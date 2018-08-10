@@ -5,7 +5,8 @@ test_that("test_symmetry_of_LOp", {
   # LOp should return a symmetric positive semi-definite matrix
   # with non-positive off diagonal elements and nonnegative
   # diagonal elements
-  Lw <- LOp(w)
+  w <- c(1, 2, 3, 4, 5, 6)
+  Lw <- LOp(w, 4)
   expect_that(isSymmetric.matrix(Lw), is_true())
   expect_that(all.equal(diag(Lw) >= 0), is_true())
   Lw_off <- Lw - diag(diag(Lw))
