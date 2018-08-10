@@ -40,5 +40,5 @@ LStarOp <- function(W) {
   # Returns:
   #   w: vector
 
-  return NA
+  return(NA)
 }
