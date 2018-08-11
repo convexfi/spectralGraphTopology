@@ -55,8 +55,8 @@ Lambda_update <- function(lb, ub, beta, U, w, n, K) {
   l <- n - K
   lambda <- CVXR::Variable(l)
   objective <- CVXR::Minimize(sum(.5 * beta * (lambda - d)^2 - log(lambda)))
-  constraints <- list(lambda[1] >= lb, lambda[l] <= ub,
-                      lambda[1:(l-1)] <= lambda[2:l])
+  constraints <- list(lambda[l] >= lb, lambda[1] <= ub,
+                      lambda[1:(l-1)] >= lambda[2:l])
   prob <- CVXR::Problem(objective, constraints)
   result <- solve(prob)
   return(as.vector(result$getValue(lambda)))
