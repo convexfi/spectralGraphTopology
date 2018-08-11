@@ -5,8 +5,8 @@ spectralGraphTopology <- function (data, K, lb, ub, alpha, beta = .5, pho = .1,
   #
   # Args:
   #   data: matrix
-  #     a k by n matrix, where k is the number of samples
-  #     and n is the size of each sample
+  #     a n by k matrix, where n is the size of each sample
+  #     and k is the number of samples
   #   K: scalar
   #     number of components of the graph
   #   lb, ub: scalars
@@ -17,8 +17,9 @@ spectralGraphTopology <- function (data, K, lb, ub, alpha, beta = .5, pho = .1,
   #   Lw: matrix
   #     the Laplacian matrix
   #
-  n <- length(data[1])
-  S <- cor(data)
+  n <- nrow(data)
+  k <- ncol(data)
+  S <- data %*% t(data) / k
   H <- alpha * (2. * diag(n) - matrix(1, n, n))
   Km <- S + H
 

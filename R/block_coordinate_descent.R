@@ -11,14 +11,14 @@ w_update <- function(w, U, beta, Lambda, n, Km) {
   #   w: vector
   #   U: matrix
   #   β: scalar
-  #   Λ: matrix
+  #   Λ: vector
   #   n: dimension of each data sample
   #   Km: matrix (see section 1.1 for its definition)
   #
   # Returns:
   #   w_update: the updated value of w
 
-  grad_f <- LStarOp(LOp(w)) - LStarOp(U %*% Lambda %*% t(U) - Km / beta)
+  grad_f <- LStarOp(LOp(w, n)) - LStarOp(U %*% diag(Lambda) %*% t(U) - Km / beta)
   w_update <- w - .5 * grad_f / n
   mask <- w_update < 0
   w_update[mask] <- 0
@@ -59,5 +59,5 @@ Lambda_update <- function(lb, ub, beta, U, w, n, K) {
                       lambda[1:(l-1)] <= lambda[2:l])
   prob <- CVXR::Problem(objective, constraints)
   result <- solve(prob)
-  return(result$getValue(lambda))
+  return(as.vector(result$getValue(lambda)))
 }

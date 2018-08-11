@@ -1,4 +1,5 @@
 export(LOp)
 export(LStarOp)
+export(w_update)
 export(U_update)
 export(Lambda_update)
