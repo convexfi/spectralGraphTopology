@@ -1,6 +1,8 @@
-spectralGraphTopology <- function (data, K, lb, ub, alpha, beta = .5, pho = .1,
-                                   maxiter = 50, w_tol = 1e-2, U_tol = 1e-2,
-                                   Lambda_tol = 1e-2, Lw_tol = 1e-2) {
+learn_graph_topology <- function (data, K, w1 = NA, U1 = NA, Lambda1 = NA,
+                                  lb = 1e-4, ub = 100., alpha = 1.,
+                                  beta = .5, pho = .1, maxiter = 50,
+                                  w_tol = 1e-4, U_tol = 1e-4,
+                                  Lambda_tol = 1e-4, Lw_tol = 1e-4) {
   # Function to solve the graph learning problem with K-components
   #
   # Args:
@@ -23,19 +25,24 @@ spectralGraphTopology <- function (data, K, lb, ub, alpha, beta = .5, pho = .1,
   H <- alpha * (2. * diag(n) - matrix(1, n, n))
   Km <- S + H
 
-  # define appropriate inital guess
-  w1 <- array(1., as.integer(.5 * n * (n - 1)))
-  U1 <- diag(n)[, (K+1):n]
-  Lambda1 <- array(1., n-K)
-
+  # define "appropriate" inital guess
+  if (is.na(w1))
+    w1 <- array(1., as.integer(.5 * n * (n - 1)))
   Lw1 <- LOp(w1, n)
-  while (iter < maxiter) {
-    while (1) {
-      w <- w_update(w1, U1, beta, diag(Lambda1), n, Km)
-      U <- U_update(w, n)
+  if (is.na(U1))
+    U1 <- diag(n)[, 1:(n-K)]
+  if (is.na(Lambda1))
+    Lambda1 <- eigen(Lw1, only.values=TRUE)$values[1:(n-K)]
+
+  iter_1 <- 1
+  iter_2 <- 1
+  while (iter_1 < maxiter) {
+    while (iter_2 < maxiter) {
+      w <- w_update(w1, U1, beta, Lambda1, n, Km)
+      U <- U_update(w, n, K)
       Lambda <- Lambda_update(lb, ub, beta, U, w, n, K)
 
-      w_err <- norm(w - w1, type="2") / max(1., norm(w, type=2))
+      w_err <- norm(w - w1, type="2") / max(1., norm(w, type="2"))
       U_err <- norm(U - U1, type="F") / max(1., norm(U, type="F"))
       Lambda_err <- norm(Lambda - Lambda1, type="2") /
                         max(1., norm(Lambda, type="2"))
@@ -46,13 +53,14 @@ spectralGraphTopology <- function (data, K, lb, ub, alpha, beta = .5, pho = .1,
       w1 <- w
       U1 <- U
       Lambda1 <- Lambda
+      iter_2 <- iter_2 + 1
     }
     Lw <- LOp(w, n)
     Lw_err <- norm(Lw - Lw1, type="F") / max(1., norm(Lw, type="F"))
     if (Lw_err < Lw_tol)
       break
     Lw1 <- Lw
-    iter <- iter + 1
+    iter_1 <- iter_1 + 1
     beta <- beta * (1 + pho)
   }
 

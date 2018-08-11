@@ -11,6 +11,12 @@ LOpConstraints <- function(Lw) {
   expect_that(all(Lw_off <= 0), is_true())
   expect_that(all(colSums(Lw) == 0), is_true())
   expect_that(all(rowSums(Lw) == 0), is_true())
+  eigen_values <- eigen(Lw, symmetric = TRUE, only.values = TRUE)
+  # set to zero eigen values that are no bigger than 1e-12 in magnitude
+  mask <- abs(eigen_values$values) < 1e-12
+  eigen_values$values[mask] <- 0
+  # verify that eigen values are nonnegative
+  expect_that(all(eigen_values$values >= 0), is_true())
 }
 
 test_that("test_LOp_order4", {
@@ -51,13 +57,14 @@ test_that("test_linearity_of_LOp", {
 })
 
 test_that("test_LStarOp", {
+   # Test the LStar operator in a basic case
    Y <- diag(4)
    w <- LStarOp(Y)
    expect_that(all(w == array(2, 6)), is_true())
 })
 
 test_that("test_inner_product_relation_between_LOp_and_LStarOp", {
-  # section 1.1 talks about a inner product equality relation
+  # section 1.1 talks about an inner product equality relation
   # involving LOp and LStarOp, let's verify that
   n <- 4
   w <- c(1, 2, 3, 4, 5, 6)

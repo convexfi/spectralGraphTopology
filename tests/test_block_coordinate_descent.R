@@ -1,33 +1,27 @@
 library(testthat)
 library(spectralGraphTopology)
 
-test_that("test_spectralGraphTopology", {
-  n <- 3
-  k <- 1000
-  w <- c(1, 2, 3)
-  K <- 1
-  Lw <- LOp(w, n)
-  Y <- t(MASS::mvrnorm(k, as.vector(array(0, 3)), MASS::ginv(Lw)))
-  S <- Y %*% t(Y) / k
-})
 
 test_that("test_U_update_consistency", {
+  # test that U remains orthonormal after being updated
   w <- c(1, 2, 3, 4, 5, 6)
   n <- 4
   K <- 1
   U <- U_update(w, n, K)
-  # test that U is orthonormal
   expect_that(all.equal(t(U) %*% U, diag(array(1., n-K)),
                          check.attributes = FALSE), is_true())
+  expect_that(ncol(U) == n-K, is_true())
+  expect_that(nrow(U) == n, is_true())
 })
 
 test_that("test_Lambda_update_consistency", {
+  # test that the eigen values meet the criterion after being updated
   w <- runif(6)
   n <- 4
   K <- 1
   U <- U_update(w, n, K)
   lb <- 1e-2
-  ub <- 2.
+  ub <- 100.
   beta <- .5
   l <- n - K
 

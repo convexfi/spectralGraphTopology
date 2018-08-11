@@ -1,2 +1,1 @@
-library(testthat)
-test_results <- test_dir(".", reporter = "summary")
+test_results <- testthat::test_dir(".", reporter = "summary")

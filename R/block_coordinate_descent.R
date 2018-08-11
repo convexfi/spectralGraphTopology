@@ -17,7 +17,6 @@ w_update <- function(w, U, beta, Lambda, n, Km) {
   #
   # Returns:
   #   w_update: the updated value of w
-
   grad_f <- LStarOp(LOp(w, n)) - LStarOp(U %*% diag(Lambda) %*% t(U) - Km / beta)
   w_update <- w - .5 * grad_f / n
   mask <- w_update < 0
