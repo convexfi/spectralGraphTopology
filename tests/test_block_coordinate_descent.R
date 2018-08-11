@@ -3,20 +3,22 @@ library(spectralGraphTopology)
 
 test_that("test_U_update_consistency", {
   w <- c(1, 2, 3, 4, 5, 6)
-  U <- U_update(w, 4)
+  n <- 4
+  K <- 1
+  U <- U_update(w, n, K)
   # test that U is orthonormal
-  expect_that(all.equal(t(U) %*% U, diag(array(1., 4)),
+  expect_that(all.equal(t(U) %*% U, diag(array(1., n-K)),
                          check.attributes = FALSE), is_true())
 })
 
 test_that("test_Lambda_update_consistency", {
   w <- runif(6)
   n <- 4
-  U <- U_update(w, n)
+  K <- 1
+  U <- U_update(w, n, K)
   lb <- 1e-2
   ub <- 2.
   beta <- .5
-  K <- 1
   l <- n - K
 
   lambda <- Lambda_update(lb, ub, beta, U, w, n, K)

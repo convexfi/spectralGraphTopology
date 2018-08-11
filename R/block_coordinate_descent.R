@@ -26,16 +26,17 @@ w_update <- function(w, U, beta, Lambda, n, Km) {
 }
 
 
-U_update <- function(w, n) {
+U_update <- function(w, n, K) {
   # Function to update the value of U
   #
   # Args:
   #   w: vector
   #   n: dimension of each data sample
+  #   K: number of components
   #
   # Returns:
   #   U_update: the updated value of U
-  return(eigen(LOp(w, n))$vectors)
+  return(eigen(LOp(w, n))$vectors[, (K+1):n])
 }
 
 
@@ -51,7 +52,6 @@ Lambda_update <- function(lb, ub, beta, U, w, n, K) {
   #   Lambda_update: the updated value of Lambda
 
   d <- diag(t(U) %*% LOp(w, n) %*% U)
-  d <- d[(K+1):n]
   l <- n - K
   lambda <- CVXR::Variable(l)
   objective <- CVXR::Minimize(sum(.5 * beta * (lambda - d)^2 - log(lambda)))
