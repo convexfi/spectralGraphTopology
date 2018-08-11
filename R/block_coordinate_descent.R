@@ -36,7 +36,7 @@ U_update <- function(w, n, K) {
   #
   # Returns:
   #   U_update: the updated value of U
-  return(eigen(LOp(w, n))$vectors[, (K+1):n])
+  return(eigen(LOp(w, n))$vectors[, 1:(n-K)])
 }
 
 
