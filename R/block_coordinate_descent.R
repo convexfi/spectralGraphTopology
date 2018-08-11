@@ -52,10 +52,11 @@ Lambda_update <- function(lb, ub, beta, U, w, n, K) {
 
   d <- diag(t(U) %*% LOp(w, n) %*% U)
   d <- d[(K+1):n]
-  lambda <- CVXR::Variable(n - K)
+  l <- n - K
+  lambda <- CVXR::Variable(l)
   objective <- CVXR::Minimize(sum(.5 * beta * (lambda - d)^2 - log(lambda)))
-  constraints <- list(lambda[1] >= lb, lambda[n] <= ub)
-  constraints <- c(constraints, lambda[1:(n-1)] <= lambda[2:n])
+  constraints <- list(lambda[1] >= lb, lambda[l] <= ub,
+                      lambda[1:(l-1)] <= lambda[2:l])
   prob <- CVXR::Problem(objective, constraints)
   result <- solve(prob)
   return(result$getValue(lambda))
