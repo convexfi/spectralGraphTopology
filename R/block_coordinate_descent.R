@@ -24,3 +24,16 @@ w_update <- function(w, U, beta, Lambda, n, Km) {
   w_update[mask] <- 0
   return(w_update)
 }
+
+
+U_update <- function(w, n) {
+  # Function to update the value of U
+  #
+  # Args:
+  #   w: vector
+  #   n: dimension of each data sample
+  #
+  # Returns:
+  #   U_update: the updated value of U
+  return(eigen(LOp(w, n))$vectors)
+}
