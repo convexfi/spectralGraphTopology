@@ -11,9 +11,31 @@ learn_graph_topology <- function (data, K, w1 = NA, U1 = NA, Lambda1 = NA,
   #     and k is the number of samples
   #   K: scalar
   #     number of components of the graph
+  #   w1: vector
+  #     initial estimate for w
+  #   U1: matrix
+  #     initial estimate for U
+  #   Lambda1: vector
+  #     initial estimate for Lambda
   #   lb, ub: scalars
   #     lower and upper bounds on the eigenvalues of the Laplacian
   #     matrix
+  #   alpha: scalar
+  #   beta: scalar
+  #     regularization factor
+  #   pho: float
+  #     how much to increase beta per iteration, i.e.,
+  #     beta <- beta * (1 + pho)
+  #   maxiter: integer
+  #     maximum number of iterations
+  #   w_tol: float
+  #     tolerance for the convergence of w
+  #   U_tol: float
+  #     tolerance for the convergence of U
+  #   Lambda_tol: float
+  #     tolerance for the convergence of Lambda
+  #   Lw_tol: float
+  #     tolerance for the convergence of Lw
   #
   # Returns:
   #   Lw: matrix
