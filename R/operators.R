@@ -17,9 +17,9 @@ LOp <- function(w, n) {
   #   Lw: matrix
   Lw <- matrix(0, n, n)
   k <- length(w)
-  for(i in ((n-1):1)) {
+  for (i in ((n-1):1)) {
     j <- n - i
-    Lw[i, (i+1):n] = -tail(w[1:k], j)
+    Lw[i, (i+1):n] <- -tail(w[1:k], j)
     k <- k - j
   }
 
@@ -30,15 +30,24 @@ LOp <- function(w, n) {
 }
 
 
-LStarOp <- function(W) {
+LStarOp <- function(Y) {
   # The L star operator, LStarOp, acts upon a matrix W and
   # returns a vector given by expression (7) in the Work Plan I.
   #
   # Args:
-  #   W: matrix which LStarOp will act upon
+  #   Y: matrix which LStarOp will act upon
   #
   # Returns:
-  #   w: vector
+  #   LStarY: vector
+  n <- ncol(Y)
+  k <- as.integer(n * (n - 1) / 2)
+  LStarY <- array(0., k)
+  for (i in 1:k) {
+    w <- array(0., k)
+    w[i] <- 1.
+    Lw <- LOp(w, n)
+    LStarY[i] <- sum(diag(t(Y) %*% Lw))
+  }
 
-  return(NA)
+  return(LStarY)
 }
