@@ -1,5 +1,5 @@
 learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, Lambda1 = NA,
-                                lb = 1e-4, ub = 100., alpha = 1.,
+                                lb = 1e-4, ub = 1e4, alpha = 0.,
                                 beta = .5, pho = .1, maxiter = 50,
                                 w_tol = 1e-4, U_tol = 1e-4,
                                 Lambda_tol = 1e-4, Lw_tol = 1e-4) {
