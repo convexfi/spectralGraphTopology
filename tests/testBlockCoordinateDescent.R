@@ -8,7 +8,7 @@ test_that("test_U_update_consistency", {
   n <- 4
   K <- 1
   U <- U_update(w, n, K)
-  expect_that(all.equal(t(U) %*% U, diag(array(1., n-K)),
+  expect_that(all.equal(crossprod(U), diag(array(1., n-K)),
                          check.attributes = FALSE), is_true())
   expect_that(ncol(U) == n-K, is_true())
   expect_that(nrow(U) == n, is_true())
