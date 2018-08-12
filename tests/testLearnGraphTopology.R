@@ -2,6 +2,7 @@ library(testthat)
 library(spectralGraphTopology)
 
 test_that("test_learn_graph_topology", {
+  # test the learning of a single-component graph
   n <- 4
   k <- 10000
   w <- c(1:6)
