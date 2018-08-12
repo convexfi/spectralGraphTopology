@@ -8,6 +8,6 @@ test_that("test_learn_graph_topology", {
   K <- 1
   Lw <- LOp(w, n)
   Y <- t(MASS::mvrnorm(k, as.vector(array(0, n)), MASS::ginv(Lw)))
-  Lw_est <- learn_graph_topology(Y, K)
+  Lw_est <- learnGraphTopology(Y, K)
   expect_that(norm(Lw - Lw_est, type="F") / max(1., norm(Lw, type="F")) < 1e-4, is_true())
 })
