@@ -3,7 +3,7 @@ learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, Lambda1 = NA,
                                 beta = .5, pho = .1, maxiter = 50,
                                 w_tol = 1e-4, U_tol = 1e-4,
                                 Lambda_tol = 1e-4, Lw_tol = 1e-4) {
-  # Function to solve the graph learning problem with K-components
+  # Solves the graph learning problem with K-components
   #
   # Args:
   #   data: matrix

@@ -5,7 +5,7 @@
 #  3) a matrix Λ (see expression (15)).
 
 w_update <- function(w, U, beta, Lambda, n, Km) {
-  # Function to update the value of w
+  # Updates the value of w
   #
   # Args:
   #   w: vector
@@ -26,7 +26,7 @@ w_update <- function(w, U, beta, Lambda, n, Km) {
 
 
 U_update <- function(w, n, K) {
-  # Function to update the value of U
+  # Updates the value of U
   #
   # Args:
   #   w: vector
@@ -40,7 +40,7 @@ U_update <- function(w, n, K) {
 
 
 Lambda_update <- function(lb, ub, beta, U, w, n, K) {
-  # Function to update the value of U
+  # Updates the value of U
   #
   # Args:
   #   lb, ub: lower and upper bounds on the Lambda vector components
