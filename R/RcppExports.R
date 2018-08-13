@@ -5,11 +5,11 @@ CppLOp <- function(w, n) {
     .Call('_spectralGraphTopology_CppLOp', PACKAGE = 'spectralGraphTopology', w, n)
 }
 
-CppLStarOpImpl <- function(Y) {
-    .Call('_spectralGraphTopology_CppLStarOpImpl', PACKAGE = 'spectralGraphTopology', Y)
-}
-
 CppLStarOp <- function(Y) {
     .Call('_spectralGraphTopology_CppLStarOp', PACKAGE = 'spectralGraphTopology', Y)
+}
+
+CppLStarOpImpl <- function(Y) {
+    .Call('_spectralGraphTopology_CppLStarOpImpl', PACKAGE = 'spectralGraphTopology', Y)
 }
 

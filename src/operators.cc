@@ -22,7 +22,7 @@ Eigen::MatrixXd CppLOp(const Eigen::VectorXd& w, int n) {
 }
 
 // [[Rcpp::export]]
-Eigen::VectorXd CppLStarOpImpl(const Eigen::MatrixXd& Y) {
+Eigen::VectorXd CppLStarOp(const Eigen::MatrixXd& Y) {
     int n = Y.cols();
     int k = .5 * n * (n - 1);
     int j = 0;
@@ -42,7 +42,7 @@ Eigen::VectorXd CppLStarOpImpl(const Eigen::MatrixXd& Y) {
 }
 
 // [[Rcpp::export]]
-Eigen::VectorXd CppLStarOp(const Eigen::MatrixXd& Y) {
+Eigen::VectorXd CppLStarOpImpl(const Eigen::MatrixXd& Y) {
     int n = Y.cols();
     int k = .5 * n * (n - 1);
     Eigen::VectorXd LStarY = Eigen::VectorXd::Zero(k);

@@ -89,8 +89,8 @@ test_that("test_LStarOp_random", {
    w1 <- LStarOp(Y)
    w2 <- LStarOpImpl(Y)
    w3 <- CppLStarOp(Y)
-   expect_that(all(abs(w1 - w2) < 1e-4), is_true())
-   expect_that(all(abs(w2 - w3) < 1e-4), is_true())
+   expect_that(all(abs(w1 - w2) < 1e-6), is_true())
+   expect_that(all(abs(w2 - w3) < 1e-6), is_true())
 })
 
 test_that("test_inner_product_relation_between_LOp_and_LStarOp", {
