@@ -1,10 +1,11 @@
-#include <operators.hh>
+#include "operators.hh"
+using namespace Eigen;
 // [[Rcpp::depends(RcppEigen)]]
 
 // [[Rcpp::export]]
-MatrixXd _LOp(VectorXd w, int n) {
+Eigen::MatrixXd CppLOp(Eigen::VectorXd w, int n) {
     int j, k;
-    MatrixXd Lw = MatrixXd::Zero(n, n);
+    Eigen::MatrixXd Lw = Eigen::MatrixXd::Zero(n, n);
     k = w.size();
 
     for (int i = n-2; i > -1; --i) {
@@ -13,24 +14,24 @@ MatrixXd _LOp(VectorXd w, int n) {
         k -= j;
     }
 
-    MatrixXd LwT = Lw.transpose();
+    Eigen::MatrixXd LwT = Lw.transpose();
     Lw += LwT;
-    MatrixXd LwColSum = Lw.colwise().sum().asDiagonal();
+    Eigen::MatrixXd LwColSum = Lw.colwise().sum().asDiagonal();
     Lw -= LwColSum;
     return Lw;
 }
 
 // [[Rcpp::export]]
-VectorXd _LStarOp(MatrixXd Y) {
+Eigen::VectorXd CppLStarOp(Eigen::MatrixXd Y) {
     int n = Y.cols();
     int k = .5 * n * (n - 1);
-    VectorXd LStarY = VectorXd::Zero(k);
-    MatrixXd Lw = MatrixXd::Zero(n, n);
+    Eigen::VectorXd LStarY = Eigen::VectorXd::Zero(k);
+    Eigen::MatrixXd Lw = Eigen::MatrixXd::Zero(n, n);
 
     for (int i = 0; i < k; ++i) {
-        VectorXd w = VectorXd::Zero(k);
+        Eigen::VectorXd w = Eigen::VectorXd::Zero(k);
         w(i) = 1.;
-        Lw = _LOp(w, n);
+        Lw = CppLOp(w, n);
         LStarY(i) = (Y.transpose() * Lw).trace();
     }
 

@@ -3,10 +3,8 @@
 #include <RcppEigen.h>
 // [[Rcpp::depends(RcppEigen)]]
 
-using Eigen::VectorXd;
-using Eigen::MatrixXd;
-using Eigen::Map;
+using namespace Eigen;
 
-MatrixXd _LOp(Map<VectorXd> w, int n);
-VectorXd _LStarOp(Map<MatrixXd> Y);
+MatrixXd CppLOp(VectorXd w, int n);
+VectorXd CppLStarOp(MatrixXd Y);
 #endif

@@ -8,7 +8,9 @@ Description: Learns the topology of a class of graphs such as K-component, tree,
 License: MIT | file LICENSE
 Encoding: UTF-8
 BugReports: https://github.com/dppalomar/spectralGraphTopology/issues
-LinkingTo: Rcpp
+LinkingTo:
+    Rcpp,
+    RcppEigen
 Imports:
     CVXR,
     Rcpp,
