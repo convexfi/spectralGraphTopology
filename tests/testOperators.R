@@ -24,39 +24,39 @@ test_that("test_LOp_order4", {
   answer <- matrix(c(6, -1, -2, -3,
                      -1, 10, -4, -5,
                      -2, -4, 12, -6,
-                     -3, -5, -6, 14))
+                     -3, -5, -6, 14), nrow=4)
   Lw <- LOp(w, 4)
   LOpConstraints(Lw)
-  expect_that(all(Lw == answer, nrow=4), is_true())
+  expect_that(all(Lw == answer), is_true())
 
   Lw <- CppLOp(w, 4)
   LOpConstraints(Lw)
-  expect_that(all(Lw == answer, nrow=4), is_true())
+  expect_that(all(Lw == answer), is_true())
 })
 
 test_that("test_LOp_order3", {
   w <- c(1, 2, 3)
   answer <- matrix(c(3, -1, -2,
                      -1, 4, -3,
-                     -2, -3, 5))
+                     -2, -3, 5), nrow=3)
   Lw <- LOp(w, 3)
   LOpConstraints(Lw)
-  expect_that(all(Lw == answer, nrow=3), is_true())
+  expect_that(all(Lw == answer), is_true())
 
   Lw <- CppLOp(w, 3)
   LOpConstraints(Lw)
-  expect_that(all(Lw == answer, nrow=3), is_true())
+  expect_that(all(Lw == answer), is_true())
 })
 
 test_that("test_LOp_order2", {
   w <- c(1)
-  answer <- matrix(c(1, -1, -1, 1))
+  answer <- matrix(c(1, -1, -1, 1), nrow=2)
   Lw <- LOp(w, 2)
   LOpConstraints(Lw)
-  expect_that(all(Lw == answer, nrow=2), is_true())
+  expect_that(all(Lw == answer), is_true())
   Lw <- CppLOp(w, 2)
   LOpConstraints(Lw)
-  expect_that(all(Lw == answer, nrow=2), is_true())
+  expect_that(all(Lw == answer), is_true())
 })
 
 test_that("test_linearity_of_LOp", {
