@@ -83,6 +83,16 @@ test_that("test_LStarOp", {
    expect_that(all(w == array(2, 6)), is_true())
 })
 
+test_that("test_LStarOp_random", {
+   # Test the LStar operator implementations are compatible among themselves
+   Y <- matrix(rnorm(16), 4, 4)
+   w1 <- LStarOp(Y)
+   w2 <- LStarOpImpl(Y)
+   w3 <- CppLStarOp(Y)
+   expect_that(all(abs(w1 - w2) < 1e-4), is_true())
+   expect_that(all(abs(w2 - w3) < 1e-4), is_true())
+})
+
 test_that("test_inner_product_relation_between_LOp_and_LStarOp", {
   # section 1.1 talks about an inner product equality relation
   # involving LOp and LStarOp, let's verify that
