@@ -43,7 +43,7 @@ learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, Lambda1 = NA,
   #
   n <- nrow(data)
   k <- ncol(data)
-  S <- data %*% t(data) / k
+  S <- tcrossprod(data) / k
   H <- alpha * (2. * diag(n) - matrix(1, n, n))
   Km <- S + H
 
