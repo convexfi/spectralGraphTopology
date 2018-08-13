@@ -1,9 +1,9 @@
 #include "operators.hh"
-using namespace Eigen;
 // [[Rcpp::depends(RcppEigen)]]
+using namespace Eigen;
 
 // [[Rcpp::export]]
-Eigen::MatrixXd CppLOp(Eigen::VectorXd w, int n) {
+Eigen::MatrixXd CppLOp(const Eigen::VectorXd& w, int n) {
     int j, k;
     Eigen::MatrixXd Lw = Eigen::MatrixXd::Zero(n, n);
     k = w.size();
@@ -22,17 +22,18 @@ Eigen::MatrixXd CppLOp(Eigen::VectorXd w, int n) {
 }
 
 // [[Rcpp::export]]
-Eigen::VectorXd CppLStarOp(Eigen::MatrixXd Y) {
+Eigen::VectorXd CppLStarOp(const Eigen::MatrixXd& Y) {
     int n = Y.cols();
     int k = .5 * n * (n - 1);
     Eigen::VectorXd LStarY = Eigen::VectorXd::Zero(k);
     Eigen::MatrixXd Lw = Eigen::MatrixXd::Zero(n, n);
+    Eigen::MatrixXd tY = Y.transpose();
 
     for (int i = 0; i < k; ++i) {
         Eigen::VectorXd w = Eigen::VectorXd::Zero(k);
         w(i) = 1.;
         Lw = CppLOp(w, n);
-        LStarY(i) = (Y.transpose() * Lw).trace();
+        LStarY(i) = (tY * Lw).trace();
     }
 
     return LStarY;

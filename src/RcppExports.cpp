@@ -7,24 +7,24 @@
 using namespace Rcpp;
 
 // CppLOp
-Eigen::MatrixXd CppLOp(Eigen::VectorXd w, int n);
+Eigen::MatrixXd CppLOp(const Eigen::VectorXd& w, int n);
 RcppExport SEXP _spectralGraphTopology_CppLOp(SEXP wSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Eigen::VectorXd >::type w(wSEXP);
+    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type w(wSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     rcpp_result_gen = Rcpp::wrap(CppLOp(w, n));
     return rcpp_result_gen;
 END_RCPP
 }
 // CppLStarOp
-Eigen::VectorXd CppLStarOp(Eigen::MatrixXd Y);
+Eigen::VectorXd CppLStarOp(const Eigen::MatrixXd& Y);
 RcppExport SEXP _spectralGraphTopology_CppLStarOp(SEXP YSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type Y(YSEXP);
     rcpp_result_gen = Rcpp::wrap(CppLStarOp(Y));
     return rcpp_result_gen;
 END_RCPP

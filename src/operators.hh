@@ -1,10 +1,10 @@
 #ifndef OPERATORS_H
 #define OPERATORS_H
-#include <RcppEigen.h>
 // [[Rcpp::depends(RcppEigen)]]
+#include <RcppEigen.h>
 
 using namespace Eigen;
 
-MatrixXd CppLOp(VectorXd w, int n);
-VectorXd CppLStarOp(MatrixXd Y);
+MatrixXd CppLOp(const Eigen::VectorXd&, int);
+VectorXd CppLStarOp(const Eigen::MatrixXd&);
 #endif
