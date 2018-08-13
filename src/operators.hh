@@ -7,6 +7,6 @@ using Eigen::VectorXd;
 using Eigen::MatrixXd;
 using Eigen::Map;
 
-MatrixXd LOp(Map<VectorXd> w, int n);
-VectorXd LStarOp(Map<MatrixXd> Y);
+MatrixXd _LOp(Map<VectorXd> w, int n);
+VectorXd _LStarOp(Map<MatrixXd> Y);
 #endif

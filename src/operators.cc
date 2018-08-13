@@ -2,7 +2,7 @@
 // [[Rcpp::depends(RcppEigen)]]
 
 // [[Rcpp::export]]
-MatrixXd LOp(VectorXd w, int n) {
+MatrixXd _LOp(VectorXd w, int n) {
     int j, k;
     MatrixXd Lw = MatrixXd::Zero(n, n);
     k = w.size();
@@ -21,7 +21,7 @@ MatrixXd LOp(VectorXd w, int n) {
 }
 
 // [[Rcpp::export]]
-VectorXd LStarOp(MatrixXd Y) {
+VectorXd _LStarOp(MatrixXd Y) {
     int n = Y.cols();
     int k = .5 * n * (n - 1);
     VectorXd LStarY = VectorXd::Zero(k);
@@ -30,7 +30,7 @@ VectorXd LStarOp(MatrixXd Y) {
     for (int i = 0; i < k; ++i) {
         VectorXd w = VectorXd::Zero(k);
         w(i) = 1.;
-        Lw = LOp(w, n);
+        Lw = _LOp(w, n);
         LStarY(i) = (Y.transpose() * Lw).trace();
     }
 
