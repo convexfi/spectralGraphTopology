@@ -48,13 +48,14 @@ learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, Lambda1 = NA,
   Km <- S + H
 
   # define "appropriate" inital guess
-  if (is.na(w1))
+  if (any(is.na(w1)))
     w1 <- array(1., as.integer(.5 * n * (n - 1)))
-  Lw1 <- LOp(w1, n)
-  if (is.na(U1))
-    U1 <- diag(n)[, 1:(n-K)]
-  if (is.na(Lambda1))
-    Lambda1 <- eigen(Lw1, only.values=TRUE)$values[1:(n-K)]
+  Lw1 <- CppLOp(w1, n)
+  evd <- eigen(Lw1)
+  if (any(is.na(U1)))
+    U1 <- evd$vectors[, 1:(n-K)]
+  if (any(is.na(Lambda1)))
+    Lambda1 <- evd$values[1:(n-K)]
 
   iter_1 <- 1
   iter_2 <- 1
@@ -77,7 +78,7 @@ learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, Lambda1 = NA,
       Lambda1 <- Lambda
       iter_2 <- iter_2 + 1
     }
-    Lw <- LOp(w, n)
+    Lw <- CppLOp(w, n)
     Lw_err <- norm(Lw - Lw1, type="F") / max(1., norm(Lw, type="F"))
     if (Lw_err < Lw_tol)
       break

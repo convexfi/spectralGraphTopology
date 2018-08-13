@@ -17,7 +17,7 @@ w_update <- function(w, U, beta, Lambda, n, Km) {
   #
   # Returns:
   #   w_update: the updated value of w
-  grad_f <- LStarOp(LOp(w, n)) - LStarOp(U %*% diag(Lambda) %*% t(U) - Km / beta)
+  grad_f <- CppLStarOp(CppLOp(w, n)) - CppLStarOp(U %*% diag(Lambda) %*% t(U) - Km / beta)
   w_update <- w - .5 * grad_f / n
   mask <- w_update < 0
   w_update[mask] <- 0
@@ -35,7 +35,7 @@ U_update <- function(w, n, K) {
   #
   # Returns:
   #   U_update: the updated value of U
-  return(eigen(LOp(w, n))$vectors[, 1:(n-K)])
+  return(eigen(CppLOp(w, n))$vectors[, 1:(n-K)])
 }
 
 
@@ -50,7 +50,7 @@ Lambda_update <- function(lb, ub, beta, U, w, n, K) {
   # Returns:
   #   Lambda_update: the updated value of Lambda
 
-  d <- diag(t(U) %*% LOp(w, n) %*% U)
+  d <- diag(t(U) %*% CppLOp(w, n) %*% U)
   l <- n - K
   lambda <- CVXR::Variable(l)
   objective <- CVXR::Minimize(sum(.5 * beta * (lambda - d)^2 - log(lambda)))
