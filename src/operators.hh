@@ -7,4 +7,5 @@ using namespace Eigen;
 
 MatrixXd CppLOp(const Eigen::VectorXd&, int);
 VectorXd CppLStarOp(const Eigen::MatrixXd&);
+VectorXd CppLStarOpImpl(const Eigen::MatrixXd&);
 #endif

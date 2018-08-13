@@ -18,6 +18,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// CppLStarOpImpl
+Eigen::VectorXd CppLStarOpImpl(const Eigen::MatrixXd& Y);
+RcppExport SEXP _spectralGraphTopology_CppLStarOpImpl(SEXP YSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type Y(YSEXP);
+    rcpp_result_gen = Rcpp::wrap(CppLStarOpImpl(Y));
+    return rcpp_result_gen;
+END_RCPP
+}
 // CppLStarOp
 Eigen::VectorXd CppLStarOp(const Eigen::MatrixXd& Y);
 RcppExport SEXP _spectralGraphTopology_CppLStarOp(SEXP YSEXP) {
@@ -32,6 +43,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_spectralGraphTopology_CppLOp", (DL_FUNC) &_spectralGraphTopology_CppLOp, 2},
+    {"_spectralGraphTopology_CppLStarOpImpl", (DL_FUNC) &_spectralGraphTopology_CppLStarOpImpl, 1},
     {"_spectralGraphTopology_CppLStarOp", (DL_FUNC) &_spectralGraphTopology_CppLStarOp, 1},
     {NULL, NULL, 0}
 };
