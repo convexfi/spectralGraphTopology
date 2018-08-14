@@ -34,35 +34,44 @@ U_update <- function(w, N, K) {
   #
   # Returns:
   #   U_update: the updated value of U
-  return(eigen(L(w))$vectors[, 1:(N-K)])
+  return(eigen(L(w))$vectors[, (N-K):1])
 }
 
 
 lambda_update <- function(lb, ub, beta, U, w, N, K) {
-  # Updates the value of U
-  #
-  # Args:
-  #   lb, ub: lower and upper bounds on the Lambda vector components
-  #   N: dimension of each data sample
-  #   K: number of components of the graph
-  #
-  # Returns:
-  #   Lambda_update: the updated value of Lambda
-
-  d <- diag(t(U) %*% L(w) %*% U)
   l <- N - K
-  lambda <- CVXR::Variable(l)
-  objective <- CVXR::Minimize(sum(.5 * beta * (lambda - d)^2 - log(lambda)))
-  constraints <- list(lambda[l] >= lb, lambda[1] <= ub,
-                      lambda[1:(l-1)] >= lambda[2:l])
-  prob <- CVXR::Problem(objective, constraints)
-  prob_data <- CVXR::get_problem_data(prob, solver = "ECOS")
-  solver_output <- ECOSolveR::ECOS_csolve(c = prob_data[["c"]],
-                                            G = prob_data[["G"]],
-                                            h = prob_data[["h"]],
-                                            dims = prob_data[["dims"]],
-                                            A = prob_data[["A"]],
-                                            b = prob_data[["b"]])
-  result <- CVXR::unpack_results(prob, "ECOS", solver_output)
-  return(as.vector(result$getValue(lambda)))
+  d <- diag(t(U) %*% L(w) %*% U)
+  lambda <- .5 * (d + sqrt(d^2 + 4 / beta))
+  condition <- all(lambda[l] <= ub, lambda[1] >= lb, lambda[2:l] >= lambda[1:(l-1)])
+  if (condition) {
+    return(lambda)
+  }
+
+  while (!condition) {
+    geq <- c(lb >= lambda[1], lambda[1:(l-1)] >= lambda[2:l], lambda[l] >= ub)
+    flag1 <- geq[1]
+    flag2 <- geq[l]
+    for (i in 1:l) {
+      if (flag1) {
+        lambda[i] <- lb
+        flag1 <- geq[i+1]
+      } else {
+        c1 <- i
+        flag1 <- FALSE
+      }
+
+      if (flag2) {
+        lambda[l-i+1] <- ub
+        flag2 <- geq[l-i]
+      } else {
+        c2 <- l-i+1
+        flag2 <- FALSE
+      }
+
+      if ((!flag1) & (!flag2)) {
+        break
+      }
+    }
+    condition <- all(lambda[l] <= ub, lambda[1] >= lb, lambda[2:l] >= lambda[1:(l-1)])
+  }
 }
