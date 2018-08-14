@@ -26,6 +26,6 @@ test_that("test_lambda_update_consistency", {
   l <- N - K
 
   lambda <- lambda_update(lb, ub, beta, U, w, N, K)
-  expect_that(all(lambda[l] >= lb, lambda[1] <= ub,
-                  lambda[1:(l-1)] >= lambda[2:l]), is_true())
+  expect_that(all(lambda[1] >= lb, lambda[l] <= ub,
+                  lambda[2:l] >= lambda[1:(l-1)]), is_true())
 })
