@@ -5,7 +5,7 @@ n <- 4
 # Number of random samples to generate
 k <- 100000
 # True w vector
-w <- c(1:6)
+w <- runif(6)
 # Number of components
 K <- 1
 # True Lw matrix
@@ -13,7 +13,7 @@ Lw <- L(w)
 # Generate random samples
 Y <- t(MASS::mvrnorm(k, rep(0, n), MASS::ginv(Lw)))
 # Learn Lw
-Lw_est <- learnGraphTopology(Y, K, ub=1e4, beta=.1, maxiter=500)
+Lw_est <- learnGraphTopology(Y, K, lb=1e-4, ub=1e2, beta=1., rho=.5, maxiter=5000, Lw_tol = 1e-12)
 print(Lw)
 print(Lw_est)
 print(norm(Lw - Lw_est, type="F") / max(1., norm(Lw, type="F")))
@@ -34,10 +34,10 @@ print(norm(Lw - Lw_est, type="F") / max(1., norm(Lw, type="F")))
 
 
 
-w1 <- runif(6)
-w2 <- runif(6)
-Theta1 <- CppLOp(w1, n)
-Theta2 <- CppLOp(w2, n)
-Theta <- rbind(cbind(Theta1, matrix(0, n, n)),
-               cbind(matrix(0, n, n), Theta2))
-eigen(Theta)$values
+#w1 <- runif(6)
+#w2 <- runif(6)
+#Theta1 <- CppLOp(w1, n)
+#Theta2 <- CppLOp(w2, n)
+#Theta <- rbind(cbind(Theta1, matrix(0, n, n)),
+#               cbind(matrix(0, n, n), Theta2))
+#eigen(Theta)$values

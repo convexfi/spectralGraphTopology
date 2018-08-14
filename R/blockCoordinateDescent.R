@@ -73,6 +73,19 @@ lambda_update <- function(lb, ub, beta, U, w, N, K) {
         break
       }
     }
-    condition <- all(lambda[l] <= ub, lambda[1] >= lb, lambda[2:l] >= lambda[1:(q-1)])
+
+    m <- c()
+    geq3 <- lambda[c1:(c2-1)] >= lambda[(c1+1):c2]
+    for (i in 1:(c2 - c1 + 1)) {
+        if (geq3[i]) {
+          m <- c(m, c1 + i - 1)
+        } else {
+          d_mean <- mean(d[m])
+          lambda[m] <- d_mean + sqrt(d_mean^2 + 4/beta)
+          m <- c()
+        }
+    }
+
+    condition <- all(lambda[q] <= ub, lambda[1] >= lb, lambda[2:q] >= lambda[1:(q-1)])
   }
 }
