@@ -1,2 +1,8 @@
 *.o
 *.so
+.Rproj.user
+.Rhistory
+.RData
+.DS_Store
+inst/doc
+README_cache

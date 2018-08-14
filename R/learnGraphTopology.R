@@ -1,3 +1,35 @@
+#' Sparse Index Tracking
+#'
+#' Computes the weights of assets (relative capital allocation) for a sparse approximation of a financial index.
+#'
+#' @param X m-by-n matrix of net returns (m samples, n assets).
+#' @param r m dimensional vector of the net returns of the index.
+#' @param lambda sparsity weight factor. Any nonnegative number (suggested range \code{[10^{-8},10^{-6}]}).
+#' @param u upper bound of the weights.Default value \code{u <- 1}, i.e., no effective upper bound.
+#' @param measure performance measure. Possible values \code{'ete'} (empirical tracking error - default), \code{'dr'} (downside risk),
+#' \code{'hete'} (Huber empirical tracking error), and \code{'hdr'} (Huber downside risk).
+#' @param hub Huber parameter. Required if \code{measure = 'hete'} or \code{measure = 'hdr'}.
+#' @param w0 initial point. If \code{NULL} a uniform allocation is used, i.e., \code{w0 <- rep(1/N, N)}.
+#' @param thres threshold value. All the weights less or equal to \code{thres} are set to 0. The default value is \code{1e-9}.
+#' @return An n-dimensional vector with allocation weights on the assets.
+#' @author Konstantinos Benidis and Daniel P. Palomar
+#' @references
+#' K. Benidis, Y. Feng, D. P. Palomar, "Sparse Portfolios for High-Dimensional Financial Index Tracking,"
+#' \emph{IEEE Transactions on Signal Processing}, vol. 66, no. 1, pp. 155-170, Jan. 2018.
+#' @examples
+#' library(sparseIndexTracking)
+#' library(xts)
+#'
+#' # load data
+#' data(INDEX_2010)
+#'
+#' # fit portfolio under error measure ETE (Empirical Tracking Error)
+#' w_ete <- spIndexTrack(INDEX_2010$X, INDEX_2010$SP500, lambda = 1e-7, u = 0.5, measure = 'ete')
+#'
+#' # show cardinality achieved
+#' cat("Number of assets used:", sum(w_ete > 1e-6))
+#'
+#' @export
 learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, Lambda1 = NA,
                                 lb = 1e-4, ub = 1e4, alpha = 0.,
                                 beta = .5, pho = .1, maxiter = 50,

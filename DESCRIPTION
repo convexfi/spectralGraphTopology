@@ -1,13 +1,19 @@
 Package: spectralGraphTopology
 Type: Package
-Title: Learns the topology of a class of graphs such as K-component, tree, bipartite, regular.
+Title: Learning of Topology of a Class of Graphs such as K-component, Tree, Bipartite, Regular.
 Version: 0.1.0
-Author: Convex Group-HKUST
-Maintainer: Daniel P. Palomar <daniel.p.palomar@gmail.com>
 Description: Learns the topology of a class of graphs such as K-component, tree, bipartite, regular
-License: MIT | file LICENSE
-Encoding: UTF-8
+Authors@R: c(
+  person("Ze", "Vinicius", role = "aut", email = "jvmirca@gmail.com"),
+  person(c("Daniel", "P."), "Palomar", role = c("cre", "aut"), email = "daniel.p.palomar@gmail.com")
+  )
+Maintainer: Vinicius Ze <jvmirca@gmail.com>
+URL: https://github.com/dppalomar/spectralGraphTopology
 BugReports: https://github.com/dppalomar/spectralGraphTopology/issues
+Depends:
+License: GPL-3 | file LICENSE
+Encoding: UTF-8
+LazyData: true
 LinkingTo:
     Rcpp,
     RcppEigen
@@ -15,5 +21,14 @@ Imports:
     CVXR,
     Rcpp,
     RcppEigen
+RoxygenNote: 6.0.1
 Suggests:
-    testthat
+    testthat,
+    knitr,
+    rmarkdown,
+    bookdown,
+    prettydoc
+VignetteBuilder: 
+    knitr,
+    bookdown,
+    prettydoc
