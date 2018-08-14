@@ -4,7 +4,7 @@
 # https://google.github.io/styleguide/Rguide.xml
 
 
-LOp <- function(w, n) {
+LOp <- function(w) {
   # The L operator, LOp, acts upon a vector w and returns
   # a matrix given by expression (5) in the Work Plan I.
   #
@@ -15,8 +15,9 @@ LOp <- function(w, n) {
   #
   # Returns:
   #   Lw: matrix
-  Lw <- matrix(0, n, n)
   k <- length(w)
+  n <- as.integer(.5 * (1 + sqrt(1 + 8 * k)))
+  Lw <- matrix(0, n, n)
   for (i in ((n-1):1)) {
     j <- n - i
     Lw[i, (i+1):n] <- -tail(w[1:k], j)
@@ -28,31 +29,6 @@ LOp <- function(w, n) {
 
   return(Lw)
 }
-
-
-LStarOpImpl <- function(Y) {
-  # An alternative implementation of the L star operator.
-  # Implemented only for the purposes of testing.
-  # Use LStarOp or CppLStarOp instead.
-  #
-  # Args:
-  #   Y: matrix which LStarOp will act upon
-  #
-  # Returns:
-  #   LStarY: vector
-  n <- ncol(Y)
-  k <- as.integer(n * (n - 1) / 2)
-  LStarY <- array(0., k)
-  for (i in 1:k) {
-    w <- array(0., k)
-    w[i] <- 1.
-    Lw <- LOp(w, n)
-    LStarY[i] <- sum(diag(t(Y) %*% Lw))
-  }
-
-  return(LStarY)
-}
-
 
 LStarOp <- function(Y) {
   # The L star operator, LStarOp, acts upon a matrix W and
@@ -77,5 +53,29 @@ LStarOp <- function(Y) {
       l <- l + 1
     }
   }
+  return(LStarY)
+}
+
+
+LStarOpImpl <- function(Y) {
+  # An alternative implementation of the L star operator.
+  # Implemented only for the purposes of testing.
+  # Use LStarOp or CppLStarOp instead.
+  #
+  # Args:
+  #   Y: matrix which LStarOp will act upon
+  #
+  # Returns:
+  #   LStarY: vector
+  n <- ncol(Y)
+  k <- as.integer(n * (n - 1) / 2)
+  LStarY <- array(0., k)
+  for (i in 1:k) {
+    w <- array(0., k)
+    w[i] <- 1.
+    Lw <- LOp(w)
+    LStarY[i] <- sum(diag(t(Y) %*% Lw))
+  }
+
   return(LStarY)
 }

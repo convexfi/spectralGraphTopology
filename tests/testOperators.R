@@ -25,7 +25,7 @@ test_that("test_LOp_order4", {
                      -1, 10, -4, -5,
                      -2, -4, 12, -6,
                      -3, -5, -6, 14), nrow=4)
-  Lw <- LOp(w, 4)
+  Lw <- LOp(w)
   LOpConstraints(Lw)
   expect_that(all(Lw == answer), is_true())
 
@@ -39,7 +39,7 @@ test_that("test_LOp_order3", {
   answer <- matrix(c(3, -1, -2,
                      -1, 4, -3,
                      -2, -3, 5), nrow=3)
-  Lw <- LOp(w, 3)
+  Lw <- LOp(w)
   LOpConstraints(Lw)
   expect_that(all(Lw == answer), is_true())
 
@@ -51,7 +51,7 @@ test_that("test_LOp_order3", {
 test_that("test_LOp_order2", {
   w <- c(1)
   answer <- matrix(c(1, -1, -1, 1), nrow=2)
-  Lw <- LOp(w, 2)
+  Lw <- LOp(w)
   LOpConstraints(Lw)
   expect_that(all(Lw == answer), is_true())
   Lw <- CppLOp(w, 2)
@@ -65,12 +65,12 @@ test_that("test_linearity_of_LOp", {
   w2 <- rev(w1)
   a <- runif(1)
   b <- runif(1)
-  Lw1 <- LOp(w1, 4)
-  Lw2 <- LOp(w2, 4)
-  expect_that(all((a * Lw1 + b * Lw2) == LOp(a * w1 + b * w2, 4)), is_true())
+  Lw1 <- LOp(w1)
+  Lw2 <- LOp(w2)
+  expect_that(all((a * Lw1 + b * Lw2) == LOp(a * w1 + b * w2)), is_true())
   Lw1 <- CppLOp(w1, 4)
   Lw2 <- CppLOp(w2, 4)
-  expect_that(all((a * Lw1 + b * Lw2) == LOp(a * w1 + b * w2, 4)), is_true())
+  expect_that(all((a * Lw1 + b * Lw2) == LOp(a * w1 + b * w2)), is_true())
 })
 
 test_that("test_LStarOp", {
@@ -99,7 +99,7 @@ test_that("test_inner_product_relation_between_LOp_and_LStarOp", {
   n <- 4
   w <- c(1, 2, 3, 4, 5, 6)
   Y <- diag(n)
-  Lw <- LOp(w, n)
+  Lw <- LOp(w)
   y <- LStarOp(Y)
   expect_that(sum(diag(t(Y) %*% Lw)) == w %*% y, is_true())
 
