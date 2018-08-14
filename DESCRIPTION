@@ -18,7 +18,6 @@ LinkingTo:
     Rcpp,
     RcppEigen
 Imports:
-    CVXR,
     Rcpp,
     RcppEigen
 RoxygenNote: 6.0.1
