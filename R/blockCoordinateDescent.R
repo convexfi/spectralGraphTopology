@@ -57,6 +57,13 @@ Lambda_update <- function(lb, ub, beta, U, w, n, K) {
   constraints <- list(lambda[l] >= lb, lambda[1] <= ub,
                       lambda[1:(l-1)] >= lambda[2:l])
   prob <- CVXR::Problem(objective, constraints)
-  result <- solve(prob)
+  prob_data <- CVXR::get_problem_data(prob, solver = "ECOS")
+  solver_output <- ECOSolveR::ECOS_csolve(c = prob_data[["c"]],
+                                            G = prob_data[["G"]],
+                                            h = prob_data[["h"]],
+                                            dims = prob_data[["dims"]],
+                                            A = prob_data[["A"]],
+                                            b = prob_data[["b"]])
+  result <- CVXR::unpack_results(prob, "ECOS", solver_output)
   return(as.vector(result$getValue(lambda)))
 }
