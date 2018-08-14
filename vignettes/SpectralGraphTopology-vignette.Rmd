@@ -47,85 +47,11 @@ knit_hooks$set(pngquant = hook_pngquant)
 ```
 
 -----------
-> This vignette illustrates the design of sparse portfolios that aim to track a financial index with the package `sparseIndexTracking` (with a comparison with other packages) and gives a description of the algorithms used.
 
 
 # Comparison with other packages
-There are currently no other R packages for index tracking. In paper [@BenFengPal2018] and monograph [@BenFengPal2018b], a detailed comparison in terms of execution speed and performance is made with the mixed-integer quadratic programming (MIQP) solver Gurobi (for which R has an interface via package `ROI` and plugin `ROI.plugin.gurobi`).
 
 # Usage of the package
-We start by loading the package and real data of the index S&P 500 and its underlying assets:
-```{r, message = FALSE}
-library(sparseIndexTracking)
-library(xts)
-data(INDEX_2010)
-```
-The data `INDEX_2010` contains a list with two xts objects:
-
-> 1. `X`: A $T\times N$ xts with the daily linear returns of the $N$ assets that were in the index during the year 2010 (total $T$ trading days)
-  2. `SP500`: A $T\times 1$ xts with the daily linear returns of the index S\&P 500 during the same period.
-
-Note that we use xts objects just for illustration purposes. The function `spIndexTrack()` can also be invoked passing simple data arrays or dataframes.
-
-Based on the above quantities we create a training window, which we will use to create our portfolios, and a testing window, which will be used to assess the performance of the designed portfolios. For simplicity, here we consider the first six (trading) months of the dataset (~126 days) as the training window, and the subsequent six months as the testing window:
-```{r}
-X_train <- INDEX_2010$X[1:126]
-X_test <- INDEX_2010$X[127:252]
-r_train <- INDEX_2010$SP500[1:126]
-r_test <- INDEX_2010$SP500[127:252]
-```
-
-Now, we use the four modes (four available tracking errors) of the `spIndexTrack()` algorithm to design our portfolios:
-```{r, cache = TRUE}
-# ETE
-w_ete <- spIndexTrack(X_train, r_train, lambda = 1e-7, u = 0.5, measure = 'ete')
-cat('Number of assets used:', sum(w_ete > 1e-6))
-
-# DR
-w_dr <- spIndexTrack(X_train, r_train, lambda = 2e-8, u = 0.5, measure = 'dr')
-cat('Number of assets used:', sum(w_dr > 1e-6))
-
-# HETE
-w_hete <- spIndexTrack(X_train, r_train, lambda = 8e-8, u = 0.5, measure = 'hete', hub = 0.05)
-cat('Number of assets used:', sum(w_hete > 1e-6))
-
-# HDR
-w_hdr <- spIndexTrack(X_train, r_train, lambda = 2e-8, u = 0.5, measure = 'hdr', hub = 0.05)
-cat('Number of assets used:', sum(w_hdr > 1e-6))
-```
-
-Finally, we plot the actual value of the index in the testing window in comparison with the values of the designed portfolios:
-```{r}
-plot(cbind("PortfolioETE" = cumprod(1 + X_test %*% w_ete$w), cumprod(1 + r_test)), 
-     legend.loc = "topleft", main = "Cumulative P&L")
-plot(cbind("PortfolioDR" = cumprod(1 + X_test %*% w_dr$w), cumprod(1 + r_test)),
-     legend.loc = "topleft", main = "Cumulative P&L")
-plot(cbind("PortfolioHETE" = cumprod(1 + X_test %*% w_hete$w), cumprod(1 + r_test)),
-     legend.loc = "topleft", main = "Cumulative P&L")
-plot(cbind("PortfolioHDR" = cumprod(1 + X_test %*% w_hdr$w), cumprod(1 + r_test)),
-     legend.loc = "topleft", main = "Cumulative P&L")
-```
-
-In the above examples we used a single training and testing window. In practice, we need to perform this task sequentially for many windows in order to assess an algorithm or to distinguish the differences between the various tracking errors. 
-
-Ideally, the ETE and HETE portfolios should have Excess P&L close to zero since their purpose is to track as closely as possible the index, whereas the DR and HDR portfolios should have a positive Excess P&L since their purpose is to beat the index. Finally, Huber should shine in periods of high volatility where many extreme returns are observed (like the great recession). 
-
-All of the above can be observed in Figures \@ref(fig:dotcom) - \@ref(fig:stablemarket) where we applied the four modes of the algorithm in the index S&P 500 considering three different periods. All the constructed portfolios consist of 40 assets, the training and testing windows were set to 6 months and 1 month, respectively, while monthly returns were used. The upper plot of each period (Normalized P&L) shows the wealth of the index and the four portfolios, which are normalized to the index value each time they are rebalanced. The lower plot of each period (Excess P&L) shows the cumulative difference of the portfolios and the index due to normalization, i.e., it is equivalent to a second account that keeps track of our excess profits or losses.    
-
-
-```{r dotcom, echo = FALSE, out.width = '80%', fig.cap = "Dot-com bubble."}
-knitr::include_graphics('figures/per1_126_22_hub4_w.png', auto_pdf = TRUE)
-```
-
-```{r greatres, echo = FALSE, out.width = '80%', fig.cap = "Great recession."}
-knitr::include_graphics('figures/per2_126_22_hub4_w.png', auto_pdf = TRUE)
-```
-
-```{r stablemarket, echo = FALSE, out.width = '80%', fig.cap = "Stable market."}
-knitr::include_graphics('figures/per4_126_22_hub4_w.png', auto_pdf = TRUE)
-```
-
-For a more detailed discussion please refer to [@BenFengPal2018] and [@BenFengPal2018b].
 
 # Explanation of the algorithms
 
@@ -135,20 +61,22 @@ The goal of `learnGraphTopology()` is to estimate the Laplacian matrix generated
 by the weight vector of graph, $\mathbf{w}$.
 
 > **Algorithm 1**
+
   1. Choose initial values for $\mathbf{w}$, $\mathbf{U}$, $\boldsymbol{\Lambda}$,
-     and $\beta$, and compute $\mathcal{L}\mathbf{w}^(0)$.
-  2. Define the number of components $K$ and tunning parameters, $\alpha_1$,
-     $\alpha_2$, $\pho$.
-  2. Set $j=0$, while not converged do
-  3. Set $i=0$, while not converged do
+     and $\beta$, and compute $\mathcal{L}\mathbf{w}^{(0)}$
+  2. Define the number of components $K$ and tunning parameters, $\alpha$, $\alpha_1$, $\alpha_2$, $\rho$
+  3. Set $j=0$, while not converged do
+  4. Set $i=0$, while not converged do
   5. Update $\mathbf{w}$, $\mathbf{w}^{(i+1)} \gets f_{\mathbf{w}}(\mathbf{w}^{(i)}, \mathbf{U}^{(i)}, \boldsymbol{\Lambda}^{(i)}, \beta, n, \mathbf{K})$
   6. Update $\mathbf{U}$, $\mathbf{U}^{(i+1)} \gets f_{\mathbf{U}}(\mathbf{w}^{(i+1)}, n, K)$
-  7. Update $\boldsymbol{\Lambda}$, $\boldsymbol{\Lambda} \gets f_{\boldsymbol{\Lambda}}(\alpha_1, \alpha_2, \beta, \mathbf{w}^{(i+1)}, \mathbf{U}^{(i+1)}, n, K)$
+  7. Update $\boldsymbol{\Lambda}$, $\boldsymbol{\Lambda}^{(i+1)} \gets f_{\boldsymbol{\Lambda}}(\alpha_1, \alpha_2, \beta, \mathbf{w}^{(i+1)}, \mathbf{U}^{(i+1)}, n, K)$
   8. $i \gets i+1$
-  9. Repeat steps 4-8 until convergence
-  10. Compute $\mathcal{L}\mathbf{w}^(i)$
-  11. Repeat steps 3-10 until convergence
-  10. Return $\mathcal{L}\mathbf{w}^(i)$
+  9. $\beta \gets \beta(\rho + 1)$
+  10. Repeat steps $4-9$ until convergence
+  11. Compute $\mathcal{L}\mathbf{w}^{(i)}$
+  12. $j \gets j+1$
+  13. Repeat steps $3-12$ until convergence
+  14. Return $\mathcal{L}\mathbf{w}^{(i)}$
 
 # References {-}
 \setlength{\parindent}{-0.2in}

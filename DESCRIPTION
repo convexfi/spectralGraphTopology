@@ -28,7 +28,7 @@ Suggests:
     rmarkdown,
     bookdown,
     prettydoc
-VignetteBuilder: 
+VignetteBuilder:
     knitr,
     bookdown,
     prettydoc
