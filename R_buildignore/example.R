@@ -9,7 +9,7 @@ w <- c(1:6)
 # Number of components
 K <- 1
 # True Lw matrix
-Lw <- CppLOp(w, n)
+Lw <- L(w)
 # Generate random samples
 Y <- t(MASS::mvrnorm(k, rep(0, n), MASS::ginv(Lw)))
 # Learn Lw
@@ -40,7 +40,4 @@ Theta1 <- CppLOp(w1, n)
 Theta2 <- CppLOp(w2, n)
 Theta <- rbind(cbind(Theta1, matrix(0, n, n)),
                cbind(matrix(0, n, n), Theta2))
-    
-eigen(Theta)$values           
-
-
+eigen(Theta)$values

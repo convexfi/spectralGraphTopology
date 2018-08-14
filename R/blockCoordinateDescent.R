@@ -17,8 +17,8 @@ w_update <- function(w, U, beta, lambda, N, Km) {
   #
   # Returns:
   #   w_update: the updated value of w
-  #grad_f <- Lstar(L(w) - tcrossprod(U*sqrt(lambda)) + Km / beta)
-  grad_f <- Lstar(L(w) - U %*% diag(lambda) %*% t(U) + Km / beta)
+  #grad_f <- Lstar(L(w) - U %*% diag(lambda) %*% t(U) + Km / beta)
+  grad_f <- Lstar(L(w) - crossprod(t(U)*sqrt(lambda)) + Km / beta)
   w_update <- w - .5 * grad_f / N
   return(pmax(0, w_update))
 }
