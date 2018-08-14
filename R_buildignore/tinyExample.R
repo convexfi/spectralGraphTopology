@@ -30,3 +30,17 @@ print(norm(Lw - Lw_est, type="F") / max(1., norm(Lw, type="F")))
 # [3,] -1.9470629 -4.0683432 12.017785 -6.002379
 # [4,] -3.0137326 -5.0777083 -6.002379 14.093820
 # [1] 0.009535078
+
+
+
+
+w1 <- runif(6)
+w2 <- runif(6)
+Theta1 <- CppLOp(w1, n)
+Theta2 <- CppLOp(w2, n)
+Theta <- rbind(cbind(Theta1, matrix(0, n, n)),
+               cbind(matrix(0, n, n), Theta2))
+    
+eigen(Theta)$values           
+
+
