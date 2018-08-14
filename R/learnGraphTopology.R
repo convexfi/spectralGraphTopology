@@ -34,7 +34,7 @@ learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, lambda1 = NA,
                                 lb = 1e-4, ub = 1e4, alpha = 0.,
                                 beta = .5, rho = .1, maxiter = 50,
                                 w_tol = 1e-4, U_tol = 1e-4,
-                                lambda_tol = 1e-4, Lw_tol = 1e-4) {
+                                lambda_tol = 1e-4, ftol = 1e-4) {
   # Solves the graph learning problem with K-components
   #
   # Args:
@@ -66,11 +66,11 @@ learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, lambda1 = NA,
   #     tolerance for the convergence of U
   #   lambda_tol: float
   #     tolerance for the convergence of lambda
-  #   Lw_tol: float
-  #     tolerance for the convergence of Lw
+  #   ftol: float
+  #     tolerance for the convergence of the objective function
   #
   # Returns:
-  #   Lw: matrix
+  #   Theta: matrix
   #     the Laplacian matrix
   #
   N <- nrow(data)
@@ -82,17 +82,19 @@ learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, lambda1 = NA,
   # define "appropriate" inital guess
   if (any(is.na(w1)))
     w1 <- array(1., as.integer(.5 * N * (N - 1)))
-  Lw1 <- L(w1)
-  evd <- eigen(Lw1)
+  Theta1 <- L(w1)
+  evd <- eigen(Theta1)
   if (any(is.na(U1)))
-    U1 <- evd$vectors[, 1:(N-K)]
-  if (any(is.na(lambda1)))
+    U1 <- evd$vectors[, (N-K):1]
+  if (any(is.na(lambda1))) {
     lambda1 <- evd$values[1:(N-K)]
+    lambda1 <- lambda1[(N-K):1]
+  }
 
-  iter_1 <- 1
-  iter_2 <- 1
-  while (iter_1 < maxiter) {
-    while (iter_2 < maxiter) {
+  fun1 <- objFunction(w1, U1, lambda1, Km, beta)
+
+  for (i in 1:maxiter) {
+    for (k in 1:maxiter) {
       w <- w_update(w1, U1, beta, lambda1, N, Km)
       U <- U_update(w, N, K)
       lambda <- lambda_update(lb, ub, beta, U, w, N, K)
@@ -108,16 +110,22 @@ learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, lambda1 = NA,
       w1 <- w
       U1 <- U
       lambda1 <- lambda
-      iter_2 <- iter_2 + 1
     }
-    Lw <- L(w)
-    Lw_err <- norm(Lw - Lw1, type="F") / max(1., norm(Lw, type="F"))
-    if (Lw_err < Lw_tol)
+    fun <- objFunction(w, U, lambda, Km, beta)
+    ferr <- abs(fun - fun1) / abs(fun)
+
+    if (ferr < ftol)
       break
-    Lw1 <- Lw
-    iter_1 <- iter_1 + 1
+
+    fun1 <- fun
     beta <- beta * (1 + rho)
   }
 
-  return (Lw)
+  return (L(w))
+}
+
+objFunction <- function(w, U, lambda, Km, beta) {
+  Theta <- L(w)
+  return(sum(-log(lambda)) + sum(diag(Km %*% Theta)) +
+         .5 * beta * norm(Theta - crossprod(t(U) * sqrt(lambda)), type="F")^2)
 }
