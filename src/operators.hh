@@ -2,10 +2,11 @@
 #define OPERATORS_H
 // [[Rcpp::depends(RcppEigen)]]
 #include <RcppEigen.h>
+#include <cmath>
 
 using namespace Eigen;
 
-MatrixXd CppLOp(const Eigen::VectorXd&, int);
-VectorXd CppLStarOp(const Eigen::MatrixXd&);
-VectorXd CppLStarOpImpl(const Eigen::MatrixXd&);
+MatrixXd L(const Eigen::VectorXd&, int);
+VectorXd Lstar(const Eigen::MatrixXd&);
+VectorXd altLstar(const Eigen::MatrixXd&);
 #endif

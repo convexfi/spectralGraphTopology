@@ -4,7 +4,7 @@
 #  2) a matrix U (see expression (11)),
 #  3) a matrix Λ (see expression (15)).
 
-w_update <- function(w, U, beta, Lambda, n, Km) {
+w_update <- function(w, U, beta, lambda, N, Km) {
   # Updates the value of w
   #
   # Args:
@@ -17,41 +17,40 @@ w_update <- function(w, U, beta, Lambda, n, Km) {
   #
   # Returns:
   #   w_update: the updated value of w
-  grad_f <- CppLStarOp(CppLOp(w, n) - U %*% diag(Lambda) %*% t(U) + Km / beta)
-  w_update <- w - .5 * grad_f / n
-  mask <- w_update < 0
-  w_update[mask] <- 0
-  return(w_update)
+  #grad_f <- Lstar(L(w) - tcrossprod(U*sqrt(lambda)) + Km / beta)
+  grad_f <- Lstar(L(w) - U %*% diag(lambda) %*% t(U) + Km / beta)
+  w_update <- w - .5 * grad_f / N
+  return(pmax(0, w_update))
 }
 
 
-U_update <- function(w, n, K) {
+U_update <- function(w, N, K) {
   # Updates the value of U
   #
   # Args:
   #   w: vector
-  #   n: dimension of each data sample
+  #   N: dimension of each data sample
   #   K: number of components
   #
   # Returns:
   #   U_update: the updated value of U
-  return(eigen(CppLOp(w, n))$vectors[, 1:(n-K)])
+  return(eigen(L(w))$vectors[, 1:(N-K)])
 }
 
 
-Lambda_update <- function(lb, ub, beta, U, w, n, K) {
+lambda_update <- function(lb, ub, beta, U, w, N, K) {
   # Updates the value of U
   #
   # Args:
   #   lb, ub: lower and upper bounds on the Lambda vector components
-  #   n: dimension of each data sample
+  #   N: dimension of each data sample
   #   K: number of components of the graph
   #
   # Returns:
   #   Lambda_update: the updated value of Lambda
 
-  d <- diag(t(U) %*% CppLOp(w, n) %*% U)
-  l <- n - K
+  d <- diag(t(U) %*% L(w) %*% U)
+  l <- N - K
   lambda <- CVXR::Variable(l)
   objective <- CVXR::Minimize(sum(.5 * beta * (lambda - d)^2 - log(lambda)))
   constraints <- list(lambda[l] >= lb, lambda[1] <= ub,

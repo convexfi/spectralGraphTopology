@@ -39,14 +39,14 @@ LStarOp <- function(Y) {
   #
   # Returns:
   #   LStarY: vector
-  n <- ncol(Y)
-  k <- as.integer(n * (n - 1) / 2)
+  N <- ncol(Y)
+  k <- as.integer(N * (N - 1) / 2)
   LStarY <- array(0., k)
   j <- 1
   l <- 2
   for (i in 1:k) {
     LStarY[i] <- Y[j, j] + Y[l, l] - Y[l, j] - Y[j, l]
-    if (l == n) {
+    if (l == N) {
       j <- j + 1
       l <- j + 1
     } else {
@@ -60,7 +60,6 @@ LStarOp <- function(Y) {
 LStarOpImpl <- function(Y) {
   # An alternative implementation of the L star operator.
   # Implemented only for the purposes of testing.
-  # Use LStarOp or CppLStarOp instead.
   #
   # Args:
   #   Y: matrix which LStarOp will act upon

@@ -2,7 +2,7 @@ library(testthat)
 library(spectralGraphTopology)
 
 LOpConstraints <- function(Lw) {
-  # LOp should return a symmetric positive semi-definite matrix
+  # The L operator should return a symmetric positive semi-definite matrix
   # with non-positive off diagonal elements and nonnegative
   # diagonal elements
   expect_that(isSymmetric.matrix(Lw), is_true())
@@ -29,7 +29,7 @@ test_that("test_LOp_order4", {
   LOpConstraints(Lw)
   expect_that(all(Lw == answer), is_true())
 
-  Lw <- CppLOp(w, 4)
+  Lw <- L(w)
   LOpConstraints(Lw)
   expect_that(all(Lw == answer), is_true())
 })
@@ -43,7 +43,7 @@ test_that("test_LOp_order3", {
   LOpConstraints(Lw)
   expect_that(all(Lw == answer), is_true())
 
-  Lw <- CppLOp(w, 3)
+  Lw <- L(w)
   LOpConstraints(Lw)
   expect_that(all(Lw == answer), is_true())
 })
@@ -54,7 +54,7 @@ test_that("test_LOp_order2", {
   Lw <- LOp(w)
   LOpConstraints(Lw)
   expect_that(all(Lw == answer), is_true())
-  Lw <- CppLOp(w, 2)
+  Lw <- L(w)
   LOpConstraints(Lw)
   expect_that(all(Lw == answer), is_true())
 })
@@ -68,9 +68,9 @@ test_that("test_linearity_of_LOp", {
   Lw1 <- LOp(w1)
   Lw2 <- LOp(w2)
   expect_that(all((a * Lw1 + b * Lw2) == LOp(a * w1 + b * w2)), is_true())
-  Lw1 <- CppLOp(w1, 4)
-  Lw2 <- CppLOp(w2, 4)
-  expect_that(all((a * Lw1 + b * Lw2) == LOp(a * w1 + b * w2)), is_true())
+  Lw1 <- L(w1)
+  Lw2 <- L(w2)
+  expect_that(all((a * Lw1 + b * Lw2) == L(a * w1 + b * w2)), is_true())
 })
 
 test_that("test_LStarOp", {
@@ -79,7 +79,7 @@ test_that("test_LStarOp", {
    w <- LStarOp(Y)
    expect_that(all(w == array(2, 6)), is_true())
 
-   w <- CppLStarOp(Y)
+   w <- Lstar(Y)
    expect_that(all(w == array(2, 6)), is_true())
 })
 
@@ -88,7 +88,7 @@ test_that("test_LStarOp_random", {
    Y <- matrix(rnorm(16), 4, 4)
    w1 <- LStarOp(Y)
    w2 <- LStarOpImpl(Y)
-   w3 <- CppLStarOp(Y)
+   w3 <- Lstar(Y)
    expect_that(all(abs(w1 - w2) < 1e-6), is_true())
    expect_that(all(abs(w2 - w3) < 1e-6), is_true())
 })
@@ -103,7 +103,7 @@ test_that("test_inner_product_relation_between_LOp_and_LStarOp", {
   y <- LStarOp(Y)
   expect_that(sum(diag(t(Y) %*% Lw)) == w %*% y, is_true())
 
-  Lw <- CppLOp(w, n)
-  y <- CppLStarOp(Y)
+  Lw <- L(w)
+  y <- Lstar(Y)
   expect_that(sum(diag(t(Y) %*% Lw)) == w %*% y, is_true())
 })

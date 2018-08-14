@@ -6,45 +6,44 @@
 
 using namespace Rcpp;
 
-// CppLOp
-Eigen::MatrixXd CppLOp(const Eigen::VectorXd& w, int n);
-RcppExport SEXP _spectralGraphTopology_CppLOp(SEXP wSEXP, SEXP nSEXP) {
+// L
+Eigen::MatrixXd L(const Eigen::VectorXd& w);
+RcppExport SEXP _spectralGraphTopology_L(SEXP wSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type w(wSEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(CppLOp(w, n));
+    rcpp_result_gen = Rcpp::wrap(L(w));
     return rcpp_result_gen;
 END_RCPP
 }
-// CppLStarOp
-Eigen::VectorXd CppLStarOp(const Eigen::MatrixXd& Y);
-RcppExport SEXP _spectralGraphTopology_CppLStarOp(SEXP YSEXP) {
+// Lstar
+Eigen::VectorXd Lstar(const Eigen::MatrixXd& Y);
+RcppExport SEXP _spectralGraphTopology_Lstar(SEXP YSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(CppLStarOp(Y));
+    rcpp_result_gen = Rcpp::wrap(Lstar(Y));
     return rcpp_result_gen;
 END_RCPP
 }
-// CppLStarOpImpl
-Eigen::VectorXd CppLStarOpImpl(const Eigen::MatrixXd& Y);
-RcppExport SEXP _spectralGraphTopology_CppLStarOpImpl(SEXP YSEXP) {
+// altLstar
+Eigen::VectorXd altLstar(const Eigen::MatrixXd& Y);
+RcppExport SEXP _spectralGraphTopology_altLstar(SEXP YSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(CppLStarOpImpl(Y));
+    rcpp_result_gen = Rcpp::wrap(altLstar(Y));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_spectralGraphTopology_CppLOp", (DL_FUNC) &_spectralGraphTopology_CppLOp, 2},
-    {"_spectralGraphTopology_CppLStarOp", (DL_FUNC) &_spectralGraphTopology_CppLStarOp, 1},
-    {"_spectralGraphTopology_CppLStarOpImpl", (DL_FUNC) &_spectralGraphTopology_CppLStarOpImpl, 1},
+    {"_spectralGraphTopology_L", (DL_FUNC) &_spectralGraphTopology_L, 1},
+    {"_spectralGraphTopology_Lstar", (DL_FUNC) &_spectralGraphTopology_Lstar, 1},
+    {"_spectralGraphTopology_altLstar", (DL_FUNC) &_spectralGraphTopology_altLstar, 1},
     {NULL, NULL, 0}
 };
 
