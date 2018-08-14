@@ -39,32 +39,33 @@ U_update <- function(w, N, K) {
 
 
 lambda_update <- function(lb, ub, beta, U, w, N, K) {
-  l <- N - K
+  q <- N - K
   d <- diag(t(U) %*% L(w) %*% U)
   lambda <- .5 * (d + sqrt(d^2 + 4 / beta))
-  condition <- all(lambda[l] <= ub, lambda[1] >= lb, lambda[2:l] >= lambda[1:(l-1)])
+  condition <- all(lambda[q] <= ub, lambda[1] >= lb, lambda[2:q] >= lambda[1:(q-1)])
   if (condition) {
     return(lambda)
   }
 
   while (!condition) {
-    geq <- c(lb >= lambda[1], lambda[1:(l-1)] >= lambda[2:l], lambda[l] >= ub)
+    geq <- c(lb >= lambda[1], lambda[1:(q-1)] >= lambda[2:q], lambda[q] >= ub)
+    l <- q + 1
     flag1 <- geq[1]
     flag2 <- geq[l]
-    for (i in 1:l) {
+    for (i in 1:q) {
       if (flag1) {
         lambda[i] <- lb
-        flag1 <- geq[i+1]
+        flag1 <- geq[i + 1]
       } else {
         c1 <- i
         flag1 <- FALSE
       }
 
       if (flag2) {
-        lambda[l-i+1] <- ub
-        flag2 <- geq[l-i]
+        lambda[q - i + 1] <- ub
+        flag2 <- geq[l - i]
       } else {
-        c2 <- l-i+1
+        c2 <- q - i + 1
         flag2 <- FALSE
       }
 
@@ -72,6 +73,6 @@ lambda_update <- function(lb, ub, beta, U, w, N, K) {
         break
       }
     }
-    condition <- all(lambda[l] <= ub, lambda[1] >= lb, lambda[2:l] >= lambda[1:(l-1)])
+    condition <- all(lambda[l] <= ub, lambda[1] >= lb, lambda[2:l] >= lambda[1:(q-1)])
   }
 }
