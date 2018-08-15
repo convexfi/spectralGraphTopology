@@ -99,14 +99,3 @@ lambda_update <- function(lb, ub, beta, U, w, N, K) {
 
   return(lambda)
 }
-
-lambda_update_CVX <- function(lb, ub, beta, U, w, N, K) {
-  d <- diag(t(U) %*% L(w) %*% U)
-  q <- N - K
-  lambda <- CVXR::Variable(l)
-  objective <- CVXR::Minimize(sum(.5 * beta * (lambda - d)^2 - log(lambda)))
-  constraints <- list(lambda[q] <= ub, lambda[1] >= lb, lambda[2:q] >= lambda[1:(q-1)])
-  prob <- CVXR::Problem(objective, constraints)
-  result <- CVXR::solve(prob)
-  return(as.vector(result$getValue(lambda)))
-}
