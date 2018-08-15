@@ -83,7 +83,7 @@ test_that("test_lambda_update_equals_to_lb", {
 })
 
 
-test_that("test_lambda_update_equals_to_lb", {
+test_that("test_lambda_update_with_terms_equal_to_both_lb_and_ub", {
   w <- runif(20)
   N <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
   K <- 1
