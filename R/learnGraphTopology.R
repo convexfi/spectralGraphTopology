@@ -34,7 +34,7 @@ learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, lambda1 = NA,
                                 lb = 1e-4, ub = 1e4, alpha = 0.,
                                 beta = .5, rho = .1, maxiter = 50,
                                 w_tol = 1e-4, U_tol = 1e-4,
-                                lambda_tol = 1e-4, ftol = 1e-4) {
+                                lambda_tol = 1e-4, ftol = 1e-6) {
   # Solves the graph learning problem with K-components
   #
   # Args:
@@ -93,31 +93,33 @@ learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, lambda1 = NA,
 
   fun1 <- objFunction(w1, U1, lambda1, Km, beta)
 
-  for (i in 1:maxiter) {
+  for (i in 1:1) {
     for (k in 1:maxiter) {
       w <- w_update(w1, U1, beta, lambda1, N, Km)
       U <- U_update(w, N, K)
       lambda <- lambda_update(lb, ub, beta, U, w, N, K)
 
-      w_err <- norm(w - w1, type="2") / max(1., norm(w, type="2"))
-      U_err <- norm(U - U1, type="F") / max(1., norm(U, type="F"))
+      # check tolerance on parameters
+      w_err <- norm(w - w1, type="2") / max(1, norm(w, type="2"))
+      U_err <- norm(U - U1, type="F") / max(1, norm(U, type="F"))
       lambda_err <- norm(lambda - lambda1, type="2") /
-                        max(1., norm(lambda, type="2"))
+                        max(1, norm(lambda, type="2"))
 
       if ((w_err < w_tol) & (U_err < U_tol) & (lambda_err < lambda_tol))
         break
 
+      # check tolerance on objective function
+      fun <- objFunction(w, U, lambda, Km, beta)
+      ferr <- abs(fun - fun1) / max(1, abs(fun))
+
+      if (ferr < ftol)
+        break
+
+      fun1 <- fun
       w1 <- w
       U1 <- U
       lambda1 <- lambda
     }
-    fun <- objFunction(w, U, lambda, Km, beta)
-    ferr <- abs(fun - fun1) / abs(fun)
-
-    if (ferr < ftol)
-      break
-
-    fun1 <- fun
     beta <- beta * (1 + rho)
   }
 
