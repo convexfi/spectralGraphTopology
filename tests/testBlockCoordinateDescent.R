@@ -63,13 +63,5 @@ test_that("test_lambda_update_equals_to_ub", {
 
   lambda <- lambda_update(lb, ub, beta, U, w, N, K)
   lambda_cvx <- lambda_update_cvx(lb, ub, beta, U, w, N, K)
-  expect_that(all(abs(lambda_cvx - lambda) < 1e-3), is_true())
-
-  expect_that(length(lambda) == q, is_true())
-  expect_that(all(lambda[1] >= lb, lambda[q] <= ub,
-                  lambda[2:q] >= lambda[1:(q-1)]), is_true())
-
-  expect_that(length(lambda_cvx) == q, is_true())
-  expect_that(all(lambda_cvx[1] >= lb, lambda_cvx[q] <= ub,
-                  lambda_cvx[2:q] >= lambda_cvx[1:(q-1)]), is_true())
+  expect_that(all(abs(lambda_cvx - lambda) < 1e-5), is_true())
 })

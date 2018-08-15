@@ -55,14 +55,14 @@ lambda_update <- function(lb, ub, beta, U, w, N, K) {
   d <- diag(t(U) %*% L(w) %*% U)
 
   lambda <- .5 * (d + sqrt(d^2 + 4 / beta)) # unconstrained solution as initial point
-  condition <- all(lambda[q] <= ub, lambda[1] >= lb, lambda[2:q] >= lambda[1:(q-1)])
+  condition <- all(lambda[q] <= ub, lambda[1] >= lb,
+                   lambda[2:q] >= lambda[1:(q-1)])
   while (!condition) {
     geq <- c(lb >= lambda[1], lambda[1:(q-1)] >= lambda[2:q], lambda[q] >= ub)
-    l <- q + 1
     flag1 <- geq[1]
-    flag2 <- geq[l]
+    flag2 <- geq[q + 1]
     c1 <- 1
-    c2 <- l
+    c2 <- q + 1
 
     for (i in 1:q) {
       if (flag1) {
@@ -75,9 +75,9 @@ lambda_update <- function(lb, ub, beta, U, w, N, K) {
 
       if (flag2) {
         lambda[q - i + 1] <- ub
-        flag2 <- geq[l - i]
+        flag2 <- geq[q + 1 - i]
         if (!flag2) {
-          c2 <- l - i
+          c2 <- q + 1 - i
         }
       }
 
@@ -86,16 +86,19 @@ lambda_update <- function(lb, ub, beta, U, w, N, K) {
       }
     }
 
-    geq3 <- lambda[c1:(c2-1)] >= lambda[(c1+1):c2]
-    if(c1 == 1) {
-      geq3 <- c(lambda[1] > lb, geq3)
+    geq3 <- c()
+    if (c2 < (q + 1)) {
+      geq3 <- lambda[c1:(c2-1)] >= lambda[(c1+1):c2]
+    } else {
+      geq3 <- lambda[c1:(c2-2)] >= lambda[(c1+1):(c2-1)]
+      geq3 <- c(geq3, lambda[q] < ub)
     }
-    if(c2 == l) {
-      geq3 <- c(geq3, lambda[l] < ub)
+    if (c1 == 1) {
+      geq3 <- c(lambda[1] > lb, geq3)
     }
 
     m <- c()
-    for (i in 1:(c2 - c1 + 1)) {
+    for (i in 1:length(geq3)) {
         if (geq3[i]) {
           m <- c(m, c1 + i - 1)
         } else {
