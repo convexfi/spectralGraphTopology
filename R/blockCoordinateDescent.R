@@ -18,13 +18,7 @@ w_update <- function(w, U, beta, lambda, N, Km) {
   # Returns:
   #   w_update: the updated value of w
   #grad_f <- Lstar(L(w) - U %*% diag(lambda) %*% t(U) + Km / beta)
-  grad_f <- Lstar(L(w) - crossprod(t(U)*sqrt(lambda)) + Km / beta)
-  
-  Vinicius, according to my code, it should be: crossprod( sqrt(lambda)*t(U) )
-  Is it equivalent to your code? Oh, yes, it is. The order of the product doesnt matter
-  but I prefer my order as it looks more similar to the original code... ;-)
-  
-  
+  grad_f <- Lstar(L(w) - crossprod(sqrt(lambda) * t(U)) + Km / beta)
   w_update <- w - .5 * grad_f / N
   return(pmax(0, w_update))
 }
@@ -47,7 +41,7 @@ U_update <- function(w, N, K) {
 lambda_update <- function(lb, ub, beta, U, w, N, K) {
   q <- N - K
   d <- diag(t(U) %*% L(w) %*% U)
-  
+
   lambda <- .5 * (d + sqrt(d^2 + 4 / beta))  # unconstrained solution as initial point
   condition <- all(lambda[q] <= ub, lambda[1] >= lb, lambda[2:q] >= lambda[1:(q-1)])
   while (!condition) {
