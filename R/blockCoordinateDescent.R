@@ -39,10 +39,22 @@ U_update <- function(w, N, K) {
 
 
 lambda_update <- function(lb, ub, beta, U, w, N, K) {
+  # Updates the value of lambda
+  #
+  # Args:
+  #   lb, ub: lower and upper bounds on the Lambda vector components
+  #   β: scalar that controls the strength of the regularization term
+  #   U: matrix
+  #   w: vector
+  #   N: dimension of each data sample
+  #   K: number of components of the graph
+  #
+  # Returns:
+  #   lambda: the updated value of lambda
   q <- N - K
   d <- diag(t(U) %*% L(w) %*% U)
 
-  lambda <- .5 * (d + sqrt(d^2 + 4 / beta))  # unconstrained solution as initial point
+  lambda <- .5 * (d + sqrt(d^2 + 4 / beta)) # unconstrained solution as initial point
   condition <- all(lambda[q] <= ub, lambda[1] >= lb, lambda[2:q] >= lambda[1:(q-1)])
   while (!condition) {
     geq <- c(lb >= lambda[1], lambda[1:(q-1)] >= lambda[2:q], lambda[q] >= ub)
@@ -82,8 +94,19 @@ lambda_update <- function(lb, ub, beta, U, w, N, K) {
           m <- c()
         }
     }
-
     condition <- all(lambda[q] <= ub, lambda[1] >= lb, lambda[2:q] >= lambda[1:(q-1)])
   }
+
   return(lambda)
+}
+
+lambda_update_CVX <- function(lb, ub, beta, U, w, N, K) {
+  d <- diag(t(U) %*% L(w) %*% U)
+  q <- N - K
+  lambda <- CVXR::Variable(l)
+  objective <- CVXR::Minimize(sum(.5 * beta * (lambda - d)^2 - log(lambda)))
+  constraints <- list(lambda[q] <= ub, lambda[1] >= lb, lambda[2:q] >= lambda[1:(q-1)])
+  prob <- CVXR::Problem(objective, constraints)
+  result <- CVXR::solve(prob)
+  return(as.vector(result$getValue(lambda)))
 }
