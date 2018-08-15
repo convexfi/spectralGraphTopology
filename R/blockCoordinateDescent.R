@@ -86,15 +86,14 @@ lambda_update <- function(lb, ub, beta, U, w, N, K) {
       }
     }
 
-    geq3 <- c()
-    if (c2 < (q + 1)) {
-      geq3 <- lambda[c1:(c2-1)] >= lambda[(c1+1):c2]
+    if(c2 > c1) {
+      if (c2 < (q + 1)) {
+        geq3 <- lambda[c1:(c2-1)] >= lambda[(c1+1):c2]
+      } else {
+        geq3 <- lambda[c1:(c2-2)] >= lambda[(c1+1):(c2-1)]
+      }
     } else {
-      geq3 <- lambda[c1:(c2-2)] >= lambda[(c1+1):(c2-1)]
-      geq3 <- c(geq3, lambda[q] < ub)
-    }
-    if (c1 == 1) {
-      geq3 <- c(lambda[1] > lb, geq3)
+      break
     }
 
     m <- c()
