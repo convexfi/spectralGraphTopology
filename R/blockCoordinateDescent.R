@@ -61,21 +61,24 @@ lambda_update <- function(lb, ub, beta, U, w, N, K) {
     l <- q + 1
     flag1 <- geq[1]
     flag2 <- geq[l]
+    c1 <- 1
+    c2 <- l
+
     for (i in 1:q) {
       if (flag1) {
         lambda[i] <- lb
         flag1 <- geq[i + 1]
-      } else {
-        c1 <- i
-        flag1 <- FALSE
+        if(!flag1) {
+          c1 <- i
+        }
       }
 
       if (flag2) {
         lambda[q - i + 1] <- ub
         flag2 <- geq[l - i]
-      } else {
-        c2 <- q - i + 1
-        flag2 <- FALSE
+        if (!flag2) {
+          c2 <- l - i
+        }
       }
 
       if ((!flag1) & (!flag2)) {
@@ -83,8 +86,15 @@ lambda_update <- function(lb, ub, beta, U, w, N, K) {
       }
     }
 
-    m <- c()
     geq3 <- lambda[c1:(c2-1)] >= lambda[(c1+1):c2]
+    if(c1 == 1) {
+      geq3 <- c(lambda[1] > lb, geq3)
+    }
+    if(c2 == l) {
+      geq3 <- c(geq3, lambda[l] < ub)
+    }
+
+    m <- c()
     for (i in 1:(c2 - c1 + 1)) {
         if (geq3[i]) {
           m <- c(m, c1 + i - 1)
