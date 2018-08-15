@@ -57,6 +57,7 @@ lambda_update <- function(lb, ub, beta, U, w, N, K) {
   lambda <- .5 * (d + sqrt(d^2 + 4 / beta)) # unconstrained solution as initial point
   condition <- all(lambda[q] <= ub, lambda[1] >= lb,
                    lambda[2:q] >= lambda[1:(q-1)])
+
   while (!condition) {
     geq <- c(lb >= lambda[1], lambda[1:(q-1)] >= lambda[2:q], lambda[q] >= ub)
     flag1 <- geq[1]
@@ -69,7 +70,7 @@ lambda_update <- function(lb, ub, beta, U, w, N, K) {
         lambda[i] <- lb
         flag1 <- geq[i + 1]
         if(!flag1) {
-          c1 <- i
+          c1 <- i + 1
         }
       }
 
@@ -106,7 +107,8 @@ lambda_update <- function(lb, ub, beta, U, w, N, K) {
           m <- c()
         }
     }
-    condition <- all(lambda[q] <= ub, lambda[1] >= lb, lambda[2:q] >= lambda[1:(q-1)])
+    condition <- all(lambda[q] <= ub, lambda[1] >= lb,
+                     lambda[2:q] >= lambda[1:(q-1)])
   }
 
   return(lambda)

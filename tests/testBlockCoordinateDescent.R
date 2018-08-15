@@ -63,5 +63,38 @@ test_that("test_lambda_update_equals_to_ub", {
 
   lambda <- lambda_update(lb, ub, beta, U, w, N, K)
   lambda_cvx <- lambda_update_cvx(lb, ub, beta, U, w, N, K)
-  expect_that(all(abs(lambda_cvx - lambda) < 1e-5), is_true())
+  expect_that(all(abs(lambda_cvx - lambda) < 1e-4), is_true())
+})
+
+test_that("test_lambda_update_equals_to_lb", {
+  w <- runif(20)
+  N <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
+  K <- 1
+  U <- U_update(w, N, K)
+  lb <- 3
+  ub <- 100
+  beta <- .5
+  q <- N - K
+
+  lambda_cvx <- lambda_update_cvx(lb, ub, beta, U, w, N, K)
+  lambda <- lambda_update(lb, ub, beta, U, w, N, K)
+
+  expect_that(all(abs(lambda_cvx - lambda) < 1e-4), is_true())
+})
+
+
+test_that("test_lambda_update_equals_to_lb", {
+  w <- runif(20)
+  N <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
+  K <- 1
+  U <- U_update(w, N, K)
+  lb <- 3.3
+  ub <- 4.
+  beta <- .5
+  q <- N - K
+
+  lambda_cvx <- lambda_update_cvx(lb, ub, beta, U, w, N, K)
+  lambda <- lambda_update(lb, ub, beta, U, w, N, K)
+
+  expect_that(all(abs(lambda_cvx - lambda) < 1e-4), is_true())
 })
