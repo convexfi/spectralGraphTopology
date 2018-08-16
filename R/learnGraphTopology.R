@@ -67,7 +67,7 @@ learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
   fun0 <- objFunction(w0, U0, lambda0, Km, beta, N, K)
   fun_seq <- c(fun0)
 
-  for (i in 1:maxiter) {
+  for (i in 1:1) {
     for (k in 1:maxiter) {
       w <- w_update(w0, U0, beta, lambda0, N, Km)
       U <- U_update(w, N)
@@ -85,7 +85,7 @@ learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
       # check tolerance on objective function
       fun <- objFunction(w, U, lambda, Km, beta, N, K)
       ferr <- abs(fun - fun0) / max(1, abs(fun))
-      fun_seq <- c(fun, fun_seq)
+      fun_seq <- c(fun_seq, fun)
 
       if (ferr < ftol)
         break
