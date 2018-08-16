@@ -20,7 +20,8 @@
 #' @param U_tol relative tolerance on U
 #' @param lambda_tol relative tolerance on lambda
 #' @param ftol relative tolerance on the objective function
-#' @return The learned Laplacian matrix
+#' @return Theta the learned Laplacian matrix
+#' @return fun_seq the objective function value at every iteration
 #' @author Convex group - HKUST
 #' @references
 #' @examples
@@ -53,9 +54,8 @@ learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
 
   # define "appropriate" inital guess
   if (any(is.na(w0)))
-    w0 <- array(1., as.integer(.5 * N * (N - 1)))
-  Theta1 <- L(w0)
-  evd <- eigen(Theta1)
+    w0 <- runif(as.integer(.5 * N * (N - 1)))
+  evd <- eigen(L(w0))
   if (any(is.na(U0)))
     U0 <- evd$vectors[, (N-K):1]
   if (any(is.na(lambda0))) {
@@ -64,6 +64,7 @@ learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
   }
 
   fun0 <- objFunction(w0, U0, lambda0, Km, beta)
+  fun_seq <- c(fun0)
 
   for (i in 1:1) {
     for (k in 1:maxiter) {
@@ -83,6 +84,7 @@ learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
       # check tolerance on objective function
       fun <- objFunction(w, U, lambda, Km, beta)
       ferr <- abs(fun - fun0) / max(1, abs(fun))
+      fun_seq <- c(fun, fun_seq)
 
       if (ferr < ftol)
         break
@@ -95,7 +97,7 @@ learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
     beta <- beta * (1 + rho)
   }
 
-  return (L(w))
+  return(list(Theta = L(w), fun = fun_seq))
 }
 
 objFunction <- function(w, U, lambda, Km, beta) {

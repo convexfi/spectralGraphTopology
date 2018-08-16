@@ -1,8 +1,7 @@
 library(testthat)
 library(spectralGraphTopology)
 
-# lambda update step using CVX for the
-# sake of unit testing
+# lambda update step using CVX for the sake of unit testing
 lambda_update_cvx <- function(lb, ub, beta, U, w, N, K) {
   d <- diag(t(U) %*% L(w) %*% U)
   q <- N - K
