@@ -4,9 +4,11 @@ using namespace Eigen;
 
 // [[Rcpp::export]]
 Eigen::MatrixXd L(const Eigen::VectorXd& w) {
-    /* Computes the L Operator
+   /* Computes the L Operator.
+    *
     * Args:
-    *   w: vector
+    *   w: weight vector of the graph
+    *
     * Returns:
     *   Theta: the Laplacian matrix
     **/
@@ -30,6 +32,14 @@ Eigen::MatrixXd L(const Eigen::VectorXd& w) {
 
 // [[Rcpp::export]]
 Eigen::VectorXd Lstar(const Eigen::MatrixXd& Y) {
+   /* Computes the Lstar operator.
+    *
+    * Args:
+    *   Y: matrix
+    *
+    * Returns:
+    *   w: vector
+    */
     int N = Y.cols();
     int k = .5 * N * (N - 1);
     int j = 0;
@@ -50,6 +60,16 @@ Eigen::VectorXd Lstar(const Eigen::MatrixXd& Y) {
 
 // [[Rcpp::export]]
 Eigen::VectorXd altLstar(const Eigen::MatrixXd& Y) {
+   /* Alternative implementation for the Lstar operator.
+    * This is only used for unit testing. Use Lstar for
+    * a better performance.
+    *
+    *  Args:
+    *    Y: matrix
+    *
+    *  Returns:
+    *    w: vector
+    */
     int N = Y.cols();
     int k = .5 * N * (N - 1);
     Eigen::VectorXd w = Eigen::VectorXd::Zero(k);
