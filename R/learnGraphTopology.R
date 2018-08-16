@@ -57,19 +57,20 @@ learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
     w0 <- runif(as.integer(.5 * N * (N - 1)))
   evd <- eigen(L(w0))
   if (any(is.na(U0)))
-    U0 <- evd$vectors[, (N-K):1]
+    U0 <- evd$vectors[, N:1]
   if (any(is.na(lambda0))) {
-    lambda0 <- evd$values[1:(N-K)]
-    lambda0 <- lambda0[(N-K):1]
+    lambda0 <- evd$values
+    lambda0 <- lambda0[N:1]
+    lambda0[1:K] <- 0
   }
 
-  fun0 <- objFunction(w0, U0, lambda0, Km, beta)
+  fun0 <- objFunction(w0, U0, lambda0, Km, beta, N, K)
   fun_seq <- c(fun0)
 
-  for (i in 1:1) {
+  for (i in 1:maxiter) {
     for (k in 1:maxiter) {
       w <- w_update(w0, U0, beta, lambda0, N, Km)
-      U <- U_update(w, N, K)
+      U <- U_update(w, N)
       lambda <- lambda_update(lb, ub, beta, U, w, N, K)
 
       # check tolerance on parameters
@@ -82,7 +83,7 @@ learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
         break
 
       # check tolerance on objective function
-      fun <- objFunction(w, U, lambda, Km, beta)
+      fun <- objFunction(w, U, lambda, Km, beta, N, K)
       ferr <- abs(fun - fun0) / max(1, abs(fun))
       fun_seq <- c(fun, fun_seq)
 
@@ -100,8 +101,8 @@ learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
   return(list(Theta = L(w), fun = fun_seq))
 }
 
-objFunction <- function(w, U, lambda, Km, beta) {
+objFunction <- function(w, U, lambda, Km, beta, N, K) {
   Theta <- L(w)
-  return(sum(-log(lambda)) + sum(diag(Km %*% Theta)) +
+  return(sum(-log(lambda[(K+1):N])) + sum(diag(Km %*% Theta)) +
          .5 * beta * norm(Theta - crossprod(t(U) * sqrt(lambda)), type="F")^2)
 }

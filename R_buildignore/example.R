@@ -3,7 +3,7 @@ library(spectralGraphTopology)
 # Number of samples
 T <- 100000
 # True w vector
-w <- sample(1:10, 10)
+w <- c(1:6)
 # Number of components
 K <- 1
 # True Theta matrix
@@ -12,11 +12,11 @@ Theta <- L(w)
 N <- ncol(Theta)
 Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Theta))
 # Learn Theta
-Theta_est <- learnGraphTopology(Y, K, lb=1e-4, ub=1e2, beta=.1, maxiter=5000)
+res <- learnGraphTopology(Y, K, beta=.1, rho=.1, maxiter=5000, ftol=1e-12)
 print(Theta)
-print(Theta_est)
-print(norm(Theta - Theta_est, type="F") / max(1., norm(Theta, type="F")))
-
+print(res$Theta)
+print(norm(Theta - res$Theta, type="F") / max(1., norm(Theta, type="F")))
+plot(res$fun)
 # Results should be something similiar to
 #     [,1] [,2] [,3] [,4]
 # [1,]    6   -1   -2   -3

@@ -49,8 +49,6 @@ knit_hooks$set(pngquant = hook_pngquant)
 -----------
 
 
-# Comparison with other packages
-
 # Usage of the package
 We illustrate the usage of the package with simulated data, as follows.
 ```{r, cache = TRUE}
@@ -91,7 +89,7 @@ Theta2 <- L(w2)
 N1 <- ncol(Theta1)
 N2 <- ncol(Theta2)
 Theta <- rbind(cbind(Theta1, matrix(0, N1, N2)),
-               cbind(matrix(0, N2, N1)), Theta2)
+               cbind(matrix(0, N2, N1), Theta2))
 Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Theta))
 K <- 2
 Theta_est <- learnGraphTopology(Y, K)
@@ -101,10 +99,31 @@ RE
 
 # Explanation of the algorithms
 
+In this section we describe in detail the algorithms designed to solve the
+graph topology learning problem.
+
 ## `learnGraphTopology`: Learning the topology of graph
 
 The goal of `learnGraphTopology()` is to estimate the Laplacian matrix generated
 by the weight vector of a graph, $\mathbf{w}$.
+
+The general algorithm is stated as follows
+
+\begin{algorithm}[H]
+ \KwData{this text}
+ \KwResult{how to write algorithm with \LaTeX2e }
+ initialization\;
+ \While{not at end of this document}{
+  read current\;
+  \eIf{understand}{
+   go to next section\;
+   current section becomes this one\;
+   }{
+   go back to the beginning of current section\;
+  }
+ }
+ \caption{How to write algorithms}
+\end{algorithm}
 
 > **Algorithm 1**
 
