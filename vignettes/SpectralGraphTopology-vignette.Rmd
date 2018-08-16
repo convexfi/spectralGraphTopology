@@ -1,6 +1,6 @@
 ---
-title: "Design of Portfolio of Stocks to Track an Index"
-author: "Konstantinos Benidis and Daniel P. Palomar"
+title: "Learning the topology of graphs"
+author: "Convex Group-HKUST"
 date: "`r Sys.Date()`"
 output:
   bookdown::pdf_document2:
@@ -22,8 +22,8 @@ indent: yes
 csl: ieee.csl
 bibliography: refs.bib
 vignette: >
-  %\VignetteIndexEntry{Design of portfolio of stocks to track an index}
-  %\VignetteKeyword{sparse, portfolio, financial index, tracking}
+  %\VignetteIndexEntry{Learning the topology of graphs}
+  %\VignetteKeyword{graph, topology, clustering}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 ---
@@ -52,13 +52,59 @@ knit_hooks$set(pngquant = hook_pngquant)
 # Comparison with other packages
 
 # Usage of the package
+We illustrate the usage of the package with simulated data, as follows.
+```{r, cache = TRUE}
+library(spectralGraphTopology)
+set.seed(123)
+
+# Number of samples
+T <- 10000
+# Vector to generate the Laplacian matrix of the graph
+w <- runif(10)
+# Laplacian matrix
+Theta <- L(w)
+# Sample data from a Multivariate Gaussian
+N <- ncol(Theta)
+Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Theta))
+# Number of components of the graph
+K <- 1
+# Learn the Laplacian matrix
+Theta_est <- learnGraphTopology(Y, K)
+```
+
+We can evaluate the performance of the learning process by computing
+the relative error between the true Laplacian matrix and the estimated one,
+which can be done as follows
+
+```{r}
+RE <- norm(Theta - Theta_est, type="F") / max(1., norm(Theta, type="F"))
+RE
+#> [1]
+```
+
+For K > 1, we can generate the Laplacian as a block diagonal matrix, as follows
+```{r}
+w1 <- runif(10)
+w2 <- runif(6)
+Theta1 <- L(w1)
+Theta2 <- L(w2)
+N1 <- ncol(Theta1)
+N2 <- ncol(Theta2)
+Theta <- rbind(cbind(Theta1, matrix(0, N1, N2)),
+               cbind(matrix(0, N2, N1)), Theta2)
+Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Theta))
+K <- 2
+Theta_est <- learnGraphTopology(Y, K)
+RE <- norm(Theta - Theta_est, type="F") / max(1., norm(Theta, type="F"))
+RE
+```
 
 # Explanation of the algorithms
 
 ## `learnGraphTopology`: Learning the topology of graph
 
 The goal of `learnGraphTopology()` is to estimate the Laplacian matrix generated
-by the weight vector of graph, $\mathbf{w}$.
+by the weight vector of a graph, $\mathbf{w}$.
 
 > **Algorithm 1**
 

@@ -9,8 +9,8 @@ K <- 1
 # True Theta matrix
 Theta <- L(w)
 # Generate random samples
-N <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
-Y <- t(MASS::mvrnorm(T, rep(0, N), MASS::ginv(Theta)))
+N <- ncol(Theta)
+Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Theta))
 # Learn Theta
 Theta_est <- learnGraphTopology(Y, K, lb=1e-4, ub=1e2, beta=.1, maxiter=5000)
 print(Theta)

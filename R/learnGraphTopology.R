@@ -32,7 +32,7 @@
 #' @export
 learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, lambda1 = NA,
                                 lb = 1e-4, ub = 1e4, alpha = 0.,
-                                beta = .5, rho = .1, maxiter = 50,
+                                beta = .5, rho = .1, maxiter = 5000,
                                 w_tol = 1e-4, U_tol = 1e-4,
                                 lambda_tol = 1e-4, ftol = 1e-6) {
   # Solves the graph learning problem with K-components
