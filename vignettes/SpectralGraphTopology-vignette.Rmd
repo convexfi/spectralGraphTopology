@@ -17,6 +17,7 @@ output:
     toc: yes
     toc_depth: 2
 header-includes:
+  \usepackage[]{algorithm2e}
   \allowdisplaybreaks
 indent: yes
 csl: ieee.csl
@@ -50,7 +51,7 @@ knit_hooks$set(pngquant = hook_pngquant)
 
 
 # Usage of the package
-We illustrate the usage of the package with simulated data, as follows.
+We illustrate the usage of the package with simulated data, as follows::
 ```{r, cache = TRUE}
 library(spectralGraphTopology)
 set.seed(123)
@@ -67,23 +68,35 @@ Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Theta))
 # Number of components of the graph
 K <- 1
 # Learn the Laplacian matrix
-Theta_est <- learnGraphTopology(Y, K)
+res <- learnGraphTopology(Y, K, beta = 10)
 ```
 
-We can evaluate the performance of the learning process by computing
-the relative error between the true Laplacian matrix and the estimated one,
-which can be done as follows
-
+Let's visually inspect the true Laplacian and the estimated one as follows::
 ```{r}
-RE <- norm(Theta - Theta_est, type="F") / max(1., norm(Theta, type="F"))
+Theta
+res$Theta
+```
+
+We can evaluate the performance of the learning process in a more objective manner
+by computing the relative error between the true Laplacian matrix and the estimated one,
+which can be done as follows::
+```{r}
+RE <- norm(Theta - res$Theta, type="F") / max(1., norm(Theta, type="F"))
 RE
-#> [1]
+```
+
+Let's also look at the trend of the objective function per iteration:
+```{r}
+k <- length(res$fun)
+plot(c(1:k), res$fun, type = "s", xlab = "Iteration number",
+     ylab = "Objective function")
 ```
 
 For K > 1, we can generate the Laplacian as a block diagonal matrix, as follows
 ```{r}
-w1 <- runif(10)
-w2 <- runif(6)
+library(spectralGraphTopology)
+w1 <- runif(3)
+w2 <- runif(3)
 Theta1 <- L(w1)
 Theta2 <- L(w2)
 N1 <- ncol(Theta1)
@@ -92,10 +105,24 @@ Theta <- rbind(cbind(Theta1, matrix(0, N1, N2)),
                cbind(matrix(0, N2, N1), Theta2))
 Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Theta))
 K <- 2
-Theta_est <- learnGraphTopology(Y, K)
-RE <- norm(Theta - Theta_est, type="F") / max(1., norm(Theta, type="F"))
+res <- learnGraphTopology(Y, K, beta = 5, ftol = 1e-3)
+RE <- norm(Theta - res$Theta, type="F") / max(1., norm(Theta, type="F"))
 RE
 ```
+
+```{r}
+Theta
+res$Theta
+```
+
+
+```{r}
+k <- length(res$fun)
+plot(c(1:k), res$fun, type = "s", xlab = "Iteration number",
+     ylab = "Objective function")
+```
+
+
 
 # Explanation of the algorithms
 
@@ -105,43 +132,78 @@ graph topology learning problem.
 ## `learnGraphTopology`: Learning the topology of graph
 
 The goal of `learnGraphTopology()` is to estimate the Laplacian matrix generated
-by the weight vector of a graph, $\mathbf{w}$.
-
-The general algorithm is stated as follows
+by the weight vector of a graph, $\mathbf{w}$. The algorithm for the function `learnGraphTopology`
+is stated as follows:
 
 \begin{algorithm}[H]
- \KwData{this text}
- \KwResult{how to write algorithm with \LaTeX2e }
- initialization\;
- \While{not at end of this document}{
-  read current\;
-  \eIf{understand}{
-   go to next section\;
-   current section becomes this one\;
-   }{
-   go back to the beginning of current section\;
+ \DontPrintSemicolon
+ \KwData{$\mathbf{Y}$ (data matrix), $K$ (\#\{components\}), $\beta$ (regularization term),
+ $\mathbf{w}_0$, $\boldsymbol{\lambda}_0$, $\mathbf{U}_0$ (initial parameter estimates),
+ $\alpha_1$, $\alpha_2$ (lower and upper bound on the eigenvalues of the Laplacian matrix),
+ $\rho$ (how much to increase beta per iteration)}
+ \KwResult{$\boldsymbol{\Theta}$ (Laplacian matrix)}
+ $N \gets \texttt{ncol}(\mathbf{Y})$\;
+ \While{objective function do not converged or max \#\{iterations\} not reached}{
+   $k \gets 0$\;
+   \While{parameters do not converged or max \#\{iterations\} not reached}{
+  $\mathbf{w}^{(k+1)} \gets \texttt{w\_update}(\mathbf{w}^{(k)}, \mathbf{U}^{(k)}, \boldsymbol{\lambda}^{(k)}, \beta, N, \mathbf{K})$\;
+  $\mathbf{U}^{(k+1)} \gets \texttt{U\_update}(\mathbf{w}^{(k+1)}, N)$\;
+  $\boldsymbol{\lambda}^{(k+1)} \gets \texttt{lambda\_update}(\mathbf{w}^{(k+1)},
+  \mathbf{U}^{(k+1)}, \alpha_1, \alpha_2, \beta,N, K)$\;
+  $k \gets k + 1$\;
   }
+  $\beta \gets \beta (\rho + 1)$\;
  }
- \caption{How to write algorithms}
+ \Return $\mathcal{L}(\mathbf{w}^{(k+1)})$\;
 \end{algorithm}
 
-> **Algorithm 1**
+\begin{algorithm}[H]
+  \DontPrintSemicolon
+  \SetKwFunction{Fwupdate}{\texttt{w\_update}}
+  \SetKwProg{Fn}{Function}{:}{}
+  \Fn{\Fwupdate{$\mathbf{w}, \mathbf{U}, \boldsymbol{\lambda}, \beta, N, \mathbf{K}$}}{
+        $\nabla_{\mathbf{w}}f \gets \mathcal{L}^{\star}\left(\mathcal{L}\left(\mathbf{w}\right)
+                        - \mathbf{U}  \texttt{diag}(\boldsymbol{\lambda}) {\mathbf{U}^{T}}
+                        + \dfrac{\mathbf{K}}{\beta}\right)$\;
+        \KwRet $\texttt{max}\left(0, \mathbf{w} - \dfrac{\nabla_{\mathbf{w}}f}{2N}\right)$\;
+  }
+  \;
+\end{algorithm}
 
-  1. Choose initial values for $\mathbf{w}$, $\mathbf{U}$, $\boldsymbol{\Lambda}$,
-     and $\beta$, and compute $\mathcal{L}\mathbf{w}^{(0)}$
-  2. Define the number of components $K$ and tunning parameters, $\alpha$, $\alpha_1$, $\alpha_2$, $\rho$
-  3. Set $j=0$, while not converged do
-  4. Set $i=0$, while not converged do
-  5. Update $\mathbf{w}$, $\mathbf{w}^{(i+1)} \gets f_{\mathbf{w}}(\mathbf{w}^{(i)}, \mathbf{U}^{(i)}, \boldsymbol{\Lambda}^{(i)}, \beta, n, \mathbf{K})$
-  6. Update $\mathbf{U}$, $\mathbf{U}^{(i+1)} \gets f_{\mathbf{U}}(\mathbf{w}^{(i+1)}, n, K)$
-  7. Update $\boldsymbol{\Lambda}$, $\boldsymbol{\Lambda}^{(i+1)} \gets f_{\boldsymbol{\Lambda}}(\alpha_1, \alpha_2, \beta, \mathbf{w}^{(i+1)}, \mathbf{U}^{(i+1)}, n, K)$
-  8. $i \gets i+1$
-  9. $\beta \gets \beta(\rho + 1)$
-  10. Repeat steps $4-9$ until convergence
-  11. Compute $\mathcal{L}\mathbf{w}^{(i)}$
-  12. $j \gets j+1$
-  13. Repeat steps $3-12$ until convergence
-  14. Return $\mathcal{L}\mathbf{w}^{(i)}$
+\begin{algorithm}[H]
+  \DontPrintSemicolon
+  \SetKwFunction{FwUupdate}{\texttt{U\_update}}
+  \SetKwProg{Fn}{Function}{:}{}
+  \Fn{\FwUupdate{$\mathbf{w}, N$}}{
+        \KwRet \texttt{eigen}$(\mathcal{L}(\mathbf{w}))$\$\texttt{vectors}$[, N:1]$\;
+  }
+  \;
+\end{algorithm}
+
+\begin{algorithm}[H]
+  \DontPrintSemicolon
+  \SetKwFunction{Fwlambdaupdate}{\texttt{U\_update}}
+  \SetKwProg{Fn}{Function}{:}{}
+  \Fn{\Fwlambdaupdate{$\mathbf{w}, \mathbf{U}, \alpha_1, \alpha_2, \beta, N, K$}}{
+        $\mathbf{d} \gets \texttt{diag}\left(\mathbf{U}^{T} \mathcal{L}(\mathbf{w})\mathbf{U}\right)$\;
+        $\boldsymbol{\lambda} \gets \frac{1}{2}\left(\mathbf{d} +
+                \sqrt{\mathbf{d} \odot \mathbf{d} + \frac{4}{\beta}}\right)$\;
+        \eIf{$\boldsymbol{\lambda}$ has its elements in increasing order} {
+            \KwRet $\boldsymbol{\lambda}$\;
+        } {
+            set to $\alpha_1$ the elements of $\boldsymbol{\lambda}$
+            whose values are less than $\alpha_1$ \;
+            set to $\alpha_2$ the elements of $\boldsymbol{\lambda}$
+            whose values are greater than $\alpha_2$\;
+        }
+        \eIf{$\boldsymbol{\lambda}$ has its elements in increasing order} {
+            \KwRet $\boldsymbol{\lambda}$\;
+        } {
+            $\mathbf{raise}$ \texttt{Exception}(\textit{"eigenvalues are not in increasing order"})\;
+        }
+  }
+  \;
+\end{algorithm}
 
 # References {-}
 \setlength{\parindent}{-0.2in}

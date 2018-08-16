@@ -44,7 +44,9 @@ of the Laplacian matrix}
 eigenvalues of the Laplacian matrix}
 }
 \value{
-The learned Laplacian matrix
+Theta the learned Laplacian matrix
+
+fun_seq the objective function value at every iteration
 }
 \description{
 Learns the topology of a K-connected graph given an observed data matrix

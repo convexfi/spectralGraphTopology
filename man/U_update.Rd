@@ -5,14 +5,12 @@
 \title{Updates the value of U, the matrix whose columns represent the eigen vectors
 of the Laplacian in increasing order}
 \usage{
-U_update(w, N, K)
+U_update(w, N)
 }
 \arguments{
 \item{w}{weight vector of the graph}
 
 \item{N}{dimension of each data sample}
-
-\item{K}{number of componentes of the graph}
 }
 \value{
 the updated value of U
