@@ -1,108 +1,80 @@
-#' Sparse Index Tracking
+#' Learn Graph Topology
 #'
-#' Computes the weights of assets (relative capital allocation) for a sparse approximation of a financial index.
+#' Learns the topology of a K-connected graph given an observed data matrix
 #'
-#' @param X m-by-n matrix of net returns (m samples, n assets).
-#' @param r m dimensional vector of the net returns of the index.
-#' @param lambda sparsity weight factor. Any nonnegative number (suggested range \code{[10^{-8},10^{-6}]}).
-#' @param u upper bound of the weights.Default value \code{u <- 1}, i.e., no effective upper bound.
-#' @param measure performance measure. Possible values \code{'ete'} (empirical tracking error - default), \code{'dr'} (downside risk),
-#' \code{'hete'} (Huber empirical tracking error), and \code{'hdr'} (Huber downside risk).
-#' @param hub Huber parameter. Required if \code{measure = 'hete'} or \code{measure = 'hdr'}.
-#' @param w0 initial point. If \code{NULL} a uniform allocation is used, i.e., \code{w0 <- rep(1/N, N)}.
-#' @param thres threshold value. All the weights less or equal to \code{thres} are set to 0. The default value is \code{1e-9}.
-#' @return An n-dimensional vector with allocation weights on the assets.
-#' @author Konstantinos Benidis and Daniel P. Palomar
+#' @param Y T-by-N observed data matrix, where T is the size of each sample
+#' and N is the number of samples
+#' @param K the number of components of the graph
+#' @param w0 initial estimate for the weight vector the graph
+#' @param U0 initial estimate for the matrix whose columns are the eigenvectors
+#' of the Laplacian matrix
+#' @param lamdba0 initial estimate for the vector whose entries are the
+#' eigenvalues of the Laplacian matrix
+#' @param lb lower bound for the eigenvalues of the Laplacian matrix
+#' @param ub upper bound for the eigenvalues of the Laplacian matrix
+#' @param alpha tunning parameter
+#' @param beta parameter that controls the strength of the regularization term
+#' @param rho how much to increase beta after a complete round of iterations
+#' @param maxiter the maximum number of iterations for each beta
+#' @param w_tol relative tolerance on w
+#' @param U_tol relative tolerance on U
+#' @param lambda_tol relative tolerance on lambda
+#' @param ftol relative tolerance on the objective function
+#' @return The learned Laplacian matrix
+#' @author Convex group - HKUST
 #' @references
-#' K. Benidis, Y. Feng, D. P. Palomar, "Sparse Portfolios for High-Dimensional Financial Index Tracking,"
-#' \emph{IEEE Transactions on Signal Processing}, vol. 66, no. 1, pp. 155-170, Jan. 2018.
 #' @examples
-#' library(sparseIndexTracking)
-#' library(xts)
+#' library(learnGraphTopology)
 #'
-#' # load data
-#' data(INDEX_2010)
+#' # simulate a Laplacian matrix of a single-component graph
+#' w <- sample(1:10, 10)
+#' Theta <- L(w)
 #'
-#' # fit portfolio under error measure ETE (Empirical Tracking Error)
-#' w_ete <- spIndexTrack(INDEX_2010$X, INDEX_2010$SP500, lambda = 1e-7, u = 0.5, measure = 'ete')
+#' # create fake data
+#' T <- 10000
+#' N <- ncol(Theta)
+#' Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Theta))
 #'
-#' # show cardinality achieved
-#' cat("Number of assets used:", sum(w_ete > 1e-6))
+#' # learn the Laplacian matrix from the simulated data
+#' Theta_est <- learnGraphTopology(Y, 1)
 #'
+#' # show the relative error between the true Laplacian and the learned one
+#' norm(Theta - Theta_est, type="F") / norm(Theta, type="F")
 #' @export
-learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, lambda1 = NA,
-                                lb = 1e-4, ub = 1e4, alpha = 0.,
-                                beta = .5, rho = .1, maxiter = 5000,
-                                w_tol = 1e-4, U_tol = 1e-4,
+learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
+                                ub = 1e4, alpha = 0., beta = .5, rho = .1,
+                                maxiter = 5000, w_tol = 1e-4, U_tol = 1e-4,
                                 lambda_tol = 1e-4, ftol = 1e-6) {
-  # Solves the graph learning problem with K-components
-  #
-  # Args:
-  #   data: matrix
-  #     a T by N matrix, where N is the size of each sample
-  #     and T is the number of samples
-  #   K: scalar
-  #     number of components of the graph
-  #   w1: vector
-  #     initial estimate for w
-  #   U1: matrix
-  #     initial estimate for U
-  #   lambda1: vector
-  #     initial estimate for lambda
-  #   lb, ub: scalars
-  #     lower and upper bounds on the eigenvalues of the Laplacian
-  #     matrix
-  #   alpha: scalar
-  #   beta: scalar
-  #     regularization factor
-  #   rho: float
-  #     how much to increase beta per iteration, i.e.,
-  #     beta <- beta * (1 + rho)
-  #   maxiter: integer
-  #     maximum number of iterations
-  #   w_tol: float
-  #     tolerance for the convergence of w
-  #   U_tol: float
-  #     tolerance for the convergence of U
-  #   lambda_tol: float
-  #     tolerance for the convergence of lambda
-  #   ftol: float
-  #     tolerance for the convergence of the objective function
-  #
-  # Returns:
-  #   Theta: matrix
-  #     the Laplacian matrix
-  #
-  N <- ncol(data)
-  T <- nrow(data)
-  S <- crossprod(data) / T
+  N <- ncol(Y)
+  T <- nrow(Y)
+  S <- crossprod(Y) / T
   H <- alpha * (2. * diag(N) - matrix(1, N, N))
   Km <- S + H
 
   # define "appropriate" inital guess
-  if (any(is.na(w1)))
-    w1 <- array(1., as.integer(.5 * N * (N - 1)))
-  Theta1 <- L(w1)
+  if (any(is.na(w0)))
+    w0 <- array(1., as.integer(.5 * N * (N - 1)))
+  Theta1 <- L(w0)
   evd <- eigen(Theta1)
-  if (any(is.na(U1)))
-    U1 <- evd$vectors[, (N-K):1]
-  if (any(is.na(lambda1))) {
-    lambda1 <- evd$values[1:(N-K)]
-    lambda1 <- lambda1[(N-K):1]
+  if (any(is.na(U0)))
+    U0 <- evd$vectors[, (N-K):1]
+  if (any(is.na(lambda0))) {
+    lambda0 <- evd$values[1:(N-K)]
+    lambda0 <- lambda0[(N-K):1]
   }
 
-  fun1 <- objFunction(w1, U1, lambda1, Km, beta)
+  fun0 <- objFunction(w0, U0, lambda0, Km, beta)
 
   for (i in 1:1) {
     for (k in 1:maxiter) {
-      w <- w_update(w1, U1, beta, lambda1, N, Km)
+      w <- w_update(w0, U0, beta, lambda0, N, Km)
       U <- U_update(w, N, K)
       lambda <- lambda_update(lb, ub, beta, U, w, N, K)
 
       # check tolerance on parameters
-      w_err <- norm(w - w1, type="2") / max(1, norm(w, type="2"))
-      U_err <- norm(U - U1, type="F") / max(1, norm(U, type="F"))
-      lambda_err <- norm(lambda - lambda1, type="2") /
+      w_err <- norm(w - w0, type="2") / max(1, norm(w, type="2"))
+      U_err <- norm(U - U0, type="F") / max(1, norm(U, type="F"))
+      lambda_err <- norm(lambda - lambda0, type="2") /
                         max(1, norm(lambda, type="2"))
 
       if ((w_err < w_tol) & (U_err < U_tol) & (lambda_err < lambda_tol))
@@ -110,15 +82,15 @@ learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, lambda1 = NA,
 
       # check tolerance on objective function
       fun <- objFunction(w, U, lambda, Km, beta)
-      ferr <- abs(fun - fun1) / max(1, abs(fun))
+      ferr <- abs(fun - fun0) / max(1, abs(fun))
 
       if (ferr < ftol)
         break
 
-      fun1 <- fun
-      w1 <- w
-      U1 <- U
-      lambda1 <- lambda
+      fun0 <- fun
+      w0 <- w
+      U0 <- U
+      lambda0 <- lambda
     }
     beta <- beta * (1 + rho)
   }
