@@ -51,60 +51,22 @@ lambda_update <- function(lb, ub, beta, U, w, N, K) {
   lambda <- .5 * (d + sqrt(d^2 + 4 / beta)) # unconstrained solution as initial point
   condition <- all(lambda[q] <= ub, lambda[1] >= lb,
                    lambda[2:q] >= lambda[1:(q-1)])
-  while (!condition) {
-    geq <- c(lb >= lambda[1], lambda[1:(q-1)] >= lambda[2:q], lambda[q] >= ub)
-    flag1 <- geq[1]
-    flag2 <- geq[q + 1]
-    #c1 <- 1
-    #c2 <- q + 1
 
-    for (i in 1:q) {
-      if (flag1) {
-        lambda[i] <- lb
-        flag1 <- geq[i + 1]
-        #if(!flag1) {
-        #  c1 <- i + 1
-        #}
-      }
-
-      if (flag2) {
-        lambda[q - i + 1] <- ub
-        flag2 <- geq[q + 1 - i]
-        #if (!flag2) {
-        #  c2 <- q + 1 - i
-        #}
-      }
-
-      if ((!flag1) & (!flag2)) {
-        break
-      }
-    }
-
-    #if(c2 > c1) {
-    #  if (c2 < (q + 1)) {
-    #    geq3 <- lambda[c1:(c2-1)] >= lambda[(c1+1):c2]
-    #  } else {
-    #    geq3 <- lambda[c1:(c2-2)] >= lambda[(c1+1):(c2-1)]
-    #  }
-    #} else {
-    #  break
-    #}
-    #print(geq3)
-    #print(c1)
-    #print(c2)
-    #m <- c()
-    #for (i in 1:length(geq3)) {
-    #    if (geq3[i]) {
-    #      m <- c(m, c1 + i - 1)
-    #    } else {
-    #      d_mean <- mean(d[m])
-    #      lambda[m] <- d_mean + sqrt(d_mean^2 + 4/beta)
-    #      m <- c()
-    #    }
-    #}
-    condition <- all(lambda[q] <= ub, lambda[1] >= lb,
-                     lambda[2:q] >= lambda[1:(q-1)])
+  if (condition) {
+    return (lambda)
+  } else {
+    bigger_ub <- lambda > ub
+    smaller_lb <- lambda < lb
+    lambda[bigger_ub] <- ub
+    lambda[smaller_lb] <- lb
   }
 
-  return(lambda)
+  condition <- all(lambda[q] <= ub, lambda[1] >= lb,
+                   lambda[2:q] >= lambda[1:(q-1)])
+
+  if (condition) {
+    return (lambda)
+  } else {
+    stop("eigenvalues are not in increasing order")
+  }
 }
