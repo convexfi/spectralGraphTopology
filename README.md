@@ -1,5 +1,7 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+
+
 # spectralGraphTopology
 Learns the topology of a class of graphs such as K-component, tree, bipartite,
 and regular.
@@ -35,6 +37,14 @@ package?spectralGraphTopology
 citation("spectralGraphTopology")
 ```
 
+## Tests
+To run unit tests proceed as follows:
+```
+$ cd tests
+$ Rscript runTests.R
+```
+
+If any of the tests fail, please open a ticket [here](https://github.com/dppalomar/spectralGraphTopology/issues).
 
 ## Vignette
 For more detailed information, please check the vignette:
