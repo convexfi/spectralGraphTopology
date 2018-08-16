@@ -1,22 +1,16 @@
-# This module defines the updates of the block coordinate descent algorithm.
-# More precisely, there are three variables to be updated:
-#  1) a vector w (see expression (9)),
-#  2) a matrix U (see expression (11)),
-#  3) a matrix Λ (see expression (15)).
-
+#' Updates the value of w, the weight vector of the graph
+#'
+#' @param w weight vector of the graph
+#' @param U matrix whose columns represent the eigen vectors of the Laplacian
+#' matrix in increasing order
+#' @param β scalar that controls the strength of the regularization term
+#' @param λ vector whose entries are the eigenvalues of the Laplacian in
+#' increasing order
+#' @param N dimension of each data sample
+#' @param Km matrix (see section 1.1 for its definition)
+#'
+#' @return the updated value of w
 w_update <- function(w, U, beta, lambda, N, Km) {
-  # Updates the value of w
-  #
-  # Args:
-  #   w: vector
-  #   U: matrix
-  #   β: scalar
-  #   Λ: vector
-  #   n: dimension of each data sample
-  #   Km: matrix (see section 1.1 for its definition)
-  #
-  # Returns:
-  #   w_update: the updated value of w
   #grad_f <- Lstar(L(w) - U %*% diag(lambda) %*% t(U) + Km / beta)
   grad_f <- Lstar(L(w) - crossprod(sqrt(lambda) * t(U)) + Km / beta)
   w_update <- w - .5 * grad_f / N
@@ -24,33 +18,33 @@ w_update <- function(w, U, beta, lambda, N, Km) {
 }
 
 
+#' Updates the value of U, the matrix whose columns represent the eigen vectors
+#' of the Laplacian in increasing order
+#'
+#' @param w weight vector of the graph
+#' @param N dimension of each data sample
+#' @param K number of componentes of the graph
+#'
+#' @return the updated value of U
 U_update <- function(w, N, K) {
-  # Updates the value of U
-  #
-  # Args:
-  #   w: vector
-  #   N: dimension of each data sample
-  #   K: number of components
-  #
-  # Returns:
-  #   U_update: the updated value of U
   return(eigen(L(w))$vectors[, (N-K):1])
 }
 
 
+#' Updates the value of lambda, the vector whose entries correspond to the
+#' eigenvalues of the Laplacian matrix
+#'
+#' @param lb lower bound on the eigenvalues of the Laplacian matrix
+#' @param ub upper bound on the eigenvalues of the Laplacian matrix
+#' @param β: scalar that controls the strength of the regularization term
+#' @param U matrix whose columns represent the eigen vectors of the Laplacian
+#' matrix in increasing order
+#' @param w weight vector of the graph
+#' @param N dimension of each data sample
+#' @param K number of components of the graph
+#'
+#' @return the updated value of λ
 lambda_update <- function(lb, ub, beta, U, w, N, K) {
-  # Updates the value of lambda
-  #
-  # Args:
-  #   lb, ub: lower and upper bounds on the Lambda vector components
-  #   β: scalar that controls the strength of the regularization term
-  #   U: matrix
-  #   w: vector
-  #   N: dimension of each data sample
-  #   K: number of components of the graph
-  #
-  # Returns:
-  #   lambda: the updated value of lambda
   q <- N - K
   d <- diag(t(U) %*% L(w) %*% U)
 
