@@ -39,7 +39,7 @@ learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, lambda1 = NA,
   #
   # Args:
   #   data: matrix
-  #     a N by T matrix, where N is the size of each sample
+  #     a T by N matrix, where N is the size of each sample
   #     and T is the number of samples
   #   K: scalar
   #     number of components of the graph
@@ -73,9 +73,9 @@ learnGraphTopology <- function (data, K, w1 = NA, U1 = NA, lambda1 = NA,
   #   Theta: matrix
   #     the Laplacian matrix
   #
-  N <- nrow(data)
-  T <- ncol(data)
-  S <- tcrossprod(data) / T
+  N <- ncol(data)
+  T <- nrow(data)
+  S <- crossprod(data) / T
   H <- alpha * (2. * diag(N) - matrix(1, N, N))
   Km <- S + H
 
