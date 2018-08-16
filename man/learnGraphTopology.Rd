@@ -2,54 +2,71 @@
 % Please edit documentation in R/learnGraphTopology.R
 \name{learnGraphTopology}
 \alias{learnGraphTopology}
-\title{Sparse Index Tracking}
+\title{Learn Graph Topology}
 \usage{
-learnGraphTopology(data, K, w1 = NA, U1 = NA, Lambda1 = NA, lb = 1e-04,
-  ub = 10000, alpha = 0, beta = 0.5, pho = 0.1, maxiter = 50,
-  w_tol = 1e-04, U_tol = 1e-04, Lambda_tol = 1e-04, Lw_tol = 1e-04)
+learnGraphTopology(Y, K, w0 = NA, U0 = NA, lambda0 = NA,
+  lb = 1e-04, ub = 10000, alpha = 0, beta = 0.5, rho = 0.1,
+  maxiter = 5000, w_tol = 1e-04, U_tol = 1e-04, lambda_tol = 1e-04,
+  ftol = 1e-06)
 }
 \arguments{
-\item{X}{m-by-n matrix of net returns (m samples, n assets).}
+\item{Y}{T-by-N observed data matrix, where T is the size of each sample
+and N is the number of samples}
 
-\item{r}{m dimensional vector of the net returns of the index.}
+\item{K}{the number of components of the graph}
 
-\item{lambda}{sparsity weight factor. Any nonnegative number (suggested range \code{[10^{-8},10^{-6}]}).}
+\item{w0}{initial estimate for the weight vector the graph}
 
-\item{u}{upper bound of the weights.Default value \code{u <- 1}, i.e., no effective upper bound.}
+\item{U0}{initial estimate for the matrix whose columns are the eigenvectors
+of the Laplacian matrix}
 
-\item{measure}{performance measure. Possible values \code{'ete'} (empirical tracking error - default), \code{'dr'} (downside risk),
-\code{'hete'} (Huber empirical tracking error), and \code{'hdr'} (Huber downside risk).}
+\item{lb}{lower bound for the eigenvalues of the Laplacian matrix}
 
-\item{hub}{Huber parameter. Required if \code{measure = 'hete'} or \code{measure = 'hdr'}.}
+\item{ub}{upper bound for the eigenvalues of the Laplacian matrix}
 
-\item{w0}{initial point. If \code{NULL} a uniform allocation is used, i.e., \code{w0 <- rep(1/N, N)}.}
+\item{alpha}{tunning parameter}
 
-\item{thres}{threshold value. All the weights less or equal to \code{thres} are set to 0. The default value is \code{1e-9}.}
+\item{beta}{parameter that controls the strength of the regularization term}
+
+\item{rho}{how much to increase beta after a complete round of iterations}
+
+\item{maxiter}{the maximum number of iterations for each beta}
+
+\item{w_tol}{relative tolerance on w}
+
+\item{U_tol}{relative tolerance on U}
+
+\item{lambda_tol}{relative tolerance on lambda}
+
+\item{ftol}{relative tolerance on the objective function}
+
+\item{lamdba0}{initial estimate for the vector whose entries are the
+eigenvalues of the Laplacian matrix}
 }
 \value{
-An n-dimensional vector with allocation weights on the assets.
+The learned Laplacian matrix
 }
 \description{
-Computes the weights of assets (relative capital allocation) for a sparse approximation of a financial index.
+Learns the topology of a K-connected graph given an observed data matrix
 }
 \examples{
-library(sparseIndexTracking)
-library(xts)
+library(learnGraphTopology)
 
-# load data
-data(INDEX_2010)
+# simulate a Laplacian matrix of a single-component graph
+w <- sample(1:10, 10)
+Theta <- L(w)
 
-# fit portfolio under error measure ETE (Empirical Tracking Error)
-w_ete <- spIndexTrack(INDEX_2010$X, INDEX_2010$SP500, lambda = 1e-7, u = 0.5, measure = 'ete')
+# create fake data
+T <- 10000
+N <- ncol(Theta)
+Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Theta))
 
-# show cardinality achieved
-cat("Number of assets used:", sum(w_ete > 1e-6))
+# learn the Laplacian matrix from the simulated data
+Theta_est <- learnGraphTopology(Y, 1)
 
-}
-\references{
-K. Benidis, Y. Feng, D. P. Palomar, "Sparse Portfolios for High-Dimensional Financial Index Tracking,"
-\emph{IEEE Transactions on Signal Processing}, vol. 66, no. 1, pp. 155-170, Jan. 2018.
+# show the relative error between the true Laplacian and the learned one
+norm(Theta - Theta_est, type="F") / norm(Theta, type="F")
 }
 \author{
-Konstantinos Benidis and Daniel P. Palomar
+Convex group - HKUST
 }
