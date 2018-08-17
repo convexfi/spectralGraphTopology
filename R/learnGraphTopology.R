@@ -43,7 +43,7 @@
 #' norm(Theta - Theta_est, type="F") / norm(Theta, type="F")
 #' @export
 learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
-                                beta = .5, rho = .1, maxiter = 5000,
+                                beta = .5, rho = .1, maxiter = 5000, maxiter_beta = 1,
                                 w_tol = 1e-6, lambda_tol = 1e-6, U_tol = 1e-6,
                                 ftol = 1e-6) {
   N <- ncol(Y)
@@ -63,10 +63,10 @@ learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
   lambda0 <- pmax(0, evd$values[(N-K):1])
   U0 <- evd$vectors[, (N-K):1]
 
-  fun0 <- objFunction(L(w0), U0, lambda0, Km, beta, N, K)
+  fun0 <- objectiveFunction(L(w0), U0, lambda0, Km, beta, N, K)
   fun_seq <- c(fun0)
 
-  for (i in 1:maxiter) {
+  for (i in 1:maxiter_beta) {
     for (k in 1:maxiter) {
       w <- w_update(w0, U0, beta, lambda0, N, Km)
       U <- U_update(w, N, K)
@@ -81,7 +81,7 @@ learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
         break
 
       # check tolerance on objective function
-      fun <- objFunction(L(w), U, lambda, Km, beta, N, K)
+      fun <- objectiveFunction(L(w), U, lambda, Km, beta, N, K)
       ferr <- abs(fun - fun0) / max(1, abs(fun))
       fun_seq <- c(fun_seq, fun)
 
