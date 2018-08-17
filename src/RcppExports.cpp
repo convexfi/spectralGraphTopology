@@ -28,6 +28,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// Linv
+Eigen::VectorXd Linv(const Eigen::MatrixXd& Theta);
+RcppExport SEXP _spectralGraphTopology_Linv(SEXP ThetaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type Theta(ThetaSEXP);
+    rcpp_result_gen = Rcpp::wrap(Linv(Theta));
+    return rcpp_result_gen;
+END_RCPP
+}
 // altLstar
 Eigen::VectorXd altLstar(const Eigen::MatrixXd& Y);
 RcppExport SEXP _spectralGraphTopology_altLstar(SEXP YSEXP) {
@@ -43,6 +54,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_spectralGraphTopology_L", (DL_FUNC) &_spectralGraphTopology_L, 1},
     {"_spectralGraphTopology_Lstar", (DL_FUNC) &_spectralGraphTopology_Lstar, 1},
+    {"_spectralGraphTopology_Linv", (DL_FUNC) &_spectralGraphTopology_Linv, 1},
     {"_spectralGraphTopology_altLstar", (DL_FUNC) &_spectralGraphTopology_altLstar, 1},
     {NULL, NULL, 0}
 };

@@ -54,6 +54,30 @@ Eigen::VectorXd Lstar(const Eigen::MatrixXd& Y) {
             ++l;
         }
     }
+    return w;
+}
+
+// [[Rcpp::export]]
+Eigen::VectorXd Linv(const Eigen::MatrixXd& Theta) {
+   /* Computes the inverse of the L Operator.
+    *
+    * Args:
+    *   Theta: the Laplacian matrix
+    *
+    * Returns:
+    *   w: weight vector of the graph
+    **/
+    int N = Theta.cols();
+    int k = .5 * N * (N - 1);
+    Eigen::VectorXd w = Eigen::VectorXd::Zero(k);
+    int l = 0;
+
+    for (int i = 0; i < N-1; ++i) {
+        for (int j = i+1; j < N; ++j) {
+            w(l) = -Theta(i, j);
+            ++l;
+        }
+    }
 
     return w;
 }

@@ -19,6 +19,13 @@ LOpConstraints <- function(Lw) {
   expect_that(all(eigen_values$values >= 0), is_true())
 }
 
+test_that("test_Linv", {
+  w <- runif(10)
+  Lw <- L(w)
+  w_test <- Linv(Lw)
+  expect_that(all(w == w_test), is_true())
+})
+
 test_that("test_LOp_order4", {
   w <- c(1, 2, 3, 4, 5, 6)
   answer <- matrix(c(6, -1, -2, -3,

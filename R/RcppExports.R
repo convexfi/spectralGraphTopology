@@ -9,6 +9,10 @@ Lstar <- function(Y) {
     .Call('_spectralGraphTopology_Lstar', PACKAGE = 'spectralGraphTopology', Y)
 }
 
+Linv <- function(Theta) {
+    .Call('_spectralGraphTopology_Linv', PACKAGE = 'spectralGraphTopology', Theta)
+}
+
 altLstar <- function(Y) {
     .Call('_spectralGraphTopology_altLstar', PACKAGE = 'spectralGraphTopology', Y)
 }

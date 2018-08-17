@@ -7,6 +7,7 @@
 using namespace Eigen;
 
 MatrixXd L(const Eigen::VectorXd&, int);
+VectorXd Linv(const Eigen::MatrixXd&);
 VectorXd Lstar(const Eigen::MatrixXd&);
 VectorXd altLstar(const Eigen::MatrixXd&);
 #endif
