@@ -49,22 +49,33 @@ knit_hooks$set(pngquant = hook_pngquant)
 
 -----------
 
+# Installation
+
+For installation instructions, please visit
+[https://github.com/dppalomar/spectralGraphTopology](https://github.com/dppalomar/spectralGraphTopology)
+
 # Problem Statement
 
-The problem of learning a K-component graph may be expressed mathematically as
-\begin{align}
-& \texttt{minimize}_{\mathbf{w}, \boldsymbol{\Lambda}, \mathbf{U}} - \log \det(\boldsymbol{\Lambda})
+The underlying optimization problem of learning a K-component graph may be expressed as follows
+$$\begin{array}{ll}
+\underset{\mathbf{w}, \boldsymbol{\Lambda}, \mathbf{U}}{\textsf{minimize}} & - \log \det(\boldsymbol{\Lambda})
 + \mathrm{tr}\left(\mathbf{K}\mathcal{L}\mathbf{w}\right)
-+ \frac{\beta}{2}||\mathcal{L}\mathbf{w} - \mathbf{U}\boldsymbol{\Lambda}\mathbf{U}^{T}||^{2}_{F} \label{eq:opt-prob}\\
-& \texttt{subject to} ~ \mathbf{w} \geq 0, \boldsymbol{\Lambda} \in \mathcal{S}_{\boldsymbol{\Lambda}},
-\mathbf{U}^{T}\mathbf{U} = \mathbf{I},
-\end{align}
++ \frac{\beta}{2}\big\|\mathcal{L}\mathbf{w} - \mathbf{U}\boldsymbol{\Lambda}\mathbf{U}^{T}\big\|^{2}_{F}\\
+\textsf{subject to} & \mathbf{w} \geq 0, \boldsymbol{\Lambda} \in \mathcal{S}_{\boldsymbol{\Lambda}},~\text{and}~
+\mathbf{U}^{T}\mathbf{U} = \mathbf{I}
+\end{array}$$
 in which $\mathcal{S}_{\boldsymbol{\Lambda}}$ is the space of eigenvalues of matrices
 $\boldsymbol{\Theta}$ which are positive semi-definite, symmetric, and whose sum of the elements of
 any row or column is equal to zero.
 
-We use a block coordinate descent to optimize each variable while helding the others fixed.
-Therefore, problem (\ref{opt-prob}) can be divided in the following problems:
+In order to solve this problem, we use a block coordinate descent algorithm to
+iteratively optimize each variable while helding the others fixed.
+
+## w-update
+
+\begin{equation}
+\mathbf{w}^{(k+1)} = \mathbf{w}^{(k)} - \dfrac{\nabla_{\mathbf{w}}f(\mathbf{w}^{(k)})}{2N}
+\end{equation}
 
 
 # Usage of the package
@@ -107,7 +118,7 @@ norm(Theta - Theta_naive, type="F") / norm(Theta, type="F")
 Let's also look at the convergence of the objective function versus iteration:
 ```{r}
 k <- length(res$fun)
-plot(c(1:k), res$fun,  pch=19, cex=.5, col = scales::alpha("black", .25),
+plot(c(1:k), res$fun,  pch=19, cex=.5,
      xlab = "Iteration number", ylab = "Objective function")
 ```
 
@@ -125,8 +136,7 @@ Theta <- rbind(cbind(Theta1, matrix(0, N1, N2)),
                cbind(matrix(0, N2, N1), Theta2))
 Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Theta))
 K <- 2
-beta <- 5
-res <- learnGraphTopology(Y, K, beta = beta, ftol = 1e-3)
+res <- learnGraphTopology(Y, K, beta = 10)
 norm(Theta - res$Theta, type="F") / norm(Theta, type="F")
 norm(Theta - MASS::ginv(cov(Y)), type="F") / norm(Theta, type="F")
 ```
@@ -136,42 +146,10 @@ Theta
 res$Theta
 ```
 
-As we can observe, the matrices' structure do not quite match.
-
-I suspect they might be similar matrices. Let's check some properties:
-
-```{r}
-eigen(Theta, only.values = TRUE)
-eigen(res$Theta, only.values = TRUE)
-```
-
-```{r}
-sum(diag(Theta))
-sum(diag(res$Theta))
-```
-
-```{r}
-det(Theta)
-det(res$Theta)
-```
-
-```{r}
-N <- N1 + N2
-evd_true <- eigen(Theta)
-vec_true <- evd_true$vectors[, N:1]
-vec_true
-vals_true <- evd_true$values[N:1]
-vals_true
-res$lambda
-objFunction(Theta, vec_true, vals_true, res$Km, beta, N, K)
-objFunction(res$Theta, vec_true, vals_true, res$Km, beta, N, K)
-```
-
-
 ```{r}
 k <- length(res$fun)
-plot(c(1:k), res$fun, pch=19, cex=.6, xlab = "Iteration number",
-     ylab = "Objective function")
+plot(c(1:k), res$fun, pch=19, cex=.6, col = scales::alpha("black", .5),
+     xlab = "Iteration number", ylab = "Objective function")
 ```
 
 
@@ -187,17 +165,10 @@ The goal of `learnGraphTopology()` is to estimate the Laplacian matrix generated
 by the weight vector of a graph, $\mathbf{w}$. The algorithm for the function `learnGraphTopology`
 is stated as follows:
 
-> **Algorithm 1:** Blah, blah, blah  
-  **Data:** asdljflasdf  
-  **begin**  
-  &nbsp; &nbsp; &nbsp; &nbsp; asdkjhfaksljdf  
-  &nbsp; &nbsp; &nbsp; &nbsp; asdfsdfasd  
-  **end**
-
 \begin{algorithm}[H]
  \DontPrintSemicolon
  \KwData{$\mathbf{Y}$ (data matrix), $K$ (\#\{components\}), $\beta$ (regularization term),
- $\mathbf{w}_0$, $\boldsymbol{\lambda}_0$, $\mathbf{U}_0$ (initial parameter estimates),
+ $\mathbf{w}^{(0)}$, $\boldsymbol{\lambda}^{(0)}$, $\mathbf{U}^{(0)}$ (initial parameter estimates),
  $\alpha_1$, $\alpha_2$ (lower and upper bound on the eigenvalues of the Laplacian matrix),
  $\rho$ (how much to increase beta per iteration)}
  \KwResult{$\boldsymbol{\Theta}$ (Laplacian matrix)}
@@ -234,7 +205,7 @@ is stated as follows:
   \SetKwFunction{FwUupdate}{\texttt{U\_update}}
   \SetKwProg{Fn}{Function}{:}{}
   \Fn{\FwUupdate{$\mathbf{w}, N$}}{
-        \KwRet \texttt{eigen}$(\mathcal{L}(\mathbf{w}))$\$\texttt{vectors}$[, N:1]$\;
+        \KwRet \texttt{eigenvectors}$(\mathcal{L}(\mathbf{w}))$ \# \textit{increasing order w.r.t. eigenvalues}\;
   }
   \;
 \end{algorithm}
@@ -246,8 +217,11 @@ is stated as follows:
   \Fn{\Fwlambdaupdate{$\mathbf{w}, \mathbf{U}, \alpha_1, \alpha_2, \beta, N, K$}}{
         $\mathbf{d} \gets \texttt{diag}\left(\mathbf{U}^{T} \mathcal{L}(\mathbf{w})\mathbf{U}\right)$\;
         $\boldsymbol{\lambda} \gets \frac{1}{2}\left(\mathbf{d} +
-                \sqrt{\mathbf{d} \odot \mathbf{d} + \frac{4}{\beta}}\right)$\;
-        \eIf{$\boldsymbol{\lambda}$ has its elements in increasing order} {
+                \sqrt{\mathbf{d} \odot \mathbf{d} + \frac{4}{\beta}}\right)$
+                \# $\odot$ \textit{means element-wise multiplication} \;
+        \eIf{$\boldsymbol{\lambda}$ has its elements in nondecreasing order
+             \textbf{and} $\min(\boldsymbol{\lambda}) \geq \alpha_1$
+             \textbf{and} $\max(\boldsymbol{\lambda}) \leq \alpha_2$} {
             \KwRet $\boldsymbol{\lambda}$\;
         } {
             set to $\alpha_1$ the elements of $\boldsymbol{\lambda}$
@@ -255,7 +229,7 @@ is stated as follows:
             set to $\alpha_2$ the elements of $\boldsymbol{\lambda}$
             whose values are greater than $\alpha_2$\;
         }
-        \eIf{$\boldsymbol{\lambda}$ has its elements in increasing order} {
+        \eIf{$\boldsymbol{\lambda}$ has its elements in nondecreasing order} {
             \KwRet $\boldsymbol{\lambda}$\;
         } {
             $\mathbf{raise}$ \texttt{Exception}(\textit{"eigenvalues are not in increasing order"})\;
