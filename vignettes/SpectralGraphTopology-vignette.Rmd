@@ -74,7 +74,7 @@ library(spectralGraphTopology)
 set.seed(123)
 
 # Number of samples
-T <- 10000
+T <- 20
 # Vector to generate the Laplacian matrix of the graph
 w <- runif(10)
 # Laplacian matrix
@@ -96,13 +96,15 @@ res$Theta
 
 We can evaluate the performance of the learning process in a more objective manner
 by computing the relative error between the true Laplacian matrix and the estimated one,
-which can be done as follows::
+which can be done as follows:
 ```{r}
-RE <- norm(Theta - res$Theta, type="F") / max(1., norm(Theta, type="F"))
-RE
+norm(Theta - res$Theta, type="F") / norm(Theta, type="F")
+
+Theta_naive <- ginv(cov(Y))
+norm(Theta - Theta_naive, type="F") / norm(Theta, type="F")
 ```
 
-Let's also look at the trend of the objective function per iteration:
+Let's also look at the convergence of the objective function versus iteration:
 ```{r}
 k <- length(res$fun)
 plot(c(1:k), res$fun,  pch=19, cex=.5, col = scales::alpha("black", .25),
@@ -112,6 +114,7 @@ plot(c(1:k), res$fun,  pch=19, cex=.5, col = scales::alpha("black", .25),
 For K > 1, we can generate the Laplacian as a block diagonal matrix, as follows
 ```{r}
 library(spectralGraphTopology)
+T <- 20
 w1 <- runif(3)
 w2 <- runif(3)
 Theta1 <- L(w1)
@@ -124,8 +127,8 @@ Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Theta))
 K <- 2
 beta <- 5
 res <- learnGraphTopology(Y, K, beta = beta, ftol = 1e-3)
-RE <- norm(Theta - res$Theta, type="F") / max(1., norm(Theta, type="F"))
-RE
+norm(Theta - res$Theta, type="F") / norm(Theta, type="F")
+norm(Theta - ginv(cov(Y)), type="F") / norm(Theta, type="F")
 ```
 
 ```{r}
@@ -183,6 +186,13 @@ graph topology learning problem.
 The goal of `learnGraphTopology()` is to estimate the Laplacian matrix generated
 by the weight vector of a graph, $\mathbf{w}$. The algorithm for the function `learnGraphTopology`
 is stated as follows:
+
+> **Algorithm 1:** Blah, blah, blah  
+  **Data:** asdljflasdf  
+  **begin**  
+  &nbsp; &nbsp; &nbsp; &nbsp; asdkjhfaksljdf  
+  &nbsp; &nbsp; &nbsp; &nbsp; asdfsdfasd  
+  **end**
 
 \begin{algorithm}[H]
  \DontPrintSemicolon

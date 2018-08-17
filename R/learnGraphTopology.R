@@ -48,7 +48,8 @@ learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
                                 lambda_tol = 1e-4, ftol = 1e-6) {
   N <- ncol(Y)
   T <- nrow(Y)
-  S <- crossprod(Y) / T
+  #S <- crossprod(Y) / T
+  S <- cov(Y)
   H <- alpha * (2. * diag(N) - matrix(1, N, N))
   Km <- S + H
 
