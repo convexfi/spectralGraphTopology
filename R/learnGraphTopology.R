@@ -64,7 +64,7 @@ learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
     lambda0[1:K] <- 0
   }
 
-  fun0 <- objFunction(w0, U0, lambda0, Km, beta, N, K)
+  fun0 <- objFunction(L(w0), U0, lambda0, Km, beta, N, K)
   fun_seq <- c(fun0)
 
   for (i in 1:1) {
@@ -83,7 +83,7 @@ learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
         break
 
       # check tolerance on objective function
-      fun <- objFunction(w, U, lambda, Km, beta, N, K)
+      fun <- objFunction(L(w), U, lambda, Km, beta, N, K)
       ferr <- abs(fun - fun0) / max(1, abs(fun))
       fun_seq <- c(fun_seq, fun)
 
@@ -101,8 +101,7 @@ learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
   return(list(Theta = L(w), fun = fun_seq))
 }
 
-objFunction <- function(w, U, lambda, Km, beta, N, K) {
-  Theta <- L(w)
+objFunction <- function(Theta, U, lambda, Km, beta, N, K) {
   return(sum(-log(lambda[(K+1):N])) + sum(diag(Km %*% Theta)) +
-         .5 * beta * norm(Theta - crossprod(t(U) * sqrt(lambda)), type="F")^2)
+         .5 * beta * norm(Theta - crossprod(sqrt(lambda) * t(U)), type="F")^2)
 }
