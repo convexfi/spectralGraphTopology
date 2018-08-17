@@ -88,8 +88,8 @@ RE
 Let's also look at the trend of the objective function per iteration:
 ```{r}
 k <- length(res$fun)
-plot(c(1:k), res$fun, type = "s", xlab = "Iteration number",
-     ylab = "Objective function")
+plot(c(1:k), res$fun,  pch=19, cex=.5, col = scales::alpha("black", .25),
+     xlab = "Iteration number", ylab = "Objective function")
 ```
 
 For K > 1, we can generate the Laplacian as a block diagonal matrix, as follows
@@ -144,7 +144,7 @@ objFunction(res$Theta, res$U, res$lambda, res$Km, beta, N, K)
 
 ```{r}
 k <- length(res$fun)
-plot(c(1:k), res$fun, type = "s", xlab = "Iteration number",
+plot(c(1:k), res$fun, pch=19, cex=.6, xlab = "Iteration number",
      ylab = "Objective function")
 ```
 
