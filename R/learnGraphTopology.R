@@ -60,8 +60,8 @@ learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
   } else {
     evd <- eigen(L(w0))
   }
-  lambda0 <- pmax(0, evd$values[N:1])
-  U0 <- evd$vectors[, N:1]
+  lambda0 <- pmax(0, evd$values[(N-K):1])
+  U0 <- evd$vectors[, (N-K):1]
 
   fun0 <- objFunction(L(w0), U0, lambda0, Km, beta, N, K)
   fun_seq <- c(fun0)
@@ -69,7 +69,7 @@ learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
   for (i in 1:1) {
     for (k in 1:maxiter) {
       w <- w_update(w0, U0, beta, lambda0, N, Km)
-      U <- U_update(w, N)
+      U <- U_update(w, N, K)
       lambda <- lambda_update(lb, ub, beta, U, w, N, K)
 
       # check tolerance on parameters
@@ -96,10 +96,10 @@ learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
     beta <- beta * (1 + rho)
   }
 
-  return(list(Theta = L(w), fun = fun_seq, U = U, lambda = lambda, Km = Km))
+  return(list(Theta = L(w), fun = fun_seq, w = w, lambda = lambda, U = U))
 }
 
 objFunction <- function(Theta, U, lambda, Km, beta, N, K) {
-  return(sum(-log(lambda[(K+1):N])) + sum(diag(Km %*% Theta)) +
+  return(sum(-log(lambda)) + sum(diag(Km %*% Theta)) +
          .5 * beta * norm(Theta - crossprod(sqrt(lambda) * t(U)), type="F")^2)
 }

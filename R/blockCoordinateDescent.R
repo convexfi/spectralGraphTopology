@@ -25,8 +25,8 @@ w_update <- function(w, U, beta, lambda, N, Km) {
 #' @param N dimension of each data sample
 #'
 #' @return the updated value of U
-U_update <- function(w, N) {
-  return(eigen(L(w))$vectors[, N:1])
+U_update <- function(w, N, K) {
+  return(eigen(L(w))$vectors[, (N-K):1])
 }
 
 
@@ -44,23 +44,23 @@ U_update <- function(w, N) {
 #'
 #' @return the updated value of λ
 lambda_update <- function(lb, ub, beta, U, w, N, K) {
+  q <- N - K
   d <- diag(t(U) %*% L(w) %*% U)
   lambda <- .5 * (d + sqrt(d^2 + 4 / beta)) # unconstrained solution as initial point
-  lambda[1:K] <- 0.
-  condition <- all(lambda[N] <= ub, lambda[K+1] >= lb,
-                   lambda[(K+2):N] >= lambda[(K+1):(N-1)])
+  condition <- all(lambda[q] <= ub, lambda[1] >= lb,
+                   lambda[2:q] >= lambda[1:(q-1)])
 
   if (condition) {
     return (lambda)
   } else {
-    bigger_ub <- lambda[(K+1):N] > ub
-    smaller_lb <- lambda[(K+1):N] < lb
-    lambda[(K+1):N][bigger_ub] <- ub
-    lambda[(K+1):N][smaller_lb] <- lb
+    bigger_ub <- lambda > ub
+    smaller_lb <- lambda < lb
+    lambda[bigger_ub] <- ub
+    lambda[smaller_lb] <- lb
   }
 
-  condition <- all(lambda[N] <= ub, lambda[K+1] >= lb,
-                   lambda[(K+2):N] >= lambda[(K+1):(N-1)])
+  condition <- all(lambda[q] <= ub, lambda[1] >= lb,
+                   lambda[2:q] >= lambda[1:(q-1)])
 
   if (condition) {
     return (lambda)

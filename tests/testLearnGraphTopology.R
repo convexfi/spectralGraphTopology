@@ -33,9 +33,9 @@ test_that("test_learnGraphTopology_K=2", {
                  c(-1, 0, 1, 0),
                  c(0, -1, 0, 1))
   Y <- MASS::mvrnorm(T, as.vector(array(0, N)), MASS::ginv(Theta))
-  res <- learnGraphTopology(Y, K, ub=100, beta=1., maxiter=500)
-  expect_that(norm(Theta - res$Theta, type="F") /
-              max(1., norm(Theta, type="F")) < 1e-1, is_true())
+  res <- learnGraphTopology(Y, K, beta=20.)
+  expect_that(norm(Theta - res$Theta, type="F") / norm(Theta, type="F") < 1e-1,
+              is_true())
 })
 
 
@@ -53,7 +53,7 @@ test_that("test_learnGraphTopology_K=2", {
   Theta <- rbind(cbind(Theta1, matrix(0, N1, N2)),
                  cbind(matrix(0, N2, N1), Theta2))
   Y <- MASS::mvrnorm(T, as.vector(array(0, N1 + N2)), MASS::ginv(Theta))
-  res <- learnGraphTopology(Y, K, ub=100, beta=1., maxiter=500)
-  expect_that(norm(Theta - res$Theta, type="F") /
-              max(1., norm(Theta, type="F")) < 1e-1, is_true())
+  res <- learnGraphTopology(Y, K, beta=20.)
+  expect_that(norm(Theta - res$Theta, type="F") / norm(Theta, type="F") < 1e-1,
+              is_true())
 })
