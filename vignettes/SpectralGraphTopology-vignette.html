@@ -81,6 +81,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <div id="TOC" class="toc">
 <ul>
+<li><a href="#problem-statement">Problem Statement</a></li>
 <li><a href="#usage-of-the-package">Usage of the package</a></li>
 <li><a href="#explanation-of-the-algorithms">Explanation of the algorithms</a><ul>
 <li><a href="#learngraphtopology-learning-the-topology-of-graph"><code>learnGraphTopology</code>: Learning the topology of graph</a></li>
@@ -90,9 +91,22 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 
 <hr />
+<div id="problem-statement" class="section level1">
+<h1>Problem Statement</h1>
+The problem of learning a K-component graph may be expressed mathematically as
+<span class="math display">\[\begin{align}
+&amp; \texttt{minimize}_{\mathbf{w}, \boldsymbol{\Lambda}, \mathbf{U}} - \log \det(\boldsymbol{\Lambda})
++ \mathrm{tr}\left(\mathbf{K}\mathcal{L}\mathbf{w}\right)
++ \frac{\beta}{2}||\mathcal{L}\mathbf{w} - \mathbf{U}\boldsymbol{\Lambda}\mathbf{U}^{T}||^{2}_{F} \label{eq:opt-prob}\\
+&amp; \texttt{subject to} ~ \mathbf{w} \geq 0, \boldsymbol{\Lambda} \in \mathcal{S}_{\boldsymbol{\Lambda}},
+\mathbf{U}^{T}\mathbf{U} = \mathbf{I},
+\end{align}\]</span>
+<p>in which <span class="math inline">\(\mathcal{S}_{\boldsymbol{\Lambda}}\)</span> is the space of eigenvalues of matrices <span class="math inline">\(\boldsymbol{\Theta}\)</span> which are positive semi-definite, symmetric, and whose sum of the elements of any row or column is equal to zero.</p>
+<p>We use a block coordinate descent to optimize each variable while helding the others fixed. Therefore, problem () can be divided in the following problems:</p>
+</div>
 <div id="usage-of-the-package" class="section level1">
 <h1>Usage of the package</h1>
-<p>We illustrate the usage of the package with simulated data, as follows::</p>
+<p>We illustrate the usage of the package with simulated data, as follows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(spectralGraphTopology)
 <span class="kw">set.seed</span>(<span class="dv">123</span>)
 
@@ -109,7 +123,7 @@ Y &lt;-<span class="st"> </span>MASS<span class="op">::</span><span class="kw">m
 K &lt;-<span class="st"> </span><span class="dv">1</span>
 <span class="co"># Learn the Laplacian matrix</span>
 res &lt;-<span class="st"> </span><span class="kw">learnGraphTopology</span>(Y, K, <span class="dt">beta =</span> <span class="dv">10</span>)</code></pre></div>
-<p>Let’s visually inspect the true Laplacian and the estimated one as follows::</p>
+<p>Let’s visually inspect the true Laplacian and the estimated one:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Theta
 <span class="co">#&gt;            [,1]       [,2]       [,3]       [,4]       [,5]</span>
 <span class="co">#&gt; [1,]  2.3678770 -0.2875775 -0.7883051 -0.4089769 -0.8830174</span>

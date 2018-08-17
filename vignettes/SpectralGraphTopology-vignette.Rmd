@@ -49,9 +49,26 @@ knit_hooks$set(pngquant = hook_pngquant)
 
 -----------
 
+# Problem Statement
+
+The problem of learning a K-component graph may be expressed mathematically as
+\begin{align}
+& \texttt{minimize}_{\mathbf{w}, \boldsymbol{\Lambda}, \mathbf{U}} - \log \det(\boldsymbol{\Lambda})
++ \mathrm{tr}\left(\mathbf{K}\mathcal{L}\mathbf{w}\right)
++ \frac{\beta}{2}||\mathcal{L}\mathbf{w} - \mathbf{U}\boldsymbol{\Lambda}\mathbf{U}^{T}||^{2}_{F} \label{eq:opt-prob}\\
+& \texttt{subject to} ~ \mathbf{w} \geq 0, \boldsymbol{\Lambda} \in \mathcal{S}_{\boldsymbol{\Lambda}},
+\mathbf{U}^{T}\mathbf{U} = \mathbf{I},
+\end{align}
+in which $\mathcal{S}_{\boldsymbol{\Lambda}}$ is the space of eigenvalues of matrices
+$\boldsymbol{\Theta}$ which are positive semi-definite, symmetric, and whose sum of the elements of
+any row or column is equal to zero.
+
+We use a block coordinate descent to optimize each variable while helding the others fixed.
+Therefore, problem (\ref{opt-prob}) can be divided in the following problems:
+
 
 # Usage of the package
-We illustrate the usage of the package with simulated data, as follows::
+We illustrate the usage of the package with simulated data, as follows:
 ```{r, cache = TRUE}
 library(spectralGraphTopology)
 set.seed(123)
@@ -71,7 +88,7 @@ K <- 1
 res <- learnGraphTopology(Y, K, beta = 10)
 ```
 
-Let's visually inspect the true Laplacian and the estimated one as follows::
+Let's visually inspect the true Laplacian and the estimated one:
 ```{r}
 Theta
 res$Theta
