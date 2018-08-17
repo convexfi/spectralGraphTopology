@@ -105,7 +105,8 @@ Theta <- rbind(cbind(Theta1, matrix(0, N1, N2)),
                cbind(matrix(0, N2, N1), Theta2))
 Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Theta))
 K <- 2
-res <- learnGraphTopology(Y, K, beta = 5, ftol = 1e-3)
+beta <- 5
+res <- learnGraphTopology(Y, K, beta = beta, ftol = 1e-3)
 RE <- norm(Theta - res$Theta, type="F") / max(1., norm(Theta, type="F"))
 RE
 ```
@@ -133,6 +134,13 @@ sum(diag(res$Theta))
 det(Theta)
 det(res$Theta)
 ```
+
+```
+N <- N1 + N2
+objFunction(Theta, res$U, res$lambda, res$Km, beta, N, K)
+objFunction(res$Theta, res$U, res$lambda, res$Km, beta, N, K)
+```
+
 
 ```{r}
 k <- length(res$fun)

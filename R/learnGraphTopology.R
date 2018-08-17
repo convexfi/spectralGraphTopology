@@ -98,7 +98,7 @@ learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
     beta <- beta * (1 + rho)
   }
 
-  return(list(Theta = L(w), fun = fun_seq))
+  return(list(Theta = L(w), fun = fun_seq, U = U, lambda = lambda, Km = Km))
 }
 
 objFunction <- function(Theta, U, lambda, Km, beta, N, K) {
