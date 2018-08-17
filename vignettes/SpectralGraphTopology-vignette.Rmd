@@ -115,6 +115,24 @@ Theta
 res$Theta
 ```
 
+As we can observe, the matrices' structure do not quite match.
+
+I suspect they might be similar matrices. Let's check some properties:
+
+```{r}
+eigen(Theta, only.values = TRUE)
+eigen(res$Theta, only.values = TRUE)
+```
+
+```{r}
+sum(diag(Theta))
+sum(diag(res$Theta))
+```
+
+```{r}
+det(Theta)
+det(res$Theta)
+```
 
 ```{r}
 k <- length(res$fun)
@@ -182,7 +200,7 @@ is stated as follows:
 
 \begin{algorithm}[H]
   \DontPrintSemicolon
-  \SetKwFunction{Fwlambdaupdate}{\texttt{U\_update}}
+  \SetKwFunction{Fwlambdaupdate}{\texttt{lambda\_update}}
   \SetKwProg{Fn}{Function}{:}{}
   \Fn{\Fwlambdaupdate{$\mathbf{w}, \mathbf{U}, \alpha_1, \alpha_2, \beta, N, K$}}{
         $\mathbf{d} \gets \texttt{diag}\left(\mathbf{U}^{T} \mathcal{L}(\mathbf{w})\mathbf{U}\right)$\;
