@@ -135,10 +135,16 @@ det(Theta)
 det(res$Theta)
 ```
 
-```
+```{r}
 N <- N1 + N2
-objFunction(Theta, res$U, res$lambda, res$Km, beta, N, K)
-objFunction(res$Theta, res$U, res$lambda, res$Km, beta, N, K)
+evd_true <- eigen(Theta)
+vec_true <- evd_true$vectors[, N:1]
+vec_true
+vals_true <- evd_true$values[N:1]
+vals_true
+res$lambda
+objFunction(Theta, vec_true, vals_true, res$Km, beta, N, K)
+objFunction(res$Theta, vec_true, vals_true, res$Km, beta, N, K)
 ```
 
 

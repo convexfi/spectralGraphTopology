@@ -190,9 +190,27 @@ res<span class="op">$</span>Theta
 <span class="co">#&gt; [1] 0</span>
 <span class="kw">det</span>(res<span class="op">$</span>Theta)
 <span class="co">#&gt; [1] 0</span></code></pre></div>
-<pre><code>N &lt;- N1 + N2
-objFunction(Theta, res$U, res$lambda, res$Km, beta, N, K)
-objFunction(res$Theta, res$U, res$lambda, res$Km, beta, N, K)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span>N1 <span class="op">+</span><span class="st"> </span>N2
+evd_true &lt;-<span class="st"> </span><span class="kw">eigen</span>(Theta)
+vec_true &lt;-<span class="st"> </span>evd_true<span class="op">$</span>vectors[, N<span class="op">:</span><span class="dv">1</span>]
+vec_true
+<span class="co">#&gt;            [,1]       [,2]       [,3]          [,4]       [,5]       [,6]</span>
+<span class="co">#&gt; [1,]  0.0000000 -0.5773503  0.5643095  0.0000000000  0.5901029  0.0000000</span>
+<span class="co">#&gt; [2,]  0.0000000 -0.5773503 -0.7931989  0.0000000000  0.1936549  0.0000000</span>
+<span class="co">#&gt; [3,]  0.0000000 -0.5773503  0.2288893  0.0000000000 -0.7837578  0.0000000</span>
+<span class="co">#&gt; [4,] -0.5773503  0.0000000  0.0000000 -0.7069205454  0.0000000  0.4085707</span>
+<span class="co">#&gt; [5,] -0.5773503  0.0000000  0.0000000 -0.0003723246  0.0000000 -0.8164965</span>
+<span class="co">#&gt; [6,] -0.5773503  0.0000000  0.0000000  0.7072928700  0.0000000  0.4079258</span>
+vals_true &lt;-<span class="st"> </span>evd_true<span class="op">$</span>values[N<span class="op">:</span><span class="dv">1</span>]
+vals_true
+<span class="co">#&gt; [1] 8.881784e-16 1.332268e-15 6.408571e-01 1.627111e+00 2.185018e+00</span>
+<span class="co">#&gt; [6] 2.746823e+00</span>
+res<span class="op">$</span>lambda
+<span class="co">#&gt; [1] 0.000000 0.000000 1.010313 1.774452 2.062863 2.785350</span>
+<span class="kw">objFunction</span>(Theta, vec_true, vals_true, res<span class="op">$</span>Km, beta, N, K)
+<span class="co">#&gt; [1] 2.185048</span>
+<span class="kw">objFunction</span>(res<span class="op">$</span>Theta, vec_true, vals_true, res<span class="op">$</span>Km, beta, N, K)
+<span class="co">#&gt; [1] 31.74898</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">k &lt;-<span class="st"> </span><span class="kw">length</span>(res<span class="op">$</span>fun)
 <span class="kw">plot</span>(<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>k), res<span class="op">$</span>fun, <span class="dt">pch=</span><span class="dv">19</span>, <span class="dt">cex=</span>.<span class="dv">6</span>, <span class="dt">xlab =</span> <span class="st">&quot;Iteration number&quot;</span>,
      <span class="dt">ylab =</span> <span class="st">&quot;Objective function&quot;</span>)</code></pre></div>
