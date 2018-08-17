@@ -74,7 +74,7 @@ library(spectralGraphTopology)
 set.seed(123)
 
 # Number of samples
-T <- 20
+T <- 200
 # Vector to generate the Laplacian matrix of the graph
 w <- runif(10)
 # Laplacian matrix
@@ -100,7 +100,7 @@ which can be done as follows:
 ```{r}
 norm(Theta - res$Theta, type="F") / norm(Theta, type="F")
 
-Theta_naive <- ginv(cov(Y))
+Theta_naive <- MASS::ginv(cov(Y))
 norm(Theta - Theta_naive, type="F") / norm(Theta, type="F")
 ```
 
@@ -114,7 +114,7 @@ plot(c(1:k), res$fun,  pch=19, cex=.5, col = scales::alpha("black", .25),
 For K > 1, we can generate the Laplacian as a block diagonal matrix, as follows
 ```{r}
 library(spectralGraphTopology)
-T <- 20
+T <- 200
 w1 <- runif(3)
 w2 <- runif(3)
 Theta1 <- L(w1)
@@ -128,7 +128,7 @@ K <- 2
 beta <- 5
 res <- learnGraphTopology(Y, K, beta = beta, ftol = 1e-3)
 norm(Theta - res$Theta, type="F") / norm(Theta, type="F")
-norm(Theta - ginv(cov(Y)), type="F") / norm(Theta, type="F")
+norm(Theta - MASS::ginv(cov(Y)), type="F") / norm(Theta, type="F")
 ```
 
 ```{r}

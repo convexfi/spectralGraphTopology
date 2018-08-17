@@ -42,28 +42,26 @@
 #' # show the relative error between the true Laplacian and the learned one
 #' norm(Theta - Theta_est, type="F") / norm(Theta, type="F")
 #' @export
-learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
-                                ub = 1e4, alpha = 0., beta = .5, rho = .1,
-                                maxiter = 5000, w_tol = 1e-4, U_tol = 1e-4,
-                                lambda_tol = 1e-4, ftol = 1e-6) {
+learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
+                                beta = .5, rho = .1, maxiter = 5000,
+                                w_tol = 1e-6, lambda_tol = 1e-6, U_tol = 1e-6,
+                                ftol = 1e-6) {
   N <- ncol(Y)
   T <- nrow(Y)
-  #S <- crossprod(Y) / T
   S <- cov(Y)
-  H <- alpha * (2. * diag(N) - matrix(1, N, N))
+  H <- alpha * (2 * diag(N) - matrix(1, N, N))
   Km <- S + H
 
-  # define "appropriate" inital guess
-  if (any(is.na(w0)))
-    w0 <- runif(as.integer(.5 * N * (N - 1)))
-  evd <- eigen(L(w0))
-  if (any(is.na(U0)))
-    U0 <- evd$vectors[, N:1]
-  if (any(is.na(lambda0))) {
-    lambda0 <- evd$values
-    lambda0 <- lambda0[N:1]
-    lambda0[1:K] <- 0
+  # define appropriate inital guess
+  if (any(is.na(w0))) {
+    Sinv <- MASS::ginv(Km)
+    w0 <- Linv(Sinv)
+    evd <- eigen(Sinv)
+  } else {
+    evd <- eigen(L(w0))
   }
+  lambda0 <- pmax(0, evd$values[N:1])
+  U0 <- evd$vectors[, N:1]
 
   fun0 <- objFunction(L(w0), U0, lambda0, Km, beta, N, K)
   fun_seq <- c(fun0)
@@ -76,11 +74,10 @@ learnGraphTopology <- function (Y, K, w0 = NA, U0 = NA, lambda0 = NA, lb = 1e-4,
 
       # check tolerance on parameters
       w_err <- norm(w - w0, type="2") / max(1, norm(w, type="2"))
-      U_err <- norm(U - U0, type="F") / max(1, norm(U, type="F"))
-      lambda_err <- norm(lambda - lambda0, type="2") /
-                        max(1, norm(lambda, type="2"))
+      lambda_err <- norm(lambda - lambda0, type="2") / max(1, norm(lambda, type="2"))
+      U_err <- norm(U - U0, type="F") / max(1, norm(U, type="2"))
 
-      if ((w_err < w_tol) & (U_err < U_tol) & (lambda_err < lambda_tol))
+      if ((w_err < w_tol) & (lambda_err < lambda_tol) & (U_err < U_tol))
         break
 
       # check tolerance on objective function
