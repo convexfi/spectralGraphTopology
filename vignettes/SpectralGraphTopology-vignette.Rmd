@@ -57,7 +57,7 @@ For installation instructions, please visit
 # Problem Statement
 The Laplacian matrix $\boldsymbol{\Theta}$ of a graph contains the information of its topology and weight connections. By definition a Laplacian matrix is positive semi-definite, symmetric, and with sum of rows equal to zero. The Laplacian linear operator $\mathcal{L}\mathbf{w}$ maps a vector of weights $\mathbf{w}$ into a valid Laplacian matrix so that the conditions are satisfied by construction.
 
-The underlying optimization problem of learning a graph may be expressed as follows:
+The underlying optimization problem of learning a K-component graph may be expressed as follows:
 $$\begin{array}{ll}
 \underset{\mathbf{w}, \boldsymbol{\Lambda}, \mathbf{U}}{\textsf{minimize}} & - \log \det(\boldsymbol{\Lambda})
 + \mathrm{tr}\left(\mathbf{K}\mathcal{L}\mathbf{w}\right)
@@ -98,15 +98,40 @@ Theta
 res$Theta
 ```
 
-We can evaluate the performance of the learning process in a more objective manner
-by computing the relative error between the true Laplacian matrix and the estimated one,
-which can be done as follows:
-```{r}
-norm(Theta - res$Theta, type="F") / norm(Theta, type="F")
-
-Theta_naive <- MASS::ginv(cov(Y))
-norm(Theta - Theta_naive, type="F") / norm(Theta, type="F")
+```{r, cache = TRUE}
+library(corrplot)
+par(mfrow = c(1, 2))
+corrplot(cov2cor(Theta))
+corrplot(cov2cor(res$Theta))
 ```
+
+We evaluate the performance of the learning process in a more objective
+manner by computing two criterions:
+
+1. relative error
+2. percentage improvement in average loss (PRIAL)
+
+```{r, cache = TRUE}
+relativeError <- function(Xtrue, Xest) {
+    return (100 * norm(Xtrue - Xest, type = "F") / norm(Xtrue, type = "F"))
+}
+
+prial <- function(Xtrue, Xest) {
+    Xnaive <- MASS::ginv(cov(Xtrue))
+    return (100 * (1 - (norm(Xest - Xtrue, type = "F") /
+                        norm(Xnaive - Xtrue, type = "F"))^2))
+}
+
+```{r}
+Theta_naive <- MASS::ginv(cov(Y))
+rel_err <- c(proposed = relativeError(Theta, res$Theta),
+             naive = relativeError(Theta, Theta_naive))
+prial_avg <- c(proposed = prial(Theta, res$Theta),
+               naive = prial(Theta, Theta_naive))
+rel_err
+prial_avg
+```
+
 In this case, the naive estimation of the Laplacian matrix (i.e., generalized inverse of the sample covariance matrix) performs already quite well since the ratio $T/N$ is large enough `r T/N` for the sample covariance matrix to be accurately estimated.
 
 Let's also look at the convergence of the objective function versus iterations:
@@ -118,9 +143,9 @@ plot(c(1:N_iter), res$fun, type = "b", pch=19, cex=.6, col = scales::alpha("blac
 ```
 
 For K > 1, we can generate the Laplacian as a block diagonal matrix, as follows
-```{r}
+```{r, cache = TRUE}
 library(spectralGraphTopology)
-T <- 200
+T <- 50
 w1 <- runif(3)
 w2 <- runif(3)
 Theta1 <- L(w1)
@@ -132,8 +157,15 @@ Theta <- rbind(cbind(Theta1, matrix(0, N1, N2)),
 Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Theta))
 K <- 2
 res <- learnGraphTopology(Y, K, beta = 10)
-norm(Theta - res$Theta, type="F") / norm(Theta, type="F")
-norm(Theta - MASS::ginv(cov(Y)), type="F") / norm(Theta, type="F")
+```
+```{r}
+Theta_naive <- MASS::ginv(cov(Y))
+rel_err <- c(proposed = relativeError(Theta, res$Theta),
+             naive = relativeError(Theta, Theta_naive))
+prial_avg <- c(proposed = prial(Theta, res$Theta),
+               naive = prial(Theta, Theta_naive))
+rel_err
+prial_avg
 ```
 
 ```{r}
@@ -151,8 +183,6 @@ plot(c(1:N_iter), res$loglike, type = "b", pch=19, cex=.6, col = scales::alpha("
      xlab = "Iteration number", ylab = "Log Likelihood")
 ```
 
-
-
 # Explanation of the algorithms
 
 In this section we describe in detail the algorithms designed to solve the
@@ -160,7 +190,7 @@ graph topology learning problem.
 
 ## `learnGraphTopology`: Learning the topology of graph
 
-The goal of `learnGraphTopology()` is to estimate the Laplacian matrix generated
+The goal of `learnGraphTopology` is to estimate the Laplacian matrix generated
 by the weight vector of a graph, $\mathbf{w}$. The algorithm for the function `learnGraphTopology`
 is stated as follows:
 
@@ -169,12 +199,12 @@ is stated as follows:
  \KwData{$\mathbf{Y}$ (data matrix), $K$ (\#\{components\}), $\beta$ (regularization term),
  $\mathbf{w}^{(0)}$, $\boldsymbol{\lambda}^{(0)}$, $\mathbf{U}^{(0)}$ (initial parameter estimates),
  $\alpha_1$, $\alpha_2$ (lower and upper bound on the eigenvalues of the Laplacian matrix),
- $\rho$ (how much to increase beta per iteration)}
+ $\rho$ (how much to increase beta per iteration).}
  \KwResult{$\boldsymbol{\Theta}$ (Laplacian matrix)}
  $N \gets \texttt{ncol}(\mathbf{Y})$\;
- \While{objective function do not converged or max \#\{iterations\} not reached}{
+ \While{objective function do not converged \textbf{or} max \#\{iterations\} not reached}{
    $k \gets 0$\;
-   \While{parameters do not converged or max \#\{iterations\} not reached}{
+   \While{parameters do not converged \textbf{or} max \#\{iterations\} not reached}{
   $\mathbf{w}^{(k+1)} \gets \texttt{w\_update}(\mathbf{w}^{(k)}, \mathbf{U}^{(k)}, \boldsymbol{\lambda}^{(k)}, \beta, N, \mathbf{K})$\;
   $\mathbf{U}^{(k+1)} \gets \texttt{U\_update}(\mathbf{w}^{(k+1)}, N)$\;
   $\boldsymbol{\lambda}^{(k+1)} \gets \texttt{lambda\_update}(\mathbf{w}^{(k+1)},
@@ -203,8 +233,8 @@ is stated as follows:
   \DontPrintSemicolon
   \SetKwFunction{FwUupdate}{\texttt{U\_update}}
   \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\FwUupdate{$\mathbf{w}, N$}}{
-        \KwRet \texttt{eigenvectors}$(\mathcal{L}(\mathbf{w}))$ \# \textit{increasing order w.r.t. eigenvalues}\;
+  \Fn{\FwUupdate{$\mathbf{w}, N, K$}}{
+        \KwRet \texttt{eigenvectors}$(\mathcal{L}(\mathbf{w}))$[K+1:N] \# \textit{increasing order w.r.t. eigenvalues}\;
   }
   \;
 \end{algorithm}
