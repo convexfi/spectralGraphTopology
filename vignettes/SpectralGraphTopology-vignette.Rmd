@@ -69,7 +69,8 @@ where $\mathcal{S}_{\boldsymbol{\Lambda}}$ further constrains the eigenvalues of
 $\boldsymbol{\Theta}=\mathcal{L}\mathbf{w}$ according to some topology (e.g., a $K$-component graph has $K$ zero eigenvalues).
 
 In order to solve this problem, we use a block coordinate descent algorithm to
-iteratively optimize each variable while helding the others fixed.
+iteratively optimize each variable while helding the others fixed. For
+details check the paper or the algorithm description at the end of this document.
 
 # Usage of the package
 We illustrate the usage of the package with simulated data, as follows:

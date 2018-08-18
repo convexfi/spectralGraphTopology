@@ -106,7 +106,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 \textsf{subject to} &amp; \mathbf{w} \geq 0, \boldsymbol{\Lambda} \in \mathcal{S}_{\boldsymbol{\Lambda}},~\text{and}~
 \mathbf{U}^{T}\mathbf{U} = \mathbf{I}
 \end{array}\]</span> where <span class="math inline">\(\mathcal{S}_{\boldsymbol{\Lambda}}\)</span> further constrains the eigenvalues of Laplacian matrices <span class="math inline">\(\boldsymbol{\Theta}=\mathcal{L}\mathbf{w}\)</span> according to some topology (e.g., a <span class="math inline">\(K\)</span>-component graph has <span class="math inline">\(K\)</span> zero eigenvalues).</p>
-<p>In order to solve this problem, we use a block coordinate descent algorithm to iteratively optimize each variable while helding the others fixed.</p>
+<p>In order to solve this problem, we use a block coordinate descent algorithm to iteratively optimize each variable while helding the others fixed. Please, for details check the paper or the algorithm description at the end of this document.</p>
 </div>
 <div id="usage-of-the-package" class="section level1">
 <h1>Usage of the package</h1>
