@@ -3,17 +3,17 @@ title: "Learning the topology of graphs"
 author: "Convex Group-HKUST"
 date: "`r Sys.Date()`"
 output:
-  bookdown::pdf_document2:
-    fig_caption: yes
-    number_sections: yes
-    toc: yes
-    toc_depth: 2
   bookdown::html_document2:
     base_format: prettydoc::html_pretty
     theme: tactile
     highlight: vignette
     fig_caption: yes
     number_sections: no
+    toc: yes
+    toc_depth: 2
+  bookdown::pdf_document2:
+    fig_caption: yes
+    number_sections: yes
     toc: yes
     toc_depth: 2
 header-includes:
@@ -55,8 +55,9 @@ For installation instructions, please visit
 [https://github.com/dppalomar/spectralGraphTopology](https://github.com/dppalomar/spectralGraphTopology)
 
 # Problem Statement
+The Laplacian matrix $\boldsymbol{\Theta}$ of a graph contains the information of its topology and weight connections. By definition a Laplacian matrix is positive semi-definite, symmetric, and with sum of rows equal to zero. The Laplacian linear operator $\mathcal{L}\mathbf{w}$ maps a vector of weights $\mathbf{w}$ into a valid Laplacian matrix so that the conditions are satisfied by construction.
 
-The underlying optimization problem of learning a K-component graph may be expressed as follows
+The underlying optimization problem of learning a graph may be expressed as follows:
 $$\begin{array}{ll}
 \underset{\mathbf{w}, \boldsymbol{\Lambda}, \mathbf{U}}{\textsf{minimize}} & - \log \det(\boldsymbol{\Lambda})
 + \mathrm{tr}\left(\mathbf{K}\mathcal{L}\mathbf{w}\right)
@@ -64,14 +65,13 @@ $$\begin{array}{ll}
 \textsf{subject to} & \mathbf{w} \geq 0, \boldsymbol{\Lambda} \in \mathcal{S}_{\boldsymbol{\Lambda}},~\text{and}~
 \mathbf{U}^{T}\mathbf{U} = \mathbf{I}
 \end{array}$$
-in which $\mathcal{S}_{\boldsymbol{\Lambda}}$ is the space of eigenvalues of matrices
-$\boldsymbol{\Theta}$ which are positive semi-definite, symmetric, and whose sum of the elements of
-any row or column is equal to zero.
+where $\mathcal{S}_{\boldsymbol{\Lambda}}$ further constrains the eigenvalues of Laplacian matrices
+$\boldsymbol{\Theta}=\mathcal{L}\mathbf{w}$ according to some topology (e.g., a $K$-component graph has $K$ zero eigenvalues).
 
 In order to solve this problem, we use a block coordinate descent algorithm to
 iteratively optimize each variable while helding the others fixed.
 
-## w-update
+## w-update [Vinicius: this should be removed from here, right?]
 
 \begin{equation}
 \mathbf{w}^{(k+1)} = \mathbf{w}^{(k)} - \dfrac{\nabla_{\mathbf{w}}f(\mathbf{w}^{(k)})}{2N}
@@ -114,13 +114,16 @@ norm(Theta - res$Theta, type="F") / norm(Theta, type="F")
 Theta_naive <- MASS::ginv(cov(Y))
 norm(Theta - Theta_naive, type="F") / norm(Theta, type="F")
 ```
+In this case, the naive estimation of the Laplacian matrix (i.e., generalized inverse of the sample covariance matrix) performs already quite well since the ratio $T/N$ is large enough `r T/N` for the sample covariance matrix to be accurately estimated.
 
-Let's also look at the convergence of the objective function versus iteration:
+Let's also look at the convergence of the objective function versus iterations:
 ```{r}
-k <- length(res$fun)
-plot(c(1:k), res$fun,  pch=19, cex=.5,
+N_iter <- length(res$fun)
+plot(c(1:N_iter), res$fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
      xlab = "Iteration number", ylab = "Objective function")
+
 ```
+[Vinicius: the plot should have the dots connected with lines, I have updated it.]
 
 For K > 1, we can generate the Laplacian as a block diagonal matrix, as follows
 ```{r}
@@ -147,8 +150,8 @@ res$Theta
 ```
 
 ```{r}
-k <- length(res$fun)
-plot(c(1:k), res$fun, pch=19, cex=.6, col = scales::alpha("black", .5),
+N_iter <- length(res$fun)
+plot(c(1:N_iter), res$fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
      xlab = "Iteration number", ylab = "Objective function")
 ```
 
