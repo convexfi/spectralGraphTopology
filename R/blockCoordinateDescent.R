@@ -7,12 +7,12 @@
 #' @param λ vector whose entries are the eigenvalues of the Laplacian in
 #' increasing order
 #' @param N dimension of each data sample
-#' @param Km matrix (see section 1.1 for its definition)
+#' @param Kmat matrix (see section 1.1 for its definition)
 #'
 #' @return the updated value of w
-w_update <- function(w, U, beta, lambda, N, Km) {
-  #grad_f <- Lstar(L(w) - U %*% diag(lambda) %*% t(U) + Km / beta)
-  grad_f <- Lstar(L(w) - crossprod(sqrt(lambda) * t(U)) + Km / beta)
+w_update <- function(w, U, beta, lambda, N, Kmat) {
+  #grad_f <- Lstar(L(w) - U %*% diag(lambda) %*% t(U) + Kmat / beta)
+  grad_f <- Lstar(L(w) - crossprod(sqrt(lambda) * t(U)) + Kmat / beta)
   w_update <- w - .5 * grad_f / N
   return(pmax(0, w_update))
 }
@@ -53,10 +53,10 @@ lambda_update <- function(lb, ub, beta, U, w, N, K) {
   if (condition) {
     return (lambda)
   } else {
-    bigger_ub <- lambda > ub
-    smaller_lb <- lambda < lb
-    lambda[bigger_ub] <- ub
-    lambda[smaller_lb] <- lb
+    greater_ub <- lambda > ub
+    lesser_lb <- lambda < lb
+    lambda[greater_ub] <- ub
+    lambda[lesser_lb] <- lb
   }
 
   condition <- all(lambda[q] <= ub, lambda[1] >= lb,
