@@ -71,13 +71,6 @@ $\boldsymbol{\Theta}=\mathcal{L}\mathbf{w}$ according to some topology (e.g., a 
 In order to solve this problem, we use a block coordinate descent algorithm to
 iteratively optimize each variable while helding the others fixed.
 
-## w-update [Vinicius: this should be removed from here, right?]
-
-\begin{equation}
-\mathbf{w}^{(k+1)} = \mathbf{w}^{(k)} - \dfrac{\nabla_{\mathbf{w}}f(\mathbf{w}^{(k)})}{2N}
-\end{equation}
-
-
 # Usage of the package
 We illustrate the usage of the package with simulated data, as follows:
 ```{r, cache = TRUE}
@@ -123,7 +116,6 @@ plot(c(1:N_iter), res$fun, type = "b", pch=19, cex=.6, col = scales::alpha("blac
      xlab = "Iteration number", ylab = "Objective function")
 
 ```
-[Vinicius: the plot should have the dots connected with lines, I have updated it.]
 
 For K > 1, we can generate the Laplacian as a block diagonal matrix, as follows
 ```{r}
@@ -153,6 +145,10 @@ res$Theta
 N_iter <- length(res$fun)
 plot(c(1:N_iter), res$fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
      xlab = "Iteration number", ylab = "Objective function")
+```
+```{r}
+plot(c(1:N_iter), res$loglike, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
+     xlab = "Iteration number", ylab = "Log Likelihood")
 ```
 
 

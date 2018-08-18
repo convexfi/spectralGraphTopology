@@ -50,11 +50,11 @@ learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
   T <- nrow(Y)
   S <- cov(Y)
   H <- alpha * (2 * diag(N) - matrix(1, N, N))
-  Km <- S + H
+  Kmat <- S + H
 
   # define appropriate inital guess
   if (any(is.na(w0))) {
-    Sinv <- MASS::ginv(Km)
+    Sinv <- MASS::ginv(Kmat)
     w0 <- Linv(Sinv)
     evd <- eigen(Sinv)
   } else {
@@ -63,12 +63,14 @@ learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
   lambda0 <- pmax(0, evd$values[(N-K):1])
   U0 <- evd$vectors[, (N-K):1]
 
-  fun0 <- objectiveFunction(L(w0), U0, lambda0, Km, beta, N, K)
+  ll0 <- logLikelihood(L(w0), lambda0, Kmat)
+  fun0 <- ll0 + logPrior(beta, L(w0), lambda0, U0)
   fun_seq <- c(fun0)
+  ll_seq <- c(ll0)
 
   for (i in 1:maxiter_beta) {
     for (k in 1:maxiter) {
-      w <- w_update(w0, U0, beta, lambda0, N, Km)
+      w <- w_update(w0, U0, beta, lambda0, N, Kmat)
       U <- U_update(w, N, K)
       lambda <- lambda_update(lb, ub, beta, U, w, N, K)
 
@@ -81,10 +83,13 @@ learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
         break
 
       # check tolerance on objective function
-      fun <- objectiveFunction(L(w), U, lambda, Km, beta, N, K)
+      ll <- logLikelihood(L(w), lambda, Kmat)
+      fun <- ll + logPrior(beta, L(w), lambda, U)
       ferr <- abs(fun - fun0) / max(1, abs(fun))
+      ll_seq <- c(ll_seq, ll)
       fun_seq <- c(fun_seq, fun)
 
+      # check tolerance on objective function
       if (ferr < ftol)
         break
 
@@ -95,5 +100,6 @@ learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
     }
     beta <- beta * (1 + rho)
   }
-  return(list(Theta = L(w), fun = fun_seq, w = w, lambda = lambda, U = U))
+  return(list(Theta = L(w), fun = fun_seq, loglike = ll_seq, w = w,
+              lambda = lambda, U = U))
 }
