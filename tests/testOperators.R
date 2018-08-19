@@ -114,3 +114,50 @@ test_that("test_inner_product_relation_between_LOp_and_LStarOp", {
   y <- Lstar(Y)
   expect_that(sum(diag(t(Y) %*% Lw)) == w %*% y, is_true())
 })
+
+# Unfortunately, neither Eigen nor base R provide the canonical vec operator,
+# so we need to code our own in C++ in order to compute the matrix form of
+# vec(L). Anyways, let's test our vec against matrixcalc::vec.
+test_that("test_vec_operator_against_matrixcalc", {
+    ncols <- sample(1:10, 1)
+    nrows <- sample(1:10, 1)
+    M <- matrix(runif(ncols * nrows), nrows, ncols)
+    expect_that(all(vec(M) == matrixcalc::vec(M)), is_true())
+})
+
+test_that("test_vec(L)_operator", {
+    # N = 2
+    R2 <- matrix(c(1, -1, -1, 1), 4, 1)
+    expect_that(all(R2 == vecLmat(2)), is_true())
+
+    # N = 3
+    R3 <- matrix(c(1, 1, 0,
+                  -1, 0, 0,
+                   0,-1, 0,
+                  -1, 0, 0,
+                   1, 0, 1,
+                   0, 0,-1,
+                   0,-1, 0,
+                   0, 0,-1,
+                   0, 1, 1), 9, 3, byrow = TRUE)
+    expect_that(all(R3 == vecLmat(3)), is_true())
+
+    # N = 4
+    R4 <- matrix(c(1, 1, 1, 0, 0, 0,
+                  -1, 0, 0, 0, 0, 0,
+                   0,-1, 0, 0, 0, 0,
+                   0, 0,-1, 0, 0, 0,
+                  -1, 0, 0, 0, 0, 0,
+                   1, 0, 0, 1, 1, 0,
+                   0, 0, 0,-1, 0, 0,
+                   0, 0, 0, 0,-1, 0,
+                   0,-1, 0, 0, 0, 0,
+                   0, 0, 0,-1, 0, 0,
+                   0, 1, 0, 1, 0, 1,
+                   0, 0, 0, 0, 0,-1,
+                   0, 0,-1, 0, 0, 0,
+                   0, 0, 0, 0,-1, 0,
+                   0, 0, 0, 0, 0,-1,
+                   0, 0, 1, 0, 1, 1), 16, 6, byrow = TRUE)
+    expect_that(all(R4 == vecLmat(4)), is_true())
+})

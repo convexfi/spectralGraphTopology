@@ -41,19 +41,18 @@ test_that("test_learnGraphTopology_K=2", {
 
 # This test is currently failing, it should pass after we make K > 1 work
 test_that("test_learnGraphTopology_K=2", {
-  T <- 10000
+  T <- 2000
   w1 <- runif(3)
-  w2 <- runif(6)
+  w2 <- runif(3)
   K <- 2
   Theta1 <- L(w1)
   Theta2 <- L(w2)
   N1 <- ncol(Theta1)
   N2 <- ncol(Theta2)
 
-  Theta <- rbind(cbind(Theta1, matrix(0, N1, N2)),
-                 cbind(matrix(0, N2, N1), Theta2))
-  Y <- MASS::mvrnorm(T, as.vector(array(0, N1 + N2)), MASS::ginv(Theta))
-  res <- learnGraphTopology(Y, K, beta=20.)
+  Theta <- blockDiagonal(list(Theta1, Theta2))
+  Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Theta))
+  res <- learnGraphTopology(Y, K, beta=10.)
   expect_that(norm(Theta - res$Theta, type="F") / norm(Theta, type="F") < 1e-1,
               is_true())
 })

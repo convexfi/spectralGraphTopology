@@ -30,6 +30,7 @@ Eigen::MatrixXd L(const Eigen::VectorXd& w) {
     return Theta;
 }
 
+// [[Rcpp::export]]
 Eigen::MatrixXd vecLmat(int n) {
    /* Computes the matrix that represents the composition of
     * the vec and the L operators.
@@ -47,7 +48,7 @@ Eigen::MatrixXd vecLmat(int n) {
     for (int j = 0; j < ncols; ++j) {
         Eigen::VectorXd e = Eigen::VectorXd::Zero(ncols);
         e(j) = 1.;
-        //R.col(j) = vec(L(e));
+        R.col(j) = vec(L(e));
     }
     return R;
 }

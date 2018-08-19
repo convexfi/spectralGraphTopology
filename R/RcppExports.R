@@ -5,6 +5,10 @@ L <- function(w) {
     .Call('_spectralGraphTopology_L', PACKAGE = 'spectralGraphTopology', w)
 }
 
+vecLmat <- function(n) {
+    .Call('_spectralGraphTopology_vecLmat', PACKAGE = 'spectralGraphTopology', n)
+}
+
 vec <- function(M) {
     .Call('_spectralGraphTopology_vec', PACKAGE = 'spectralGraphTopology', M)
 }
