@@ -187,8 +187,7 @@ Theta1 &lt;-<span class="st"> </span><span class="kw">L</span>(w1)
 Theta2 &lt;-<span class="st"> </span><span class="kw">L</span>(w2)
 N1 &lt;-<span class="st"> </span><span class="kw">ncol</span>(Theta1)
 N2 &lt;-<span class="st"> </span><span class="kw">ncol</span>(Theta2)
-Theta &lt;-<span class="st"> </span><span class="kw">rbind</span>(<span class="kw">cbind</span>(Theta1, <span class="kw">matrix</span>(<span class="dv">0</span>, N1, N2)),
-               <span class="kw">cbind</span>(<span class="kw">matrix</span>(<span class="dv">0</span>, N2, N1), Theta2))
+Theta &lt;-<span class="st"> </span><span class="kw">blockDiagonal</span>(<span class="kw">list</span>(Theta1, Theta2))
 Y &lt;-<span class="st"> </span>MASS<span class="op">::</span><span class="kw">mvrnorm</span>(T, <span class="kw">rep</span>(<span class="dv">0</span>, N1 <span class="op">+</span><span class="st"> </span>N2), MASS<span class="op">::</span><span class="kw">ginv</span>(Theta))
 K &lt;-<span class="st"> </span><span class="dv">2</span>
 res &lt;-<span class="st"> </span><span class="kw">learnGraphTopology</span>(Y, K, <span class="dt">beta =</span> <span class="dv">10</span>)</code></pre></div>
