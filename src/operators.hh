@@ -2,12 +2,14 @@
 #define OPERATORS_H
 // [[Rcpp::depends(RcppEigen)]]
 #include <RcppEigen.h>
+#include <iostream>
 #include <cmath>
 
 using namespace Eigen;
 
-MatrixXd L(const Eigen::VectorXd&, int);
-VectorXd Linv(const Eigen::MatrixXd&);
-VectorXd Lstar(const Eigen::MatrixXd&);
-VectorXd altLstar(const Eigen::MatrixXd&);
+MatrixXd L(const VectorXd&, int);
+VectorXd Linv(const MatrixXd&);
+VectorXd Lstar(const MatrixXd&);
+VectorXd altLstar(const MatrixXd&);
+MatrixXd vec(const MatrixXd& M);
 #endif

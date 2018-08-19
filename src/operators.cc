@@ -30,6 +30,42 @@ Eigen::MatrixXd L(const Eigen::VectorXd& w) {
     return Theta;
 }
 
+Eigen::MatrixXd vecLmat(int n) {
+   /* Computes the matrix that represents the composition of
+    * the vec and the L operators.
+    *
+    * Args:
+    *   n: the dimension of L
+    *
+    * Returns:
+    *   R: matrix such that vec(L(w)) = Rw
+    **/
+    int ncols = .5 * n * (n - 1);
+    int nrows = n * n;
+
+    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(nrows, ncols);
+    for (int j = 0; j < ncols; ++j) {
+        Eigen::VectorXd e = Eigen::VectorXd::Zero(ncols);
+        e(j) = 1.;
+        //R.col(j) = vec(L(e));
+    }
+    return R;
+}
+
+// [[Rcpp::export]]
+Eigen::MatrixXd vec(const Eigen::MatrixXd& M) {
+    Eigen::MatrixXd vecM(M.size(), 1);
+    int k = 0;
+    for (int j = 0; j < M.cols(); ++j) {
+        for (int i = 0; i < M.rows(); ++i) {
+            vecM(k, 0) = M(i, j);
+            ++k;
+        }
+    }
+    return vecM;
+}
+
+
 // [[Rcpp::export]]
 Eigen::VectorXd Lstar(const Eigen::MatrixXd& Y) {
    /* Computes the Lstar operator.
