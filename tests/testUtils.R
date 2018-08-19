@@ -10,3 +10,11 @@ test_that("testBlockDiagonal", {
              cbind(matrix(0, N2, N1), L2))
   expect_that(all(L == blockDiagonal(list(L1, L2))), is_true())
 })
+
+test_that("testBlockDiagonalThrowsException", {
+  N1 <- sample(1:10, 1)
+  N2 <- N1 + 1
+  L2 <- matrix(2, N1, N2)
+  expect_error(blockDiagonal(list(matrix(-1, N1, N1),
+                                  matrix(-1, N1, N2))), "matrix 2 is not square")
+})
