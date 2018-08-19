@@ -10,9 +10,19 @@ Eigen::MatrixXd blockDiagonal(const std::vector<Eigen::MatrixXd>& matrices) {
     Eigen::VectorXd sizes(n);
 
     int N = 0;
+    int cols, rows;
     for (int k = 0; k < n; ++k) {
-        sizes(k) = matrices[k].cols();
-        N += sizes(k);
+        cols = matrices[k].cols();
+        rows = matrices[k].rows();
+
+        if(cols != rows) {
+            std::stringstream err_msg;
+            err_msg << "matrix " << std::to_string(k + 1) << " is not square";
+            throw std::invalid_argument(err_msg.str().c_str());
+        } else {
+            sizes(k) = cols;
+            N += sizes(k);
+        }
     }
 
     Eigen::MatrixXd blockDiag = Eigen::MatrixXd::Zero(N, N);
