@@ -17,3 +17,7 @@ altLstar <- function(Y) {
     .Call('_spectralGraphTopology_altLstar', PACKAGE = 'spectralGraphTopology', Y)
 }
 
+blockDiagonal <- function(matrices) {
+    .Call('_spectralGraphTopology_blockDiagonal', PACKAGE = 'spectralGraphTopology', matrices)
+}
+
