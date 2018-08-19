@@ -9,6 +9,3 @@ using namespace std;
 
 MatrixXd blockDiagonal(const std::vector<MatrixXd>& matrices);
 #endif
-
-// library(spectralGraphTopology)
-// x <- list(matrix(1, 2, 2), matrix(-1, 3, 3))
