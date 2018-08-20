@@ -1,1 +1,1 @@
-test_results <- testthat::test_dir(".", reporter = "summary")
+test_results <- testthat::test_dir("testthat", reporter = "summary")

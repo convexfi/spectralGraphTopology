@@ -41,7 +41,7 @@ test_that("test_learnGraphTopology_K=2", {
 
 # This test is currently failing, it should pass after we make K > 1 work
 test_that("test_learnGraphTopology_K=2", {
-  T <- 2000
+  T <- 10000
   w1 <- runif(3)
   w2 <- runif(3)
   K <- 2
