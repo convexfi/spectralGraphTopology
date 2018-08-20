@@ -1,11 +1,13 @@
 context("testOperators.R")
+library(patrick)
 library(testthat)
 library(spectralGraphTopology)
 
+
+# The L operator should return a symmetric positive semi-definite matrix
+# with non-positive off diagonal elements and nonnegative
+# diagonal elements
 LOpConstraints <- function(Lw) {
-  # The L operator should return a symmetric positive semi-definite matrix
-  # with non-positive off diagonal elements and nonnegative
-  # diagonal elements
   expect_that(isSymmetric.matrix(Lw), is_true())
   expect_that(all(diag(Lw) >= 0), is_true())
   Lw_off <- Lw - diag(diag(Lw))
@@ -20,6 +22,7 @@ LOpConstraints <- function(Lw) {
   expect_that(all(eigen_values$values >= 0), is_true())
 }
 
+# Test the inverse of the L operator
 test_that("test_Linv", {
   w <- runif(10)
   Lw <- L(w)
@@ -27,48 +30,33 @@ test_that("test_Linv", {
   expect_that(all(w == w_test), is_true())
 })
 
-test_that("test_LOp_order4", {
-  w <- c(1, 2, 3, 4, 5, 6)
-  answer <- matrix(c(6, -1, -2, -3,
-                     -1, 10, -4, -5,
-                     -2, -4, 12, -6,
-                     -3, -5, -6, 14), nrow=4)
-  Lw <- LOp(w)
-  LOpConstraints(Lw)
-  expect_that(all(Lw == answer), is_true())
 
-  Lw <- L(w)
-  LOpConstraints(Lw)
-  expect_that(all(Lw == answer), is_true())
-})
+# Test the L operator in simple, manually verifiable cases
+with_parameters_test_that("test_L_operator", {
+    Lw <- L(w)
+    LOpConstraints(Lw)
+    expect_that(all(Lw == answer), is_true())
 
-test_that("test_LOp_order3", {
-  w <- c(1, 2, 3)
-  answer <- matrix(c(3, -1, -2,
-                     -1, 4, -3,
-                     -2, -3, 5), nrow=3)
-  Lw <- LOp(w)
-  LOpConstraints(Lw)
-  expect_that(all(Lw == answer), is_true())
+    Lw <- LOp(w)
+    LOpConstraints(Lw)
+    expect_that(all(Lw == answer), is_true())
+  },
+  cases(
+        list(w = c(1, 2, 3, 4, 5, 6), answer = matrix(c(6, -1, -2, -3,
+                                                       -1, 10, -4, -5,
+                                                       -2, -4, 12, -6,
+                                                       -3, -5, -6, 14), nrow=4)),
+        list(w = c(1, 2, 3), answer = matrix(c(3, -1, -2,
+                                              -1,  4, -3,
+                                              -2, -3,  5), nrow=3)),
+        list(w = c(1), answer = matrix(c(1, -1,
+                                        -1,  1), nrow=2))
+       )
+)
 
-  Lw <- L(w)
-  LOpConstraints(Lw)
-  expect_that(all(Lw == answer), is_true())
-})
 
-test_that("test_LOp_order2", {
-  w <- c(1)
-  answer <- matrix(c(1, -1, -1, 1), nrow=2)
-  Lw <- LOp(w)
-  LOpConstraints(Lw)
-  expect_that(all(Lw == answer), is_true())
-  Lw <- L(w)
-  LOpConstraints(Lw)
-  expect_that(all(Lw == answer), is_true())
-})
-
+# Verify that the implemented L operator is indeed linear
 test_that("test_linearity_of_LOp", {
-  # Verify that the implemented L operator is indeed linear
   w1 <- c(1, 2, 3, 4, 5, 6)
   w2 <- rev(w1)
   a <- runif(1)

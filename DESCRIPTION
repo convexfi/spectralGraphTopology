@@ -1,8 +1,8 @@
 Package: spectralGraphTopology
 Type: Package
-Title: Learning of Topology of a Class of Graphs such as K-component, Tree, Bipartite, Regular.
+Title: Learning the Topology of a Class of Graphs such as K-component, Tree, Bipartite, and Regular.
 Version: 0.1.0
-Description: Learns the topology of a class of graphs such as K-component, tree, bipartite, regular
+Description: Fast graph topology learning in R.
 Authors@R: c(
   person("Ze", "Vinicius", role = "aut", email = "jvmirca@gmail.com"),
   person(c("Daniel", "P."), "Palomar", role = c("cre", "aut"), email = "daniel.p.palomar@gmail.com")
@@ -20,13 +20,16 @@ LinkingTo:
 Imports:
     Rcpp,
     RcppEigen
+Remotes:
+    google/patrick
 RoxygenNote: 6.1.0
 Suggests:
     testthat,
     knitr,
     rmarkdown,
     bookdown,
-    prettydoc
+    prettydoc,
+    patrick
 VignetteBuilder:
     knitr,
     bookdown,

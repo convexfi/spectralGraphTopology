@@ -1,5 +1,6 @@
 context("testBlockCoordinateDescent.R")
 library(testthat)
+library(patrick)
 library(spectralGraphTopology)
 
 # lambda update step using CVX for the sake of unit testing
@@ -14,8 +15,9 @@ lambda_update_cvx <- function(lb, ub, beta, U, w, N, K) {
   return(as.vector(result$getValue(lambda)))
 }
 
+
+# test that U remains orthonormal after being updated
 test_that("test_U_update_consistency", {
-  # test that U remains orthonormal after being updated
   w <- runif(1000)
   N <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
   K <- 1
@@ -27,81 +29,29 @@ test_that("test_U_update_consistency", {
   expect_that(nrow(U) == N, is_true())
 })
 
-test_that("test_lambda_update_consistency", {
-  # test that the eigen values meet the criterion after being updated
-  w <- runif(1000)
-  N <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
-  K <- 1
-  U <- U_update(w, N, K)
-  lb <- 1e-2
-  ub <- 10
-  beta <- .5
-  q <- N - K
 
-  lambda <- lambda_update(lb, ub, beta, U, w, N, K)
-  expect_that(length(lambda) == q, is_true())
-  expect_that(all(lambda[1] >= lb, lambda[q] <= ub,
-                  lambda[2:q] >= lambda[1:(q-1)]), is_true())
+# Test that the eigen values meet the criterion after being updated
+with_parameters_test_that("test_lambda_update_consistency", {
+    N <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
+    K <- 1
+    U <- U_update(w, N, K)
+    beta <- .5
+    q <- N - K
 
-  # compare against results from CVXR
-  lambda_cvx <- lambda_update_cvx(lb, ub, beta, U, w, N, K)
-  expect_that(length(lambda_cvx) == q, is_true())
-  expect_that(all(abs(lambda_cvx - lambda) < 1e-3), is_true())
-})
+    lambda <- lambda_update(lb, ub, beta, U, w, N, K)
+    expect_that(length(lambda) == q, is_true())
+    expect_that(all(lambda[1] >= lb, lambda[q] <= ub,
+                    lambda[2:q] >= lambda[1:(q-1)]), is_true())
 
-test_that("test_lambda_update_equals_to_ub", {
-  w <- runif(6)
-  N <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
-  K <- 1
-  U <- U_update(w, N, K)
-  lb <- 1e-2
-  ub <- 1.5
-  beta <- .5
-  q <- N - K
-
-  lambda <- lambda_update(lb, ub, beta, U, w, N, K)
-  expect_that(length(lambda) == q, is_true())
-  expect_that(all(lambda[1] >= lb, lambda[q] <= ub,
-                  lambda[2:q] >= lambda[1:(q-1)]), is_true())
-
-
-  lambda_cvx <- lambda_update_cvx(lb, ub, beta, U, w, N, K)
-  expect_that(all(abs(lambda_cvx - lambda) < 1e-4), is_true())
-})
-
-test_that("test_lambda_update_equals_to_lb", {
-  w <- runif(20)
-  N <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
-  K <- 1
-  U <- U_update(w, N, K)
-  lb <- 3
-  ub <- 100
-  beta <- .5
-  q <- N - K
-
-  lambda <- lambda_update(lb, ub, beta, U, w, N, K)
-  expect_that(length(lambda) == q, is_true())
-  expect_that(all(lambda[1] >= lb, lambda[q] <= ub,
-                  lambda[2:q] >= lambda[1:(q-1)]), is_true())
-  lambda_cvx <- lambda_update_cvx(lb, ub, beta, U, w, N, K)
-  expect_that(all(abs(lambda_cvx - lambda) < 1e-4), is_true())
-})
-
-
-test_that("test_lambda_update_with_terms_equal_to_both_lb_and_ub", {
-  w <- runif(20)
-  N <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
-  K <- 1
-  U <- U_update(w, N, K)
-  lb <- 3.3
-  ub <- 4.
-  beta <- .5
-  q <- N - K
-
-  lambda <- lambda_update(lb, ub, beta, U, w, N, K)
-  expect_that(length(lambda) == q, is_true())
-  expect_that(all(lambda[1] >= lb, lambda[q] <= ub,
-                  lambda[2:q] >= lambda[1:(q-1)]), is_true())
-  lambda_cvx <- lambda_update_cvx(lb, ub, beta, U, w, N, K)
-  expect_that(all(abs(lambda_cvx - lambda) < 1e-4), is_true())
-})
+    # compare against results from CVXR
+    lambda_cvx <- lambda_update_cvx(lb, ub, beta, U, w, N, K)
+    expect_that(length(lambda_cvx) == q, is_true())
+    expect_that(all(abs(lambda_cvx - lambda) < 1e-3), is_true())
+  },
+  cases(
+        list(lb = 1e-2, ub = 10,  w = runif(1000)),
+        list(lb = 1e-2, ub = 1.5, w = runif(6)),
+        list(lb = 3,    ub = 100, w = runif(20)),
+        list(lb = 3.3,  ub = 4,   w = runif(20))
+       )
+)

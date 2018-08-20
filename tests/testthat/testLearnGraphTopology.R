@@ -24,8 +24,8 @@ test_that("test_learnGraphTopology_K=1", {
 })
 
 
+# test on toy graph from section 3 of https://arxiv.org/pdf/1206.5726.pdf
 test_that("test_learnGraphTopology_K=2", {
-  # test on toy graph from section 3 of https://arxiv.org/pdf/1206.5726.pdf
   T <- 10000
   K <- 2
   N <- 4
@@ -41,9 +41,9 @@ test_that("test_learnGraphTopology_K=2", {
 
 
 test_that("test_learnGraphTopology_K=2", {
-  T <- 10000
+  T <- 2000
   w1 <- runif(3)
-  w2 <- runif(3)
+  w2 <- runif(6)
   K <- 2
   Theta1 <- L(w1)
   Theta2 <- L(w2)
@@ -52,7 +52,7 @@ test_that("test_learnGraphTopology_K=2", {
 
   Theta <- blockDiag(list(Theta1, Theta2))
   Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Theta))
-  res <- learnGraphTopology(Y, K, beta=10.)
+  res <- learnGraphTopology(Y, K, beta=100)
   expect_that(norm(Theta - res$Theta, type="F") / norm(Theta, type="F") < 1e-1,
               is_true())
 })
