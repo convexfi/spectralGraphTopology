@@ -1,3 +1,4 @@
+context("testBlockCoordinateDescent.R")
 library(testthat)
 library(spectralGraphTopology)
 

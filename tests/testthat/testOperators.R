@@ -1,3 +1,4 @@
+context("testOperators.R")
 library(testthat)
 library(spectralGraphTopology)
 

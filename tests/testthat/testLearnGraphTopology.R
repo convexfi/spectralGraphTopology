@@ -1,3 +1,4 @@
+context("testLearnGraphTopology.R")
 library(testthat)
 library(spectralGraphTopology)
 
