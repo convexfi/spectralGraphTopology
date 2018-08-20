@@ -1,3 +1,12 @@
+---
+output:
+  html_document:
+    variant: markdown_github
+    keep_md: true
+  md_document:
+    variant: markdown_github
+---
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 
@@ -6,7 +15,7 @@
 Learns the topology of a class of graphs such as K-component, tree, bipartite,
 and regular.
 
-See vignette for a detailed documentation with several illustrative examples.
+See the vignette for a detailed documentation with several illustrative examples.
 
 The package is based on the paper:
 
@@ -14,7 +23,6 @@ The package is based on the paper:
 
 ```r
 # Installation from GitHub
-install.packages("devtools")
 devtools::install_github("dppalomar/spectralGraphTopology")
 ```
 
@@ -38,23 +46,21 @@ citation("spectralGraphTopology")
 ```
 
 ## Tests
-To run unit tests proceed as follows:
+To run unit tests, type on your favourite terminal:
 ```
-$ cd tests
-$ Rscript runTests.R
+$ cd spectralGraphTopology
+$ Rscript -e "devtools::test()"
 ```
 
 If any of the tests fail, please open a ticket [here](https://github.com/dppalomar/spectralGraphTopology/issues).
 
 ## Vignette
-For more detailed information, please check the vignette:
-[GitHub-html-vignette](https://rawgit.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology-vignette.html),
-[GitHub-pdf-vignette](https://rawgit.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology-vignette.pdf),
-
-
-## Usage of `learnGraphTopology()`
+For more detailed information, please check the vignette in
+[html](https://rawgit.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology-vignette.html) or
+[pdf](https://rawgit.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology-vignette.pdf).
 
 
 ## Links
 Package: [GitHub](https://github.com/dppalomar/spectralGraphTopology)
+
 README file: [GitHub-readme](https://rawgit.com/dppalomar/spectralGraphTopology/master/README.html)

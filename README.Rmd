@@ -65,10 +65,9 @@ $ Rscript -e "devtools::test()"
 If any of the tests fail, please open a ticket [here](https://github.com/dppalomar/spectralGraphTopology/issues).
 
 ## Vignette
-For more detailed information, please check the vignette:
-[html-vignette](https://rawgit.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology-vignette.html)
-
-[pdf-vignette](https://rawgit.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology-vignette.pdf)
+For more detailed information, please check the vignette in
+[html](https://rawgit.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology-vignette.html) or
+[pdf](https://rawgit.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology-vignette.pdf).
 
 
 ## Links
