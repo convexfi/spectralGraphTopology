@@ -52,14 +52,14 @@ learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
   H <- alpha * (2 * diag(N) - matrix(1, N, N))
   Kmat <- S + H
 
-  # define appropriate inital guess
+  # find an appropriate inital guess via QP
   if (any(is.na(w0))) {
     Sinv <- MASS::ginv(Kmat)
-    w0 <- Linv(Sinv)
-    evd <- eigen(Sinv)
-  } else {
-    evd <- eigen(L(w0))
+    R <- vecLmat(ncol(Sinv))
+    qp <- quadprog::solve.QP(t(R) %*% R, t(R) %*% vec(Sinv), diag(ncol(R)))
+    w0 <- qp$solution
   }
+  evd <- eigen(L(w0))
   lambda0 <- pmax(0, evd$values[(N-K):1])
   U0 <- evd$vectors[, (N-K):1]
 
