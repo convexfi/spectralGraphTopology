@@ -49,7 +49,7 @@ test_that("test_learnGraphTopology_K=2", {
   N1 <- ncol(Theta1)
   N2 <- ncol(Theta2)
 
-  Theta <- blockDiagonal(list(Theta1, Theta2))
+  Theta <- blockDiag(list(Theta1, Theta2))
   Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Theta))
   res <- learnGraphTopology(Y, K, beta=10.)
   expect_that(norm(Theta - res$Theta, type="F") / norm(Theta, type="F") < 1e-1,

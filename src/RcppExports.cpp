@@ -72,14 +72,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// blockDiagonal
-Eigen::MatrixXd blockDiagonal(const std::vector<Eigen::MatrixXd>& matrices);
-RcppExport SEXP _spectralGraphTopology_blockDiagonal(SEXP matricesSEXP) {
+// blockDiag
+Eigen::MatrixXd blockDiag(const std::vector<Eigen::MatrixXd>& matrices);
+RcppExport SEXP _spectralGraphTopology_blockDiag(SEXP matricesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::vector<Eigen::MatrixXd>& >::type matrices(matricesSEXP);
-    rcpp_result_gen = Rcpp::wrap(blockDiagonal(matrices));
+    rcpp_result_gen = Rcpp::wrap(blockDiag(matrices));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -91,7 +91,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spectralGraphTopology_Lstar", (DL_FUNC) &_spectralGraphTopology_Lstar, 1},
     {"_spectralGraphTopology_Linv", (DL_FUNC) &_spectralGraphTopology_Linv, 1},
     {"_spectralGraphTopology_altLstar", (DL_FUNC) &_spectralGraphTopology_altLstar, 1},
-    {"_spectralGraphTopology_blockDiagonal", (DL_FUNC) &_spectralGraphTopology_blockDiagonal, 1},
+    {"_spectralGraphTopology_blockDiag", (DL_FUNC) &_spectralGraphTopology_blockDiag, 1},
     {NULL, NULL, 0}
 };
 

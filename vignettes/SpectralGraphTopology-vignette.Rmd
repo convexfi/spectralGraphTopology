@@ -153,7 +153,7 @@ Theta1 <- L(w1)
 Theta2 <- L(w2)
 N1 <- ncol(Theta1)
 N2 <- ncol(Theta2)
-Theta <- blockDiagonal(list(Theta1, Theta2))
+Theta <- blockDiag(list(Theta1, Theta2))
 Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Theta))
 K <- 2
 res <- learnGraphTopology(Y, K, beta = 10)

@@ -4,7 +4,7 @@ using namespace Eigen;
 using namespace std;
 
 // [[Rcpp::export]]
-Eigen::MatrixXd blockDiagonal(const std::vector<Eigen::MatrixXd>& matrices) {
+Eigen::MatrixXd blockDiag(const std::vector<Eigen::MatrixXd>& matrices) {
     int n = matrices.size();
     Eigen::VectorXd sizes(n);
 
