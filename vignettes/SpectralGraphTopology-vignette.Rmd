@@ -55,9 +55,25 @@ For installation instructions, please visit
 [https://github.com/dppalomar/spectralGraphTopology](https://github.com/dppalomar/spectralGraphTopology)
 
 # Problem Statement
-The Laplacian matrix $\boldsymbol{\Theta}$ of a graph contains the information of its topology and weight connections. By definition a Laplacian matrix is positive semi-definite, symmetric, and with sum of rows equal to zero. The Laplacian linear operator $\mathcal{L}\mathbf{w}$ maps a vector of weights $\mathbf{w}$ into a valid Laplacian matrix so that the conditions are satisfied by construction.
+The Laplacian matrix $\boldsymbol{\Theta}$ of a graph contains the information
+of its topology and weight connections. By definition a Laplacian matrix is
+positive semi-definite, symmetric, and with sum of rows equal to zero. The
+Laplacian linear operator $\mathcal{L}\mathbf{w}$ maps a vector of weights
+$\mathbf{w}$ into a valid Laplacian matrix so that the conditions are satisfied
+by construction.
 
-The underlying optimization problem of learning a K-component graph may be expressed as follows:
+One common approach to estimate the Laplacian matrix would be via the generalized
+inverse of the covariance matrix, which is an assymptotically unbiased and efficient
+estimator. In this document, we call this approach the \textit{naive} one.
+In \textsf{R}, this estimator can be computed as ``MASS::ginv(cov(Y))``,
+where``Y`` is the data matrix.
+
+Another classical approach was proposed in [@Friedman2008] which incorporates a
+$\ell_1$-norm penalty term in order to induce sparsity on the solution. The R package
+``glasso`` provides an implementation of this estimator.
+
+The underlying optimization problem of learning a K-component graph, solved by this
+``spectralGraphTopology``, may be expressed as follows:
 $$\begin{array}{ll}
 \underset{\mathbf{w}, \boldsymbol{\Lambda}, \mathbf{U}}{\textsf{minimize}} & - \log \det(\boldsymbol{\Lambda})
 + \mathrm{tr}\left(\mathbf{K}\mathcal{L}\mathbf{w}\right)
@@ -99,11 +115,23 @@ Theta
 res$Theta
 ```
 
+Another visual tool is the correlation matrix:
+
 ```{r, cache = TRUE}
 library(corrplot)
 par(mfrow = c(1, 2))
 corrplot(cov2cor(Theta))
 corrplot(cov2cor(res$Theta))
+```
+
+Finally, we can also plot the graph structure:
+```{r}
+library(qgraph)
+par(mfrow = c(1, 2))
+qgraph(Theta - diag(diag(Theta)), esize = 5, edge.color = "black")
+title("True diamond graph", line = 2.5)
+qgraph(res$Theta - diag(diag(res$Theta)), esize = 5, edge.color = "black")
+title("Estimated diamond graph", line = 2.5)
 ```
 
 We evaluate the performance of the learning process in a more objective
@@ -122,6 +150,8 @@ prial <- function(Xtrue, Xest) {
     return (100 * (1 - (norm(Xest - Xtrue, type = "F") /
                         norm(Xnaive - Xtrue, type = "F"))^2))
 }
+```
+
 
 ```{r}
 Theta_naive <- MASS::ginv(cov(Y))
@@ -146,9 +176,9 @@ plot(c(1:N_iter), res$fun, type = "b", pch=19, cex=.6, col = scales::alpha("blac
 For K > 1, we can generate the Laplacian as a block diagonal matrix, as follows
 ```{r, cache = TRUE}
 library(spectralGraphTopology)
-T <- 50
+T <- 500
 w1 <- runif(3)
-w2 <- runif(3)
+w2 <- runif(6)
 Theta1 <- L(w1)
 Theta2 <- L(w2)
 N1 <- ncol(Theta1)
@@ -183,9 +213,18 @@ plot(c(1:N_iter), res$loglike, type = "b", pch=19, cex=.6, col = scales::alpha("
      xlab = "Iteration number", ylab = "Log Likelihood")
 ```
 
+```{r}
+library(qgraph)
+par(mfrow = c(1, 2))
+qgraph(Theta - diag(diag(Theta)), esize = 5, edge.color = "black")
+title("True graph", line = 2.5)
+qgraph(res$Theta - diag(diag(res$Theta)), esize = 5, edge.color = "black")
+title("Estimated graph", line = 2.5)
+```
+
 # Explanation of the algorithms
 
-In this section we describe in detail the algorithms designed to solve the
+In this section we present the algorithms designed to solve the
 graph topology learning problem.
 
 ## `learnGraphTopology`: Learning the topology of graph
