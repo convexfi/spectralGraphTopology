@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output:
   bookdown::html_document2:
     base_format: prettydoc::html_pretty
-    theme: tactile
+    theme: leonids
     highlight: vignette
     fig_caption: yes
     number_sections: no
@@ -72,7 +72,7 @@ Another classical approach was proposed in [@Friedman2008] which incorporates a
 $\ell_1$-norm penalty term in order to induce sparsity on the solution. The R package
 ``glasso`` provides an implementation of this estimator.
 
-The underlying optimization problem of learning a K-component graph, solved by this
+The underlying optimization problem of learning a K-component graph, solved by
 ``spectralGraphTopology``, may be expressed as follows:
 $$\begin{array}{ll}
 \underset{\mathbf{w}, \boldsymbol{\Lambda}, \mathbf{U}}{\textsf{minimize}} & - \log \det(\boldsymbol{\Lambda})
@@ -121,7 +121,9 @@ Another visual tool is the correlation matrix:
 library(corrplot)
 par(mfrow = c(1, 2))
 corrplot(cov2cor(Theta))
+title("True Laplacian matrix", line = 2.5)
 corrplot(cov2cor(res$Theta))
+title("Estimated Laplacian matrix", line = 2.5)
 ```
 
 Finally, we can also plot the graph structure:
@@ -210,7 +212,7 @@ plot(c(1:N_iter), res$fun, type = "b", pch=19, cex=.6, col = scales::alpha("blac
 ```
 ```{r}
 plot(c(1:N_iter), res$loglike, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
-     xlab = "Iteration number", ylab = "Log Likelihood")
+     xlab = "Iteration number", ylab = "Negative Log Likelihood")
 ```
 
 ```{r}
