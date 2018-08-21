@@ -99,10 +99,10 @@ T <- 200
 # Vector to generate the Laplacian matrix of the graph
 w <- runif(10)
 # Laplacian matrix
-Theta <- L(w)
+Lw <- L(w)
 # Sample data from a Multivariate Gaussian
-N <- ncol(Theta)
-Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Theta))
+N <- ncol(Lw)
+Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Lw))
 # Number of components of the graph
 K <- 1
 # Learn the Laplacian matrix
@@ -111,8 +111,8 @@ res <- learnGraphTopology(Y, K, beta = 10)
 
 Let's visually inspect the true Laplacian and the estimated one:
 ```{r}
-Theta
-res$Theta
+Lw
+res$Lw
 ```
 
 Another visual tool is the correlation matrix:
@@ -120,19 +120,21 @@ Another visual tool is the correlation matrix:
 ```{r, cache = TRUE}
 library(corrplot)
 par(mfrow = c(1, 2))
-corrplot(cov2cor(Theta))
+corrplot(cov2cor(Lw))
 title("True Laplacian matrix", line = 2.5)
-corrplot(cov2cor(res$Theta))
+corrplot(cov2cor(res$Lw))
 title("Estimated Laplacian matrix", line = 2.5)
 ```
 
 Finally, we can also plot the graph structure:
 ```{r}
+# True adjancency matrix
+W <- Lw - diag(diag(Lw))
 library(qgraph)
 par(mfrow = c(1, 2))
-qgraph(Theta - diag(diag(Theta)), esize = 5, edge.color = "black")
+qgraph(W, esize = 5, edge.color = "black")
 title("True diamond graph", line = 2.5)
-qgraph(res$Theta - diag(diag(res$Theta)), esize = 5, edge.color = "black")
+qgraph(res$W, esize = 5, edge.color = "black")
 title("Estimated diamond graph", line = 2.5)
 ```
 
@@ -156,21 +158,21 @@ prial <- function(Xtrue, Xest) {
 
 
 ```{r}
-Theta_naive <- MASS::ginv(cov(Y))
-rel_err <- c(proposed = relativeError(Theta, res$Theta),
-             naive = relativeError(Theta, Theta_naive))
-prial_avg <- c(proposed = prial(Theta, res$Theta),
-               naive = prial(Theta, Theta_naive))
+Lw_naive <- MASS::ginv(cov(Y))
+rel_err <- c(proposed = relativeError(Lw, res$Lw),
+             naive = relativeError(Lw, Lw_naive))
+prial <- c(proposed = prial(Lw, res$Lw),
+           naive = prial(Lw, Lw_naive))
 rel_err
-prial_avg
+prial
 ```
 
 In this case, the naive estimation of the Laplacian matrix (i.e., generalized inverse of the sample covariance matrix) performs already quite well since the ratio $T/N$ is large enough `r T/N` for the sample covariance matrix to be accurately estimated.
 
 Let's also look at the convergence of the objective function versus iterations:
 ```{r}
-N_iter <- length(res$fun)
-plot(c(1:N_iter), res$fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
+N_iter <- length(res$obj_fun)
+plot(c(1:N_iter), res$obj_fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
      xlab = "Iteration number", ylab = "Objective function")
 
 ```
@@ -181,33 +183,33 @@ library(spectralGraphTopology)
 T <- 500
 w1 <- runif(3)
 w2 <- runif(6)
-Theta1 <- L(w1)
-Theta2 <- L(w2)
-N1 <- ncol(Theta1)
-N2 <- ncol(Theta2)
-Theta <- blockDiag(list(Theta1, Theta2))
-Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Theta))
+Lw1 <- L(w1)
+Lw2 <- L(w2)
+N1 <- ncol(Lw1)
+N2 <- ncol(Lw2)
+Lw <- blockDiag(Lw1, Lw2)
+Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Lw))
 K <- 2
 res <- learnGraphTopology(Y, K, beta = 10)
 ```
 ```{r}
-Theta_naive <- MASS::ginv(cov(Y))
-rel_err <- c(proposed = relativeError(Theta, res$Theta),
-             naive = relativeError(Theta, Theta_naive))
-prial_avg <- c(proposed = prial(Theta, res$Theta),
-               naive = prial(Theta, Theta_naive))
+Lw_naive <- MASS::ginv(cov(Y))
+rel_err <- c(proposed = relativeError(Lw, res$Lw),
+             naive = relativeError(Lw, Lw_naive))
+prial <- c(proposed = prial(Lw, res$Lw),
+           naive = prial(Lw, Lw_naive))
 rel_err
-prial_avg
+prial
 ```
 
 ```{r}
-Theta
-res$Theta
+Lw
+res$Lw
 ```
 
 ```{r}
-N_iter <- length(res$fun)
-plot(c(1:N_iter), res$fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
+N_iter <- length(res$obj_fun)
+plot(c(1:N_iter), res$obj_fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
      xlab = "Iteration number", ylab = "Objective function")
 ```
 ```{r}
@@ -216,11 +218,12 @@ plot(c(1:N_iter), res$loglike, type = "b", pch=19, cex=.6, col = scales::alpha("
 ```
 
 ```{r}
+W <- Lw - diag(diag(Lw))
 library(qgraph)
 par(mfrow = c(1, 2))
-qgraph(Theta - diag(diag(Theta)), esize = 5, edge.color = "black")
-title("True graph", line = 2.5)
-qgraph(res$Theta - diag(diag(res$Theta)), esize = 5, edge.color = "black")
+qgraph(W, esize = 5, edge.color = "black")
+title("True graph (K = 2)", line = 2.5)
+qgraph(res$W, esize = 5, edge.color = "black")
 title("Estimated graph", line = 2.5)
 ```
 

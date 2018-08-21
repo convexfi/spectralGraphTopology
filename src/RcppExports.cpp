@@ -40,46 +40,46 @@ BEGIN_RCPP
 END_RCPP
 }
 // Lstar
-Eigen::VectorXd Lstar(const Eigen::MatrixXd& Y);
-RcppExport SEXP _spectralGraphTopology_Lstar(SEXP YSEXP) {
+Eigen::VectorXd Lstar(const Eigen::MatrixXd& M);
+RcppExport SEXP _spectralGraphTopology_Lstar(SEXP MSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(Lstar(Y));
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type M(MSEXP);
+    rcpp_result_gen = Rcpp::wrap(Lstar(M));
     return rcpp_result_gen;
 END_RCPP
 }
 // Linv
-Eigen::VectorXd Linv(const Eigen::MatrixXd& Theta);
-RcppExport SEXP _spectralGraphTopology_Linv(SEXP ThetaSEXP) {
+Eigen::VectorXd Linv(const Eigen::MatrixXd& M);
+RcppExport SEXP _spectralGraphTopology_Linv(SEXP MSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type Theta(ThetaSEXP);
-    rcpp_result_gen = Rcpp::wrap(Linv(Theta));
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type M(MSEXP);
+    rcpp_result_gen = Rcpp::wrap(Linv(M));
     return rcpp_result_gen;
 END_RCPP
 }
 // altLstar
-Eigen::VectorXd altLstar(const Eigen::MatrixXd& Y);
-RcppExport SEXP _spectralGraphTopology_altLstar(SEXP YSEXP) {
+Eigen::VectorXd altLstar(const Eigen::MatrixXd& M);
+RcppExport SEXP _spectralGraphTopology_altLstar(SEXP MSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(altLstar(Y));
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type M(MSEXP);
+    rcpp_result_gen = Rcpp::wrap(altLstar(M));
     return rcpp_result_gen;
 END_RCPP
 }
-// blockDiag
-Eigen::MatrixXd blockDiag(const std::vector<Eigen::MatrixXd>& matrices);
-RcppExport SEXP _spectralGraphTopology_blockDiag(SEXP matricesSEXP) {
+// blockDiagCpp
+Eigen::MatrixXd blockDiagCpp(const std::vector<Eigen::MatrixXd>& matrices);
+RcppExport SEXP _spectralGraphTopology_blockDiagCpp(SEXP matricesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::vector<Eigen::MatrixXd>& >::type matrices(matricesSEXP);
-    rcpp_result_gen = Rcpp::wrap(blockDiag(matrices));
+    rcpp_result_gen = Rcpp::wrap(blockDiagCpp(matrices));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -91,7 +91,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spectralGraphTopology_Lstar", (DL_FUNC) &_spectralGraphTopology_Lstar, 1},
     {"_spectralGraphTopology_Linv", (DL_FUNC) &_spectralGraphTopology_Linv, 1},
     {"_spectralGraphTopology_altLstar", (DL_FUNC) &_spectralGraphTopology_altLstar, 1},
-    {"_spectralGraphTopology_blockDiag", (DL_FUNC) &_spectralGraphTopology_blockDiag, 1},
+    {"_spectralGraphTopology_blockDiagCpp", (DL_FUNC) &_spectralGraphTopology_blockDiagCpp, 1},
     {NULL, NULL, 0}
 };
 

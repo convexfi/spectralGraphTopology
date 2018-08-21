@@ -6,30 +6,31 @@
 #' and N is the number of samples
 #' @param K the number of components of the graph
 #' @param w0 initial estimate for the weight vector the graph
-#' @param U0 initial estimate for the matrix whose columns are the eigenvectors
-#' of the Laplacian matrix
-#' @param lamdba0 initial estimate for the vector whose entries are the
-#' eigenvalues of the Laplacian matrix
 #' @param lb lower bound for the eigenvalues of the Laplacian matrix
 #' @param ub upper bound for the eigenvalues of the Laplacian matrix
 #' @param alpha tunning parameter
 #' @param beta parameter that controls the strength of the regularization term
 #' @param rho how much to increase beta after a complete round of iterations
 #' @param maxiter the maximum number of iterations for each beta
+#' @param maxiter_beta the maximum number of iterations for the outer loop
 #' @param w_tol relative tolerance on w
 #' @param U_tol relative tolerance on U
 #' @param lambda_tol relative tolerance on lambda
 #' @param ftol relative tolerance on the objective function
 #' @return Theta the learned Laplacian matrix
 #' @return fun_seq the objective function value at every iteration
+#' @return loglike the negative loglikelihood function value at every iteration
+#' @return w the optimal value of the weight vector
+#' @return lambda the optimal value of the eigenvalues
+#' @return U the optimal value of the eigenvectors
 #' @author Convex group - HKUST
-#' @references
+#' @references our paper soon to be submitted
 #' @examples
 #' library(learnGraphTopology)
 #'
 #' # simulate a Laplacian matrix of a single-component graph
 #' w <- sample(1:10, 10)
-#' Theta <- L(w)
+#' Lw <- L(w)
 #'
 #' # create fake data
 #' T <- 10000
@@ -37,10 +38,10 @@
 #' Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Theta))
 #'
 #' # learn the Laplacian matrix from the simulated data
-#' Theta_est <- learnGraphTopology(Y, 1)
+#' Lw_est <- learnGraphTopology(Y, 1)
 #'
 #' # show the relative error between the true Laplacian and the learned one
-#' norm(Theta - Theta_est, type="F") / norm(Theta, type="F")
+#' norm(Lw - Lw_est, type="F") / norm(Lw, type="F")
 #' @export
 learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
                                 beta = .5, rho = .1, maxiter = 5000, maxiter_beta = 1,
@@ -100,6 +101,8 @@ learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
     }
     beta <- beta * (1 + rho)
   }
-  return(list(Theta = L(w), fun = fun_seq, loglike = ll_seq, w = w,
-              lambda = lambda, U = U))
+  Lw <- L(w)
+  W <- diag(diag(Lw)) - Lw
+  return(list(Lw = L(w), W = W, obj_fun = fun_seq, loglike = ll_seq,
+              w = w, lambda = lambda, U = U))
 }

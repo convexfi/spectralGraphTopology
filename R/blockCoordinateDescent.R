@@ -23,6 +23,7 @@ w_update <- function(w, U, beta, lambda, N, Kmat) {
 #'
 #' @param w weight vector of the graph
 #' @param N dimension of each data sample
+#' @param K number of components of the graph
 #'
 #' @return the updated value of U
 U_update <- function(w, N, K) {
@@ -35,7 +36,7 @@ U_update <- function(w, N, K) {
 #'
 #' @param lb lower bound on the eigenvalues of the Laplacian matrix
 #' @param ub upper bound on the eigenvalues of the Laplacian matrix
-#' @param β: scalar that controls the strength of the regularization term
+#' @param β scalar that controls the strength of the regularization term
 #' @param U matrix whose columns represent the eigen vectors of the Laplacian
 #' matrix in increasing order
 #' @param w weight vector of the graph

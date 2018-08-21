@@ -7,20 +7,20 @@ test_that("test_learnGraphTopology_K=1", {
   T <- 10000
   w <- sample(1:10, 6)
   K <- 1
-  Theta <- L(w)
-  N <- ncol(Theta)
-  Y <- MASS::mvrnorm(T, as.vector(array(0, N)), MASS::ginv(Theta))
+  Lw <- L(w)
+  N <- ncol(Lw)
+  Y <- MASS::mvrnorm(T, as.vector(array(0, N)), MASS::ginv(Lw))
   res <- learnGraphTopology(Y, K, ub=100, beta=.1, maxiter=500)
-  expect_that(norm(Theta - res$Theta, type="F") /
-              max(1., norm(Theta, type="F")) < 1e-1, is_true())
+  expect_that(norm(Lw - res$Lw, type="F") /
+              max(1., norm(Lw, type="F")) < 1e-1, is_true())
 
   # test the learning of a single-component diamond graph
   w <- c(1, 1, 0, 1, 1, 1)
-  Theta <- L(w)
-  Y <- MASS::mvrnorm(T, as.vector(array(0, N)), MASS::ginv(Theta))
+  Lw <- L(w)
+  Y <- MASS::mvrnorm(T, as.vector(array(0, N)), MASS::ginv(Lw))
   res <- learnGraphTopology(Y, K, ub=10, beta=10, maxiter=500)
-  expect_that(norm(Theta - res$Theta, type="F") /
-              max(1., norm(Theta, type="F")) < 1e-1, is_true())
+  expect_that(norm(Lw - res$Lw, type="F") /
+              max(1., norm(Lw, type="F")) < 1e-1, is_true())
 })
 
 
@@ -29,13 +29,13 @@ test_that("test_learnGraphTopology_K=2", {
   T <- 10000
   K <- 2
   N <- 4
-  Theta <- rbind(c(1, 0, -1, 0),
-                 c(0, 1, 0, -1),
-                 c(-1, 0, 1, 0),
-                 c(0, -1, 0, 1))
-  Y <- MASS::mvrnorm(T, as.vector(array(0, N)), MASS::ginv(Theta))
+  Lw <- rbind(c(1, 0, -1, 0),
+              c(0, 1, 0, -1),
+              c(-1, 0, 1, 0),
+              c(0, -1, 0, 1))
+  Y <- MASS::mvrnorm(T, as.vector(array(0, N)), MASS::ginv(Lw))
   res <- learnGraphTopology(Y, K, beta=20.)
-  expect_that(norm(Theta - res$Theta, type="F") / norm(Theta, type="F") < 1e-1,
+  expect_that(norm(Lw - res$Lw, type="F") / norm(Lw, type="F") < 1e-1,
               is_true())
 })
 
@@ -45,14 +45,14 @@ test_that("test_learnGraphTopology_K=2", {
   w1 <- runif(3)
   w2 <- runif(6)
   K <- 2
-  Theta1 <- L(w1)
-  Theta2 <- L(w2)
-  N1 <- ncol(Theta1)
-  N2 <- ncol(Theta2)
+  Lw1 <- L(w1)
+  Lw2 <- L(w2)
+  N1 <- ncol(Lw1)
+  N2 <- ncol(Lw2)
 
-  Theta <- blockDiag(list(Theta1, Theta2))
-  Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Theta))
+  Lw <- blockDiag(Lw1, Lw2)
+  Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Lw))
   res <- learnGraphTopology(Y, K, beta=100)
-  expect_that(norm(Theta - res$Theta, type="F") / norm(Theta, type="F") < 1e-1,
+  expect_that(norm(Lw - res$Lw, type="F") / norm(Lw, type="F") < 1e-1,
               is_true())
 })

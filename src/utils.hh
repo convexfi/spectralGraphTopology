@@ -7,5 +7,5 @@
 using namespace Eigen;
 using namespace std;
 
-MatrixXd blockDiag(const std::vector<MatrixXd>&);
+MatrixXd blockDiagCpp(const std::vector<MatrixXd>&);
 #endif

@@ -5,6 +5,10 @@ clean:
 
 build:
 	Rscript .compileAttributes.R
+	Rscript .roxygenize.R
 
 install:
 	R CMD INSTALL ../spectralGraphTopology
+
+test:
+	Rscript -e "devtools::test()"
