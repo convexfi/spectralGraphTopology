@@ -5,7 +5,11 @@
 #' @param Y T-by-N observed data matrix, where T is the size of each sample
 #' and N is the number of samples
 #' @param K the number of components of the graph
-#' @param w0 initial estimate for the weight vector the graph
+#' @param w0 initial estimate for the weight vector the graph or a string
+#' selecting an appropriate method. Available methods are: "qp": solves a
+#' simple quadratic program; "naive": sets w0 to the negative of the
+#' off-diagonal elements of the generalized precision matrix; "glasso": uses
+#' the glasso solution
 #' @param lb lower bound for the eigenvalues of the Laplacian matrix
 #' @param ub upper bound for the eigenvalues of the Laplacian matrix
 #' @param alpha tunning parameter
@@ -33,17 +37,17 @@
 #' Lw <- L(w)
 #'
 #' # create fake data
-#' T <- 10000
-#' N <- ncol(Theta)
-#' Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Theta))
+#' T <- 40
+#' N <- ncol(Lw)
+#' Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Lw))
 #'
 #' # learn the Laplacian matrix from the simulated data
-#' Lw_est <- learnGraphTopology(Y, 1)
+#' res <- learnGraphTopology(Y, 1)
 #'
-#' # show the relative error between the true Laplacian and the learned one
-#' norm(Lw - Lw_est, type="F") / norm(Lw, type="F")
+#' # relative error between the true Laplacian and the learned one
+#' norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
 #' @export
-learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
+learnGraphTopology <- function (Y, K, w0 = "qp", lb = 1e-4, ub = 1e4, alpha = 0.,
                                 beta = .5, rho = .1, maxiter = 5000, maxiter_beta = 1,
                                 w_tol = 1e-6, lambda_tol = 1e-6, U_tol = 1e-6,
                                 ftol = 1e-6) {
@@ -53,12 +57,14 @@ learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
   H <- alpha * (2 * diag(N) - matrix(1, N, N))
   Kmat <- S + H
 
-  # find an appropriate inital guess via QP
-  if (any(is.na(w0))) {
-    Sinv <- MASS::ginv(Kmat)
+  # find an appropriate inital guess
+  Sinv <- MASS::ginv(Kmat)
+  if (w0 == "qp") {
     R <- vecLmat(ncol(Sinv))
     qp <- quadprog::solve.QP(t(R) %*% R, t(R) %*% vec(Sinv), diag(ncol(R)))
     w0 <- qp$solution
+  } else if (w0 == "naive") {
+    w0 <- pmax(0, Linv(Sinv))
   }
   evd <- eigen(L(w0))
   lambda0 <- pmax(0, evd$values[(N-K):1])
@@ -103,6 +109,6 @@ learnGraphTopology <- function (Y, K, w0 = NA, lb = 1e-4, ub = 1e4, alpha = 0.,
   }
   Lw <- L(w)
   W <- diag(diag(Lw)) - Lw
-  return(list(Lw = L(w), W = W, obj_fun = fun_seq, loglike = ll_seq,
+  return(list(Lw = Lw, W = W, obj_fun = fun_seq, loglike = ll_seq,
               w = w, lambda = lambda, U = U))
 }

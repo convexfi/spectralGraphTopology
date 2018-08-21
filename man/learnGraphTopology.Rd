@@ -4,7 +4,7 @@
 \alias{learnGraphTopology}
 \title{Learn Graph Topology}
 \usage{
-learnGraphTopology(Y, K, w0 = NA, lb = 1e-04, ub = 10000,
+learnGraphTopology(Y, K, w0 = "qp", lb = 1e-04, ub = 10000,
   alpha = 0, beta = 0.5, rho = 0.1, maxiter = 5000,
   maxiter_beta = 1, w_tol = 1e-06, lambda_tol = 1e-06,
   U_tol = 1e-06, ftol = 1e-06)
@@ -15,7 +15,11 @@ and N is the number of samples}
 
 \item{K}{the number of components of the graph}
 
-\item{w0}{initial estimate for the weight vector the graph}
+\item{w0}{initial estimate for the weight vector the graph or a string
+selecting an appropriate method. Available methods are: "qp": solves a
+simple quadratic program; "naive": sets w0 to the negative of the
+off-diagonal elements of the generalized precision matrix; "glasso": uses
+the glasso solution}
 
 \item{lb}{lower bound for the eigenvalues of the Laplacian matrix}
 
@@ -63,15 +67,15 @@ w <- sample(1:10, 10)
 Lw <- L(w)
 
 # create fake data
-T <- 10000
-N <- ncol(Theta)
-Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Theta))
+T <- 40
+N <- ncol(Lw)
+Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Lw))
 
 # learn the Laplacian matrix from the simulated data
-Lw_est <- learnGraphTopology(Y, 1)
+res <- learnGraphTopology(Y, 1)
 
-# show the relative error between the true Laplacian and the learned one
-norm(Lw - Lw_est, type="F") / norm(Lw, type="F")
+# relative error between the true Laplacian and the learned one
+norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
 }
 \references{
 our paper soon to be submitted

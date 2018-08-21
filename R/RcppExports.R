@@ -60,7 +60,7 @@ Linv <- function(M) {
 #' a better performance.
 #'
 #' @param M matrix
-#' @param w vector
+#' @return w vector
 #'
 altLstar <- function(M) {
     .Call('_spectralGraphTopology_altLstar', PACKAGE = 'spectralGraphTopology', M)

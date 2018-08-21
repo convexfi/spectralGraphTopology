@@ -10,8 +10,9 @@ altLstar(M)
 }
 \arguments{
 \item{M}{matrix}
-
-\item{w}{vector}
+}
+\value{
+w vector
 }
 \description{
 Alternative implementation for the Lstar operator.
