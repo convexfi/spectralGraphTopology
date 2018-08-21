@@ -4,10 +4,10 @@
 \alias{learnGraphTopology}
 \title{Learn Graph Topology}
 \usage{
-learnGraphTopology(Y, K, w0 = NA, U0 = NA, lambda0 = NA,
-  lb = 1e-04, ub = 10000, alpha = 0, beta = 0.5, rho = 0.1,
-  maxiter = 5000, w_tol = 1e-04, U_tol = 1e-04, lambda_tol = 1e-04,
-  ftol = 1e-06)
+learnGraphTopology(Y, K, w0 = NA, lb = 1e-04, ub = 10000,
+  alpha = 0, beta = 0.5, rho = 0.1, maxiter = 5000,
+  maxiter_beta = 1, w_tol = 1e-06, lambda_tol = 1e-06,
+  U_tol = 1e-06, ftol = 1e-06)
 }
 \arguments{
 \item{Y}{T-by-N observed data matrix, where T is the size of each sample
@@ -16,9 +16,6 @@ and N is the number of samples}
 \item{K}{the number of components of the graph}
 
 \item{w0}{initial estimate for the weight vector the graph}
-
-\item{U0}{initial estimate for the matrix whose columns are the eigenvectors
-of the Laplacian matrix}
 
 \item{lb}{lower bound for the eigenvalues of the Laplacian matrix}
 
@@ -32,21 +29,28 @@ of the Laplacian matrix}
 
 \item{maxiter}{the maximum number of iterations for each beta}
 
-\item{w_tol}{relative tolerance on w}
+\item{maxiter_beta}{the maximum number of iterations for the outer loop}
 
-\item{U_tol}{relative tolerance on U}
+\item{w_tol}{relative tolerance on w}
 
 \item{lambda_tol}{relative tolerance on lambda}
 
-\item{ftol}{relative tolerance on the objective function}
+\item{U_tol}{relative tolerance on U}
 
-\item{lamdba0}{initial estimate for the vector whose entries are the
-eigenvalues of the Laplacian matrix}
+\item{ftol}{relative tolerance on the objective function}
 }
 \value{
 Theta the learned Laplacian matrix
 
 fun_seq the objective function value at every iteration
+
+loglike the negative loglikelihood function value at every iteration
+
+w the optimal value of the weight vector
+
+lambda the optimal value of the eigenvalues
+
+U the optimal value of the eigenvectors
 }
 \description{
 Learns the topology of a K-connected graph given an observed data matrix
@@ -56,7 +60,7 @@ library(learnGraphTopology)
 
 # simulate a Laplacian matrix of a single-component graph
 w <- sample(1:10, 10)
-Theta <- L(w)
+Lw <- L(w)
 
 # create fake data
 T <- 10000
@@ -64,10 +68,13 @@ N <- ncol(Theta)
 Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Theta))
 
 # learn the Laplacian matrix from the simulated data
-Theta_est <- learnGraphTopology(Y, 1)
+Lw_est <- learnGraphTopology(Y, 1)
 
 # show the relative error between the true Laplacian and the learned one
-norm(Theta - Theta_est, type="F") / norm(Theta, type="F")
+norm(Lw - Lw_est, type="F") / norm(Lw, type="F")
+}
+\references{
+our paper soon to be submitted
 }
 \author{
 Convex group - HKUST

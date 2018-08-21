@@ -4,7 +4,7 @@
 \alias{w_update}
 \title{Updates the value of w, the weight vector of the graph}
 \usage{
-w_update(w, U, beta, lambda, N, Km)
+w_update(w, U, beta, lambda, N, Kmat)
 }
 \arguments{
 \item{w}{weight vector of the graph}
@@ -14,7 +14,7 @@ matrix in increasing order}
 
 \item{N}{dimension of each data sample}
 
-\item{Km}{matrix (see section 1.1 for its definition)}
+\item{Kmat}{matrix (see section 1.1 for its definition)}
 
 \item{β}{scalar that controls the strength of the regularization term}
 

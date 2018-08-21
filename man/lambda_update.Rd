@@ -21,7 +21,7 @@ matrix in increasing order}
 
 \item{K}{number of components of the graph}
 
-\item{β:}{scalar that controls the strength of the regularization term}
+\item{β}{scalar that controls the strength of the regularization term}
 }
 \value{
 the updated value of λ
