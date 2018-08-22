@@ -1,16 +1,25 @@
 library(spectralGraphTopology)
 library(ggplot2)
 
-warmup_benchmark <- function(N_realizations, Nmax = 10) {
+
+# This function is a little benchmark to warm up
+# against simpler estimators such as the naive one
+# (generalized inverse of the covariance matrix)
+# and one designed by Prof Dan which is the solution
+# of a QP. Latter we will test against glasso and
+# then against the (to be implemented) state-of-art
+# algorithms.
+warmup_benchmark <- function(N_realizations, N_nodes_max = 10) {
+  # fix the number of observations
   T <- 50
-  pb <- txtProgressBar(min = 3, max = Nmax, style = 3)
-  N_set <- seq(3, Nmax, by = 1)
-  rel_err_spec <- array(0, length(N_set))
-  rel_err_naive <- array(0, length(N_set))
-  rel_err_qp <- array(0, length(N_set))
+  pb <- txtProgressBar(min = 3, max = N_nodes_max, style = 3)
+  N_nodes_set <- seq(3, N_nodes_max, by = 1)
+  rel_err_spec <- array(0, length(N_nodes_set))
+  rel_err_naive <- array(0, length(N_nodes_set))
+  rel_err_qp <- array(0, length(N_nodes_set))
   i <- 1
   # loop over the number of nodes
-  for (N in N_set) {
+  for (N in N_nodes_set) {
     setTxtProgressBar(pb, N)
     rel_err <- c(naive = 0, qp = 0, spectral = 0)
     # loop over the number of realizations per node
@@ -31,7 +40,7 @@ warmup_benchmark <- function(N_realizations, Nmax = 10) {
     rel_err_qp[i] <- rel_err["qp"] / N_realizations
     i <- i + 1
   }
-  x <- T / N_set
+  x <- T / N_nodes_set
   df <- data.frame(x, rel_err_spec, rel_err_naive, rel_err_qp)
   ggplot(df, aes(x)) +
     geom_line(aes(y=rel_err_spec), colour="red") +
@@ -57,5 +66,6 @@ relativeError <- function(Xtrue, Xest) {
     return (100 * norm(Xtrue - Xest, type = "F") / max(1., norm(Xtrue, type = "F")))
 }
 
-warmup_benchmark(N_realizations = 100, Nmax = 10)
+# usage
+warmup_benchmark(N_realizations = 100, N_nodes_max = 10)
 warnings()
