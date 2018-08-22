@@ -10,9 +10,8 @@ set.seed(123)
 # of a QP. Latter we will test against glasso and
 # then against the (to be implemented) state-of-art
 # algorithms.
-warmup_benchmark <- function(N_realizations, ratios) {
+warmup_benchmark <- function(N_realizations, T, ratios) {
   # fix the number of samples per node
-  T <- 100
   N_nodes_set <- sort(as.integer(T / ratios))
   rel_err_spec <- array(0, length(N_nodes_set))
   rel_err_naive <- array(0, length(N_nodes_set))
@@ -51,20 +50,7 @@ warmup_benchmark <- function(N_realizations, ratios) {
     labs(y="Relative Error (%)", x="T/N")
 }
 
-# naive estimator
-naive <- function(S) {
-  return(MASS::ginv(S))
-}
-
-# qp estimator
-qp <- function(S) {
-  Sinv <- MASS::ginv(S)
-  R <- vecLmat(ncol(Sinv))
-  qp <- quadprog::solve.QP(t(R) %*% R, t(R) %*% vec(Sinv), diag(ncol(R)))
-  return (L(qp$solution))
-}
-
 # usage
-ratios <- c(.5, .8, 1, 5, 10, 25)
-warmup_benchmark(N_realizations = 100, ratios = ratios)
+ratios <- c(.5, 1, 2, 5, 10, 20, 50)
+warmup_benchmark(N_realizations = 100, T = 200, ratios = ratios)
 warnings()

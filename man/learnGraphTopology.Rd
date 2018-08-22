@@ -44,9 +44,11 @@ the glasso solution}
 \item{ftol}{relative tolerance on the objective function}
 }
 \value{
-Theta the learned Laplacian matrix
+Lw the learned Laplacian matrix
 
-fun_seq the objective function value at every iteration
+W the learned weighted adjacency matrix
+
+obj_fun the objective function value at every iteration
 
 loglike the negative loglikelihood function value at every iteration
 
