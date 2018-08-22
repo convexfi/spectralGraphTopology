@@ -10,7 +10,7 @@ library(ggplot2)
 # then against the (to be implemented) state-of-art
 # algorithms.
 warmup_benchmark <- function(N_realizations, N_nodes_max = 10) {
-  # fix the number of observations
+  # fix the number of samples per node
   T <- 200
   pb <- txtProgressBar(min = 3, max = N_nodes_max, style = 3)
   N_nodes_set <- seq(3, N_nodes_max, by = 3)
@@ -50,13 +50,13 @@ warmup_benchmark <- function(N_realizations, N_nodes_max = 10) {
 }
 
 # naive estimator
-naive <- function(Kmat) {
-  return(MASS::ginv(Kmat))
+naive <- function(S) {
+  return(MASS::ginv(S))
 }
 
 # qp estimator
-qp <- function(Kmat) {
-  Sinv <- MASS::ginv(Kmat)
+qp <- function(S) {
+  Sinv <- MASS::ginv(S)
   R <- vecLmat(ncol(Sinv))
   qp <- quadprog::solve.QP(t(R) %*% R, t(R) %*% vec(Sinv), diag(ncol(R)))
   return (L(qp$solution))

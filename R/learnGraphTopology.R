@@ -51,14 +51,18 @@ learnGraphTopology <- function (Y, K, w0 = "qp", lb = 1e-4, ub = 1e4, alpha = 0.
                                 beta = .5, rho = .1, maxiter = 5000, maxiter_beta = 1,
                                 w_tol = 1e-6, lambda_tol = 1e-6, U_tol = 1e-6,
                                 ftol = 1e-6) {
-  N <- ncol(Y)
+  # number of samples per node
   T <- nrow(Y)
+  # number of nodes
+  N <- ncol(Y)
+  # sample covariance matrix
   S <- cov(Y)
+  # l1-norm penalty factor
   H <- alpha * (2 * diag(N) - matrix(1, N, N))
   Kmat <- S + H
 
   # find an appropriate inital guess
-  Sinv <- MASS::ginv(Kmat)
+  Sinv <- MASS::ginv(S)
   if (w0 == "qp") {
     R <- vecLmat(ncol(Sinv))
     qp <- quadprog::solve.QP(t(R) %*% R, t(R) %*% vec(Sinv), diag(ncol(R)))
