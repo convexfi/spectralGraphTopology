@@ -1,10 +1,10 @@
 library(spectralGraphTopology)
 library(ggplot2)
 
-warmup_benchmark <- function(N_realizations, Nmax = 1000) {
-  T <- 100
+warmup_benchmark <- function(N_realizations, Nmax = 10) {
+  T <- 50
   pb <- txtProgressBar(min = 3, max = Nmax, style = 3)
-  N_set <- c(3:Nmax)
+  N_set <- seq(3, Nmax, by = 1)
   rel_err_spec <- array(0, length(N_set))
   rel_err_naive <- array(0, length(N_set))
   rel_err_qp <- array(0, length(N_set))
