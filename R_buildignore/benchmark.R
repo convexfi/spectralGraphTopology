@@ -9,9 +9,11 @@ warmup_benchmark <- function(N_realizations, Nmax = 10) {
   rel_err_naive <- array(0, length(N_set))
   rel_err_qp <- array(0, length(N_set))
   i <- 1
+  # loop over the number of nodes
   for (N in N_set) {
     setTxtProgressBar(pb, N)
     rel_err <- c(naive = 0, qp = 0, spectral = 0)
+    # loop over the number of realizations per node
     for (n in 1:N_realizations) {
       w <- runif(as.integer(.5 * N * (N - 1)))
       Lw <- L(w)
@@ -23,6 +25,7 @@ warmup_benchmark <- function(N_realizations, Nmax = 10) {
       rel_err["naive"] <- rel_err["naive"] + relativeError(Lw, naive(covY))
       rel_err["qp"] <- rel_err["qp"] + relativeError(Lw, qp(covY))
     }
+    # save the average of the relative errors
     rel_err_spec[i] <- rel_err["spectral"] / N_realizations
     rel_err_naive[i] <- rel_err["naive"] / N_realizations
     rel_err_qp[i] <- rel_err["qp"] / N_realizations
@@ -36,10 +39,12 @@ warmup_benchmark <- function(N_realizations, Nmax = 10) {
     geom_line(aes(y=rel_err_qp), colour="blue")
 }
 
+# naive estimator
 naive <- function(Kmat) {
   return(MASS::ginv(Kmat))
 }
 
+# qp estimator
 qp <- function(Kmat) {
   Sinv <- MASS::ginv(Kmat)
   R <- vecLmat(ncol(Sinv))
@@ -47,6 +52,7 @@ qp <- function(Kmat) {
   return (L(qp$solution))
 }
 
+# compute the relative error
 relativeError <- function(Xtrue, Xest) {
     return (100 * norm(Xtrue - Xest, type = "F") / max(1., norm(Xtrue, type = "F")))
 }
