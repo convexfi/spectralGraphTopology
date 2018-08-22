@@ -21,8 +21,9 @@
 #' @param U_tol relative tolerance on U
 #' @param lambda_tol relative tolerance on lambda
 #' @param ftol relative tolerance on the objective function
-#' @return Theta the learned Laplacian matrix
-#' @return fun_seq the objective function value at every iteration
+#' @return Lw the learned Laplacian matrix
+#' @return W the learned weighted adjacency matrix
+#' @return obj_fun the objective function value at every iteration
 #' @return loglike the negative loglikelihood function value at every iteration
 #' @return w the optimal value of the weight vector
 #' @return lambda the optimal value of the eigenvalues
