@@ -62,11 +62,6 @@ qp <- function(S) {
   return (L(qp$solution))
 }
 
-# compute the relative error
-relativeError <- function(Xtrue, Xest) {
-    return (100 * norm(Xtrue - Xest, type = "F") / max(1., norm(Xtrue, type = "F")))
-}
-
 # usage
 warmup_benchmark(N_realizations = 100, N_nodes_max = 30)
 warnings()

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Convex Group-HKUST" />
 
-<meta name="date" content="2018-08-21" />
+<meta name="date" content="2018-08-22" />
 
 <title>Learning the topology of graphs</title>
 
@@ -74,7 +74,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="cover-card table-cell table-middle">
 <span class="author_name">Learning the topology of graphs</span>
 <span class="author_bio mbm">Convex Group-HKUST</span>
-<span class="author_bio mbm">2018-08-21</span>
+<span class="author_bio mbm">2018-08-22</span>
 </div>
 </div>
 </div>
@@ -172,24 +172,15 @@ W &lt;-<span class="st"> </span>Lw <span class="op">-</span><span class="st"> </
 <li>relative error</li>
 <li>percentage improvement in average loss (PRIAL)</li>
 </ol>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">relativeError &lt;-<span class="st"> </span><span class="cf">function</span>(Xtrue, Xest) {
-    <span class="kw">return</span> (<span class="dv">100</span> <span class="op">*</span><span class="st"> </span><span class="kw">norm</span>(Xtrue <span class="op">-</span><span class="st"> </span>Xest, <span class="dt">type =</span> <span class="st">&quot;F&quot;</span>) <span class="op">/</span><span class="st"> </span><span class="kw">norm</span>(Xtrue, <span class="dt">type =</span> <span class="st">&quot;F&quot;</span>))
-}
-
-prial &lt;-<span class="st"> </span><span class="cf">function</span>(Xtrue, Xest) {
-    Xnaive &lt;-<span class="st"> </span>MASS<span class="op">::</span><span class="kw">ginv</span>(<span class="kw">cov</span>(Xtrue))
-    <span class="kw">return</span> (<span class="dv">100</span> <span class="op">*</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>(<span class="kw">norm</span>(Xest <span class="op">-</span><span class="st"> </span>Xtrue, <span class="dt">type =</span> <span class="st">&quot;F&quot;</span>) <span class="op">/</span>
-<span class="st">                        </span><span class="kw">norm</span>(Xnaive <span class="op">-</span><span class="st"> </span>Xtrue, <span class="dt">type =</span> <span class="st">&quot;F&quot;</span>))<span class="op">^</span><span class="dv">2</span>))
-}</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Lw_naive &lt;-<span class="st"> </span>MASS<span class="op">::</span><span class="kw">ginv</span>(<span class="kw">cov</span>(Y))
 rel_err &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">proposed =</span> <span class="kw">relativeError</span>(Lw, res<span class="op">$</span>Lw),
              <span class="dt">naive =</span> <span class="kw">relativeError</span>(Lw, Lw_naive))
-prial_avg &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">proposed =</span> <span class="kw">prial</span>(Lw, res<span class="op">$</span>Lw),
-               <span class="dt">naive =</span> <span class="kw">prial</span>(Lw, Lw_naive))
+prial &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">proposed =</span> <span class="kw">prial</span>(Lw, res<span class="op">$</span>Lw),
+           <span class="dt">naive =</span> <span class="kw">prial</span>(Lw, Lw_naive))
 rel_err
 <span class="co">#&gt; proposed    naive </span>
 <span class="co">#&gt; 8.869914 9.224060</span>
-prial_avg
+prial
 <span class="co">#&gt; proposed    naive </span>
 <span class="co">#&gt; 98.91276 98.82421</span></code></pre></div>
 <p>In this case, the naive estimation of the Laplacian matrix (i.e., generalized inverse of the sample covariance matrix) performs already quite well since the ratio <span class="math inline">\(T/N\)</span> is large enough 40 for the sample covariance matrix to be accurately estimated.</p>
@@ -214,12 +205,12 @@ res &lt;-<span class="st"> </span><span class="kw">learnGraphTopology</span>(Y, 
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Lw_naive &lt;-<span class="st"> </span>MASS<span class="op">::</span><span class="kw">ginv</span>(<span class="kw">cov</span>(Y))
 rel_err &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">proposed =</span> <span class="kw">relativeError</span>(Lw, res<span class="op">$</span>Lw),
              <span class="dt">naive =</span> <span class="kw">relativeError</span>(Lw, Lw_naive))
-prial_avg &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">proposed =</span> <span class="kw">prial</span>(Lw, res<span class="op">$</span>Lw),
-               <span class="dt">naive =</span> <span class="kw">prial</span>(Lw, Lw_naive))
+prial &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">proposed =</span> <span class="kw">prial</span>(Lw, res<span class="op">$</span>Lw),
+           <span class="dt">naive =</span> <span class="kw">prial</span>(Lw, Lw_naive))
 rel_err
 <span class="co">#&gt;  proposed     naive </span>
 <span class="co">#&gt;  9.163421 12.742653</span>
-prial_avg
+prial
 <span class="co">#&gt; proposed    naive </span>
 <span class="co">#&gt; 99.54915 99.12817</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Lw
