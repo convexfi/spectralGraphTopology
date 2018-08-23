@@ -120,9 +120,9 @@ Another visual tool is the correlation matrix:
 ```{r, cache = TRUE}
 library(corrplot)
 par(mfrow = c(1, 2))
-corrplot(cov2cor(Lw))
+corrplot(cov2cor(Lw), mar = c(0, 0, 1, 0))
 title("True Laplacian matrix", line = 2.5)
-corrplot(cov2cor(res$Lw))
+corrplot(cov2cor(res$Lw), mar = c(0, 0, 1, 0))
 title("Estimated Laplacian matrix", line = 2.5)
 ```
 

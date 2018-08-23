@@ -12,7 +12,7 @@ set.seed(123)
 # algorithms.
 warmup_benchmark <- function(N_realizations, T, ratios) {
   # fix the number of samples per node
-  N_nodes_set <- sort(as.integer(T / ratios))
+  N_nodes_set <- as.integer(T / ratios)
   rel_err_spec <- array(0, length(N_nodes_set))
   rel_err_naive <- array(0, length(N_nodes_set))
   rel_err_qp <- array(0, length(N_nodes_set))
@@ -20,7 +20,7 @@ warmup_benchmark <- function(N_realizations, T, ratios) {
   # loop over the number of nodes
   pb <- txtProgressBar(min = 1, max = N_realizations, style = 3)
   for (N in N_nodes_set) {
-    cat("\nRunning simultation for", N, "nodes T/N = ", ratios[length(N_nodes_set) - i + 1], "\n")
+    cat("\nRunning simultation for", N, "nodes T/N = ", ratios[i], "\n")
     rel_err <- c(naive = 0, qp = 0, spectral = 0)
     # loop over the number of realizations per node
     for (n in 1:N_realizations) {
@@ -29,7 +29,7 @@ warmup_benchmark <- function(N_realizations, T, ratios) {
       Lw <- L(w)
       Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Lw))
       covY <- cov(Y)
-      res <- learnGraphTopology(Y, K = 1, beta = 1, rho = .05,
+      res <- learnGraphTopology(Y, K = 1, beta = 1, rho = .1,
                                 maxiter_beta = 50)
       Lw_est <- res$Lw
       rel_err["spectral"] <- rel_err["spectral"] + relativeError(Lw, Lw_est)
@@ -43,14 +43,17 @@ warmup_benchmark <- function(N_realizations, T, ratios) {
     i <- i + 1
   }
   df <- data.frame(ratios, rel_err_spec, rel_err_naive, rel_err_qp)
-  ggplot(df, aes(ratios)) +
-    geom_line(aes(y=rel_err_spec), colour="red") + geom_point(aes(y=rel_err_spec), colour="red") +
-    geom_line(aes(y=rel_err_naive), colour="green") + geom_point(aes(y=rel_err_naive), colour="green") +
-    geom_line(aes(y=rel_err_qp), colour="blue") + geom_point(aes(y=rel_err_qp), colour="blue") +
+  ggplot(df, aes(ratios)) + theme_bw() + theme(aspect.ratio = 3/4) +
+    geom_line(aes(y=rel_err_spec), colour="black") +
+    geom_point(aes(y=rel_err_spec), shape = 21, fill = "darkgray", colour="black") +
+    geom_line(aes(y=rel_err_naive), colour="black") +
+    geom_point(aes(y=rel_err_naive), shape = 22, fill = "darkgray", colour="black") +
+    geom_line(aes(y=rel_err_qp), colour="black") +
+    geom_point(aes(y=rel_err_qp), shape = 24, fill = "darkgray", colour="black") +
     labs(y="Relative Error (%)", x="T/N")
 }
 
 # usage
-ratios <- c(.5, 1, 2, 5, 10, 20, 50)
+ratios <- c(25, 40, 50)
 warmup_benchmark(N_realizations = 100, T = 200, ratios = ratios)
 warnings()
