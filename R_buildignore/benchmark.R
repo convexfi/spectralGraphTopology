@@ -29,7 +29,7 @@ warmup_benchmark <- function(N_realizations, T, ratios) {
       Lw <- L(w)
       Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Lw))
       covY <- cov(Y)
-      res <- learnGraphTopology(Y, K = 1, beta = 1, rho = .1,
+      res <- learnGraphTopology(Y, K = 1, beta = 10, rho = .1,
                                 maxiter_beta = 50)
       Lw_est <- res$Lw
       rel_err["spectral"] <- rel_err["spectral"] + relativeError(Lw, Lw_est)
