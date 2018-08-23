@@ -43,17 +43,18 @@ warmup_benchmark <- function(N_realizations, T, ratios) {
     i <- i + 1
   }
   df <- data.frame(ratios, rel_err_spec, rel_err_naive, rel_err_qp)
-  ggplot(df, aes(ratios)) + theme_bw() + theme(aspect.ratio = 3/4) +
+  ggplot(df, aes(ratios)) + theme_bw() +
+    theme(aspect.ratio = 3/4, text = element_text(size=18, family = "Times")) +
     geom_line(aes(y=rel_err_spec), colour="black") +
-    geom_point(aes(y=rel_err_spec), shape = 21, fill = "darkgray", colour="black") +
-    geom_line(aes(y=rel_err_naive), colour="black") +
-    geom_point(aes(y=rel_err_naive), shape = 22, fill = "darkgray", colour="black") +
-    geom_line(aes(y=rel_err_qp), colour="black") +
-    geom_point(aes(y=rel_err_qp), shape = 24, fill = "darkgray", colour="black") +
+    geom_point(aes(y=rel_err_spec), shape = 21, fill = "darkgray", colour="black", size = 2) +
+    geom_line(aes(y=rel_err_naive), colour="black", linetype = 2) +
+    geom_point(aes(y=rel_err_naive), shape = 22, fill = "darkgray", colour="black", size = 2) +
+    geom_line(aes(y=rel_err_qp), colour="black", linetype = 3) +
+    geom_point(aes(y=rel_err_qp), shape = 24, fill = "darkgray", colour="black", size = 2) +
     labs(y="Relative Error (%)", x="T/N")
 }
 
 # usage
-ratios <- c(25, 40, 50)
+ratios <- c(5, 10, 20, 25, 40, 50)
 warmup_benchmark(N_realizations = 100, T = 200, ratios = ratios)
 warnings()
