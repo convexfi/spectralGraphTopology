@@ -43,10 +43,13 @@ Eigen::MatrixXd vecLmat(int n) {
     int ncols = .5 * n * (n - 1);
     int nrows = n * n;
 
+    Eigen::VectorXd e = Eigen::VectorXd::Zero(ncols);
     Eigen::MatrixXd R = Eigen::MatrixXd::Zero(nrows, ncols);
-    for (int j = 0; j < ncols; ++j) {
-        Eigen::VectorXd e = Eigen::VectorXd::Zero(ncols);
-        e(j) = 1.;
+    e(0) = 1;
+    R.col(0) = vec(L(e));
+    for (int j = 1; j < ncols; ++j) {
+        e(j - 1) = 0;
+        e(j) = 1;
         R.col(j) = vec(L(e));
     }
     return R;
@@ -137,10 +140,13 @@ Eigen::VectorXd altLstar(const Eigen::MatrixXd& M) {
     int k = .5 * N * (N - 1);
     Eigen::VectorXd w = Eigen::VectorXd::Zero(k);
     Eigen::MatrixXd MT = M.transpose();
+    Eigen::VectorXd e = Eigen::VectorXd::Zero(k);
 
-    for (int i = 0; i < k; ++i) {
-        Eigen::VectorXd e = Eigen::VectorXd::Zero(k);
-        e(i) = 1.;
+    e(0) = 1;
+    w(0) = (MT * L(e)).trace();
+    for (int i = 1; i < k; ++i) {
+        e(i - 1) = 0;
+        e(i) = 1;
         w(i) = (MT * L(e)).trace();
     }
     return w;
