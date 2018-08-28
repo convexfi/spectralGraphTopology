@@ -10,17 +10,17 @@ set.seed(123)
 # of a QP. Latter we will test against glasso and
 # then against the (to be implemented) state-of-art
 # algorithms.
-warmup_benchmark <- function(N_realizations, T, ratios) {
+warmup_benchmark <- function(N_realizations, N, ratios) {
   # fix the number of samples per node
-  N_nodes_set <- as.integer(T / ratios)
-  rel_err_spec <- array(0, length(N_nodes_set))
-  rel_err_naive <- array(0, length(N_nodes_set))
-  rel_err_qp <- array(0, length(N_nodes_set))
+  T_set <- as.integer(N * ratios)
+  rel_err_spec <- array(0, length(T_set))
+  rel_err_naive <- array(0, length(T_set))
+  rel_err_qp <- array(0, length(T_set))
   i <- 1
   # loop over the number of nodes
   pb <- txtProgressBar(min = 1, max = N_realizations, style = 3)
-  for (N in N_nodes_set) {
-    cat("\nRunning simultation for", N, "nodes T/N = ", ratios[i], "\n")
+  for (T in T_set) {
+    cat("\nRunning simulation for", T, "samples per node, T/N = ", ratios[i], "\n")
     rel_err <- c(naive = 0, qp = 0, spectral = 0)
     # loop over the number of realizations per node
     for (n in 1:N_realizations) {
@@ -43,7 +43,7 @@ warmup_benchmark <- function(N_realizations, T, ratios) {
     i <- i + 1
   }
   df <- data.frame(ratios, rel_err_spec, rel_err_naive, rel_err_qp)
-  ggplot(df, aes(ratios)) + theme_bw() +
+  ggplot(df, aes(ratios)) + theme_bw() + scale_y_continuous(trans = 'log10') +
     theme(aspect.ratio = 3/4, text = element_text(size=18, family = "Times")) +
     geom_line(aes(y=rel_err_spec), colour="black") +
     geom_point(aes(y=rel_err_spec), shape = 21, fill = "darkgray", colour="black", size = 2) +
@@ -51,10 +51,10 @@ warmup_benchmark <- function(N_realizations, T, ratios) {
     geom_point(aes(y=rel_err_naive), shape = 22, fill = "darkgray", colour="black", size = 2) +
     geom_line(aes(y=rel_err_qp), colour="black", linetype = 3) +
     geom_point(aes(y=rel_err_qp), shape = 24, fill = "darkgray", colour="black", size = 2) +
-    labs(y="Relative Error (%)", x="T/N")
+    labs(y="Log Relative Error", x="T/N")
 }
 
 # usage
-ratios <- c(5, 10, 20, 25, 40, 50)
-warmup_benchmark(N_realizations = 100, T = 200, ratios = ratios)
+ratios <- c(2, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50)
+warmup_benchmark(N_realizations = 100, N = 64, ratios = ratios)
 warnings()
