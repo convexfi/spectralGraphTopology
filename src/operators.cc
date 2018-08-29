@@ -14,7 +14,7 @@ using namespace Eigen;
 Eigen::MatrixXd L(const Eigen::VectorXd& w) {
     int j;
     int k = w.size();
-    int N = .5 * (1 + sqrt(1 + 8 * k));
+    const int N = .5 * (1 + sqrt(1 + 8 * k));
     Eigen::MatrixXd Lw = Eigen::MatrixXd::Zero(N, N);
 
     for (int i = N-2; i > -1; --i) {
@@ -40,8 +40,8 @@ Eigen::MatrixXd L(const Eigen::VectorXd& w) {
 //' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd vecLmat(int n) {
-    int ncols = .5 * n * (n - 1);
-    int nrows = n * n;
+    const int ncols = .5 * n * (n - 1);
+    const int nrows = n * n;
 
     Eigen::VectorXd e = Eigen::VectorXd::Zero(ncols);
     Eigen::MatrixXd R = Eigen::MatrixXd::Zero(nrows, ncols);
