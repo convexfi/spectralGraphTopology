@@ -12,22 +12,22 @@ using namespace Eigen;
 //' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd L(const Eigen::VectorXd& w) {
-    int j;
-    int k = w.size();
-    const int N = .5 * (1 + sqrt(1 + 8 * k));
-    Eigen::MatrixXd Lw = Eigen::MatrixXd::Zero(N, N);
+  int j;
+  int k = w.size();
+  const int N = .5 * (1 + sqrt(1 + 8 * k));
+  Eigen::MatrixXd Lw = Eigen::MatrixXd::Zero(N, N);
 
-    for (int i = N-2; i > -1; --i) {
-        j = N - i - 1;
-        Lw.row(i).tail(j) = -w.head(k).tail(j);
-        k -= j;
-    }
+  for (int i = N-2; i > -1; --i) {
+    j = N - i - 1;
+    Lw.row(i).tail(j) = -w.head(k).tail(j);
+    k -= j;
+  }
 
-    Eigen::MatrixXd LwT = Lw.transpose();
-    Lw += LwT;
-    Eigen::MatrixXd LwColSum = Lw.colwise().sum().asDiagonal();
-    Lw -= LwColSum;
-    return Lw;
+  Eigen::MatrixXd LwT = Lw.transpose();
+  Lw += LwT;
+  Eigen::MatrixXd LwColSum = Lw.colwise().sum().asDiagonal();
+  Lw -= LwColSum;
+  return Lw;
 }
 
 
@@ -40,19 +40,19 @@ Eigen::MatrixXd L(const Eigen::VectorXd& w) {
 //' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd vecLmat(int n) {
-    const int ncols = .5 * n * (n - 1);
-    const int nrows = n * n;
+  const int ncols = .5 * n * (n - 1);
+  const int nrows = n * n;
 
-    Eigen::VectorXd e = Eigen::VectorXd::Zero(ncols);
-    Eigen::MatrixXd R = Eigen::MatrixXd::Zero(nrows, ncols);
-    e(0) = 1;
-    R.col(0) = vec(L(e));
-    for (int j = 1; j < ncols; ++j) {
-        e(j - 1) = 0;
-        e(j) = 1;
-        R.col(j) = vec(L(e));
-    }
-    return R;
+  Eigen::VectorXd e = Eigen::VectorXd::Zero(ncols);
+  Eigen::MatrixXd R = Eigen::MatrixXd::Zero(nrows, ncols);
+  e(0) = 1;
+  R.col(0) = vec(L(e));
+  for (int j = 1; j < ncols; ++j) {
+    e(j - 1) = 0;
+    e(j) = 1;
+    R.col(j) = vec(L(e));
+  }
+  return R;
 }
 
 
@@ -66,15 +66,15 @@ Eigen::MatrixXd vecLmat(int n) {
 //' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd vec(const Eigen::MatrixXd& M) {
-    Eigen::MatrixXd w(M.size(), 1);
-    int k = 0;
-    for (int j = 0; j < M.cols(); ++j) {
-        for (int i = 0; i < M.rows(); ++i) {
-            w(k, 0) = M(i, j);
-            ++k;
-        }
+  Eigen::MatrixXd w(M.size(), 1);
+  int k = 0;
+  for (int j = 0; j < M.cols(); ++j) {
+    for (int i = 0; i < M.rows(); ++i) {
+      w(k, 0) = M(i, j);
+      ++k;
     }
-    return w;
+  }
+  return w;
 }
 
 
@@ -86,21 +86,21 @@ Eigen::MatrixXd vec(const Eigen::MatrixXd& M) {
 //' @export
 // [[Rcpp::export]]
 Eigen::VectorXd Lstar(const Eigen::MatrixXd& M) {
-    int N = M.cols();
-    int k = .5 * N * (N - 1);
-    int j = 0;
-    int l = 1;
-    Eigen::VectorXd w = Eigen::VectorXd::Zero(k);
+  int N = M.cols();
+  int k = .5 * N * (N - 1);
+  int j = 0;
+  int l = 1;
+  Eigen::VectorXd w = Eigen::VectorXd::Zero(k);
 
-    for (int i = 0; i < k; ++i) {
-        w(i) = M(j, j) + M(l, l) - (M(l, j) + M(j, l));
-        if (l == (N - 1)) {
-            l = (++j) + 1;
-        } else {
-            ++l;
-        }
+  for (int i = 0; i < k; ++i) {
+    w(i) = M(j, j) + M(l, l) - (M(l, j) + M(j, l));
+    if (l == (N - 1)) {
+      l = (++j) + 1;
+    } else {
+      ++l;
     }
-    return w;
+  }
+  return w;
 }
 
 
@@ -112,18 +112,18 @@ Eigen::VectorXd Lstar(const Eigen::MatrixXd& M) {
 //' @export
 // [[Rcpp::export]]
 Eigen::VectorXd Linv(const Eigen::MatrixXd& M) {
-    int N = M.cols();
-    int k = .5 * N * (N - 1);
-    Eigen::VectorXd w = Eigen::VectorXd::Zero(k);
-    int l = 0;
+  int N = M.cols();
+  int k = .5 * N * (N - 1);
+  Eigen::VectorXd w = Eigen::VectorXd::Zero(k);
+  int l = 0;
 
-    for (int i = 0; i < N-1; ++i) {
-        for (int j = i+1; j < N; ++j) {
-            w(l) = -M(i, j);
-            ++l;
-        }
+  for (int i = 0; i < N-1; ++i) {
+    for (int j = i+1; j < N; ++j) {
+      w(l) = -M(i, j);
+      ++l;
     }
-    return w;
+  }
+  return w;
 }
 
 
@@ -136,18 +136,18 @@ Eigen::VectorXd Linv(const Eigen::MatrixXd& M) {
 //'
 // [[Rcpp::export]]
 Eigen::VectorXd altLstar(const Eigen::MatrixXd& M) {
-    int N = M.cols();
-    int k = .5 * N * (N - 1);
-    Eigen::VectorXd w = Eigen::VectorXd::Zero(k);
-    Eigen::MatrixXd MT = M.transpose();
-    Eigen::VectorXd e = Eigen::VectorXd::Zero(k);
+  int N = M.cols();
+  int k = .5 * N * (N - 1);
+  Eigen::VectorXd w = Eigen::VectorXd::Zero(k);
+  Eigen::MatrixXd MT = M.transpose();
+  Eigen::VectorXd e = Eigen::VectorXd::Zero(k);
 
-    e(0) = 1;
-    w(0) = (MT * L(e)).trace();
-    for (int i = 1; i < k; ++i) {
-        e(i - 1) = 0;
-        e(i) = 1;
-        w(i) = (MT * L(e)).trace();
-    }
-    return w;
+  e(0) = 1;
+  w(0) = (MT * L(e)).trace();
+  for (int i = 1; i < k; ++i) {
+    e(i - 1) = 0;
+    e(i) = 1;
+    w(i) = (MT * L(e)).trace();
+  }
+  return w;
 }
