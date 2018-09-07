@@ -1,7 +1,21 @@
+# Run this file as Rscript benchmark.R
+
 library(spectralGraphTopology)
 library(ggplot2)
 set.seed(123)
 
+# naive estimator
+naive <- function(S) {
+  return(MASS::ginv(S))
+}
+
+ # qp estimator
+qp <- function(S) {
+  Sinv <- MASS::ginv(S)
+  R <- vecLmat(ncol(Sinv))
+  qp <- quadprog::solve.QP(crossprod(R), t(R) %*% vec(Sinv), diag(ncol(R)))
+  return (L(qp$solution))
+}
 
 # This function is a little benchmark to warm up
 # against simpler estimators such as the naive one
@@ -29,8 +43,7 @@ warmup_benchmark <- function(N_realizations, N, ratios) {
       Lw <- L(w)
       Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Lw))
       covY <- cov(Y)
-      res <- learnGraphTopology(Y, K = 1, beta = 10, rho = .1,
-                                maxiter_beta = 50)
+      res <- learnGraphTopology(Y, K = 1)
       Lw_est <- res$Lw
       rel_err["spectral"] <- rel_err["spectral"] + relativeError(Lw, Lw_est)
       rel_err["naive"] <- rel_err["naive"] + relativeError(Lw, naive(covY))
@@ -56,5 +69,5 @@ warmup_benchmark <- function(N_realizations, N, ratios) {
 
 # usage
 ratios <- c(2, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50)
-warmup_benchmark(N_realizations = 100, N = 64, ratios = ratios)
+warmup_benchmark(N_realizations = 100, N = 12, ratios = ratios)
 warnings()
