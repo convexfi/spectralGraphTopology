@@ -66,7 +66,7 @@ learnGraphTopology <- function (Y, K, w0 = "qp", lb = 1e-4, ub = 1e4, alpha = 0.
   Sinv <- MASS::ginv(S)
   if (w0 == "qp") {
     R <- vecLmat(ncol(Sinv))
-    qp <- quadprog::solve.QP(t(R) %*% R, t(R) %*% vec(Sinv), diag(ncol(R)))
+    qp <- quadprog::solve.QP(crossprod(R), t(R) %*% vec(Sinv), diag(ncol(R)))
     w0 <- qp$solution
   } else if (w0 == "naive") {
     w0 <- pmax(0, Linv(Sinv))
