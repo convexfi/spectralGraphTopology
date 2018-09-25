@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output:
   bookdown::html_document2:
     base_format: prettydoc::html_pretty
-    theme: leonids
+    theme: tactile
     highlight: vignette
     fig_caption: yes
     number_sections: no
@@ -65,7 +65,7 @@ by construction.
 One common approach to estimate the Laplacian matrix would be via the generalized
 inverse of the covariance matrix, which is an assymptotically unbiased and efficient
 estimator. In this document, we call this approach the \textit{naive} one.
-In \textsf{R}, this estimator can be computed as ``MASS::ginv(cov(Y))``,
+In R, this estimator can be computed as ``MASS::ginv(cov(Y))``,
 where``Y`` is the data matrix.
 
 Another classical approach was proposed in [@Friedman2008] which incorporates a
@@ -90,7 +90,7 @@ details check the paper or the algorithm description at the end of this document
 
 # Usage of the package
 We illustrate the usage of the package with simulated data, as follows:
-```{r, cache = TRUE}
+```{r}
 library(spectralGraphTopology)
 set.seed(123)
 
@@ -117,7 +117,7 @@ res$Lw
 
 Another visual tool is the correlation matrix:
 
-```{r, cache = TRUE}
+```{r}
 library(corrplot)
 par(mfrow = c(1, 2))
 corrplot(cov2cor(Lw), mar = c(0, 0, 1, 0))
@@ -145,17 +145,20 @@ manner by computing two criterions:
 2. percentage improvement in average loss (PRIAL)
 
 
-```{r, cache = TRUE}
+```{r}
 Lw_naive <- MASS::ginv(cov(Y))
-rel_err <- c(proposed = relativeError(Lw, res$Lw),
-             naive = relativeError(Lw, Lw_naive))
-prial <- c(proposed = prial(Lw, res$Lw),
-           naive = prial(Lw, Lw_naive))
+rel_err <- c(proposed = spectralGraphTopology::relativeError(Lw, res$Lw),
+             naive = spectralGraphTopology::relativeError(Lw, Lw_naive))
+prial <- c(proposed = spectralGraphTopology::prial(Lw, res$Lw),
+           naive = spectralGraphTopology::prial(Lw, Lw_naive))
 rel_err
 prial
 ```
 
-In this case, the naive estimation of the Laplacian matrix (i.e., generalized inverse of the sample covariance matrix) performs already quite well since the ratio $T/N$ is large enough `r T/N` for the sample covariance matrix to be accurately estimated.
+In this case, the naive estimation of the Laplacian matrix (i.e., generalized
+inverse of the sample covariance matrix) performs already quite well since
+the ratio $T/N$ is large enough `r T/N` for the sample covariance matrix to be
+accurately estimated.
 
 Let's also look at the convergence of the objective function versus iterations:
 ```{r}
@@ -167,8 +170,8 @@ plot(c(1:N_iter), res$obj_fun, type = "b", pch=19, cex=.6, col = scales::alpha("
 
 ## Illustrative example for K = 2
 
-For K > 1, we can generate the Laplacian as a block diagonal matrix, as follows
-```{r, cache = TRUE}
+For K = 2 and $\beta = 100$, we can generate the Laplacian as a block diagonal matrix, as follows
+```{r}
 library(spectralGraphTopology)
 T <- 500
 w1 <- runif(3)
@@ -180,46 +183,36 @@ N2 <- ncol(Lw2)
 Lw <- blockDiag(Lw1, Lw2)
 Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Lw))
 K <- 2
-res <- learnGraphTopology(Y, K, beta = 10)
-```
+res <- learnGraphTopology(Y, K, w0 = "naive", beta = 100)
 
-Let's also compute the usual estimation error quantities:
-```{r}
-Lw_naive <- MASS::ginv(cov(Y))
-rel_err <- c(proposed = relativeError(Lw, res$Lw),
-             naive = relativeError(Lw, Lw_naive))
-prial <- c(proposed = prial(Lw, res$Lw),
-           naive = prial(Lw, Lw_naive))
-rel_err
-prial
-```
-
-```{r}
-Lw
-res$Lw
-```
-
-```{r}
 N_iter <- length(res$obj_fun)
 plot(c(1:N_iter), res$obj_fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
      xlab = "Iteration number", ylab = "Objective function")
-```
-```{r}
 plot(c(1:N_iter), res$loglike, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
      xlab = "Iteration number", ylab = "Negative Log Likelihood")
-```
 
-Let's pictorially compare the true graph topology and the learned one:
-```{r}
+rel_err_seq <- c()
+w_seq <- res$w_seq
+for (i in 1:N_iter) {
+  rel_err <- relativeError(Lw, L(w_seq[[i]]))
+  rel_err_seq <- c(rel_err_seq, rel_err)
+}
+plot(c(1:N_iter), rel_err_seq, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
+     xlab = "Iteration number", ylab = "Relative Error")
+
 W <- Lw - diag(diag(Lw))
+Lw_naive <- MASS::ginv(cov(Y))
+W_naive <- -(Lw_naive - diag(diag(Lw_naive)))
+
 library(qgraph)
-par(mfrow = c(1, 2))
+par(mfrow = c(1, 3))
 qgraph(W, esize = 5, edge.color = "black")
 title("True graph (K = 2)", line = 2.5)
 qgraph(res$W, esize = 5, edge.color = "black")
 title("Estimated graph", line = 2.5)
+qgraph(W_naive, esize = 5, edge.color = "black")
+title("Naive Estimated graph", line = 2.5)
 ```
-
 # Explanation of the algorithms
 
 In this section we present the algorithms designed to solve the

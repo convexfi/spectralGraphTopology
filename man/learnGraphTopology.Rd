@@ -5,7 +5,7 @@
 \title{Learn Graph Topology}
 \usage{
 learnGraphTopology(Y, K, w0 = "qp", lb = 1e-04, ub = 10000,
-  alpha = 0, beta = 0.5, rho = 0.1, maxiter = 5000,
+  alpha = 0, beta = 10, rho = 0.1, maxiter = 5000,
   maxiter_beta = 1, w_tol = 1e-06, lambda_tol = 1e-06,
   U_tol = 1e-06, ftol = 1e-06)
 }
