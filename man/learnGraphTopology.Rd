@@ -4,13 +4,12 @@
 \alias{learnGraphTopology}
 \title{Learn Graph Topology}
 \usage{
-learnGraphTopology(Y, K, w0 = "qp", lb = 1e-04, ub = 10000,
+learnGraphTopology(S, K, w0 = "qp", lb = 1e-04, ub = 10000,
   alpha = 0, beta = 10, rho = 0.1, maxiter = 5000,
   maxiter_beta = 1, Lwtol = 1e-06, ftol = 1e-06)
 }
 \arguments{
-\item{Y}{T-by-N observed data matrix, where T is the size of each sample
-and N is the number of samples}
+\item{S}{N-by-N sample covariance matrix, where N is the number of nodes}
 
 \item{K}{the number of components of the graph}
 
@@ -69,7 +68,7 @@ N <- ncol(Lw)
 Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Lw))
 
 # learn the Laplacian matrix from the simulated data
-res <- learnGraphTopology(Y, 1)
+res <- learnGraphTopology(cov(Y), 1)
 
 # relative error between the true Laplacian and the learned one
 norm(Lw - res$Lw, type="F") / norm(Lw, type="F")

@@ -106,7 +106,7 @@ Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Lw))
 # Number of components of the graph
 K <- 1
 # Learn the Laplacian matrix
-res <- learnGraphTopology(Y, K, beta = 10)
+res <- learnGraphTopology(cov(Y), K, beta = 10)
 ```
 
 Let's visually inspect the true Laplacian and the estimated one:
@@ -183,7 +183,7 @@ N2 <- ncol(Lw2)
 Lw <- blockDiag(Lw1, Lw2)
 Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Lw))
 K <- 2
-res <- learnGraphTopology(Y, K, w0 = "naive", beta = 100)
+res <- learnGraphTopology(cov(Y), K, w0 = "naive", beta = 100)
 
 N_iter <- length(res$obj_fun)
 plot(c(1:N_iter), res$obj_fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),

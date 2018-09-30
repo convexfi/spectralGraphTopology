@@ -186,7 +186,7 @@ details check the paper or the algorithm description at the end of this document
 <a class="sourceLine" id="cb1-13" data-line-number="13"><span class="co"># Number of components of the graph</span></a>
 <a class="sourceLine" id="cb1-14" data-line-number="14">K &lt;-<span class="st"> </span><span class="dv">1</span></a>
 <a class="sourceLine" id="cb1-15" data-line-number="15"><span class="co"># Learn the Laplacian matrix</span></a>
-<a class="sourceLine" id="cb1-16" data-line-number="16">res &lt;-<span class="st"> </span><span class="kw">learnGraphTopology</span>(Y, K, <span class="dt">beta =</span> <span class="dv">10</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb1-16" data-line-number="16">res &lt;-<span class="st"> </span><span class="kw">learnGraphTopology</span>(<span class="kw">cov</span>(Y), K, <span class="dt">beta =</span> <span class="dv">10</span>)</a></code></pre></div>
 <p>Let’s visually inspect the true Laplacian and the estimated one:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">Lw</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt;            [,1]       [,2]       [,3]       [,4]       [,5]</span></a>
@@ -261,7 +261,7 @@ accurately estimated.</p>
 <a class="sourceLine" id="cb7-9" data-line-number="9">Lw &lt;-<span class="st"> </span><span class="kw">blockDiag</span>(Lw1, Lw2)</a>
 <a class="sourceLine" id="cb7-10" data-line-number="10">Y &lt;-<span class="st"> </span>MASS<span class="op">::</span><span class="kw">mvrnorm</span>(T, <span class="kw">rep</span>(<span class="dv">0</span>, N1 <span class="op">+</span><span class="st"> </span>N2), MASS<span class="op">::</span><span class="kw">ginv</span>(Lw))</a>
 <a class="sourceLine" id="cb7-11" data-line-number="11">K &lt;-<span class="st"> </span><span class="dv">2</span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12">res &lt;-<span class="st"> </span><span class="kw">learnGraphTopology</span>(Y, K, <span class="dt">w0 =</span> <span class="st">&quot;naive&quot;</span>, <span class="dt">beta =</span> <span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb7-12" data-line-number="12">res &lt;-<span class="st"> </span><span class="kw">learnGraphTopology</span>(<span class="kw">cov</span>(Y), K, <span class="dt">w0 =</span> <span class="st">&quot;naive&quot;</span>, <span class="dt">beta =</span> <span class="dv">100</span>)</a>
 <a class="sourceLine" id="cb7-13" data-line-number="13"></a>
 <a class="sourceLine" id="cb7-14" data-line-number="14">N_iter &lt;-<span class="st"> </span><span class="kw">length</span>(res<span class="op">$</span>obj_fun)</a>
 <a class="sourceLine" id="cb7-15" data-line-number="15"><span class="kw">plot</span>(<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>N_iter), res<span class="op">$</span>obj_fun, <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>, <span class="dt">pch=</span><span class="dv">19</span>, <span class="dt">cex=</span>.<span class="dv">6</span>, <span class="dt">col =</span> scales<span class="op">::</span><span class="kw">alpha</span>(<span class="st">&quot;black&quot;</span>, <span class="fl">.5</span>),</a>
