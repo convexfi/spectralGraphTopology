@@ -83,7 +83,6 @@ learnGraphTopology <- function (S, K, w0 = "qp", lb = 1e-4, ub = 1e4, alpha = 0.
       lambda <- lambda_update(lb, ub, beta, U, w, N, K)
       # compute relative error on the Laplacian matrix
       Lw <- L(w)
-      time_seq <- c(time_seq, proc.time()[3] - start_time)
       Lwerr <- norm(Lw - Lw0, type="F") / norm(Lw0, type="F")
       # check tolerance on the parameters
       if (Lwerr < Lwtol)
@@ -96,6 +95,7 @@ learnGraphTopology <- function (S, K, w0 = "qp", lb = 1e-4, ub = 1e4, alpha = 0.
       if (ferr < ftol)
         break
       # save and update estimates
+      time_seq <- c(time_seq, proc.time()[3] - start_time)
       ll_seq <- c(ll_seq, ll)
       fun_seq <- c(fun_seq, fun)
       w_seq <- rlist::list.append(w_seq, w)
