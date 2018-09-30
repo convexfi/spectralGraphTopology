@@ -6,8 +6,7 @@
 \usage{
 learnGraphTopology(Y, K, w0 = "qp", lb = 1e-04, ub = 10000,
   alpha = 0, beta = 10, rho = 0.1, maxiter = 5000,
-  maxiter_beta = 1, w_tol = 1e-06, lambda_tol = 1e-06,
-  U_tol = 1e-06, ftol = 1e-06)
+  maxiter_beta = 1, Lwtol = 1e-06, ftol = 1e-06)
 }
 \arguments{
 \item{Y}{T-by-N observed data matrix, where T is the size of each sample
@@ -35,11 +34,7 @@ the glasso solution}
 
 \item{maxiter_beta}{the maximum number of iterations for the outer loop}
 
-\item{w_tol}{relative tolerance on w}
-
-\item{lambda_tol}{relative tolerance on lambda}
-
-\item{U_tol}{relative tolerance on U}
+\item{Lwtol}{relative tolerance on the Laplacian matrix}
 
 \item{ftol}{relative tolerance on the objective function}
 }
