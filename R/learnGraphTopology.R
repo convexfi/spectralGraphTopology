@@ -78,7 +78,9 @@ learnGraphTopology <- function (Y, K, w0 = "qp", lb = 1e-4, ub = 1e4, alpha = 0.
   fun_seq <- c(fun0)
   ll_seq <- c(ll0)
   w_seq <- list(w0)
+  time_seq <- c(0)
 
+  start_time <- proc.time()[3]
   for (i in 1:maxiter_beta) {
     for (k in 1:maxiter) {
       w <- w_update(w0, U0, beta, lambda0, N, Kmat)
@@ -86,6 +88,7 @@ learnGraphTopology <- function (Y, K, w0 = "qp", lb = 1e-4, ub = 1e4, alpha = 0.
       lambda <- lambda_update(lb, ub, beta, U, w, N, K)
       # compute relative error on the Laplacian matrix
       Lw <- L(w)
+      time_seq <- c(time_seq, proc.time()[3] - start_time)
       Lwerr <- norm(Lw - Lw0, type="F") / norm(Lw0, type="F")
       # check tolerance on the parameters
       if (Lwerr < Lwtol)
@@ -111,6 +114,6 @@ learnGraphTopology <- function (Y, K, w0 = "qp", lb = 1e-4, ub = 1e4, alpha = 0.
   }
   # compute the adjancency matrix
   W <- diag(diag(Lw)) - Lw
-  return(list(Lw = Lw, W = W, obj_fun = fun_seq, loglike = ll_seq,
-              w_seq = w_seq, w = w, lambda = lambda, U = U))
+  return(list(Lw = Lw, W = W, obj_fun = fun_seq, loglike = ll_seq, w_seq = w_seq,
+              w = w, lambda = lambda, U = U, elapsed_time = time_seq))
 }
