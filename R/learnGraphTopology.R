@@ -82,23 +82,21 @@ learnGraphTopology <- function (S, K, w0 = "qp", lb = 1e-4, ub = 1e4, alpha = 0.
       Lw <- L(w)
       U <- U_update(Lw, N, K)
       lambda <- lambda_update(lb, ub, beta, U, Lw, N, K)
-      # compute relative error on the Laplacian matrix
-      Lwerr <- norm(Lw - Lw0, type="F") / norm(Lw0, type="F")
-      # check tolerance on the parameters
-      if (Lwerr < Lwtol)
-        break
-      # compute relative error on the objective function
+      # compute negloglikelihood and objective function values
       ll <- logLikelihood(Lw, lambda, Kmat)
       fun <- ll + logPrior(beta, Lw, lambda, U)
-      ferr <- abs(fun - fun0) / max(1, abs(fun))
-      # check tolerance on the objective function
-      if (ferr < ftol)
-        break
-      # save and update estimates
+      # save estimates
       time_seq <- c(time_seq, proc.time()[3] - start_time)
       ll_seq <- c(ll_seq, ll)
       fun_seq <- c(fun_seq, fun)
       w_seq <- rlist::list.append(w_seq, w)
+      # compute the relative error and check the tolerance on the Laplacian
+      # matrix and on the objective function
+      Lwerr <- norm(Lw - Lw0, type="F") / norm(Lw0, type="F")
+      ferr <- abs(fun - fun0) / max(1, abs(fun))
+      if (Lwerr < Lwtol || ferr < ftol)
+        break
+      # update estimates
       fun0 <- fun
       w0 <- w
       U0 <- U
