@@ -78,11 +78,11 @@ learnGraphTopology <- function (S, K, w0 = "qp", lb = 1e-4, ub = 1e4, alpha = 0.
   start_time <- proc.time()[3]
   for (i in 1:maxiter_beta) {
     for (k in 1:maxiter) {
-      w <- w_update(w0, U0, beta, lambda0, N, Kmat)
-      U <- U_update(w, N, K)
-      lambda <- lambda_update(lb, ub, beta, U, w, N, K)
-      # compute relative error on the Laplacian matrix
+      w <- w_update(w0, Lw0, U0, beta, lambda0, N, Kmat)
       Lw <- L(w)
+      U <- U_update(Lw, N, K)
+      lambda <- lambda_update(lb, ub, beta, U, Lw, N, K)
+      # compute relative error on the Laplacian matrix
       Lwerr <- norm(Lw - Lw0, type="F") / norm(Lw0, type="F")
       # check tolerance on the parameters
       if (Lwerr < Lwtol)
