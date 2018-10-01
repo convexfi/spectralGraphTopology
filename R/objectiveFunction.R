@@ -1,3 +1,4 @@
+# Negative log of the posterior density function
 objectiveFunction <- function(Theta, U, lambda, Kmat, beta) {
   return(logLikelihood(Theta, lambda, Kmat) + logPrior(beta, Theta, lambda, U))
 }
@@ -9,5 +10,5 @@ logLikelihood <- function(Theta, lambda, Kmat) {
 
 # Negative logarithm of the prior probability distribution
 logPrior <- function(beta, Theta, lambda, U) {
-  return (.5 * beta * norm(Theta - crossprod(sqrt(lambda) * t(U)), type="F")^2)
+  return(.5 * beta * norm(Theta - crossprod(sqrt(lambda) * t(U)), type="F")^2)
 }
