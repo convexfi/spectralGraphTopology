@@ -160,12 +160,10 @@ inverse of the sample covariance matrix) performs already quite well since
 the ratio $T/N$ is large enough `r T/N` for the sample covariance matrix to be
 accurately estimated.
 
-Let's also look at the convergence of the objective function versus iterations:
+Let's also look at the convergence of the objective function versus elapsed time:
 ```{r}
-N_iter <- length(res$obj_fun)
-plot(c(1:N_iter), res$obj_fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
-     xlab = "Iteration number", ylab = "Objective function")
-
+plot(res$elapsed_time, res$obj_fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
+     xlab = "CPU time [seconds]", ylab = "Objective function")
 ```
 
 ## Illustrative example for K = 2
@@ -185,20 +183,20 @@ Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Lw))
 K <- 2
 res <- learnGraphTopology(cov(Y), K, w0 = "naive", beta = 100)
 
-N_iter <- length(res$obj_fun)
-plot(c(1:N_iter), res$obj_fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
-     xlab = "Iteration number", ylab = "Objective function")
-plot(c(1:N_iter), res$loglike, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
-     xlab = "Iteration number", ylab = "Negative Log Likelihood")
+plot(res$elapsed_time, res$obj_fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
+     xlab = "CPU time [seconds]", ylab = "Objective function")
+plot(res$elapsed_time, res$loglike, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
+     xlab = "CPU time [seconds]", ylab = "Negative Log Likelihood")
 
 rel_err_seq <- c()
 w_seq <- res$w_seq
+N_iter <- length(res$obj_fun)
 for (i in 1:N_iter) {
   rel_err <- relativeError(Lw, L(w_seq[[i]]))
   rel_err_seq <- c(rel_err_seq, rel_err)
 }
-plot(c(1:N_iter), rel_err_seq, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
-     xlab = "Iteration number", ylab = "Relative Error")
+plot(res$elapsed_time, rel_err_seq, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
+     xlab = "CPU time [seconds]", ylab = "Relative Error")
 
 W <- Lw - diag(diag(Lw))
 Lw_naive <- MASS::ginv(cov(Y))
