@@ -44,7 +44,7 @@ Eigen::MatrixXd vecLmat(int n) {
   const int nrows = n * n;
 
   Eigen::VectorXd e = Eigen::VectorXd::Zero(ncols);
-  Eigen::MatrixXd R = Eigen::MatrixXd::Zero(nrows, ncols);
+  Eigen::MatrixXd R(nrows, ncols);
   e(0) = 1;
   R.col(0) = vec(L(e));
   for (int j = 1; j < ncols; ++j) {
@@ -90,7 +90,7 @@ Eigen::VectorXd Lstar(const Eigen::MatrixXd& M) {
   int k = .5 * N * (N - 1);
   int j = 0;
   int l = 1;
-  Eigen::VectorXd w = Eigen::VectorXd::Zero(k);
+  Eigen::VectorXd w(k);
 
   for (int i = 0; i < k; ++i) {
     w(i) = M(j, j) + M(l, l) - (M(l, j) + M(j, l));
@@ -114,7 +114,7 @@ Eigen::VectorXd Lstar(const Eigen::MatrixXd& M) {
 Eigen::VectorXd Linv(const Eigen::MatrixXd& M) {
   int N = M.cols();
   int k = .5 * N * (N - 1);
-  Eigen::VectorXd w = Eigen::VectorXd::Zero(k);
+  Eigen::VectorXd w(k);
   int l = 0;
 
   for (int i = 0; i < N-1; ++i) {
