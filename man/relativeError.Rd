@@ -4,7 +4,12 @@
 \alias{relativeError}
 \title{Compute the relative error between two matrices}
 \usage{
-relativeError(Xtrue, Xest)
+relativeError(Ltrue, Lest)
+}
+\arguments{
+\item{Ltrue}{true Laplacian matrix}
+
+\item{Lest}{estimated Laplacian matrix}
 }
 \description{
 Compute the relative error between two matrices

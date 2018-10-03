@@ -4,7 +4,15 @@
 \alias{prial}
 \title{Compute the prial value between two matrices}
 \usage{
-prial(Xtrue, Xest)
+prial(Ltrue, Lest, Lscm)
+}
+\arguments{
+\item{Ltrue}{true Laplacian matrix}
+
+\item{Lest}{estimated Laplacian matrix}
+
+\item{Lscm}{estimated Laplacian matrix via the generalized inverse of the
+of the sample covariance matrix}
 }
 \description{
 Compute the prial value between two matrices

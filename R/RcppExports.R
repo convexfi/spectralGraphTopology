@@ -70,3 +70,7 @@ blockDiagCpp <- function(matrices) {
     .Call('_spectralGraphTopology_blockDiagCpp', PACKAGE = 'spectralGraphTopology', matrices)
 }
 
+Fscore <- function(Wtrue, West, eps) {
+    .Call('_spectralGraphTopology_Fscore', PACKAGE = 'spectralGraphTopology', Wtrue, West, eps)
+}
+
