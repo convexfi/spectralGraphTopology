@@ -7,6 +7,7 @@ blockDiag <- function(...) {
   return(blockDiagCpp(list(...)))
 }
 
+
 #' Compute the relative error between two matrices
 #' @param Ltrue true Laplacian matrix
 #' @param Lest estimated Laplacian matrix
@@ -25,9 +26,4 @@ relativeError <- function(Ltrue, Lest) {
 prial <- function(Ltrue, Lest, Lscm) {
   return(100 * (1 - (norm(Lest - Ltrue, type = "F") /
                      norm(Lnaive - Ltrue, type = "F"))^2))
-}
-
-#' Compute the F-score between the true Laplacian and the estimated one
-Fscore <- function(Ltrue, Lest) {
-  stop("To be implemented")
 }

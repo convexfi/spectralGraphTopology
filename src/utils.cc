@@ -32,3 +32,24 @@ Eigen::MatrixXd blockDiagCpp(const std::vector<Eigen::MatrixXd>& matrices) {
   }
   return blockDiag;
 }
+
+// [[Rcpp::export]]
+double Fscore(const Eigen::MatrixXd& Wtrue, const Eigen::MatrixXd& West,
+              const double eps) {
+  double tp = 0, fp = 0, fn = 0;
+  const int n = Wtrue.cols();
+  for (int i = 0; i < (n-1); ++i) {
+    for (int j = i+1; j < n; ++j) {
+      isthere_edge = std::abs(Wtrue(i, j)) > eps;
+      isthere_est_edge = std::abs(West(i, j)) > eps;
+      if (isthere_edge && isthere_est_edge)
+        tp += 1;
+      else if (!isthere_edge && isthere_est_edge)
+        fp += 1;
+      else if (isthere_edge && !isthere_est_edge)
+        fn += 1;
+    }
+  }
+
+  return 2 * tp / (2 * tp + fn + fp);
+}
