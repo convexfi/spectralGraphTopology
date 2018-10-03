@@ -108,5 +108,6 @@ learnGraphTopology <- function (S, K, w0 = "qp", lb = 1e-4, ub = 1e4, alpha = 0.
   # compute the adjancency matrix
   W <- diag(diag(Lw)) - Lw
   return(list(Lw = Lw, W = W, obj_fun = fun_seq, loglike = ll_seq, w_seq = w_seq,
-              w = w, lambda = lambda, U = U, elapsed_time = time_seq))
+              w = w, lambda = lambda, U = U, elapsed_time = time_seq,
+              convergence = sum(!(k == maxiter))))
 }
