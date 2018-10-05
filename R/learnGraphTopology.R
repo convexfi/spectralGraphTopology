@@ -75,9 +75,11 @@ learnGraphTopology <- function (S, K, w0 = "qp", lb = 1e-4, ub = 1e4, alpha = 0.
   w_seq <- list(w0)
   time_seq <- c(0)
 
+  pb = txtProgressBar(min = 0, max = maxiter, initial = 0)
   start_time <- proc.time()[3]
   for (i in 1:maxiter_beta) {
     for (k in 1:maxiter) {
+      setTxtProgressBar(pb, k)
       w <- w_update(w0, Lw0, U0, beta, lambda0, N, Kmat)
       Lw <- L(w)
       U <- U_update(Lw, N, K)
