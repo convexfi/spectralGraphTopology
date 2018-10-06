@@ -49,10 +49,11 @@ lambda_update <- function(lb, ub, beta, U, Lw, N, K) {
   q <- N - K
   d <- diag(t(U) %*% Lw %*% U)
   lambda <- .5 * (d + sqrt(d^2 + 4 / beta)) # unconstrained solution as initial point
-  condition <- all(lambda[q] <= ub, lambda[1] >= lb,
-                   lambda[2:q] >= lambda[1:(q-1)])
-
-  if (condition) {
+  eps <- 1e-9
+  condition <- c((lambda[q] - ub) <= eps,
+                 (lambda[1] - lb) >= -eps,
+                 (lambda[2:q] - lambda[1:(q-1)]) >= -eps)
+  if (all(condition)) {
     return (lambda)
   } else {
     greater_ub <- lambda > ub
@@ -60,11 +61,10 @@ lambda_update <- function(lb, ub, beta, U, Lw, N, K) {
     lambda[greater_ub] <- ub
     lambda[lesser_lb] <- lb
   }
-
-  condition <- all(lambda[q] <= ub, lambda[1] >= lb,
-                   lambda[2:q] >= lambda[1:(q-1)])
-
-  if (condition) {
+  condition <- c((lambda[q] - ub) <= eps,
+                 (lambda[1] - lb) >= -eps,
+                 (lambda[2:q] - lambda[1:(q-1)]) >= -eps)
+  if (all(condition)) {
     return (lambda)
   } else {
     stop("eigenvalues are not in increasing order")
