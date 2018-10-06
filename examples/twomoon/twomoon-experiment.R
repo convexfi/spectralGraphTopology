@@ -14,7 +14,7 @@ colors <- inferno(5, begin = 0, end = 1, direction = -1)
 c_scale <- colorRamp(colors)
 E(net)$color = apply(c_scale(E(net)$weight / max(E(net)$weight)), 1,
                      function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
-V(net)$color = "pink"
+V(net)$color = c(colors[5], colors[3])[twomoon$clusters]
 plot(twomoon$data, col=c(colors[5], colors[3])[twomoon$clusters], pch = 19,
      xlab = "X", ylab = "Y")
 plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
