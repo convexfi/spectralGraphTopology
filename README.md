@@ -6,6 +6,8 @@
 Learns the topology of a class of graphs such as K-component, tree, bipartite,
 and regular.
 
+![package-teaser](https://raw.githubusercontent.com/dppalomar/spectralGraphTopology/master/static/twomoon.gif?token=AMeKO581-wPSwXZwnQ76-DqSYbCdxSyVks5bwr8SwA%3D%3D)
+
 See the vignette for a detailed documentation with several illustrative examples.
 
 The package is based on the paper:
