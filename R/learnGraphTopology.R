@@ -46,7 +46,7 @@
 #' # relative error between the true Laplacian and the learned one
 #' norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
 #' @export
-learnGraphTopology <- function (S, K, w0 = "qp", lb = 1e-4, ub = 1e4, alpha = 0.,
+learnGraphTopology <- function (S, K = 1, w0 = "qp", lb = 1e-4, ub = 1e4, alpha = 0.,
                                 beta = 10., rho = .1, maxiter = 5000, maxiter_beta = 1,
                                 Lwtol = 1e-6, ftol = 1e-6) {
   # number of nodes
