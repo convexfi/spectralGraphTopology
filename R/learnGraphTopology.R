@@ -47,7 +47,7 @@
 #' norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
 #' @export
 learnGraphTopology <- function (S, K = 1, w0 = "qp", lb = 1e-4, ub = 1e4, alpha = 0.,
-                                beta = 10., rho = .1, maxiter = 5000, maxiter_beta = 1,
+                                beta = 1., rho = .1, maxiter = 5000, maxiter_beta = 1,
                                 Lwtol = 1e-6, ftol = 1e-6) {
   # number of nodes
   N <- nrow(S)
@@ -55,14 +55,17 @@ learnGraphTopology <- function (S, K = 1, w0 = "qp", lb = 1e-4, ub = 1e4, alpha 
   H <- alpha * (2 * diag(N) - matrix(1, N, N))
   Kmat <- S + H
   # find an appropriate inital guess
-  Sinv <- MASS::ginv(S)
-  if (w0 == "qp") {
-    R <- vecLmat(ncol(Sinv))
-    qp <- quadprog::solve.QP(crossprod(R), t(R) %*% vec(Sinv), diag(ncol(R)))
-    w0 <- qp$solution
-  } else if (w0 == "naive") {
-    w0 <- pmax(0, Linv(Sinv))
+  Kmatinv <- MASS::ginv(Kmat)
+  if (is.character(w0)) {
+    if (w0 == "qp") {
+      R <- vecLmat(ncol(Kmatinv))
+      qp <- quadprog::solve.QP(crossprod(R), t(R) %*% vec(Kmatinv), diag(ncol(R)))
+      w0 <- qp$solution
+    } else if (w0 == "naive") {
+      w0 <- pmax(0, Linv(Kmatinv))
+    }
   }
+  # compute quantities on the initial guess
   Lw0 <- L(w0)
   evd <- eigen(Lw0)
   lambda0 <- pmax(0, evd$values[(N-K):1])
