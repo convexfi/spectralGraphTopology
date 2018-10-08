@@ -4,8 +4,8 @@
 \alias{learnGraphTopology}
 \title{Learn Graph Topology}
 \usage{
-learnGraphTopology(S, K, w0 = "qp", lb = 1e-04, ub = 10000,
-  alpha = 0, beta = 10, rho = 0.1, maxiter = 5000,
+learnGraphTopology(S, K = 1, w0 = "naive", lb = 1e-04, ub = 10000,
+  alpha = 0, beta = 1, rho = 0.1, maxiter = 5000,
   maxiter_beta = 1, Lwtol = 1e-06, ftol = 1e-06)
 }
 \arguments{

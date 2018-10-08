@@ -149,10 +149,7 @@ manner by computing two criterions:
 Lw_naive <- MASS::ginv(cov(Y))
 rel_err <- c(proposed = spectralGraphTopology::relativeError(Lw, res$Lw),
              naive = spectralGraphTopology::relativeError(Lw, Lw_naive))
-prial <- c(proposed = spectralGraphTopology::prial(Lw, res$Lw),
-           naive = spectralGraphTopology::prial(Lw, Lw_naive))
 rel_err
-prial
 ```
 
 In this case, the naive estimation of the Laplacian matrix (i.e., generalized
@@ -181,7 +178,7 @@ N2 <- ncol(Lw2)
 Lw <- blockDiag(Lw1, Lw2)
 Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Lw))
 K <- 2
-res <- learnGraphTopology(cov(Y), K, w0 = "naive", beta = 100)
+res <- learnGraphTopology(cov(Y), K, beta = 100)
 
 plot(res$elapsed_time, res$obj_fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
      xlab = "CPU time [seconds]", ylab = "Objective function")
