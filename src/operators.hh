@@ -6,10 +6,11 @@
 
 using namespace Eigen;
 
-MatrixXd L(const VectorXd&, int);
+MatrixXd L(const VectorXd&);
 VectorXd Linv(const MatrixXd&);
 VectorXd Lstar(const MatrixXd&);
+MatrixXd Mmat(const int);
 VectorXd altLstar(const MatrixXd&);
 MatrixXd vec(const MatrixXd&);
-MatrixXd vecLmat(int);
+MatrixXd vecLmat(const int);
 #endif

@@ -30,6 +30,26 @@ Eigen::MatrixXd L(const Eigen::VectorXd& w) {
   return Lw;
 }
 
+//' Computes the matrix form of the composition of the operators Lstar and
+//' L, i.e., Lstar o L.
+//'
+//' @param n number of columns/rows
+//' @return M the composition of Lstar and L
+//'
+//' @export
+// [[Rcpp::export]]
+Eigen::MatrixXd Mmat(const int n) {
+  Eigen::VectorXd e = Eigen::VectorXd::Zero(n);
+  Eigen::MatrixXd M(n, n);
+  e(0) = 1;
+  M.col(0) = Lstar(L(e));
+  for (int j = 1; j < n; ++j) {
+    e(j - 1) = 0;
+    e(j) = 1;
+    M.col(j) = Lstar(L(e));
+  }
+  return M;
+}
 
 //' Computes the matrix that represents the composition of
 //' the vec and the L operators.
@@ -39,7 +59,7 @@ Eigen::MatrixXd L(const Eigen::VectorXd& w) {
 //'
 //' @export
 // [[Rcpp::export]]
-Eigen::MatrixXd vecLmat(int n) {
+Eigen::MatrixXd vecLmat(const int n) {
   const int ncols = .5 * n * (n - 1);
   const int nrows = n * n;
 

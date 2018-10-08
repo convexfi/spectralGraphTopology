@@ -17,13 +17,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// Mmat
+Eigen::MatrixXd Mmat(const int n);
+RcppExport SEXP _spectralGraphTopology_Mmat(SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(Mmat(n));
+    return rcpp_result_gen;
+END_RCPP
+}
 // vecLmat
-Eigen::MatrixXd vecLmat(int n);
+Eigen::MatrixXd vecLmat(const int n);
 RcppExport SEXP _spectralGraphTopology_vecLmat(SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
     rcpp_result_gen = Rcpp::wrap(vecLmat(n));
     return rcpp_result_gen;
 END_RCPP
@@ -99,6 +110,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_spectralGraphTopology_L", (DL_FUNC) &_spectralGraphTopology_L, 1},
+    {"_spectralGraphTopology_Mmat", (DL_FUNC) &_spectralGraphTopology_Mmat, 1},
     {"_spectralGraphTopology_vecLmat", (DL_FUNC) &_spectralGraphTopology_vecLmat, 1},
     {"_spectralGraphTopology_vec", (DL_FUNC) &_spectralGraphTopology_vec, 1},
     {"_spectralGraphTopology_Lstar", (DL_FUNC) &_spectralGraphTopology_Lstar, 1},

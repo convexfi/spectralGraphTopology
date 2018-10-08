@@ -12,6 +12,17 @@ L <- function(w) {
     .Call('_spectralGraphTopology_L', PACKAGE = 'spectralGraphTopology', w)
 }
 
+#' Computes the matrix form of the composition of the operators Lstar and
+#' L, i.e., Lstar o L.
+#'
+#' @param n number of columns/rows
+#' @return M the composition of Lstar and L
+#'
+#' @export
+Mmat <- function(n) {
+    .Call('_spectralGraphTopology_Mmat', PACKAGE = 'spectralGraphTopology', n)
+}
+
 #' Computes the matrix that represents the composition of
 #' the vec and the L operators.
 #'
