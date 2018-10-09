@@ -9,7 +9,7 @@ df <- read.csv("animals.txt", header = FALSE)
 names <- matrix(unlist(read.csv("animals_names.txt", header = FALSE)))
 Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
 N <- ncol(Y)
-graph <- learnGraphTopology(cov(Y) + diag(rep(1/3, N)), K = 10, beta = .5)
+graph <- learnGraphTopology(cov(Y) + diag(rep(1/3, N)), w0 = "qp", K = 10, beta = .5)
 
 net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
 #colors <- viridis(5, begin = 0, end = .1, direction = -1)
