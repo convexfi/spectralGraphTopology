@@ -55,14 +55,14 @@ learnGraphTopology <- function (S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alp
   H <- alpha * (2 * diag(N) - matrix(1, N, N))
   Kmat <- S + H
   # find an appropriate inital guess
-  Sinv <- MASS::ginv(S)
+  Kmatinv <- MASS::ginv(Kmat)
   if (is.character(w0)) {
     if (w0 == "qp") {
-      R <- vecLmat(ncol(Sinv))
-      qp <- quadprog::solve.QP(crossprod(R), t(R) %*% vec(Sinv), diag(ncol(R)))
+      R <- vecLmat(ncol(Kmatinv))
+      qp <- quadprog::solve.QP(crossprod(R), t(R) %*% vec(Kmatinv), diag(ncol(R)))
       w0 <- qp$solution
     } else if (w0 == "naive") {
-      w0 <- pmax(0, Linv(Sinv))
+      w0 <- pmax(0, Linv(Kmatinv))
     }
   }
   # compute quantities on the initial guess
