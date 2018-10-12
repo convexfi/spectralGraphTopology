@@ -47,7 +47,7 @@
 #' norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
 #' @export
 learnGraphTopology <- function (S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alpha = 0.,
-                                beta = 1., rho = .1, maxiter = 5000, maxiter_beta = 1,
+                                beta = 1., rho = .1, maxiter = 50000, maxiter_beta = 1,
                                 Lwtol = 1e-6, ftol = 1e-6) {
   # number of nodes
   N <- nrow(S)
