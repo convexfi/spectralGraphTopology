@@ -13,7 +13,7 @@
 performance_per_iteration <- function(Lw, T, K, ...) {
   N <- ncol(Lw)
   Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Lw))
-  lgt <- learnGraphTopology(Y, K, ...)
+  lgt <- learnGraphTopology(cov(Y), K, ...)
   relerr_seq <- c()
   ii <- c(1:length(lgt$w_seq))
   for (i in ii) {
