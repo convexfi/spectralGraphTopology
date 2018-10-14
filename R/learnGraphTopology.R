@@ -47,7 +47,7 @@
 #' norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
 #' @export
 learnGraphTopology <- function (S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alpha = 0.,
-                                beta = 1., rho = .1, maxiter = 50000, maxiter_beta = 1,
+                                beta = 1., rho = .1, beta_max = beta, maxiter = 50000,
                                 Lwtol = 1e-6, ftol = 1e-6) {
   # number of nodes
   N <- nrow(S)
@@ -80,7 +80,8 @@ learnGraphTopology <- function (S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alp
 
   pb = txtProgressBar(min = 0, max = maxiter, initial = 0)
   start_time <- proc.time()[3]
-  for (i in 1:maxiter_beta) {
+  beta_set <- beta * exp(seq(from = 0, to = log(beta_max/beta), by = rho))
+  for (beta in beta_set)
     for (k in 1:maxiter) {
       setTxtProgressBar(pb, k)
       w <- w_update(w0, Lw0, U0, beta, lambda0, N, Kmat)
@@ -97,10 +98,11 @@ learnGraphTopology <- function (S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alp
       w_seq <- rlist::list.append(w_seq, w)
       # compute the relative error and check the tolerance on the Laplacian
       # matrix and on the objective function
-      Lwerr <- norm(Lw - Lw0, type="F") / norm(Lw0, type="F")
+      Lwerr <- norm(Lw - Lw0, type="F") / max(1, norm(Lw0, type="F"))
       ferr <- abs(fun - fun0) / max(1, abs(fun))
-      if (Lwerr < Lwtol || ferr < ftol)
+      if (Lwerr < Lwtol || ferr < ftol) {
         break
+      }
       # update estimates
       fun0 <- fun
       w0 <- w
@@ -108,8 +110,6 @@ learnGraphTopology <- function (S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alp
       lambda0 <- lambda
       Lw0 <- Lw
     }
-    beta <- beta * (1 + rho)
-  }
   # compute the adjancency matrix
   W <- diag(diag(Lw)) - Lw
   return(list(Lw = Lw, W = W, obj_fun = fun_seq, loglike = ll_seq, w_seq = w_seq,
