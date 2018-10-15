@@ -29,7 +29,7 @@ and the number of drawn samples $T$ were set to $N = 64$ (16 nodes per component
 Figure~\ref{fig:4-comp} illustrates the ground truth model, its noisy version, and the model learned by our spectral
 topology algorithm with $\beta = 10$. We compute the performance of the learning process by means of the relative error
 ($\textsf{RE}$) and the F-score ($\textsf{FS}$). For this example, our algorithm achives $(\mathsf{RE}, \mathsf{FS}) = (0.131, 0.993)$
-which means almost perfect clustering accuracy even in a noisy model that heavily supress the ground truth weights when $\kappa$ is much
+which means almost perfect clustering accuracy even in a noisy model that heavily suppress the ground truth weights when $\kappa$ is much
 larger than zero.
 
 \begin{figure}[!htb]
@@ -69,7 +69,7 @@ larger than zero.
     \end{subfigure}
         \caption{An example of estimating a 4-component graph. (a) the ground truth graph Laplacian matrix ($\mathbf{L}_{\mathsf{true}}$),
                  (b) $\mathbf{L}_{\mathsf{true}}$ after being corrupted by noise, (c) the learned graph Laplacian with a performance of
-                 $(\mathsf{RE}, \mathsf{FS}) = (0.131, 0.993)$..
+                 $(\mathsf{RE}, \mathsf{FS}) = (0.131, 0.993)$.
                  The panels (d), (e), and (f) correspond to the graphs represented by the Laplacian matrices in
                  (a), (b), and (c), respectively.}\label{fig:4-comp-graph}
         \label{fig:4-comp}
