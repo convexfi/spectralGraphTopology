@@ -24,7 +24,7 @@ Lerdo <- as.matrix(laplacian_matrix(erdos_renyi))
 Lnoisy <- (1 - a) * Ltrue + a * Lerdo
 Wnoisy <- diag(diag(Lnoisy)) - Lnoisy
 Y <- MASS::mvrnorm(T, mu = rep(0, N), Sigma = MASS::ginv(Lnoisy))
-graph <- learnGraphTopology(crossprod(Y) / T, K = 4, beta = 10)
+graph <- learnGraphTopology(crossprod(Y) / T, K = 4, w0 = "qp", beta = 4)
 est_net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
 noisy_net <- graph_from_adjacency_matrix(Wnoisy, mode = "undirected", weighted = TRUE)
 true_net <- graph_from_adjacency_matrix(Wtrue, mode = "undirected", weighted = TRUE)
