@@ -46,9 +46,9 @@
 #' # relative error between the true Laplacian and the learned one
 #' norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
 #' @export
-learnGraphTopology <- function (S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alpha = 0.,
-                                beta = 1., beta_max = beta, npoints = 1, maxiter = 50000,
-                                Lwtol = 1e-6, ftol = 1e-6) {
+learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alpha = 0.,
+                               beta = 1., beta_max = beta, nbeta = 1, maxiter = 10000,
+                               Lwtol = 1e-6, ftol = 1e-6) {
   # number of nodes
   N <- nrow(S)
   # l1-norm penalty factor
@@ -80,7 +80,7 @@ learnGraphTopology <- function (S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alp
 
   pb = txtProgressBar(min = 0, max = maxiter, initial = 0)
   start_time <- proc.time()[3]
-  beta_set <- beta * exp(seq(from = 0, to = log(beta_max/beta), length.out = npoints))
+  beta_set <- beta * exp(seq(from = 0, to = log(beta_max/beta), length.out = nbeta))
   for (beta in beta_set) {
     Lwouter <- Lw0
     wouter <- w0
