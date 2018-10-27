@@ -8,7 +8,7 @@ set.seed(123)
 N <- 50
 twomoon <- shapes.two.moon(N)
 graph <- learnGraphTopology(crossprod(t(twomoon$data)) + diag(rep(1/3, 2 * N)),
-                            w0 = "naive", K = 2, beta = .25, ftol = 9e-4)
+                            w0 = "naive", K = 2, beta = .25)
 net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
 colors <- inferno(5, begin = 0, end = 1, direction = -1)
 c_scale <- colorRamp(colors)
