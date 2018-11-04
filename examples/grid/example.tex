@@ -18,22 +18,18 @@ For the values of $T$ such that $T / N > 1$, we fix $\beta = 4$. Otherwise, we s
 increase it up to $\beta = 4$.
 
 Figure~\ref{fig:performance} shows the performance of our algorithm for different sample size regimes.
-If we compare against Fig. 3 of Egilmez (2017), we can notice that we outperform all the methods that
-do not use connectivity priors, and we have a comparable performance to those algorithms that
-do use the node connectivity information. Additionally, it is worth mentioning that the methods
-designed in Egilmez (2017) require a lot more parameter tuning than ours, which is a big advantage in 
-practical scenarios.
+It also shows the performance for the \textsf{GGL} algorithm proposed by Egilmez (2017).
 
 \begin{figure}[!htb]
     \centering
     \begin{subfigure}[b]{0.47\textwidth}
-        \includegraphics[width=\textwidth]{relative_error.eps}
+        \includegraphics[width=\textwidth]{relative_error_grid.eps}
         \caption{Relative error versus $T/N$}
     \end{subfigure}
     ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
       %(or a blank line to force the subfigure onto a new line)
     \begin{subfigure}[b]{0.47\textwidth}
-        \includegraphics[width=\textwidth]{fscore.eps}
+        \includegraphics[width=\textwidth]{fscore_grid.eps}
         \caption{F-score versus $T/N$}
     \end{subfigure}
     \caption{Average performance results for learning Laplacian matrix of a $\mathcal{G}^{(64)}_{\mathsf{grid}}$.}
