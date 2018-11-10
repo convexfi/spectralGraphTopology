@@ -12,15 +12,21 @@ N <- 64
 grid <- make_lattice(length = sqrt(N), dim = 2)
 rel_err_spec <- array(0, length(ratios))
 rel_err_ggl <- array(0, length(ratios))
+rel_err_gglA <- array(0, length(ratios))
 rel_err_naive <- array(0, length(ratios))
 fscore_spec <- array(0, length(ratios))
 fscore_ggl <- array(0, length(ratios))
+fscore_gglA <- array(0, length(ratios))
 fscore_naive <- array(0, length(ratios))
 
+print("Connecting to MATLAB...")
 matlab <- Matlab()
 open(matlab)
+print("success!")
 A_mask <- matrix(1, 64, 64) - diag(64)
 setVariable(matlab, A_mask = A_mask)
+A_grid_mask <- as.matrix(laplacian_matrix(grid)) != 0
+setVariable(matlab, A_grid_mask = A_grid_mask)
 
 for (j in n_ratios) {
   T <- as.integer(ratios[j] * N)
@@ -44,7 +50,9 @@ for (j in n_ratios) {
     # set data variable to MATLAB
     setVariable(matlab, S = S)
     evaluate(matlab, "[Lggl,~,~] = estimate_ggl(S, A_mask, 1e-3, 1e-4 , 1e-6, 40, 2)")
+    evaluate(matlab, "[LgglA,~,~] = estimate_ggl(S, A_grid_mask, 1e-3, 1e-4 , 1e-6, 40, 2)")
     Lggl <- getVariable(matlab, "Lggl")
+    LgglA <- getVariable(matlab, "LgglA")
     # create an igraph object from the estimated and true adjacency matrices
     #est_net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
     ##lasso_net <- graph_from_adjacency_matrix(diag(diag(graph_lasso$wi)) - graph_lasso$wi, mode = "undirected", weighted = TRUE)
@@ -64,18 +72,24 @@ for (j in n_ratios) {
     fs_spec = Fscore(Ltrue, graph$Lw, 1e-3)
     rel_ggl = relativeError(Ltrue, Lggl$Lggl)
     fs_ggl = Fscore(Ltrue, Lggl$Lggl, 1e-3)
+    rel_gglA = relativeError(Ltrue, LgglA$LgglA)
+    fs_gglA = Fscore(Ltrue, LgglA$LgglA, 1e-3)
     rel_naive = relativeError(Ltrue, Lnaive)
     fs_naive = Fscore(Ltrue, Lnaive, 1e-3)
     print(rel_spec)
     print(fs_spec)
     print(rel_ggl)
     print(fs_ggl)
+    print(rel_gglA)
+    print(fs_gglA)
     print(rel_naive)
     print(fs_naive)
     rel_err_spec[j] <- rel_err_spec[j] + rel_spec
     fscore_spec[j] <- fscore_spec[j] + fs_spec
     rel_err_ggl[j] <- rel_err_ggl[j] + rel_ggl
     fscore_ggl[j] <- fscore_ggl[j] + fs_ggl
+    rel_err_gglA[j] <- rel_err_gglA[j] + rel_gglA
+    fscore_gglA[j] <- fscore_gglA[j] + fs_gglA
     rel_err_naive[j] <- rel_err_naive[j] + rel_naive
     fscore_naive[j] <- fscore_naive[j] + fs_naive
   }
@@ -83,6 +97,8 @@ for (j in n_ratios) {
   fscore_spec[j] <- fscore_spec[j] / N_realizations
   rel_err_ggl[j] <- rel_err_ggl[j] / N_realizations
   fscore_ggl[j] <- fscore_ggl[j] / N_realizations
+  rel_err_gglA[j] <- rel_err_gglA[j] / N_realizations
+  fscore_gglA[j] <- fscore_gglA[j] / N_realizations
   rel_err_naive[j] <- rel_err_naive[j] / N_realizations
   fscore_naive[j] <- fscore_naive[j] / N_realizations
   cat("\n** spectralGraphTopology results **\n")
@@ -95,6 +111,11 @@ for (j in n_ratios) {
   cat(rel_err_ggl[j], "\n")
   cat("Avg Fscore: ")
   cat(fscore_ggl[j], "\n")
+  cat("\n** GGL with A results **\n")
+  cat("Avg Relative error: ")
+  cat(rel_err_gglA[j], "\n")
+  cat("Avg Fscore: ")
+  cat(fscore_gglA[j], "\n")
   cat("\n** Naive results **\n")
   cat("Avg Relative error: ")
   cat(rel_err_naive[j], "\n")
@@ -102,7 +123,7 @@ for (j in n_ratios) {
   cat(fscore_naive[j], "\n")
 }
 
-colors <- rainbow_hcl(3)
+colors <- rainbow_hcl(4)
 gr = .5 * (1 + sqrt(5))
 setEPS()
 postscript("relative_error_grid.ps", family = "Times", height = 5, width = gr * 3.5)
@@ -110,18 +131,21 @@ plot(n_ratios, rel_err_naive, type = "b", pch=19, cex=.6,
      ylim=c(0, .6),
      xlab = TeX("$T / N$"), ylab = "Average Relative Error", col = colors[1], xaxt = "n")
 lines(n_ratios, rel_err_ggl, type = "b", pch=19, cex=.6, col = colors[2], xaxt = "n")
-lines(n_ratios, rel_err_spec, type = "b", pch=19, cex=.6, col = colors[3], xaxt = "n")
+lines(n_ratios, rel_err_gglA, type = "b", pch=19, cex=.6, col = colors[3], xaxt = "n")
+lines(n_ratios, rel_err_spec, type = "b", pch=19, cex=.6, col = colors[4], xaxt = "n")
 axis(side = 1, at = n_ratios, labels = ratios)
-legend("topright", legend=c("ISCM", "GGL", "SGT"), col=colors, lty=c(1, 1, 1), cex=0.8)
+legend("topright", legend = c(TeX("ISCM"), TeX("GGL"), TeX("GGL($\\mathbf{A}$)"), TeX("SGL")),
+       col=colors, lty=c(1, 1, 1), cex=0.8)
 dev.off()
 setEPS()
 postscript("fscore_grid.ps", family = "Times", height = 5, width = gr * 3.5)
-plot(n_ratios, fscore_naive, type = "b", pch=19, cex=.6,
-     ylim=c(0, 1.), xlab = TeX("$T / N$"), ylab = "Average F-score", col = colors[1], xaxt = "n")
-lines(n_ratios, fscore_ggl, type = "b", pch=19, cex=.6, col = colors[2], xaxt = "n")
-lines(n_ratios, fscore_spec, type = "b", pch=19, cex=.6, col = colors[3], xaxt = "n")
+plot(n_ratios, fscore_ggl, type = "b", pch=19, cex=.6,
+     ylim=c(.5, 1.), xlab = TeX("$T / N$"), ylab = "Average F-score", col = colors[2], xaxt = "n")
+lines(n_ratios, fscore_gglA, type = "b", pch=19, cex=.6, col = colors[3], xaxt = "n")
+lines(n_ratios, fscore_spec, type = "b", pch=19, cex=.6, col = colors[4], xaxt = "n")
 axis(side = 1, at = n_ratios, labels = ratios)
-legend("topleft", legend=c("ISCM", "GGL", "SGT"), col=colors, lty=c(1, 1, 1), cex=0.8)
+legend("bottomright", legend = c(TeX("GGL"), TeX("GGL($\\mathbf{A}$)"), TeX("SGL")),
+       col=colors[2:4], lty=c(1, 1, 1), cex=0.8)
 dev.off()
 
 #cat("** gggl results **\n")
