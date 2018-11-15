@@ -4,7 +4,7 @@ library(spectralGraphTopology)
 library(latex2exp)
 library(colorspace)
 
-N_realizations <- 10
+N_realizations <- 100
 ratios <- c(.5, .75, 1, 5, 10, 30, 100, 250, 500, 1000)
 n_ratios <- c(1:length(ratios))
 # design synthetic Laplacian of a grid graph
