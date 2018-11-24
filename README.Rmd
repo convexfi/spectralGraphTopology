@@ -23,7 +23,10 @@ opts_chunk$set(
 knit_hooks$set(pngquant = hook_pngquant)
 ```
 
-# spectralGraphTopology
+<p align="center">
+<img src="static/logo.png" width="200">
+</p>
+
 Learns the topology of a class of graphs such as K-component, tree, bipartite,
 and regular.
 
