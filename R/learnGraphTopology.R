@@ -82,9 +82,6 @@ learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alph
   start_time <- proc.time()[3]
   beta_set <- beta * exp(seq(from = 0, to = log(beta_max/beta), length.out = nbeta))
   for (beta in beta_set) {
-    Lwouter <- Lw0
-    wouter <- w0
-    funouter <- fun0
     for (k in 1:maxiter) {
       setTxtProgressBar(pb, k)
       w <- w_update(w0, Lw0, U0, beta, lambda0, N, Kmat)
@@ -112,10 +109,6 @@ learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alph
       lambda0 <- lambda
       Lw0 <- Lw
     }
-    Lwerr <- norm(Lw - Lwouter, type="F") / max(1, norm(Lwouter, type="F"))
-    ferr <- abs(fun - funouter) / max(1, abs(funouter))
-    if (Lwerr < Lwtol || ferr < ftol)
-      break
   }
   # compute the adjancency matrix
   W <- diag(diag(Lw)) - Lw
