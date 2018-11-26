@@ -5,11 +5,12 @@ library(extrafont)
 library(latex2exp)
 
 N_realizations <- 20
-ratios <- c(.5, .75, 1., 5., 10, 30, 100, 250, 500, 1000)
+ratios <- c(.5, .75, 1, 5, 10, 30, 100, 250, 500, 1000)
 n_ratios <- c(1:length(ratios))
-# design synthetic Laplacian of a grid graph
+# design synthetic Laplacian of a erdos_renyi graph
 N <- 64
-grid <- make_lattice(length = sqrt(N), dim = 2)
+p <- .1
+erdos_renyi <- erdos.renyi.game(N, p)
 rel_err_spec <- array(0, length(ratios))
 rel_err_cgl <- array(0, length(ratios))
 rel_err_cglA <- array(0, length(ratios))
@@ -25,15 +26,15 @@ open(matlab)
 print("success!")
 A_mask <- matrix(1, 64, 64) - diag(64)
 setVariable(matlab, A_mask = A_mask)
-A_grid_mask <- as.matrix(laplacian_matrix(grid)) != 0
-setVariable(matlab, A_grid_mask = A_grid_mask)
+A_erdos_renyi_mask <- as.matrix(laplacian_matrix(erdos_renyi)) != 0
+setVariable(matlab, A_erdos_renyi_mask = A_erdos_renyi_mask)
 
 for (j in n_ratios) {
   T <- as.integer(ratios[j] * N)
   cat("\nRunning simulation for", T, "samples per node, T/N = ", ratios[j], "\n")
   for (n in 1:N_realizations) {
-    E(grid)$weight <- runif(gsize(grid), min = 1e-1, max = 3)
-    Ltrue <- as.matrix(laplacian_matrix(grid))
+    E(erdos_renyi)$weight <- runif(gsize(erdos_renyi), min = 1e-1, max = 3)
+    Ltrue <- as.matrix(laplacian_matrix(erdos_renyi))
     # sample data from GP with covariance matrix set as
     # the pseudo inverse of the true Laplacian
     Y <- MASS::mvrnorm(T, mu = rep(0, N), Sigma = MASS::ginv(Ltrue))
@@ -41,10 +42,10 @@ for (j in n_ratios) {
     s_max <- max(abs(S - diag(diag(S))))
     alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(N)/ T), 0)
     # run spectralGraphTopology
-    if (ratios[j] <= 5)
-      graph <- learnGraphTopology(S, w0 = "naive", beta = 1e-2, beta_max = 4, nbeta = 20)
+    if (ratios[j] <= 1)
+      graph <- learnGraphTopology(S, w0 = "naive", beta = 1e-2, beta_max = 1, nbeta = 20, alpha = 1.3e-2)
     else
-      graph <- learnGraphTopology(S, w0 = "naive", beta = 10)
+      graph <- learnGraphTopology(S, w0 = "naive", beta = 1.29)
     # compute naive
     Lnaive <- MASS::ginv(S)
     # set data variable to MATLAB
@@ -54,7 +55,7 @@ for (j in n_ratios) {
     for (alpha in alphas) {
       setVariable(matlab, alpha = alpha)
       evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-6, 1e-6, 40, 1)")
-      evaluate(matlab, "[LcglA,~,~] = estimate_cgl(S, A_grid_mask, alpha, 1e-6, 1e-6, 40, 1)")
+      evaluate(matlab, "[LcglA,~,~] = estimate_cgl(S, A_erdos_renyi_mask, alpha, 1e-6, 1e-6, 40, 1)")
       Lcgl <- getVariable(matlab, "Lcgl")
       LcglA <- getVariable(matlab, "LcglA")
       if (anyNA(Lcgl$Lcgl) || anyNA(LcglA$LcglA)) {
@@ -118,8 +119,8 @@ for (j in n_ratios) {
 colors <- c("#0B032D", "#843B62", "#F67E7D", "#FFB997")
 gr = .5 * (1 + sqrt(5))
 setEPS()
-postscript("relative_error_grid.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
-plot(n_ratios, rel_err_naive, type = "b", pch=15, cex=.75, ylim=c(0, .5),
+postscript("relative_error_erdos_renyi.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
+plot(n_ratios, rel_err_naive, type = "b", pch=15, cex=.75, ylim=c(0, .65),
      xlab = TeX("$\\mathit{T} / \\mathit{N}$"), ylab = "Average Relative Error", col = colors[1], xaxt = "n")
 grid()
 lines(n_ratios, rel_err_cgl, type = "b", pch=16, cex=.75, col = colors[2], xaxt = "n")
@@ -129,10 +130,10 @@ axis(side = 1, at = n_ratios, labels = ratios)
 legend("topright", legend = c("ISCM", "CGL", TeX("CGL($\\mathbf{A}$)"), "SGL"),
        col=colors, pch=c(15, 16, 17, 18), lty=c(1, 1, 1, 1), bty="n")
 dev.off()
-embed_fonts("relative_error_grid.ps", outfile="relative_error_grid.ps")
+embed_fonts("relative_error_erdos_renyi.ps", outfile="relative_error_erdos_renyi.ps")
 setEPS()
-postscript("fscore_grid.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
-plot(n_ratios, fscore_naive, ylim=c(.4, 1.), xlab = TeX("$\\mathit{T} / \\mathit{N}$"),
+postscript("fscore_erdos_renyi.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
+plot(n_ratios, fscore_naive, ylim=c(.3, 1.), xlab = TeX("$\\mathit{T} / \\mathit{N}$"),
      ylab = "Average F-score", type = "b", pch=15, cex=.75, col = colors[1], xaxt = "n")
 grid()
 lines(n_ratios, fscore_cgl, type = "b", pch=16, cex=.75, col = colors[2], xaxt = "n")
@@ -142,4 +143,4 @@ axis(side = 1, at = n_ratios, labels = ratios)
 legend("bottomright", legend = c("ISCM", "CGL", TeX("CGL($\\mathbf{A}$)"), "SGL"),
        col=colors, pch=c(15, 16, 17, 18), lty=c(1, 1, 1, 1), bty="n")
 dev.off()
-embed_fonts("fscore_grid.ps", outfile="fscore_grid.ps")
+embed_fonts("fscore_erdos_renyi.ps", outfile="fscore_erdos_renyi.ps")

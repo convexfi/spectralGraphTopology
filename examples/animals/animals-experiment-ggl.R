@@ -1,9 +1,7 @@
 library(spectralGraphTopology)
 library(igraph)
 library(pals)
-#library(viridis)
 library(latex2exp)
-set.seed(0)
 
 df <- read.csv("ggl-laplacian-alpha01.txt", header = FALSE)
 names <- matrix(unlist(read.csv("animals_names.txt", header = FALSE)))
@@ -22,10 +20,9 @@ setEPS()
 postscript("animals_graph_ggl_alpha01.ps")
 plot(net, vertex.label = names, vertex.size = 3,
      vertex.label.dist = 1, vertex.degree = pi/2,
-     vertex.label.family = "Helvetica",
+     vertex.label.family = "Helvectica",
      vertex.label.cex = .8,
-     vertex.label.color = "black",
-     main = TeX("GGL($\\alpha = 0.1$)"))
+     vertex.label.color = "black")
 dev.off()
 #plot(graph$elapsed_time, graph$obj_fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
 #      xlab = "CPU time [seconds]", ylab = "Objective function")

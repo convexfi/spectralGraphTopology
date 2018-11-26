@@ -1,7 +1,6 @@
 library(spectralGraphTopology)
 library(igraph)
 library(pals)
-library(viridis)
 library(latex2exp)
 set.seed(0)
 
@@ -18,11 +17,11 @@ run_animals <- function(K = 10) {
   E(net)$color = apply(c_scale(E(net)$weight / max(E(net)$weight)), 1,
                        function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
   V(net)$color = "pink"
-  #layout <- layout_in_circle(net, order = V(net))
-  #plot(net, layout = layout, vertex.label = NA, vertex.size = 3)
   setEPS()
   postscript(paste0("animals_graph_k", toString(K), ".ps"))
-  plot(net, vertex.label = names, vertex.size = 3,
+  layout <- layout_in_circle(net, order = V(net))
+  #plot(net, layout = layout, vertex.label = names, vertex.size = 3)
+  plot(net, layout = layout, vertex.label = names, vertex.size = 3,
        vertex.label.dist = 1, vertex.degree = pi/2,
        vertex.label.family = "Helvetica",
        vertex.label.cex = .8,
@@ -30,10 +29,10 @@ run_animals <- function(K = 10) {
   dev.off()
 }
 
-for(i in c(1, 2, 4, 8, 10)) {
-  print(paste("running animals exp. for K =", toString(i)))
-  run_animals(K = i)
-}
+#for(i in c(1, 2, 4, 8, 10)) {
+#  print(paste("running animals exp. for K =", toString(i)))
+  run_animals(K = 10)
+#}
 #plot(graph$elapsed_time, graph$obj_fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
 #      xlab = "CPU time [seconds]", ylab = "Objective function")
 #plot(graph$elapsed_time, graph$loglike, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),

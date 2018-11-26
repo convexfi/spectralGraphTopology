@@ -1,0 +1,30 @@
+\section{Erdos-Renyi graphs}
+The experimentation on the Erdos-Renyi model is carried out in a similar fashion
+as for the grid graph. We consider an Erdo-Renyi graph $\mathcal{G}^{(64, p)}_{\mathsf{ER}}$
+with $p = 0.1$, where $p$ is the probability that a particular node is connected to any other node.
+
+On what concerns hyperparameter tunning, we fix $\beta = 1.29$ and $\alpha = 1.3\cdot 10^{-2}$
+for the values of $T$ such that $T / N > 1$, otherwise we fix $\alpha = 0$ and start with
+$\beta = 10^{-2}$ and we exponentially increase it up to $\beta = 1$.
+
+The hyperparameter tuning for the \textsf{CGL} and \textsf{CGL}$(\mathbf{A})$ algorithms
+is done as described for the grid model.
+
+Figure~\ref{fig:performance-erdos-renyi} reveals that the algorithms \textsf{SGL}
+and \textsf{CGL} obtain a similar performance across the sample size regimes. Unsurprisingly,
+the algorithm \textsf{CGL}($\mathbf{A}$) attains nearly perferct F-score for $T / N > 10$.
+
+\begin{figure}[!htb]
+    \centering
+    \begin{subfigure}[b]{0.47\textwidth}
+        \includegraphics[width=\textwidth]{erdos-renyi/relative_error_erdos_renyi.eps}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.47\textwidth}
+        \includegraphics[width=\textwidth]{erdos-renyi/fscore_erdos_renyi.eps}
+    \end{subfigure}
+    \caption{Average performance results for learning Laplacian matrix of a $\mathcal{G}^{(64, 0.1)}_{\mathsf{ER}}$.}
+    \label{fig:performance-erdos-renyi}
+\end{figure}
+
