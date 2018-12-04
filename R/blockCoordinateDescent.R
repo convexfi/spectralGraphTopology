@@ -29,7 +29,7 @@ w_update <- function(w, Lw, U, beta, lambda, N, Kmat) {
 #'
 #' @return the updated value of U
 U_update <- function(Lw, N, K) {
-  return(eigen(Lw)$vectors[, (N-K):1])
+  return(eigenvectors(Lw)[, (K+1):N])
 }
 
 
