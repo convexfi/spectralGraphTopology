@@ -9,7 +9,7 @@ set.seed(1)
 N <- 100
 twomoon <- shapes.two.moon(N)
 graph <- learnGraphTopology(crossprod(t(twomoon$data)) + diag(rep(1/3, 2 * N)),
-                            w0 = "naive", K = 2, beta = .25, ftol = 1e-3)
+                            w0 = "naive", K = 2, beta = .25, ftol = 9e-4)
 Lw <- graph$Lw
 Lw <- diag(diag(Lw)) - Lw
 net <- graph_from_adjacency_matrix(Lw, mode = "undirected", weighted = TRUE)

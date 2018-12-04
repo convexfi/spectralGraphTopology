@@ -4,10 +4,11 @@ in $\mathbb{R}^{2}$. To do that, we generate 100 nodes per cluster distributed a
 structures colloquially known as \textit{two-moons}, \textit{two-circles}, \textit{three-circles},
 and \textit{worms}.
 Figure~\ref{fig:clusters} depicts the results of learning the
-clusters structures using the proposed algorithm.
+clusters structures using the proposed algorithm denoted as \textit{Spectral Graph Learning} (\textsf{SGL}).
 As we can note, \textsf{SGL} is able to perfectly distinguish the cluster membership
 of all the datapoints for all datasets. Additionally, Figure~\ref{fig:twomoon_trend}
-shows the convergence trend of the terms in the objective function for the \textit{two-moons} structure.
+depicts the convergence trend of the terms in the objective function for the
+\textit{two-moons} structure.
 
 \begin{figure}[!htb]
     \centering
@@ -32,7 +33,7 @@ shows the convergence trend of the terms in the objective function for the \text
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=.4\textwidth]{clusters/twomoon_trend.eps}
+  \includegraphics[width=.7\textwidth]{clusters/twomoon_trend.eps}
   \caption{Convergence trend of the \textsf{SGL} algorithm for the \textit{twomoon} dataset.}
   \label{fig:twomoon_trend}
 \end{figure}
