@@ -1,7 +1,9 @@
 #include "utils.hh"
+
 // [[Rcpp::depends(RcppEigen)]]
 using namespace Eigen;
 using namespace std;
+
 
 // [[Rcpp::export]]
 Eigen::MatrixXd blockDiagCpp(const std::vector<Eigen::MatrixXd>& matrices) {
