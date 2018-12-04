@@ -67,9 +67,8 @@ learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alph
   }
   # compute quantities on the initial guess
   Lw0 <- L(w0)
-  evd <- eigen(Lw0)
-  lambda0 <- pmax(0, evd$values[(N-K):1])
-  U0 <- evd$vectors[, (N-K):1]
+  lambda0 <- pmax(0, c(eigenvalues(Lw0)[(K+1):N]))
+  U0 <- eigenvectors(Lw0)[, (K+1):N]
   # save objective function value at initial guess
   ll0 <- logLikelihood(Lw0, lambda0, Kmat)
   fun0 <- ll0 + logPrior(beta, Lw0, lambda0, U0)
@@ -100,7 +99,7 @@ learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alph
       # matrix and on the objective function
       Lwerr <- norm(Lw - Lw0, type="F") / max(1, norm(Lw0, type="F"))
       ferr <- abs(fun - fun0) / max(1, abs(fun0))
-      if (Lwerr < Lwtol || ferr < ftol)
+      if ((Lwerr < Lwtol || ferr < ftol) && k > 1)
         break
       # update estimates
       fun0 <- fun
