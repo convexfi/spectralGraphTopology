@@ -1,28 +1,28 @@
 \section{Grid graphs}
 A comprehensive performance evaluation of our spectral graph topology algorithm was
 performed considering grid graph models with 64 nodes denoted as
-$\mathcal{G}^{(64)}_{\mathsf{grid}}$ and $\mathcal{G}^{(64, p)}_{\mathsf{ER}}$, where
-$p$ is the probability that a particular node is connected to any other node.
-We compare the performance of the following algorithms: \textsf{CGL}, \textsf{CGL}$(\mathbf{A})$,
-and \textsf{SGL} (proposed). We recall that \textsf{CGL}$(\mathbf{A})$ stands for the $\textsf{CGL}$
-algorithm equiped with the knowledge of the connectivity matrix, which gives the information of
-which nodes are connected and which ones are not.
+$\mathcal{G}^{(64)}_{\mathsf{grid}}$.
+We compare the performance of the \textsf{SGL} algorithm against state-of-the-art algorithms, namely
+\textsf{CGL}, \textsf{CGL}$(\mathbf{A})$. Recall that \textsf{CGL}$(\mathbf{A})$ stands for the
+$\textsf{CGL}$ algorithm equipped with knowledge of the connectivity matrix $\mathbf{A}$, which gives
+the exact information of which nodes are connected to which ones.
 
 The experimental setup is as follows. The edges of the graph model are sampled from $\mathsf{Uniform}(0.1, 3)$.
 The Laplacian matrix estimation is carried out on the basis of $T$ samples distributed according to
-$\mathcal{N}(\mathbf{0}, \mathbf{L}_{\mathsf{grid}}^{\dagger})$. We repeat that experiment for 20 times
+$\mathcal{N}(\mathbf{0}, \mathbf{L}_{\mathsf{grid}}^{\dagger})$. We repeat that experiment 20 times
 for every value of $T$ and we average out the relative errors and F-scores\footnote{For the computation of the
-F-score, we ignore edge weight values which are less than $10^{-1}$}.
+F-score, we ignore edge weight values which are less than $10^{-1}$.}.
 
-Some hyperparameter tunning is required. For the grid graph model, and considering the
-\textsf{SGL} algorithm, we fix $\beta = 10$ for the values of $T$ such that $T / N > 5$.
-Otherwise, we start with $\beta = 10^{-2}$, and we exponentially increase it up to $\beta = 4$.
+Some hyperparameter tunning is required. For the \textsf{SGL} algorithm, we fix
+$\beta = 10$ for the values of $T$ such that $T / N > 5$. Otherwise, we start with
+$\beta = 10^{-2}$, and we exponentially increase it up to $\beta = 4$.
 Additionally, we fix $\alpha = 0$.
 
-For the \textsf{CGL} and \textsf{CGL}$(\mathbf{A})$ algorithms,
-we choose $\alpha$ from $\left\{0\right\}\cup\left\{0.75^{r}\left(s_{\text{max}}
+For the \textsf{CGL} and \textsf{CGL}$(\mathbf{A})$ algorithms, we follow the recipe by
+Eglimez, i.e., we choose $\alpha$ from $\left\{0\right\}\cup\left\{0.75^{r}\left(s_{\text{max}}
 \sqrt{\log(N) / T}\right) | r = 1, 2, ..., 14\right\}$, such that the relative error between
-the estimated Laplacian and the ground truth is minimized.
+the estimated Laplacian and the ground truth is minimized, where $s_{\text{max}}$ is the
+maximum off-diagonal element of the covariance matrix.
 
 Figure~\ref{fig:performance-grid} compares the performance of the algorithms for different
 sample size regimes for the grid graph model. As it can be noted, the \textsf{SGL} algorithm outperforms the \textsf{CGL}
@@ -33,8 +33,8 @@ the \textsf{CGL}$(\mathbf{A})$ algorithm basically attains a perfect F-score for
 However, the connectivity matrix is not always available in practical problems, especially in clustering
 tasks where the goal is precisely to understand the connectivity membership among the nodes. Nonetheless,
 the proposed \textsf{SGL} algorithm presents a comparable performance against \textsf{CGL}$(\mathbf{A})$.
-For instance, at $T/N = 5$, the difference in relative error is around $2.5\%$, which keeps decreasing until
-virtually equal performance after $T / N = 100$, where the difference in relative error is around $1.2 \%$.
+For instance, at $T/N = 5$, the difference in relative error is only around $2.5\%$, and it keeps decreasing
+even further until virtually equal performance after $T / N = 100$, where the difference in relative error is around $1.2 \%$.
 Additionally, we noted that the \textsf{SGL} algorithm requires far less tunning than \textsf{CGL}.
 At last, we add the relative error and the F-score for the Moore-Penrose inverse of the sample covariance matrix
 (\textsf{ISCM}) for completeness.
