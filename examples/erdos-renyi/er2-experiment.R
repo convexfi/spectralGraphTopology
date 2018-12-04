@@ -4,13 +4,13 @@ library(spectralGraphTopology)
 library(extrafont)
 library(latex2exp)
 
+set.seed(123)
 N_realizations <- 20
 ratios <- c(.5, .75, 1, 5, 10, 30, 100, 250, 500, 1000)
 n_ratios <- c(1:length(ratios))
 # design synthetic Laplacian of a erdos_renyi graph
 N <- 64
 p <- .1
-erdos_renyi <- erdos.renyi.game(N, p)
 rel_err_spec <- array(0, length(ratios))
 rel_err_cgl <- array(0, length(ratios))
 rel_err_cglA <- array(0, length(ratios))
@@ -19,20 +19,22 @@ fscore_spec <- array(0, length(ratios))
 fscore_cgl <- array(0, length(ratios))
 fscore_cglA <- array(0, length(ratios))
 fscore_naive <- array(0, length(ratios))
+a_swp <- 10^c(-2:-12)
 
 print("Connecting to MATLAB...")
-matlab <- Matlab()
+matlab <- Matlab(port=9998)
 open(matlab)
 print("success!")
-A_mask <- matrix(1, 64, 64) - diag(64)
+A_mask <- matrix(1, N, N) - diag(N)
 setVariable(matlab, A_mask = A_mask)
-A_erdos_renyi_mask <- as.matrix(laplacian_matrix(erdos_renyi)) != 0
-setVariable(matlab, A_erdos_renyi_mask = A_erdos_renyi_mask)
 
 for (j in n_ratios) {
   T <- as.integer(ratios[j] * N)
   cat("\nRunning simulation for", T, "samples per node, T/N = ", ratios[j], "\n")
   for (n in 1:N_realizations) {
+    erdos_renyi <- erdos.renyi.game(N, p)
+    A_erdos_renyi_mask <- as.matrix(laplacian_matrix(erdos_renyi)) != 0
+    setVariable(matlab, A_erdos_renyi_mask = A_erdos_renyi_mask)
     E(erdos_renyi)$weight <- runif(gsize(erdos_renyi), min = 1e-1, max = 3)
     Ltrue <- as.matrix(laplacian_matrix(erdos_renyi))
     # sample data from GP with covariance matrix set as
@@ -42,10 +44,7 @@ for (j in n_ratios) {
     s_max <- max(abs(S - diag(diag(S))))
     alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(N)/ T), 0)
     # run spectralGraphTopology
-    if (ratios[j] <= 1)
-      graph <- learnGraphTopology(S, w0 = "naive", beta = 1e-2, beta_max = 1, nbeta = 20, alpha = 1.3e-2)
-    else
-      graph <- learnGraphTopology(S, w0 = "naive", beta = 1.29)
+    graph <- learnGraphTopology(S, w0 = "naive", beta = 4, maxiter = 100000)
     # compute naive
     Lnaive <- MASS::ginv(S)
     # set data variable to MATLAB
@@ -75,6 +74,8 @@ for (j in n_ratios) {
 
     rel_spec <- relativeError(Ltrue, graph$Lw)
     fs_spec <- Fscore(Ltrue, graph$Lw, 1e-1)
+    print(rel_spec)
+    print(fs_spec)
     rel_naive <- relativeError(Ltrue, Lnaive)
     fs_naive <- Fscore(Ltrue, Lnaive, 1e-1)
     rel_err_spec[j] <- rel_err_spec[j] + rel_spec
