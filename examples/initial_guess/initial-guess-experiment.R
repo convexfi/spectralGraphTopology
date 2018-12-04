@@ -95,7 +95,7 @@ colors <- c("#706FD3", "#FF5252", "#33D9B2", "#34ACE0")
 gr = .5 * (1 + sqrt(5))
 setEPS()
 postscript("relative_error.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
-plot(n_ratios, rel_err_spec_naive, type = "b", pch=15, cex=.75, ylim=c(0, .5),
+plot(n_ratios, rel_err_spec_naive, type = "b", pch=15, cex=.75, ylim=c(0, .7),
      xlab = TeX("$\\mathit{T} / \\mathit{N}$"), ylab = "Average Relative Error", col = colors[1], xaxt = "n")
 grid()
 lines(n_ratios, rel_err_spec_qp, type = "b", pch=16, cex=.75, col = colors[2], xaxt = "n")
@@ -108,7 +108,7 @@ dev.off()
 embed_fonts("relative_error.ps", outfile="relative_error.ps")
 setEPS()
 postscript("fscore.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
-plot(n_ratios, fscore_spec_naive, ylim=c(.4, 1.), xlab = TeX("$\\mathit{T} / \\mathit{N}$"),
+plot(n_ratios, fscore_spec_naive, ylim=c(.1, 1.), xlab = TeX("$\\mathit{T} / \\mathit{N}$"),
      ylab = "Average F-score", type = "b", pch=15, cex=.75, col = colors[1], xaxt = "n")
 grid()
 lines(n_ratios, fscore_spec_qp, type = "b", pch=16, cex=.75, col = colors[2], xaxt = "n")
@@ -116,7 +116,7 @@ lines(n_ratios, fscore_naive, type = "b", pch=17, cex=.75, col = colors[3], xaxt
 lines(n_ratios, fscore_qp, type = "b", pch=18, cex=.85, col = colors[4], xaxt = "n")
 axis(side = 1, at = n_ratios, labels = ratios)
 legend("bottomright", legend = c(TeX("SGL($w_0 = 'naive'$)"), TeX("SGL($w_0 = 'qp'$)"), "ISCM", "LLQP"),
-       col=colors, pch=c(15, 16, 17, 18), lty=c(1, 1, 1, 1), bty="n")
+       col=colors, pch=c(15, 16, 17, 18), lty=c(1, 1, 1, 1), bty="o", bg = "white", box.col = "white")
 dev.off()
 embed_fonts("fscore.ps", outfile="fscore.ps")
 
