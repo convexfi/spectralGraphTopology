@@ -24,7 +24,7 @@ test_that("test_U_update_consistency", {
   U <- U_update(L(w), N, K)
   q <- N - K
   expect_that(all.equal(crossprod(U), diag(array(1., q)),
-                         check.attributes = FALSE), is_true())
+                        check.attributes = FALSE), is_true())
   expect_that(ncol(U) == q, is_true())
   expect_that(nrow(U) == N, is_true())
 })
