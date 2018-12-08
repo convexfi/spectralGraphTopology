@@ -52,3 +52,29 @@ At last, we add the relative error and the F-score for the Moore-Penrose inverse
     \caption{Average performance results for learning Laplacian matrix of a $\mathcal{G}^{(64)}_{\mathsf{grid}}$.}
     \label{fig:performance-grid}
 \end{figure}
+
+Figure~\ref{fig:sample-grid} pictorially compares the graph structures learned by \textsf{SGL} and \textsf{CGL} when
+$T/N = 100$.
+
+\begin{figure}[!htb]
+    \centering
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{grid/true_grid.eps}
+        \caption{Instance of $\mathcal{G}^{(64)}_{\mathsf{grid}}$.}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{grid/sgl_grid.eps}
+        \caption{\textsf{SGL} $(\mathsf{RE}, \mathsf{FS}) = (0.028, 0.991)$.}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{grid/cgl_grid.eps}
+        \caption{\textsf{CGL}. $(\mathsf{RE}, \mathsf{FS}) = (0.067, 0.953)$.}
+    \end{subfigure}
+    \caption{Sample results of learning $\mathcal{G}^{(64)}_{\mathsf{grid}}$ for $T/N = 100$. Edges smaller than $0.05$ were removed.
+    For \textsf{SGL}, we fix $\beta = 10$, whereas for \textsf{CGL} we perform a grid search in $\alpha$ to find $\alpha$ that maximizes the F-score.
+    We found $\alpha = 3.6\cdot 10^{-3}$.}
+    \label{fig:sample-grid}
+\end{figure}
