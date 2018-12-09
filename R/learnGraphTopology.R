@@ -70,8 +70,8 @@ learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alph
   lambda0 <- pmax(0, c(eigenvalues(Lw0)[(K+1):N]))
   U0 <- eigenvectors(Lw0)[, (K+1):N]
   # save objective function value at initial guess
-  ll0 <- logLikelihood(Lw0, lambda0, Kmat)
-  fun0 <- ll0 + logPrior(beta, Lw0, lambda0, U0)
+  ll0 <- loglikelihood(Lw0, lambda0, Kmat)
+  fun0 <- ll0 + logprior(beta, Lw0, lambda0, U0)
   fun_seq <- c(fun0)
   ll_seq <- c(ll0)
   w_seq <- list(w0)
@@ -88,8 +88,8 @@ learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alph
       U <- U_update(Lw, N, K)
       lambda <- lambda_update(lb, ub, beta, U, Lw, N, K)
       # compute negloglikelihood and objective function values
-      ll <- logLikelihood(Lw, lambda, Kmat)
-      fun <- ll + logPrior(beta, Lw, lambda, U)
+      ll <- loglikelihood(Lw, lambda, Kmat)
+      fun <- ll + logprior(beta, Lw, lambda, U)
       # save estimates
       time_seq <- c(time_seq, proc.time()[3] - start_time)
       ll_seq <- c(ll_seq, ll)

@@ -35,6 +35,7 @@ Eigen::MatrixXd blockDiagCpp(const std::vector<Eigen::MatrixXd>& matrices) {
   return blockDiag;
 }
 
+
 // [[Rcpp::export]]
 double Fscore(const Eigen::MatrixXd& Wtrue, const Eigen::MatrixXd& West,
               const double eps) {
