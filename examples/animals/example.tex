@@ -4,7 +4,9 @@ The \textsf{animals} dataset consists of binary values which are the answers to 
 "is warm-blooded?", "has lungs?", etc. There are in total 102 such questions, which make up the features, and
 33 animal categories, which are the nodes. Figure~\ref{fig:animals} shows the results of estimating the
 graph Laplacian of the \textsf{animals} dataset using the \textsf{GGL} algorithm with $\alpha = 0.1$ and
-the proposed \textsf{SGL} algorithm with $\beta = 1/2$.
+the proposed \textsf{SGL} algorithm with $\beta = 1/2$ and $\alpha = 10^{-1}$. The input for all the algorithms
+is the sample covariance matrix plus an identity matrix scaled by $1/3$ (see Elgimez paper for an explanation of
+the input).
 
 The evaluation of the estimated graphs is done by natural intuition, i.e., we expect that similar animals
 such as (\textit{ant}, \textit{cockroach}), (\textit{bee}, \textit{butterfly}), and
@@ -21,11 +23,11 @@ graph than the one learned by \textsf{GGL}.
     ~
     \begin{subfigure}[b]{0.475\textwidth}
       \includegraphics[width=\textwidth]{animals/animals_graph_k10.eps}
-      \caption{\textsf{SGL} with $\beta = 1/2$ and $K = 10$.}
+      \caption{\textsf{SGL}($\beta = 1/2$, $\alpha = 10^{-1}$, $K = 10$).}
     \end{subfigure}\\
     \begin{subfigure}[b]{0.475\textwidth}
       \includegraphics[width=\textwidth]{animals/graphs_for_different_k/animals_graph_k1.eps}
-      \caption{\textsf{SGL} with $\beta = 1/2$ and $K = 1$.}
+      \caption{\textsf{SGL}($\beta = 1/2$, $\alpha = 10^{-1}$, $K = 1$).}
     \end{subfigure}
     ~
     %\begin{subfigure}[b]{0.475\textwidth}
@@ -34,7 +36,7 @@ graph than the one learned by \textsf{GGL}.
     %\end{subfigure}\\
     \begin{subfigure}[b]{0.475\textwidth}
       \includegraphics[width=\textwidth]{animals/graphs_for_different_k/animals_graph_k4.eps}
-      \caption{\textsf{SGL} with $\beta = 1/2$ and $K = 4$.}
+      \caption{\textsf{SGL}($\beta = 1/2$, $\alpha = 10^{-1}$, $K = 4$).}
     \end{subfigure}
     %~
     %\begin{subfigure}[b]{0.475\textwidth}
@@ -43,4 +45,12 @@ graph than the one learned by \textsf{GGL}.
     %\end{subfigure}
     \caption{Learning the connectivity of the \textsf{animals} dataset for different values of $K$.}
     \label{fig:animals}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.475\textwidth]{animals/animals_glasso.eps}
+  \caption{Learning the connectivity of the \textsf{animals} dataset with \textsf{GLasso}.
+           Regularization parameter $\alpha = 0.05618$.}
+  \label{fig:animals-glasso}
 \end{figure}
