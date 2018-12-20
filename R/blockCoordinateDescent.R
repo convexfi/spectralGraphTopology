@@ -7,7 +7,7 @@
 #' @param β scalar that controls the strength of the regularization term
 #' @param λ vector whose entries are the eigenvalues of the Laplacian in
 #' increasing order
-#' @param N dimension of each data sample
+#' @param N number of nodes
 #' @param Kmat matrix (see section 1.1 for its definition)
 #'
 #' @return the updated value of w

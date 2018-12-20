@@ -113,5 +113,5 @@ learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alph
   W <- diag(diag(Lw)) - Lw
   return(list(Lw = Lw, W = W, obj_fun = fun_seq, loglike = ll_seq, w_seq = w_seq,
               w = w, lambda = lambda, U = U, elapsed_time = time_seq,
-              convergence = sum(!(k == maxiter)), beta = beta))
+              convergence = !(k == maxiter), beta = beta))
 }
