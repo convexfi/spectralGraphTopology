@@ -27,7 +27,7 @@ alpha = 0.003584478
 setVariable(matlab, alpha = alpha)
 evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-6, 1e-6, 40, 1)")
 Lcgl <- getVariable(matlab, "Lcgl")
-graph <- learnGraphTopology(S, w0 = "naive", beta = 10)
+graph <- learnGraphTopology(S, w0 = "naive", beta = 10, alpha = 5e-3)
 
 # compute adjacency matrices
 W <- diag(diag(graph$Lw)) - graph$Lw
