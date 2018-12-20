@@ -14,7 +14,7 @@ w_update(w, Lw, U, beta, lambda, N, Kmat)
 \item{U}{matrix whose columns represent the eigen vectors of the Laplacian
 matrix in increasing order}
 
-\item{N}{dimension of each data sample}
+\item{N}{number of nodes}
 
 \item{Kmat}{matrix (see section 1.1 for its definition)}
 

@@ -6,7 +6,6 @@ library(R.matlab)
 
 set.seed(123)
 N_realizations <- 10
-#ratios <- c(1000)
 ratios <- c(2, 5, 10, 30, 100, 250, 500, 1000)
 n_ratios <- c(1:length(ratios))
 rel_err_spec <- array(0, length(ratios))
