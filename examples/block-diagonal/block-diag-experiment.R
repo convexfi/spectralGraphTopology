@@ -2,6 +2,7 @@ library(igraph)
 library(corrplot)
 library(spectralGraphTopology)
 library(pals)
+library(extrafont)
 set.seed(0)
 
 N <- 20
@@ -23,7 +24,8 @@ Lerdo <- as.matrix(laplacian_matrix(erdos_renyi))
 Lnoisy <- Ltrue + Lerdo
 Wnoisy <- diag(diag(Lnoisy)) - Lnoisy
 Y <- MASS::mvrnorm(T, mu = rep(0, N), Sigma = MASS::ginv(Lnoisy))
-graph <- learnGraphTopology(cov(Y), K, w0 = "qp", beta = 20 * N, ub = 2*N, alpha = 1e-1, maxiter = 100000)
+graph <- learnGraphTopology(cov(Y), K, w0 = "qp", beta = 20*N, ub = 2*N,
+                            alpha = 1e-1, maxiter = 100000)
 est_net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
 noisy_net <- graph_from_adjacency_matrix(Wnoisy, mode = "undirected", weighted = TRUE)
 true_net <- graph_from_adjacency_matrix(Wtrue, mode = "undirected", weighted = TRUE)
@@ -64,3 +66,17 @@ setEPS()
 postscript("true_mat.ps", family = "Times", height = 5, width = gr * 3.5)
 corrplot(Wtrue / max(Wtrue), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 dev.off()
+
+colors <- c("#706FD3", "#FF5252", "#33D9B2")
+setEPS()
+postscript("bd_trend.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
+plot(c(1:length(graph$loglike)), graph$loglike, type = "b", lty = 1, pch = 15, cex=.75, col = colors[1],
+     xlab = "Iteration Number", ylab = "", ylim=c(0, 15))
+grid()
+lines(c(1:length(graph$loglike)), graph$obj_fun, type = "b", xaxt = "n", lty = 2, pch=16, cex=.75, col = colors[2])
+lines(c(1:length(graph$loglike)), graph$obj_fun - graph$loglike, type = "b", xaxt = "n", lty = 3, pch=17, cex=.75,
+      col = colors[3])
+legend("topright", legend = c("likelihood", "posterior", "prior"),
+       col=colors, pch=c(15, 16, 17), lty=c(1, 2, 3), bty="n")
+dev.off()
+embed_fonts("bd_trend.ps", outfile="bd_trend.ps")
