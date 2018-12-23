@@ -99,7 +99,7 @@ learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alph
       # matrix and on the objective function
       Lwerr <- norm(Lw - Lw0, type="F") / max(1, norm(Lw0, type="F"))
       ferr <- abs(fun - fun0) / max(1, abs(fun0))
-      if ((Lwerr < Lwtol || ferr < ftol) && k > 1)
+      if ((Lwerr < Lwtol && ferr < ftol) && k > 1)
         break
       # update estimates
       fun0 <- fun
