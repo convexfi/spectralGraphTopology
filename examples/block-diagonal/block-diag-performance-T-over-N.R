@@ -108,3 +108,17 @@ legend("bottomright", legend = c("ISCM", "LLQP", "SGL"),
        col=c(colors[3], colors[4], colors[2]), pch=c(15, 17, 18), lty=c(1, 1, 1), bty="n")
 dev.off()
 embed_fonts("fscore_block_diagonal.ps", outfile="fscore_block_diagonal.ps")
+
+colors <- c("#706FD3", "#FF5252", "#33D9B2")
+setEPS()
+postscript("bd_trend.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
+plot(c(1:length(graph$loglike)), graph$loglike, type = "b", lty = 1, pch = 15, cex=.75, col = colors[1],
+     xlab = "Iteration Number", ylab = "")
+grid()
+lines(c(1:length(graph$loglike)), graph$obj_fun, type = "b", xaxt = "n", lty = 2, pch=16, cex=.75, col = colors[2])
+lines(c(1:length(graph$loglike)), graph$obj_fun - graph$loglike, type = "b", xaxt = "n", lty = 3, pch=17, cex=.75,
+      col = colors[3])
+legend("topright", legend = c("likelihood", "posterior", "prior"),
+       col=colors, pch=c(15, 16, 17), lty=c(1, 2, 3), bty="n")
+dev.off()
+embed_fonts("bd_trend.ps", outfile="bd_trend.ps")

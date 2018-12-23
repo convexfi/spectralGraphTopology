@@ -4,13 +4,13 @@ library(spectralGraphTopology)
 library(extrafont)
 library(latex2exp)
 
-set.seed(123)
-N_realizations <- 20
-ratios <- c(.5, .75, 1, 5, 10, 30, 100, 250, 500, 1000)
+N_realizations <- 10
+#ratios <- c(.5, .75, 1, 5, 10, 30, 100, 250, 500, 1000)
+ratios <- c(250, 500, 1000)
 n_ratios <- c(1:length(ratios))
 # design synthetic Laplacian of a erdos_renyi graph
 N <- 64
-p <- .1
+p <- .15
 rel_err_spec <- array(0, length(ratios))
 rel_err_cgl <- array(0, length(ratios))
 rel_err_cglA <- array(0, length(ratios))
@@ -19,7 +19,6 @@ fscore_spec <- array(0, length(ratios))
 fscore_cgl <- array(0, length(ratios))
 fscore_cglA <- array(0, length(ratios))
 fscore_naive <- array(0, length(ratios))
-a_swp <- 10^c(-2:-12)
 
 print("Connecting to MATLAB...")
 matlab <- Matlab(port=9998)
@@ -44,7 +43,9 @@ for (j in n_ratios) {
     s_max <- max(abs(S - diag(diag(S))))
     alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(N)/ T), 0)
     # run spectralGraphTopology
-    graph <- learnGraphTopology(S, w0 = "naive", beta = 4, maxiter = 100000)
+    graph <- learnGraphTopology(S, w0 = "naive", beta = .5, maxiter = 100000)
+    print(graph$convergence)
+    print(graph$lambda)
     # compute naive
     Lnaive <- MASS::ginv(S)
     # set data variable to MATLAB
@@ -74,8 +75,6 @@ for (j in n_ratios) {
 
     rel_spec <- relativeError(Ltrue, graph$Lw)
     fs_spec <- Fscore(Ltrue, graph$Lw, 1e-1)
-    print(rel_spec)
-    print(fs_spec)
     rel_naive <- relativeError(Ltrue, Lnaive)
     fs_naive <- Fscore(Ltrue, Lnaive, 1e-1)
     rel_err_spec[j] <- rel_err_spec[j] + rel_spec
