@@ -3,6 +3,7 @@ library(viridis)
 library(corrplot)
 library(spectralGraphTopology)
 library(latex2exp)
+library(extrafont)
 
 N_realizations <- 10
 N <- 16
@@ -33,13 +34,13 @@ for (k in c(1:length(kappa_seq))) {
     S <- cov(Y)
     s_max <- max(abs(S - diag(diag(S))))
     alphas <- c(0, .75 ^ (c(1:14)) * s_max * sqrt(log(N)/ T))
-    re <- 9999999999
 
     Sinv <- MASS::ginv(S)
     R <- vecLmat(ncol(Sinv))
     qp <- quadprog::solve.QP(crossprod(R), t(R) %*% vec(Sinv), diag(ncol(R)))
     w0 <- qp$solution
 
+    re <- 9999999999
     for (alpha in alphas) {
       graph <- learnGraphTopology(S, w0 = w0, K = K, beta = 100 * N,
                                   alpha = alpha, maxiter = 100000)
@@ -64,16 +65,18 @@ for (k in c(1:length(kappa_seq))) {
 }
 gr = .5 * (1 + sqrt(5))
 setEPS()
-postscript("relative_error.ps", family = "Times", height = 5, width = gr * 3.5)
-plot(c(1:length(kappa_seq)), rel_err, type = "b", pch=19, cex=.75,
-     ylim=c(min(rel_err), max(rel_err)),
-     xlab = TeX("$\\kappa$"), ylab = "Average Relative Error", col = "black", xaxt = "n")
+postscript("relative_error_kappa.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
+plot(c(1:length(kappa_seq)), rel_err, type = "b", pch=19, cex=.75, ylim=c(min(rel_err), max(rel_err)),
+     xlab = TeX("$\\kappa$"), ylab = "Average Relative Error", col = "#706FD3", xaxt = "n")
+grid()
 axis(side = 1, at = c(1:length(kappa_seq)), labels = kappa_seq)
 dev.off()
+embed_fonts("relative_error_kappa.ps", outfile="relative_error_kappa.ps")
 setEPS()
-postscript("fscore.ps", family = "Times", height = 5, width = gr * 3.5)
-plot(c(1:length(kappa_seq)), fscore, type = "b", pch=19, cex=.75,
-     ylim=c(min(fscore), 1.),
-     xlab = TeX("$\\kappa$"), ylab = "Average F-score", col = "black", xaxt = "n")
+postscript("fscore_kappa.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
+plot(c(1:length(kappa_seq)), fscore, type = "b", pch=19, cex=.75, ylim=c(min(fscore), 1.),
+     xlab = TeX("$\\kappa$"), ylab = "Average F-score", col = "#706FD3", xaxt = "n")
+grid()
 axis(side = 1, at = c(1:length(kappa_seq)), labels = kappa_seq)
 dev.off()
+embed_fonts("fscore_kappa.ps", outfile="fscore_kappa.ps")
