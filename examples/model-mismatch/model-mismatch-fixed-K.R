@@ -6,7 +6,7 @@ library(extrafont)
 set.seed(0)
 
 N <- 49
-T <- 100 * N
+T <- 30 * N
 K <- 7
 P <- diag(1, K)
 # K-component graph
@@ -15,18 +15,34 @@ E(mgraph)$weight <- runif(gsize(mgraph), min = 0, max = 1)
 Ltrue <- as.matrix(laplacian_matrix(mgraph))
 Wtrue <- diag(diag(Ltrue)) - Ltrue
 # Erdo-Renyi as noise model
-p <- .55
+p <- .45
 a <- .25
 erdos_renyi <- erdos.renyi.game(N, p)
 E(erdos_renyi)$weight <- runif(gsize(erdos_renyi), min = 0, max = a)
 Lerdo <- as.matrix(laplacian_matrix(erdos_renyi))
-# Noisy Laplacian
 Lnoisy <- Ltrue + Lerdo
 Wnoisy <- diag(diag(Lnoisy)) - Lnoisy
 Y <- MASS::mvrnorm(T, mu = rep(0, N), Sigma = MASS::ginv(Lnoisy))
-graph <- learnGraphTopology(cov(Y), K=2, w0 = "qp", beta = .07, alpha = 1e-2)
-print(relativeError(Ltrue, graph$Lw))
-print(Fscore(Ltrue, graph$Lw, 1e-3))
+S <- cov(Y)
+Sinv <- MASS::ginv(S)
+Wnaive <- abs(diag(diag(Sinv)) - Sinv)
+R <- vecLmat(ncol(Sinv))
+qp <- quadprog::solve.QP(crossprod(R), t(R) %*% vec(Sinv), diag(ncol(R)))
+w0 <- qp$solution
+graph <- learnGraphTopology(S, K = 2, w0 = w0, beta = 1e-1,
+                            alpha = 1e-2, ftol = 1e-4, Lwtol = 1e-4)
+cat("\nSpectral Graph Topology results\n")
+cat("relative error", relativeError(Ltrue, graph$Lw), "\n")
+cat("fscore", Fscore(Ltrue, graph$Lw, 1e-2), "\n")
+cat("Naive results\n")
+cat("relative error", relativeError(Ltrue, Sinv), "\n")
+cat("fscore", Fscore(Ltrue, Sinv, 1e-2), "\n")
+Lqp <- L(w0)
+Wqp <- diag(diag(Lqp)) - Lqp
+cat("QP results\n")
+cat("relative error", relativeError(Ltrue, Lqp), "\n")
+cat("fscore", Fscore(Ltrue, Lqp, 1e-2), "\n")
+
 est_net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
 noisy_net <- graph_from_adjacency_matrix(Wnoisy, mode = "undirected", weighted = TRUE)
 true_net <- graph_from_adjacency_matrix(Wtrue, mode = "undirected", weighted = TRUE)
