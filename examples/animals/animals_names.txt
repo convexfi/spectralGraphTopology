@@ -1,1 +1,0 @@
-Elephant,Rhino,Horse,Cow,Camel,Giraffe,Chimp,Gorilla,Mouse,Squirrel,Tiger,Lion,Cat,Dog,Wolf,Seal,Dolphin,Robin,Eagle,Chicken,Salmon,Trout,Bee,Iguana,Alligator,Butterfly,Ant,Finch,Penguin,Cockroach,Whale,Ostrich,Deer

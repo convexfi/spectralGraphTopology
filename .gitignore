@@ -10,3 +10,5 @@ README_cache
 *.log
 *-eps-converted-to.pdf
 *.ps
+examples/cancer-rna/data.csv
+examples/cancer-rna/labels.csv

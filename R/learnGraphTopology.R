@@ -48,7 +48,7 @@
 #' @export
 learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alpha = 0.,
                                beta = 1., beta_max = beta, nbeta = 1, maxiter = 10000,
-                               Lwtol = 1e-6, ftol = 1e-6) {
+                               Lwtol = 1e-4, ftol = 1e-6) {
   # number of nodes
   N <- nrow(S)
   # l1-norm penalty factor
