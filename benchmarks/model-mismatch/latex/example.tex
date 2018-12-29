@@ -12,6 +12,16 @@ $\kappa = 0.45$. The block-model $\mathbf{L}_{\mathsf{bm}}$ is constructed with 
 blocks, each of which with seven nodes that are fully connected among themselves. The
 weights on the edges are drawn from $\mathsf{Uniform}(0, 1)$.
 
+Figure~\ref{fig:7-comp-graph} shows an example where the underlying graph has seven components,
+and we apply the \textsf{SGL} algorithm with $K = 2$. As we can see, even though the number
+of components is mismatched and the data is noisy, the \textsf{SGL} algorithm is still able
+to indentify the true structure with a resonable performance in terms of F-score and average
+relative error.
+
+Additionally, we investigate the performance as a function of the number of components,
+as depicted in Figure~\ref{fig:fscore-k}. As we can note, the performance is monotonically
+increasing and eventually reaches a perfect F-score when $K = 7$.
+
 \begin{figure}[!htb]
     \centering
     \begin{subfigure}[b]{0.3\textwidth}
@@ -58,7 +68,7 @@ weights on the edges are drawn from $\mathsf{Uniform}(0, 1)$.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=\textwidth]{model-mismatch/latex/figures/fscore.eps}
+  \includegraphics[width=.45\textwidth]{model-mismatch/latex/figures/fscore.eps}
   \caption{F-score as a function of the number of components $K$.}
   \label{fig:fscore-k}
 \end{figure}

@@ -38,7 +38,7 @@ E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
 V(net)$color <- c(colors[1], colors[2], colors[3], colors[4], colors[5])[clusters]
 setEPS()
 gr = .5 * (1 + sqrt(5))
-postscript("cancer-rna-graph-subset.ps", family = "Helvetica", height = 5, width = gr * 3.5)
+postscript("../latex/figures/cancer-rna-graph-subset.ps", family = "Helvetica", height = 5, width = gr * 3.5)
 #layout <- layout_in_circle(net, order = V(net))
 #plot(net, layout = layout, vertex.label = names, vertex.size = 3)
 plot(net, vertex.label = names,
