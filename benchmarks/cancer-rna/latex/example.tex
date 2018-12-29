@@ -21,9 +21,22 @@ $K = 10$ and $\beta = 5$. Figure~\ref{fig:cancer-gene-sgl} shows a perfect clust
 which indicates that \textsf{SGL} may be used to automatically predict types of cancer tumors
 based on gene features.
 
-\begin{figure}
+We also compare the classification performance against the \textsf{GGL} algorith. As depicted in
+Figure~\ref{fig:cancer-gene-ggl}, the \textsf{GGL} algorithm correctly classifies most of the
+nodes, but fails the segregrate the clusters as it is evidenced by the vast number of mistaken
+edges placed accross clusters.
+
+\begin{figure}[!htb]
   \centering
   \includegraphics[width=.475\textwidth]{cancer-rna/latex/figures/cancer-rna-graph-subset.eps}
   \caption{Clustering the cancer tumor type \textsf{PANCAN} dataset with \textsf{SGL}$(K = 10, \beta = 5)$.}
   \label{fig:cancer-gene-sgl}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=.475\textwidth]{cancer-rna/latex/figures/cancer-rna-graph-subset-ggl.eps}
+  \caption{Clustering the cancer tumor type \textsf{PANCAN} dataset with \textsf{GGL}$(\alpha = 0.1)$.
+            Grey colored edges indicate wrong connections.}
+  \label{fig:cancer-gene-ggl}
 \end{figure}

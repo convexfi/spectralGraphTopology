@@ -10,5 +10,5 @@ README_cache
 *.log
 *-eps-converted-to.pdf
 *.ps
-benchmarks/cancer-rna/data.csv
-benchmarks/cancer-rna/labels.csv
+benchmarks/cancer-rna/code/data.csv
+benchmarks/cancer-rna/code/labels.csv

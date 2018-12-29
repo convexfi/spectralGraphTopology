@@ -4,7 +4,7 @@ library(spectralGraphTopology)
 library(extrafont)
 library(latex2exp)
 
-set.seed(0)
+set.seed(123)
 
 N_realizations <- 10
 ratios <- c(.5, .75, 1, 5, 10, 30, 100, 250, 500, 1000)
@@ -46,8 +46,7 @@ for (j in n_ratios) {
     alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(N)/ T), 0)
     # run spectralGraphTopology
     if (ratios[j] <= 1) {
-      graph <- learnGraphTopology(S, w0 = "naive", beta = 5e-2, beta_max = 1, nbeta = 20,
-                                  alpha = 1.3e-2, ftol = 1e-8, maxiter = 100000)
+      graph <- learnGraphTopology(S, w0 = "qp", beta = 0.25, beta_max = 1, nbeta = 10, alpha = 1.3e-2, maxiter = 100000)
     } else if (ratios[j] <= 30) {
       graph <- learnGraphTopology(S, w0 = "qp", beta = 1.5, ftol = 1e-8, maxiter = 100000)
     } else {
