@@ -4,11 +4,10 @@ library(spectralGraphTopology)
 library(extrafont)
 library(latex2exp)
 
-set.seed(123)
+set.seed(1)
 
 N_realizations <- 10
 ratios <- c(.5, .75, 1, 5, 10, 30, 100, 250, 500, 1000)
-#ratios <- c(1, 5, 10, 30, 100, 250, 500, 1000)
 n_ratios <- c(1:length(ratios))
 # design synthetic Laplacian of a erdos_renyi graph
 N <- 64
@@ -23,7 +22,7 @@ fscore_cglA <- array(0, length(ratios))
 fscore_naive <- array(0, length(ratios))
 
 print("Connecting to MATLAB...")
-matlab <- Matlab(port=9999)
+matlab <- Matlab(port=9998)
 open(matlab)
 print("success!")
 A_mask <- matrix(1, N, N) - diag(N)
@@ -46,11 +45,12 @@ for (j in n_ratios) {
     alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(N)/ T), 0)
     # run spectralGraphTopology
     if (ratios[j] <= 1) {
-      graph <- learnGraphTopology(S, w0 = "qp", beta = 0.25, beta_max = 1, nbeta = 10, alpha = 1.3e-2, maxiter = 100000)
+      graph <- learnGraphTopology(S, w0 = "naive", beta = 0.2, beta_max = 1, nbeta = 10,
+                                  alpha = 1.3e-2, maxiter = 100000)
     } else if (ratios[j] <= 30) {
-      graph <- learnGraphTopology(S, w0 = "qp", beta = 1.5, ftol = 1e-8, maxiter = 100000)
+      graph <- learnGraphTopology(S, w0 = "naive", beta = 1.29, maxiter = 100000)
     } else {
-      graph <- learnGraphTopology(S, w0 = "qp", beta = 10, ftol = 1e-8, maxiter = 100000)
+      graph <- learnGraphTopology(S, w0 = "naive", beta = 10, maxiter = 100000)
     }
     print(graph$beta)
     print(graph$convergence)
@@ -62,8 +62,8 @@ for (j in n_ratios) {
     rel_cglA <- 9999999999
     for (alpha in alphas) {
       setVariable(matlab, alpha = alpha)
-      evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-6, 1e-6, 40, 1)")
-      evaluate(matlab, "[LcglA,~,~] = estimate_cgl(S, A_erdos_renyi_mask, alpha, 1e-6, 1e-6, 40, 1)")
+      evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-4, 1e-6, 100, 1)")
+      evaluate(matlab, "[LcglA,~,~] = estimate_cgl(S, A_erdos_renyi_mask, alpha, 1e-4, 1e-6, 100, 1)")
       Lcgl <- getVariable(matlab, "Lcgl")
       LcglA <- getVariable(matlab, "LcglA")
       if (anyNA(Lcgl$Lcgl) || anyNA(LcglA$LcglA)) {

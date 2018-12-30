@@ -94,7 +94,7 @@ learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alph
       time_seq <- c(time_seq, proc.time()[3] - start_time)
       ll_seq <- c(ll_seq, ll)
       fun_seq <- c(fun_seq, fun)
-      w_seq <- rlist::list.append(w_seq, w)
+      #w_seq <- rlist::list.append(w_seq, w)
       # compute the relative error and check the tolerance on the Laplacian
       # matrix and on the objective function
       Lwerr <- norm(Lw - Lw0, type="F") / max(1, norm(Lw0, type="F"))

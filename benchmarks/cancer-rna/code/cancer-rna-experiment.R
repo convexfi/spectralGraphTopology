@@ -12,7 +12,7 @@ names <- t(matrix(unlist(df_names), nrow = nrow(df_names)))
 names <- names[2, 1:Nnodes]
 
 N <- ncol(Y)
-graph <- learnGraphTopology(cov(Y), K = 5, w0 = "naive", beta = 10, maxiter = 100000)
+graph <- learnGraphTopology(cov(Y), K = 5, w0 = "naive", beta = 5, maxiter = 100000)
 print(graph$lambda)
 print(graph$convergence)
 net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)

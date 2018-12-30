@@ -11,13 +11,13 @@ lung adenocarcinoma (LUAD), lung squamous carcinoma (LUSC), breast carcinoma (BR
 ovarian carcinoma (OV), bladder carcinoma (BLCA), colon adenocarcinoma (COAD), uterine cervical and endometrial carcinoma (UCEC)
 and rectal adenocarcinoma (READ).
 
-In the subset available at UCI, however, only seven types of cancer are available.
+In the subset available at UCI, however, only five types of cancer are available.
 The dataset consists of 801 labeled samples, in which every sample has 20531 genetic
 features. The goal in this dataset is to classify and cluster the samples according to
 their tumor type on the basis of those genetic features.
 
-In our experiments we apply the \textsf{SGL} algorithm to the first 70 samples using
-$K = 10$ and $\beta = 5$. Figure~\ref{fig:cancer-gene-sgl} shows a perfect clustering,
+In our experiments, we first apply the \textsf{SGL} algorithm to the first 70 nodes using
+$K = 5$ and $\beta = 5$. Figure~\ref{fig:cancer-gene-sgl} shows a perfect clustering,
 which indicates that \textsf{SGL} may be used to automatically predict types of cancer tumors
 based on gene features.
 
@@ -29,14 +29,23 @@ edges placed accross clusters.
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=.475\textwidth]{cancer-rna/latex/figures/cancer-rna-graph-subset.eps}
-  \caption{Clustering the cancer tumor type \textsf{PANCAN} dataset with \textsf{SGL}$(K = 10, \beta = 5)$.}
+  \caption{Clustering the first 70 nodes of the \textsf{PANCAN} dataset with \textsf{SGL}$(K = 5, \beta = 5)$.}
   \label{fig:cancer-gene-sgl}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=.475\textwidth]{cancer-rna/latex/figures/cancer-rna-graph-subset-ggl.eps}
-  \caption{Clustering the cancer tumor type \textsf{PANCAN} dataset with \textsf{GGL}$(\alpha = 0.1)$.
+  \caption{Clustering the first 70 nodes of the\textsf{PANCAN} dataset with \textsf{GGL}$(\alpha = 0.1)$.
             Grey colored edges indicate wrong connections.}
   \label{fig:cancer-gene-ggl}
 \end{figure}
+
+Finally, we perform clustering for the full dataset. The result is depicted in Figure~\ref{fig:cancer-full}.
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=.475\textwidth]{cancer-rna/latex/figures/cancer-rna-graph-full.eps}
+  \caption{Clustering the full 801 nodes of the \textsf{PANCAN} dataset with \textsf{SGL}$(K = 5, \beta = 10)$.}
+  \label{fig:cancer-gene-sgl}
+\end{figure}
+
