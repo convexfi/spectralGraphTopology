@@ -13,4 +13,5 @@ MatrixXd Mmat(const int);
 VectorXd altLstar(const MatrixXd&);
 MatrixXd vec(const MatrixXd&);
 MatrixXd vecLmat(const int);
+MatrixXd A(const VectorXd&);
 #endif

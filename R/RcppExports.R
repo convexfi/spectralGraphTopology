@@ -35,6 +35,17 @@ L <- function(w) {
     .Call('_spectralGraphTopology_L', PACKAGE = 'spectralGraphTopology', w)
 }
 
+#' Computes the Adjacency linear operator which maps a vector of weights into
+#' a valid Adjacency matrix.
+#'
+#' @param w weight vector of the graph
+#' @return Aw the Adjacency matrix
+#'
+#' @export
+A <- function(w) {
+    .Call('_spectralGraphTopology_A', PACKAGE = 'spectralGraphTopology', w)
+}
+
 #' Computes the matrix form of the composition of the operators Lstar and
 #' L, i.e., Lstar o L.
 #'

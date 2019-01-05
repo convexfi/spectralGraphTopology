@@ -23,12 +23,34 @@ Eigen::MatrixXd L(const Eigen::VectorXd& w) {
     k -= j;
   }
 
-  Eigen::MatrixXd LwT = Lw.transpose();
-  Lw += LwT;
-  Eigen::MatrixXd LwColSum = Lw.colwise().sum().asDiagonal();
+  Eigen::MatrixXd LwColSum = (Lw + Lw.transpose()).colwise().sum().asDiagonal();
   Lw -= LwColSum;
-  return Lw;
+  return Lw.selfadjointView<Upper>();
 }
+
+//' Computes the Adjacency linear operator which maps a vector of weights into
+//' a valid Adjacency matrix.
+//'
+//' @param w weight vector of the graph
+//' @return Aw the Adjacency matrix
+//'
+//' @export
+// [[Rcpp::export]]
+Eigen::MatrixXd A(const Eigen::VectorXd& w) {
+  int j;
+  int k = w.size();
+  const int N = .5 * (1 + sqrt(1 + 8 * k));
+  Eigen::MatrixXd Aw = Eigen::MatrixXd::Zero(N, N);
+
+  for (int i = N-2; i > -1; --i) {
+    j = N - i - 1;
+    Aw.row(i).tail(j) = w.head(k).tail(j);
+    k -= j;
+  }
+
+  return Aw.selfadjointView<Upper>();
+}
+
 
 //' Computes the matrix form of the composition of the operators Lstar and
 //' L, i.e., Lstar o L.
