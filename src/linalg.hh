@@ -7,4 +7,5 @@ using namespace arma;
 
 arma::vec eigenvalues(arma::mat);
 arma::mat eigenvectors(arma::mat);
+
 #endif

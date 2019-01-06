@@ -83,10 +83,10 @@ learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alph
   for (beta in beta_set) {
     for (k in 1:maxiter) {
       setTxtProgressBar(pb, k)
-      w <- w_update(w0, Lw0, U0, beta, lambda0, N, Kmat)
+      w <- laplacian.w_update(w0, Lw0, U0, beta, lambda0, N, Kmat)
       Lw <- L(w)
-      U <- U_update(Lw, N, K)
-      lambda <- lambda_update(lb, ub, beta, U, Lw, N, K)
+      U <- laplacian.U_update(Lw, N, K)
+      lambda <- laplacian.lambda_update(lb, ub, beta, U, Lw, N, K)
       # compute negloglikelihood and objective function values
       ll <- loglikelihood(Lw, lambda, Kmat)
       fun <- ll + logprior(beta, Lw, lambda, U)

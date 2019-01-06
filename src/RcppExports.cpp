@@ -29,6 +29,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// inv_pd
+Eigen::MatrixXd inv_pd(const Eigen::MatrixXd& M);
+RcppExport SEXP _spectralGraphTopology_inv_pd(SEXP MSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type M(MSEXP);
+    rcpp_result_gen = Rcpp::wrap(inv_pd(M));
+    return rcpp_result_gen;
+END_RCPP
+}
 // objfunc
 double objfunc(const Eigen::MatrixXd& Lw, const Eigen::MatrixXd& U, const Eigen::VectorXd& lambda, const Eigen::MatrixXd& Kmat, const double beta);
 RcppExport SEXP _spectralGraphTopology_objfunc(SEXP LwSEXP, SEXP USEXP, SEXP lambdaSEXP, SEXP KmatSEXP, SEXP betaSEXP) {
@@ -104,6 +115,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// Pmat
+Eigen::MatrixXd Pmat(const int n);
+RcppExport SEXP _spectralGraphTopology_Pmat(SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(Pmat(n));
+    return rcpp_result_gen;
+END_RCPP
+}
 // vecLmat
 Eigen::MatrixXd vecLmat(const int n);
 RcppExport SEXP _spectralGraphTopology_vecLmat(SEXP nSEXP) {
@@ -137,6 +159,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// Astar
+Eigen::VectorXd Astar(const Eigen::MatrixXd& M);
+RcppExport SEXP _spectralGraphTopology_Astar(SEXP MSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type M(MSEXP);
+    rcpp_result_gen = Rcpp::wrap(Astar(M));
+    return rcpp_result_gen;
+END_RCPP
+}
 // Linv
 Eigen::VectorXd Linv(const Eigen::MatrixXd& M);
 RcppExport SEXP _spectralGraphTopology_Linv(SEXP MSEXP) {
@@ -148,6 +181,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// Ainv
+Eigen::VectorXd Ainv(const Eigen::MatrixXd& M);
+RcppExport SEXP _spectralGraphTopology_Ainv(SEXP MSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type M(MSEXP);
+    rcpp_result_gen = Rcpp::wrap(Ainv(M));
+    return rcpp_result_gen;
+END_RCPP
+}
 // altLstar
 Eigen::VectorXd altLstar(const Eigen::MatrixXd& M);
 RcppExport SEXP _spectralGraphTopology_altLstar(SEXP MSEXP) {
@@ -156,6 +200,17 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type M(MSEXP);
     rcpp_result_gen = Rcpp::wrap(altLstar(M));
+    return rcpp_result_gen;
+END_RCPP
+}
+// altAstar
+Eigen::VectorXd altAstar(const Eigen::MatrixXd& M);
+RcppExport SEXP _spectralGraphTopology_altAstar(SEXP MSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type M(MSEXP);
+    rcpp_result_gen = Rcpp::wrap(altAstar(M));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -187,17 +242,22 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_spectralGraphTopology_eigenvalues", (DL_FUNC) &_spectralGraphTopology_eigenvalues, 1},
     {"_spectralGraphTopology_eigenvectors", (DL_FUNC) &_spectralGraphTopology_eigenvectors, 1},
+    {"_spectralGraphTopology_inv_pd", (DL_FUNC) &_spectralGraphTopology_inv_pd, 1},
     {"_spectralGraphTopology_objfunc", (DL_FUNC) &_spectralGraphTopology_objfunc, 5},
     {"_spectralGraphTopology_loglikelihood", (DL_FUNC) &_spectralGraphTopology_loglikelihood, 3},
     {"_spectralGraphTopology_logprior", (DL_FUNC) &_spectralGraphTopology_logprior, 4},
     {"_spectralGraphTopology_L", (DL_FUNC) &_spectralGraphTopology_L, 1},
     {"_spectralGraphTopology_A", (DL_FUNC) &_spectralGraphTopology_A, 1},
     {"_spectralGraphTopology_Mmat", (DL_FUNC) &_spectralGraphTopology_Mmat, 1},
+    {"_spectralGraphTopology_Pmat", (DL_FUNC) &_spectralGraphTopology_Pmat, 1},
     {"_spectralGraphTopology_vecLmat", (DL_FUNC) &_spectralGraphTopology_vecLmat, 1},
     {"_spectralGraphTopology_vec", (DL_FUNC) &_spectralGraphTopology_vec, 1},
     {"_spectralGraphTopology_Lstar", (DL_FUNC) &_spectralGraphTopology_Lstar, 1},
+    {"_spectralGraphTopology_Astar", (DL_FUNC) &_spectralGraphTopology_Astar, 1},
     {"_spectralGraphTopology_Linv", (DL_FUNC) &_spectralGraphTopology_Linv, 1},
+    {"_spectralGraphTopology_Ainv", (DL_FUNC) &_spectralGraphTopology_Ainv, 1},
     {"_spectralGraphTopology_altLstar", (DL_FUNC) &_spectralGraphTopology_altLstar, 1},
+    {"_spectralGraphTopology_altAstar", (DL_FUNC) &_spectralGraphTopology_altAstar, 1},
     {"_spectralGraphTopology_blockDiagCpp", (DL_FUNC) &_spectralGraphTopology_blockDiagCpp, 1},
     {"_spectralGraphTopology_Fscore", (DL_FUNC) &_spectralGraphTopology_Fscore, 3},
     {NULL, NULL, 0}

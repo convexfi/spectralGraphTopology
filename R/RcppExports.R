@@ -9,6 +9,10 @@ eigenvectors <- function(M) {
     .Call('_spectralGraphTopology_eigenvectors', PACKAGE = 'spectralGraphTopology', M)
 }
 
+inv_pd <- function(M) {
+    .Call('_spectralGraphTopology_inv_pd', PACKAGE = 'spectralGraphTopology', M)
+}
+
 #' @export
 objfunc <- function(Lw, U, lambda, Kmat, beta) {
     .Call('_spectralGraphTopology_objfunc', PACKAGE = 'spectralGraphTopology', Lw, U, lambda, Kmat, beta)
@@ -57,6 +61,17 @@ Mmat <- function(n) {
     .Call('_spectralGraphTopology_Mmat', PACKAGE = 'spectralGraphTopology', n)
 }
 
+#' Computes the matrix form of the composition of the operators Astar and
+#' A, i.e., Astar o A.
+#'
+#' @param n number of columns/rows
+#' @return M the composition of Astar and A
+#'
+#' @export
+Pmat <- function(n) {
+    .Call('_spectralGraphTopology_Pmat', PACKAGE = 'spectralGraphTopology', n)
+}
+
 #' Computes the matrix that represents the composition of
 #' the vec and the L operators.
 #'
@@ -90,6 +105,16 @@ Lstar <- function(M) {
     .Call('_spectralGraphTopology_Lstar', PACKAGE = 'spectralGraphTopology', M)
 }
 
+#' Computes the Astar operator.
+#'
+#' @param M matrix
+#' @return w vector
+#'
+#' @export
+Astar <- function(M) {
+    .Call('_spectralGraphTopology_Astar', PACKAGE = 'spectralGraphTopology', M)
+}
+
 #' Computes the inverse of the L operator.
 #'
 #' @param M Laplacian matrix
@@ -98,6 +123,16 @@ Lstar <- function(M) {
 #' @export
 Linv <- function(M) {
     .Call('_spectralGraphTopology_Linv', PACKAGE = 'spectralGraphTopology', M)
+}
+
+#' Computes the inverse of the L operator.
+#'
+#' @param M Laplacian matrix
+#' @return w the weight vector of the graph
+#'
+#' @export
+Ainv <- function(M) {
+    .Call('_spectralGraphTopology_Ainv', PACKAGE = 'spectralGraphTopology', M)
 }
 
 #' Alternative implementation for the Lstar operator.
@@ -109,6 +144,17 @@ Linv <- function(M) {
 #'
 altLstar <- function(M) {
     .Call('_spectralGraphTopology_altLstar', PACKAGE = 'spectralGraphTopology', M)
+}
+
+#' Alternative implementation for the Astar operator.
+#' This is only used for unit testing. Use Astar for
+#' a better performance.
+#'
+#' @param M matrix
+#' @return w vector
+#'
+altAstar <- function(M) {
+    .Call('_spectralGraphTopology_altAstar', PACKAGE = 'spectralGraphTopology', M)
 }
 
 blockDiagCpp <- function(matrices) {

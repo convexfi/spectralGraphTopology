@@ -21,7 +21,7 @@ test_that("test_U_update_consistency", {
   w <- runif(1000)
   N <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
   K <- 1
-  U <- U_update(L(w), N, K)
+  U <- laplacian.U_update(L(w), N, K)
   q <- N - K
   expect_that(all.equal(crossprod(U), diag(array(1., q)),
                         check.attributes = FALSE), is_true())
@@ -35,11 +35,11 @@ with_parameters_test_that("test_lambda_update_consistency", {
     N <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
     K <- 1
     Lw <- L(w)
-    U <- U_update(Lw, N, K)
+    U <- laplacian.U_update(Lw, N, K)
     beta <- .5
     q <- N - K
 
-    lambda <- lambda_update(lb, ub, beta, U, Lw, N, K)
+    lambda <- laplacian.lambda_update(lb, ub, beta, U, Lw, N, K)
     expect_that(length(lambda) == q, is_true())
     expect_that(all(lambda[1] >= lb, lambda[q] <= ub,
                     lambda[2:q] >= lambda[1:(q-1)]), is_true())

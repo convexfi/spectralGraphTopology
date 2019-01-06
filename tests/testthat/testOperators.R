@@ -22,22 +22,23 @@ LOpConstraints <- function(Lw) {
   expect_that(all(eigen_values$values >= 0), is_true())
 }
 
-# Test the inverse of the L operator
-test_that("test_Linv", {
+test_that("inverse of the L operator works", {
   w <- runif(10)
   Lw <- L(w)
   w_test <- Linv(Lw)
   expect_that(all(w == w_test), is_true())
 })
 
+test_that("inverse of the A operator works", {
+  w <- runif(10)
+  Aw <- A(w)
+  w_test <- Ainv(Aw)
+  expect_that(all(w == w_test), is_true())
+})
 
-# Test the L operator in simple, manually verifiable cases
-with_parameters_test_that("test_L_operator", {
+
+with_parameters_test_that("L operator works in simple, manually verifiable cases", {
     Lw <- L(w)
-    LOpConstraints(Lw)
-    expect_that(all(Lw == answer), is_true())
-
-    Lw <- LOp(w)
     LOpConstraints(Lw)
     expect_that(all(Lw == answer), is_true())
   },
@@ -54,20 +55,34 @@ with_parameters_test_that("test_L_operator", {
        )
 )
 
+with_parameters_test_that("A operator works in simple, manually verifiable cases", {
+    Aw <- A(w)
+    expect_equal(Aw, answer)
+  },
+  cases(
+        list(w = c(1, 2, 3, 4, 5, 6), answer = matrix(c(0, 1, 2, 3,
+                                                        1, 0, 4, 5,
+                                                        2, 4, 0, 6,
+                                                        3, 5, 6, 0), nrow=4)),
+        list(w = c(1, 2, 3), answer = matrix(c(0,  1,  2,
+                                               1,  0,  3,
+                                               2,  3,  0), nrow=3)),
+        list(w = c(1), answer = matrix(c(0,  1,
+                                         1,  0), nrow=2))
+       )
+)
 
-# Verify that the implemented L operator is indeed linear
-test_that("test_linearity_of_LOp", {
-  w1 <- c(1, 2, 3, 4, 5, 6)
-  w2 <- rev(w1)
-  a <- runif(1)
-  b <- runif(1)
-  Lw1 <- LOp(w1)
-  Lw2 <- LOp(w2)
-  expect_that(all((a * Lw1 + b * Lw2) == LOp(a * w1 + b * w2)), is_true())
-  Lw1 <- L(w1)
-  Lw2 <- L(w2)
-  expect_that(all((a * Lw1 + b * Lw2) == L(a * w1 + b * w2)), is_true())
-})
+with_parameters_test_that("L and A operators are linear", {
+    w1 <- c(1, 2, 3, 4, 5, 6)
+    w2 <- rev(w1)
+    a <- runif(1)
+    b <- runif(1)
+    OPw1 <- operator(w1)
+    OPw2 <- operator(w2)
+    expect_equal(a * OPw1 + b * OPw2, operator(a * w1 + b * w2))
+  },
+  cases(list(operator = L), list(operator = A))
+)
 
 test_that("test_LStarOp", {
    # Test the LStar operator in a basic case
