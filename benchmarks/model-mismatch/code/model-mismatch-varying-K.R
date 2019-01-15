@@ -10,7 +10,7 @@ N <- 49
 Nrealizations <- 10
 T <- 30 * N
 K <- 7
-K_set <- c(1:7)
+K_set <- c(1:14)
 fs <- array(0, length(K_set))
 re <- array(0, length(K_set))
 P <- diag(1, K)
@@ -34,7 +34,7 @@ for (n in c(1:Nrealizations)) {
   w0 <- qp$solution
   for (j in c(1:length(K_set))) {
     cat("\nRunning simulation for K = ", K_set[j], "\n")
-    graph <- learnGraphTopology(S, K = K_set[j], w0 = w0, beta = 1e-1,
+    graph <- learnLaplacianGraphTopology(S, K = K_set[j], w0 = w0, beta = 1e-1,
                                 alpha = 1e-2, ftol = 1e-4, Lwtol = 1e-4)
     re[j] <- re[j] + relativeError(Ltrue, graph$Lw)
     fs[j] <- fs[j] + Fscore(Ltrue, graph$Lw, 1e-2)

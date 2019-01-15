@@ -17,7 +17,7 @@ Ltrue <- as.matrix(laplacian_matrix(erdos_renyi))
 # the pseudo inverse of the true Laplacian
 Y <- MASS::mvrnorm(T, mu = rep(0, N), Sigma = MASS::ginv(Ltrue))
 # run spectralGraphTopology
-graph <- learnGraphTopology(cov(Y), w0 = "qp", beta = 10, ftol = 1e-9, maxiter = 100000)
+graph <- learnLaplacianGraphTopology(cov(Y), w0 = "qp", beta = 10, ftol = 1e-9, maxiter = 100000)
 print(graph$convergence)
 print(relativeError(Ltrue, graph$Lw))
 print(Fscore(Ltrue, graph$Lw, 1e-1))

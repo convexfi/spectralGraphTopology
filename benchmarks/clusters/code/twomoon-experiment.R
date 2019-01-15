@@ -10,7 +10,7 @@ N <- 100
 # generate datapoints
 twomoon <- shapes.two.moon(N)
 # estimate underlying graph
-graph <- learnGraphTopology(crossprod(t(twomoon$data)) + diag(rep(1/3, 2 * N)),
+graph <- learnLaplacianGraphTopology(crossprod(t(twomoon$data)) + diag(rep(1/3, 2 * N)),
                             w0 = "naive", K = 2, beta = .25, ftol = 1e-3, Lwtol = 1e-3)
 # build network
 net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)

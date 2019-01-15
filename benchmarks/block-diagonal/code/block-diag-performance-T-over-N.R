@@ -38,7 +38,7 @@ for (j in n_ratios) {
     alphas <- c(0, .75 ^ (c(1:14)) * s_max * sqrt(log(N)/ T))
     rel_spec <- 9999999999
     for (alpha in alphas) {
-      graph <- learnGraphTopology(S, w0 = w0_qp, K = K, beta = 10*N,
+      graph <- learnLaplacianGraphTopology(S, w0 = w0_qp, K = K, beta = 10*N,
                                   alpha = alpha, ub = 2*N, maxiter = 100000)
       print(graph$convergence)
       tmp_rel_spec <- relativeError(Ltrue, graph$Lw)

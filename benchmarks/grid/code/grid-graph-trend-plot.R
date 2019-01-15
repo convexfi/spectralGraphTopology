@@ -18,7 +18,7 @@ Wtrue <- diag(diag(Ltrue)) - Ltrue
 # sample data
 Y <- MASS::mvrnorm(T, mu = rep(0, N), Sigma = MASS::ginv(Ltrue))
 # estimate underlying graph
-graph <- learnGraphTopology(cov(Y), w0 = "naive", beta = 10, alpha = 5e-3, Lwtol = 1e-4)
+graph <- learnLaplacianGraphTopology(cov(Y), w0 = "naive", beta = 10, alpha = 5e-3, Lwtol = 1e-4)
 # print convergence, relative error and fscore
 cat("\nconvergence status: ", graph$convergence, "\n")
 cat("relative error: ", relativeError(Ltrue, graph$Lw), "\n")

@@ -39,7 +39,7 @@ for (k in c(1:length(kappa_seq))) {
     qp <- quadprog::solve.QP(crossprod(R), t(R) %*% vec(Sinv), diag(ncol(R)))
     w0 <- qp$solution
 
-    graph <- learnGraphTopology(S, w0 = w0, K = K, beta = 100 * N,
+    graph <- learnLaplacianGraphTopology(S, w0 = w0, K = K, beta = 100 * N,
                                 alpha = 1e-2, maxiter = 100000)
     print(graph$convergence)
     fs <- Fscore(Ltrue, graph$Lw, 1e-3)

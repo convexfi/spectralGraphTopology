@@ -10,7 +10,8 @@ run_animals <- function(K) {
   names <- matrix(unlist(read.csv("animals_names.txt", header = FALSE)))
   Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
   N <- ncol(Y)
-  graph <- learnGraphTopology(cov(Y) + diag(rep(1/3, N)), w0 = "qp", K = K, beta = .5, alpha = 1e-1)
+  graph <- learnLaplacianGraphTopology(cov(Y) + diag(rep(1/3, N)), w0 = "qp",
+                                       K = K, beta = .5, alpha = 1e-1)
   net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
   #colors <- viridis(5, begin = 0, end = .1, direction = -1)
   colors <- brewer.greys(10)

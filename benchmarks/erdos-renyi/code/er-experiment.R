@@ -7,7 +7,8 @@ library(latex2exp)
 set.seed(1)
 
 N_realizations <- 10
-ratios <- c(.5, .75, 1, 5, 10, 30, 100, 250, 500, 1000)
+#ratios <- c(.5, .75, 1, 5, 10, 30, 100, 250, 500, 1000)
+ratios <- c(500)
 n_ratios <- c(1:length(ratios))
 # design synthetic Laplacian of a erdos_renyi graph
 N <- 64
@@ -45,13 +46,12 @@ for (j in n_ratios) {
     alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(N)/ T), 0)
     # run spectralGraphTopology
     if (ratios[j] <= 1) {
-      graph <- learnGraphTopology(S, w0 = "naive", beta = 0.2, beta_max = 1, nbeta = 10,
+      graph <- learnLaplacianGraphTopology(S, w0 = "naive", beta = 0.2, beta_max = 1, nbeta = 10,
                                   alpha = 1.3e-2, maxiter = 100000)
-    } else if (ratios[j] <= 30) {
-      graph <- learnGraphTopology(S, w0 = "naive", beta = 1.29, maxiter = 100000)
     } else {
-      graph <- learnGraphTopology(S, w0 = "naive", beta = 10, maxiter = 100000)
+      graph <- learnGraphTopology(S, w0 = "naive", beta = 1.29, maxiter = 100000)
     }
+    print(graph$lambda)
     print(graph$beta)
     print(graph$convergence)
     # compute naive

@@ -12,3 +12,6 @@ README_cache
 *.ps
 benchmarks/cancer-rna/code/data.csv
 benchmarks/cancer-rna/code/labels.csv
+benchmarks/financial-data/
+benchmarks/third-party/
+benchmarks/urban-land-cover/

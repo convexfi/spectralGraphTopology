@@ -43,7 +43,7 @@ for (j in n_ratios) {
     s_max <- max(abs(S - diag(diag(S))))
     alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(N)/ T), 0)
     setVariable(matlab, S = S)
-    graph <- learnGraphTopology(S, w0 = "naive", K = 1, ub = 32, beta = 4, maxiter = 100000)
+    graph <- learnLaplacianGraphTopology(S, w0 = "naive", K = 1, ub = 32, beta = 4, maxiter = 100000)
     print(graph$convergence)
     print(graph$lambda)
     rel_cgl <- 9999999999

@@ -10,8 +10,8 @@ N <- 100
 # generate nodes
 circles2 <- shapes.circles2(N)
 # learn underlying graph
-graph <- learnGraphTopology(crossprod(t(circles2$data)) + diag(rep(1/3, 2 * N)),
-                            w0 = "naive", K = 2, beta = .25, ftol = 1e-4, Lwtol = 1e-4)
+graph <- learnLaplacianGraphTopology(crossprod(t(circles2$data)) + diag(rep(1/3, 2 * N)),
+                                     w0 = "naive", K = 2, beta = .25, ftol = 1e-4, Lwtol = 1e-4)
 # construct network
 net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
 # use pretty colors for the nodes and edges
