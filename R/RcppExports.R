@@ -9,8 +9,12 @@ eigenvectors <- function(M) {
     .Call('_spectralGraphTopology_eigenvectors', PACKAGE = 'spectralGraphTopology', M)
 }
 
-inv_pd <- function(M) {
-    .Call('_spectralGraphTopology_inv_pd', PACKAGE = 'spectralGraphTopology', M)
+inv_sympd <- function(M) {
+    .Call('_spectralGraphTopology_inv_sympd', PACKAGE = 'spectralGraphTopology', M)
+}
+
+solve_sympd <- function(M) {
+    .Call('_spectralGraphTopology_solve_sympd', PACKAGE = 'spectralGraphTopology', M)
 }
 
 #' @export

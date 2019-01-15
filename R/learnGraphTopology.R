@@ -46,9 +46,9 @@
 #' # relative error between the true Laplacian and the learned one
 #' norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
 #' @export
-learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alpha = 0.,
-                               beta = 1., beta_max = beta, nbeta = 1, maxiter = 10000,
-                               Lwtol = 1e-4, ftol = 1e-6) {
+learnLaplacianGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alpha = 0.,
+                                        beta = 1., beta_max = beta, nbeta = 1, maxiter = 10000,
+                                        Lwtol = 1e-4, ftol = 1e-6) {
   # number of nodes
   N <- nrow(S)
   # l1-norm penalty factor
@@ -70,13 +70,12 @@ learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alph
   lambda0 <- pmax(0, c(eigenvalues(Lw0)[(K+1):N]))
   U0 <- eigenvectors(Lw0)[, (K+1):N]
   # save objective function value at initial guess
-  ll0 <- loglikelihood(Lw0, lambda0, Kmat)
-  fun0 <- ll0 + logprior(beta, Lw0, lambda0, U0)
+  ll0 <- laplacian.logLikelihood(Lw0, lambda0, Kmat)
+  fun0 <- ll0 + laplacian.logPrior(beta, Lw0, lambda0, U0)
   fun_seq <- c(fun0)
   ll_seq <- c(ll0)
-  w_seq <- list(w0)
+  #w_seq <- list(w0)
   time_seq <- c(0)
-
   pb = txtProgressBar(min = 0, max = maxiter, initial = 0)
   start_time <- proc.time()[3]
   beta_set <- beta * exp(seq(from = 0, to = log(beta_max/beta), length.out = nbeta))
@@ -88,8 +87,8 @@ learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alph
       U <- laplacian.U_update(Lw, N, K)
       lambda <- laplacian.lambda_update(lb, ub, beta, U, Lw, N, K)
       # compute negloglikelihood and objective function values
-      ll <- loglikelihood(Lw, lambda, Kmat)
-      fun <- ll + logprior(beta, Lw, lambda, U)
+      ll <- laplacian.logLikelihood(Lw, lambda, Kmat)
+      fun <- ll + laplacian.logPrior(beta, Lw, lambda, U)
       # save estimates
       time_seq <- c(time_seq, proc.time()[3] - start_time)
       ll_seq <- c(ll_seq, ll)
@@ -111,7 +110,93 @@ learnGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alph
   }
   # compute the adjancency matrix
   W <- diag(diag(Lw)) - Lw
-  return(list(Lw = Lw, W = W, obj_fun = fun_seq, loglike = ll_seq, w_seq = w_seq,
+  return(list(Lw = Lw, W = W, obj_fun = fun_seq, loglike = ll_seq, #w_seq = w_seq,
               w = w, lambda = lambda, U = U, elapsed_time = time_seq,
               convergence = !(k == maxiter), beta = beta))
 }
+
+
+#' @export
+learnAdjacencyGraphTopology <- function(S, z = 0, w0 = NULL, ub = 1e4, lb = 0 - ub, alpha = 0.,
+                                        beta = 1., beta_max = beta, nbeta = 1, maxiter = 10000,
+                                        Awtol = 1e-4, ftol = 1e-6) {
+  n <- ncol(S)
+  J <- matrix(1/n, n, n)
+  # l1-norm penalty factor
+  H <- alpha * (2 * diag(n) - matrix(1, n, n))
+  Kmat <- S + H
+  # compute initial guess
+  Sinv <- MASS::ginv(S)
+  if (is.null(w0))
+    w0 <- pmax(0, Linv(Sinv))
+  print("w0")
+  print(w0)
+  # compute quantities on the initial guess
+  Aw0 <- A(w0)
+  evals <- eigenvalues(Aw0)
+  psi0 <- c(evals[1:(.5*(n - z))], evals[(1 + .5*(n + z)):n])
+  print("psi0")
+  print(psi0)
+  evecs <- eigenvectors(Aw0)
+  V0 <- cbind(evecs[, 1:(.5*(n - z))], evecs[, (1 + .5*(n + z)):n])
+  # save objective function value at initial guess
+  ll0 <- adjacency.logLikelihood(L(w0), Kmat, J)
+  print("ll0")
+  print(ll0)
+  fun0 <- ll0 + adjacency.logPrior(beta, Aw0, psi0, V0)
+  print("prior0")
+  print(fun0 - ll0)
+  fun_seq <- c(fun0)
+  ll_seq <- c(ll0)
+  #w_seq <- list(w0)
+  time_seq <- c(0)
+  pb = txtProgressBar(min = 0, max = maxiter, initial = 0)
+  start_time <- proc.time()[3]
+  beta_set <- beta * exp(seq(from = 0, to = log(beta_max/beta), length.out = nbeta))
+  for (beta in beta_set) {
+    for (k in 1:maxiter) {
+      setTxtProgressBar(pb, k)
+      w <- adjacency.w_update(w0, Aw0, V0, beta, psi0, Kmat, J, Lips = 20)
+      print("w")
+      print(w)
+      Aw <- A(w)
+      Lw <- L(w)
+      print("eigenvalues of Lw")
+      print(c(eigenvalues(Lw)))
+      V <- adjacency.V_update(Aw, n, z)
+      psi <- adjacency.psi_update(lb, ub, V, Aw)
+      print("psi")
+      print(psi)
+      # compute negloglikelihood and objective function values
+      ll <- adjacency.logLikelihood(Lw, Kmat, J)
+      print("ll")
+      print(ll)
+      fun <- ll + adjacency.logPrior(beta, Aw, psi, V)
+      print("prior")
+      print(fun - ll)
+      print("fun")
+      print(fun)
+      # save estimates
+      time_seq <- c(time_seq, proc.time()[3] - start_time)
+      ll_seq <- c(ll_seq, ll)
+      fun_seq <- c(fun_seq, fun)
+      #w_seq <- rlist::list.append(w_seq, w)
+      # compute the relative error and check the tolerance on the Laplacian
+      # matrix and on the objective function
+      Awerr <- norm(Aw - Aw0, type="F") / max(1, norm(Aw0, type="F"))
+      ferr <- abs(fun - fun0) / max(1, abs(fun0))
+      if ((Awerr < Awtol && ferr < ftol) && k > 1)
+        break
+      # update estimates
+      fun0 <- fun
+      w0 <- w
+      V0 <- V
+      psi0 <- psi
+      Aw0 <- Aw
+    }
+  }
+  return(list(Aw = Aw, Lw = Lw, obj_fun = fun_seq, loglike = ll_seq, #w_seq = w_seq,
+              w = w, psi = psi, V = V, elapsed_time = time_seq,
+              convergence = !(k == maxiter), beta = beta))
+}
+
