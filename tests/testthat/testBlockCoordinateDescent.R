@@ -16,8 +16,7 @@ lambda_update_cvx <- function(lb, ub, beta, U, Lw, N, K) {
 }
 
 
-# test that U remains orthonormal after being updated
-test_that("test_U_update_consistency", {
+test_that("test that U remains orthonormal after being updated", {
   w <- runif(1000)
   N <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
   K <- 1
@@ -30,8 +29,36 @@ test_that("test_U_update_consistency", {
 })
 
 
-# Test that the eigen values meet the criterion after being updated
-with_parameters_test_that("test_lambda_update_consistency", {
+test_that("test that V remains orthonormal after being updated", {
+  w <- runif(4*9)
+  n <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
+  z <- 3
+  V <- adjacency.V_update(A(w), n, z)
+  q <- n - z
+  expect_that(all.equal(crossprod(V), diag(array(1., q)),
+                        check.attributes = FALSE), is_true())
+  expect_that(ncol(V) == q, is_true())
+  expect_that(nrow(V) == n, is_true())
+})
+
+
+test_that("test that the eigenvalues of the adjacency matrix meet the criterion", {
+  w <- runif(4*9)
+  n <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
+  z <- 3
+  Aw <- A(w)
+  V <- adjacency.V_update(Aw, n, z)
+  q <- n - z
+  ub <- 1e3
+  beta <- .5
+  lb <- 0 - ub
+  psi <- adjacency.psi_update(lb, ub, V, Aw)
+  print(psi)
+})
+
+
+with_parameters_test_that("test that the eigenvalues of the Laplacian matrix
+                          meet the criterion after being updated", {
     N <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
     K <- 1
     Lw <- L(w)

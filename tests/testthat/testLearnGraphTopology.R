@@ -10,7 +10,7 @@ test_that("test_learnGraphTopology_K=1", {
   Lw <- L(w)
   N <- ncol(Lw)
   Y <- MASS::mvrnorm(T, as.vector(array(0, N)), MASS::ginv(Lw))
-  res <- learnGraphTopology(cov(Y), K, ub=100, beta=.1, maxiter=500)
+  res <- learnLaplacianGraphTopology(cov(Y), K, ub=100, beta=.1, maxiter=500)
   expect_that(norm(Lw - res$Lw, type="F") /
               max(1., norm(Lw, type="F")) < 1e-1, is_true())
 
@@ -18,10 +18,20 @@ test_that("test_learnGraphTopology_K=1", {
   w <- c(1, 1, 0, 1, 1, 1)
   Lw <- L(w)
   Y <- MASS::mvrnorm(T, as.vector(array(0, N)), MASS::ginv(Lw))
-  res <- learnGraphTopology(cov(Y), K, ub=10, beta=10, maxiter=500)
+  res <- learnLaplacianGraphTopology(cov(Y), K, ub=10, beta=10, maxiter=500)
   expect_that(norm(Lw - res$Lw, type="F") /
               max(1., norm(Lw, type="F")) < 1e-1, is_true())
 })
+
+
+#test_that("simple bipartite graph can be learned", {
+#  T <- 10000
+#  w <- c(1, 0, 0, 1, 0, 1)
+#  Aw <- A(w)
+#  n <- ncol(Aw)
+#  Y <- MASS::mvrnorm(T, as.vector(array(0, n)), MASS::ginv(L(w)))
+#  res <- learnAdjacencyGraphTopology(cov(Y), z = 0, ub=10, beta=10, maxiter=500)
+#})
 
 
 # test on toy graph from section 3 of https://arxiv.org/pdf/1206.5726.pdf
@@ -34,7 +44,7 @@ test_that("test_learnGraphTopology_K=2", {
               c(-1, 0, 1, 0),
               c(0, -1, 0, 1))
   Y <- MASS::mvrnorm(T, as.vector(array(0, N)), MASS::ginv(Lw))
-  res <- learnGraphTopology(cov(Y), K, beta=20.)
+  res <- learnLaplacianGraphTopology(cov(Y), K, beta=20.)
   expect_that(norm(Lw - res$Lw, type="F") / norm(Lw, type="F") < 1e-1,
               is_true())
 })
@@ -52,7 +62,7 @@ test_that("test_learnGraphTopology_K=2", {
 
   Lw <- blockDiag(Lw1, Lw2)
   Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Lw))
-  res <- learnGraphTopology(cov(Y), K, beta=100)
+  res <- learnLaplacianGraphTopology(cov(Y), K, beta=100)
   expect_that(norm(Lw - res$Lw, type="F") / norm(Lw, type="F") < 1e-1,
               is_true())
 })

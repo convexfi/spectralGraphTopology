@@ -16,3 +16,8 @@ arma::mat eigenvectors(arma::mat M) {
   arma::eig_sym(eigval, eigvec, M);
   return eigvec;
 }
+
+// [[Rcpp::export]]
+arma::mat inv_sympd(arma::mat M) {
+  return arma::inv_sympd(M);
+}
