@@ -56,15 +56,7 @@ learnLaplacianGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 
   Kmat <- S + H
   # find an appropriate inital guess
   Sinv <- MASS::ginv(S)
-  if (is.character(w0)) {
-    if (w0 == "qp") {
-      R <- vecLmat(ncol(Sinv))
-      qp <- quadprog::solve.QP(crossprod(R), t(R) %*% vec(Sinv), diag(ncol(R)))
-      w0 <- qp$solution
-    } else if (w0 == "naive") {
-      w0 <- pmax(0, Linv(Sinv))
-    }
-  }
+  w0 <- w_init(w0, Sinv)
   # compute quantities on the initial guess
   Lw0 <- L(w0)
   #U0 <- eigenvectors(Lw0)[, (K+1):N]
@@ -119,9 +111,9 @@ learnLaplacianGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 
 
 
 #' @export
-learnAdjacencyGraphTopology <- function(S, z = 0, w0 = NULL, ub = 1e4, lb = 0 - ub, alpha = 0.,
-                                        beta = 1., beta_max = beta, nbeta = 1, Lips = 100, maxiter = 10000,
-                                        Awtol = 1e-4, ftol = 1e-6) {
+learnAdjacencyGraphTopology <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
+                                        beta_max = beta, nbeta = 1, Lips = 1e5,
+                                        maxiter = 1e4, Awtol = 1e-4, ftol = 1e-6) {
   n <- ncol(S)
   J <- matrix(1/n, n, n)
   # l1-norm penalty factor
@@ -129,16 +121,14 @@ learnAdjacencyGraphTopology <- function(S, z = 0, w0 = NULL, ub = 1e4, lb = 0 - 
   Kmat <- S + H
   # compute initial guess
   Sinv <- MASS::ginv(S)
-  if (is.null(w0))
-    w0 <- pmax(0, Linv(Sinv))
+  w0 <- w_init(w0, Sinv)
   # compute quantities on the initial guess
   Aw0 <- A(w0)
   V0 <- adjacency.V_update(Aw0, n, z)
-  psi0 <- adjacency.initial_psi(V0, Aw0)
+  psi0 <- adjacency.psi_update(V0, Aw0)
   # save objective function value at initial guess
   ll0 <- adjacency.logLikelihood(L(w0), Kmat, J)
   fun0 <- ll0 + adjacency.logPrior(beta, Aw0, psi0, V0)
-  print(fun0)
   fun_seq <- c(fun0)
   ll_seq <- c(ll0)
   #w_seq <- list(w0)
@@ -152,18 +142,11 @@ learnAdjacencyGraphTopology <- function(S, z = 0, w0 = NULL, ub = 1e4, lb = 0 - 
       w <- adjacency.w_update(w0, Aw0, V0, beta, psi0, Kmat, J, Lips)
       Lw <- L(w)
       Aw <- A(w)
-      print("w-update")
-      print(adjacency.objectiveFunction(Aw, Lw, V0, psi0, Kmat, J, beta))
       V <- adjacency.V_update(Aw, n, z)
-      print("V-update")
-      print(adjacency.objectiveFunction(Aw, Lw, V, psi0, Kmat, J, beta))
-      psi <- adjacency.initial_psi(V, Aw)
-      print("psi-update")
-      print(adjacency.objectiveFunction(Aw, Lw, V, psi, Kmat, J, beta))
+      psi <- adjacency.psi_update(V, Aw)
       # compute negloglikelihood and objective function values
       ll <- adjacency.logLikelihood(Lw, Kmat, J)
       fun <- ll + adjacency.logPrior(beta, Aw, psi, V)
-      print(fun)
       # save estimates
       time_seq <- c(time_seq, proc.time()[3] - start_time)
       ll_seq <- c(ll_seq, ll)
@@ -183,8 +166,8 @@ learnAdjacencyGraphTopology <- function(S, z = 0, w0 = NULL, ub = 1e4, lb = 0 - 
       Aw0 <- Aw
     }
   }
-  return(list(Aw = Aw, Lw = Lw, obj_fun = fun_seq, loglike = ll_seq, #w_seq = w_seq,
-              w = w, psi = psi, V = V, elapsed_time = time_seq,
+  return(list(Aw = Aw, Lw = Lw, obj_fun = fun_seq,
+              loglike = ll_seq, w = w, psi = psi, V = V, elapsed_time = time_seq,
               convergence = !(k == maxiter), beta = beta))
 }
 

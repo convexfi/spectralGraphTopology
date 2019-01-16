@@ -51,8 +51,7 @@ test_that("test that the eigenvalues of the adjacency matrix meet the criterion"
   q <- n - z
   ub <- 1e3
   lb <- 0 - ub
-  psi <- adjacency.initial_psi(V, Aw)
-  print(psi)
+  psi <- adjacency.psi_update(V, Aw)
 })
 
 
