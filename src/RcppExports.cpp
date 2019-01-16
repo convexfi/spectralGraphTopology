@@ -40,17 +40,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// solve_sympd
-arma::mat solve_sympd(arma::mat M);
-RcppExport SEXP _spectralGraphTopology_solve_sympd(SEXP MSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(solve_sympd(M));
-    return rcpp_result_gen;
-END_RCPP
-}
 // objfunc
 double objfunc(const Eigen::MatrixXd& Lw, const Eigen::MatrixXd& U, const Eigen::VectorXd& lambda, const Eigen::MatrixXd& Kmat, const double beta);
 RcppExport SEXP _spectralGraphTopology_objfunc(SEXP LwSEXP, SEXP USEXP, SEXP lambdaSEXP, SEXP KmatSEXP, SEXP betaSEXP) {
@@ -254,7 +243,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spectralGraphTopology_eigenvalues", (DL_FUNC) &_spectralGraphTopology_eigenvalues, 1},
     {"_spectralGraphTopology_eigenvectors", (DL_FUNC) &_spectralGraphTopology_eigenvectors, 1},
     {"_spectralGraphTopology_inv_sympd", (DL_FUNC) &_spectralGraphTopology_inv_sympd, 1},
-    {"_spectralGraphTopology_solve_sympd", (DL_FUNC) &_spectralGraphTopology_solve_sympd, 1},
     {"_spectralGraphTopology_objfunc", (DL_FUNC) &_spectralGraphTopology_objfunc, 5},
     {"_spectralGraphTopology_loglikelihood", (DL_FUNC) &_spectralGraphTopology_loglikelihood, 3},
     {"_spectralGraphTopology_logprior", (DL_FUNC) &_spectralGraphTopology_logprior, 4},

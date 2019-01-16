@@ -13,10 +13,6 @@ inv_sympd <- function(M) {
     .Call('_spectralGraphTopology_inv_sympd', PACKAGE = 'spectralGraphTopology', M)
 }
 
-solve_sympd <- function(M) {
-    .Call('_spectralGraphTopology_solve_sympd', PACKAGE = 'spectralGraphTopology', M)
-}
-
 #' @export
 objfunc <- function(Lw, U, lambda, Kmat, beta) {
     .Call('_spectralGraphTopology_objfunc', PACKAGE = 'spectralGraphTopology', Lw, U, lambda, Kmat, beta)
