@@ -135,24 +135,6 @@ adjacency.psi_update <- function(V, Aw) {
   return(c(-rev(x), x))
 }
 
-adjacency.initial_psi <- function(V, Aw) {
-  c <- diag(t(V) %*% Aw %*% V)
-  q <- length(c)
-  psi <- CVXR::Variable(q)
-  objective <- CVXR::Minimize(sum((psi - c) ^ 2))
-  constraints <- list(psi[1:(q - 1)] < psi[2:q])
-  j <- length(constraints) + 1
-  i <- 1
-  while (i < q + 1 - i) {
-    constraints[[j]] <- psi[i] == -psi[q + 1 - i]
-    j <- j + 1
-    i <- i + 1
-  }
-  prob <- CVXR::Problem(objective, constraints)
-  result <- solve(prob)
-  return(as.vector(result$getValue(psi)))
-}
-
 joint.w_update <- function(w, Lw, U, d, beta, lambda, N, Kmat) {
   n <- ncol(Lw)
   ULmdUT <- crossprod(sqrt(lambda) * t(U))

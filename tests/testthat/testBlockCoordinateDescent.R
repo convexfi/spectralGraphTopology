@@ -16,6 +16,25 @@ lambda_update_cvx <- function(lb, ub, beta, U, Lw, N, K) {
 }
 
 
+psi_update_cvx <- function(V, Aw) {
+  c <- diag(t(V) %*% Aw %*% V)
+  q <- length(c)
+  psi <- CVXR::Variable(q)
+  objective <- CVXR::Minimize(sum((psi - c) ^ 2))
+  constraints <- list(psi[1:(q - 1)] < psi[2:q])
+  j <- length(constraints) + 1
+  i <- 1
+  while (i < q + 1 - i) {
+    constraints[[j]] <- psi[i] == -psi[q + 1 - i]
+    j <- j + 1
+    i <- i + 1
+  }
+  prob <- CVXR::Problem(objective, constraints)
+  result <- solve(prob)
+  return(as.vector(result$getValue(psi)))
+}
+
+
 test_that("test that U remains orthonormal after being updated", {
   w <- runif(1000)
   N <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
@@ -48,10 +67,9 @@ test_that("test that the eigenvalues of the adjacency matrix meet the criterion"
   z <- 3
   Aw <- A(w)
   V <- adjacency.V_update(Aw, n, z)
-  q <- n - z
-  ub <- 1e3
-  lb <- 0 - ub
   psi <- adjacency.psi_update(V, Aw)
+  psi_cvx <- psi_update_cvx(V, Aw)
+  expect_equal(psi, psi_cvx, tolerance = 1e-4)
 })
 
 
