@@ -3,13 +3,15 @@ library(igraph)
 library(pals)
 library(latex2exp)
 
-df <- read.csv("ggl-laplacian-alpha01.txt", header = FALSE)
+set.seed(42)
+
+df <- read.csv("ggl-laplacian-alpha005.txt", header = FALSE)
 names <- matrix(unlist(read.csv("animals_names.txt", header = FALSE)))
 laplacian <- matrix(as.numeric(unlist(df)), nrow = nrow(df))
 adj <- diag(diag(laplacian)) - laplacian
 
 net <- graph_from_adjacency_matrix(adj, mode = "undirected", weighted = TRUE)
-colors <- brewer.greys(3)
+colors <- brewer.reds(100)
 c_scale <- colorRamp(colors)
 E(net)$color = apply(c_scale(E(net)$weight / max(E(net)$weight)), 1,
                      function(x) rgb(x[1]/255, x[2]/255, x[3]/255))

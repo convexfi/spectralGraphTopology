@@ -41,7 +41,7 @@
 #' Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Lw))
 #'
 #' # learn the Laplacian matrix from the simulated data
-#' res <- learnGraphTopology(cov(Y), 1)
+#' res <- learnGraphTopology(cov(Y))
 #'
 #' # relative error between the true Laplacian and the learned one
 #' norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
@@ -112,7 +112,7 @@ learnLaplacianGraphTopology <- function(S, K = 1, w0 = "naive", lb = 1e-4, ub = 
 
 #' @export
 learnAdjacencyGraphTopology <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
-                                        beta_max = beta, nbeta = 1, Lips = 1e5,
+                                        beta_max = beta, nbeta = 1, Lips = NULL,
                                         maxiter = 1e4, Awtol = 1e-4, ftol = 1e-6) {
   n <- ncol(S)
   J <- matrix(1/n, n, n)
@@ -122,6 +122,8 @@ learnAdjacencyGraphTopology <- function(S, z = 0, w0 = "naive", alpha = 0., beta
   # compute initial guess
   Sinv <- MASS::ginv(S)
   w0 <- w_init(w0, Sinv)
+  if (is.null(Lips))
+    Lips <- 1 / prod(eigenvalues(L(w0) + J))
   # compute quantities on the initial guess
   Aw0 <- A(w0)
   V0 <- adjacency.V_update(Aw0, n, z)
@@ -129,8 +131,10 @@ learnAdjacencyGraphTopology <- function(S, z = 0, w0 = "naive", alpha = 0., beta
   # save objective function value at initial guess
   ll0 <- adjacency.logLikelihood(L(w0), Kmat, J)
   fun0 <- ll0 + adjacency.logPrior(beta, Aw0, psi0, V0)
+  fun_t <- Inf
   fun_seq <- c(fun0)
   ll_seq <- c(ll0)
+  Lips_seq <- c()
   #w_seq <- list(w0)
   time_seq <- c(0)
   pb = txtProgressBar(min = 0, max = maxiter, initial = 0)
@@ -139,7 +143,22 @@ learnAdjacencyGraphTopology <- function(S, z = 0, w0 = "naive", alpha = 0., beta
   for (beta in beta_set) {
     for (k in 1:maxiter) {
       setTxtProgressBar(pb, k)
-      w <- adjacency.w_update(w0, Aw0, V0, beta, psi0, Kmat, J, Lips)
+      # we need to make sure that the Lipschitz constant is large enough
+      # in order to avoid divergence
+      while(1) {
+        w <- adjacency.w_update(w0, Aw0, V0, beta, psi0, Kmat, J, Lips)
+        fun_t <- tryCatch({
+                     adjacency.objectiveFunction(A(w), L(w), V0, psi0, Kmat, J, beta)
+                   }, warning = function(warn) return(Inf), error = function(err) return(Inf)
+                 )
+        Lips_seq <- c(Lips_seq, Lips)
+        if (fun_t > fun0) {
+          Lips <- 2 * Lips
+        } else {
+          Lips <- .5 * Lips
+          break
+        }
+      }
       Lw <- L(w)
       Aw <- A(w)
       V <- adjacency.V_update(Aw, n, z)
@@ -168,6 +187,6 @@ learnAdjacencyGraphTopology <- function(S, z = 0, w0 = "naive", alpha = 0., beta
   }
   return(list(Aw = Aw, Lw = Lw, obj_fun = fun_seq,
               loglike = ll_seq, w = w, psi = psi, V = V, elapsed_time = time_seq,
-              convergence = !(k == maxiter), beta = beta))
+              Lips = Lips, Lips_seq = Lips_seq, convergence = !(k == maxiter), beta = beta))
 }
 

@@ -1,10 +1,8 @@
 library(spectralGraphTopology)
 library(igraph)
 library(pals)
-source("../../third-party/jcgl.r")
-set.seed(0)
 
-Nnodes <- 10
+Nnodes <- 70
 df <- read.csv("data.csv", header = FALSE, nrows = Nnodes)
 Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
 Y <- Y[2:nrow(Y), 1:Nnodes]
@@ -12,15 +10,8 @@ df_names <- read.csv("labels.csv", header = FALSE, nrows = Nnodes)
 names <- t(matrix(unlist(df_names), nrow = nrow(df_names)))
 names <- names[2, 1:Nnodes]
 
-P <- myjcgl(data = t(Y), K = 5)
-P
-P$Omega
-graph$W <- diag(diag(P$Omega)) - P$Omega
-
-N <- ncol(Y)
-#graph <- learnLaplacianGraphTopology(cov(Y), K = 5, w0 = "naive", beta = 5, maxiter = 100000)
-#print(graph$lambda)
-#print(graph$convergence)
+graph <- learnLaplacianGraphTopology(cov(Y), K = 5, w0 = "qp", beta = 5, Lwtol = 1e-6, maxiter = 100000)
+print(graph$convergence)
 net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
 colors <- c("#34495E", "#706FD3", "#FF5252", "#33D9B2", "#34ACE0")
 clusters <- array(0, length(names))
@@ -41,13 +32,10 @@ V(net)$cluster <- clusters
 E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
                      function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
                                         colors[V(net)$cluster[x[1]]], brewer.greys(5)[2]))
-V(net)$color <- c(colors[1], colors[2], colors[3], colors[4], colors[5])[clusters]
+V(net)$color <- colors[clusters]
 setEPS()
 gr = .5 * (1 + sqrt(5))
-postscript("testjcgl.ps", family = "Helvetica", height = 5, width = gr * 3.5)
-#postscript("../latex/figures/cancer-rna-graph-subset.ps", family = "Helvetica", height = 5, width = gr * 3.5)
-#layout <- layout_in_circle(net, order = V(net))
-#plot(net, layout = layout, vertex.label = names, vertex.size = 3)
+postscript("../latex/figures/cancer-rna-graph-subset.ps", family = "Helvetica", height = 5, width = gr * 3.5)
 plot(net, vertex.label = names,
      vertex.size = 3,
      vertex.label.dist = 1,

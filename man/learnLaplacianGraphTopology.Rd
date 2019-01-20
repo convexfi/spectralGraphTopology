@@ -68,7 +68,7 @@ N <- ncol(Lw)
 Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Lw))
 
 # learn the Laplacian matrix from the simulated data
-res <- learnGraphTopology(cov(Y), 1)
+res <- learnGraphTopology(cov(Y))
 
 # relative error between the true Laplacian and the learned one
 norm(Lw - res$Lw, type="F") / norm(Lw, type="F")

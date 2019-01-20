@@ -12,8 +12,8 @@ names <- t(matrix(unlist(df_names), nrow = nrow(df_names)))
 names <- names[2, 1:Nnodes]
 
 N <- ncol(Y)
-graph <- learnLaplacianGraphTopology(cov(Y), K = 5, w0 = "naive", beta = 1, beta_max = 10, nbeta = 20, maxiter = 100000)
-print(graph$lambda)
+graph <- learnLaplacianGraphTopology(cov(Y), K = 5, w0 = "naive",
+                                     beta = 4, Lwtol = 1e-6, maxiter = 100000)
 print(graph$convergence)
 net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
 colors <- c("#34495E", "#706FD3", "#FF5252", "#33D9B2", "#34ACE0")
@@ -38,9 +38,7 @@ E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
 V(net)$color <- c(colors[1], colors[2], colors[3], colors[4], colors[5])[clusters]
 gr = .5 * (1 + sqrt(5))
 setEPS()
-postscript("cancer-rna-graph-full.ps", family = "Times", height = 5, width = gr * 3.5)
-#layout <- layout_in_circle(net, order = V(net))
-#plot(net, layout = layout, vertex.label = names, vertex.size = 3)
+postscript("../latex/figures/cancer-rna-graph-full.ps", family = "Times", height = 5, width = gr * 3.5)
 plot(net, vertex.label = NA,
      vertex.size = 3)
 dev.off()

@@ -17,11 +17,11 @@ fscore_llqp <- array(0, length(ratios))
 
 N <- 16
 K <- 4
-P <- diag(1., K)
+P <- diag(1, K)
 # K-component graph
 for (j in n_ratios) {
   T <- as.integer(ratios[j] * N)
-  cat("\nRunning simulation for", T, "samples per node, T/N = ", ratios[j], "\n")
+  cat("\nRunning simulation for", T, "samples per node, p/n = ", ratios[j], "\n")
   for (n in 1:N_realizations) {
     mgraph <- sample_sbm(N, pref.matrix = P, block.sizes = c(rep(N / K, K)))
     E(mgraph)$weight <- runif(gsize(mgraph), min = .1, max = 3)
@@ -39,7 +39,7 @@ for (j in n_ratios) {
     rel_spec <- 9999999999
     for (alpha in alphas) {
       graph <- learnLaplacianGraphTopology(S, w0 = w0_qp, K = K, beta = 10*N,
-                                  alpha = alpha, ub = 2*N, maxiter = 100000)
+                                           alpha = alpha, ub = 2*N, maxiter = 1e5)
       print(graph$convergence)
       tmp_rel_spec <- relativeError(Ltrue, graph$Lw)
       if (tmp_rel_spec < rel_spec) {
@@ -82,29 +82,9 @@ for (j in n_ratios) {
   cat(fscore_llqp[j], "\n")
 }
 
-colors <- c("#706FD3", "#FF5252", "#33D9B2", "#34ACE0")
-gr = .5 * (1 + sqrt(5))
-setEPS()
-postscript("..latex/figures/relative_error_block_diagonal.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
-plot(n_ratios, rel_err_naive, type = "b", pch=15, cex=.75, ylim=c(0, .7),
-     xlab = TeX("$\\mathit{T} / \\mathit{N}$"), ylab = "Average Relative Error", col = colors[3], xaxt = "n")
-grid()
-lines(n_ratios, rel_err_llqp, type = "b", pch=17, cex=.75, col = colors[4], xaxt = "n")
-lines(n_ratios, rel_err_spec, type = "b", pch=18, cex=.85, col = colors[2], xaxt = "n")
-axis(side = 1, at = n_ratios, labels = ratios)
-legend("topright", legend = c("ISCM", "LLQP", "SGL"),
-       col=c(colors[3], colors[4], colors[2]), pch=c(15, 17, 18), lty=c(1, 1, 1), bty="n")
-dev.off()
-embed_fonts("..latex/figures/relative_error_block_diagonal.ps", outfile="..latex/figures/relative_error_block_diagonal.ps")
-setEPS()
-postscript("..latex/figures/fscore_block_diagonal.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
-plot(n_ratios, fscore_naive, ylim=c(.15, 1.), xlab = TeX("$\\mathit{T} / \\mathit{N}$"),
-     ylab = "Average F-score", type = "b", pch=15, cex=.75, col = colors[3], xaxt = "n")
-grid()
-lines(n_ratios, fscore_llqp, type = "b", pch=17, cex=.75, col = colors[4], xaxt = "n")
-lines(n_ratios, fscore_spec, type = "b", pch=18, cex=.85, col = colors[2], xaxt = "n")
-axis(side = 1, at = n_ratios, labels = ratios)
-legend("bottomright", legend = c("ISCM", "LLQP", "SGL"),
-       col=c(colors[3], colors[4], colors[2]), pch=c(15, 17, 18), lty=c(1, 1, 1), bty="n")
-dev.off()
-embed_fonts("..latex/figures/fscore_block_diagonal.ps", outfile="..latex/figures/fscore_block_diagonal.ps")
+saveRDS(rel_err_spec, file="rel-err-SGL.rds")
+saveRDS(rel_err_naive, file="rel-err-Naive.rds")
+saveRDS(rel_err_llqp, file="rel-err-QP.rds")
+saveRDS(fscore_spec, file="fscore-SGL.rds")
+saveRDS(fscore_naive, file="fscore-Naive.rds")
+saveRDS(fscore_llqp, file="fscore-QP.rds")

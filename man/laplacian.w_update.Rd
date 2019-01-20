@@ -4,7 +4,7 @@
 \alias{laplacian.w_update}
 \title{Updates the value of w, the weight vector of the graph Laplacian}
 \usage{
-laplacian.w_update(w, Lw, U, beta, lambda, N, Kmat)
+laplacian.w_update(w, Lw, U, beta, lambda, n, Kmat)
 }
 \arguments{
 \item{w}{weight vector of the graph}
@@ -14,14 +14,14 @@ laplacian.w_update(w, Lw, U, beta, lambda, N, Kmat)
 \item{U}{matrix whose columns represent the eigen vectors of the Laplacian
 matrix in increasing order}
 
-\item{N}{number of nodes}
-
 \item{Kmat}{matrix (see section 1.1 for its definition)}
 
 \item{β}{scalar that controls the strength of the regularization term}
 
 \item{λ}{vector whose entries are the eigenvalues of the Laplacian in
 increasing order}
+
+\item{N}{number of nodes}
 }
 \value{
 the updated value of w

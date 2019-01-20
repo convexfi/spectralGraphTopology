@@ -1,6 +1,7 @@
 library(spectralGraphTopology)
 library(igraph)
 library(pals)
+library(viridis)
 library(latex2exp)
 library(huge)
 set.seed(0)
@@ -11,10 +12,9 @@ run_animals <- function(K) {
   Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
   N <- ncol(Y)
   graph <- learnLaplacianGraphTopology(cov(Y) + diag(rep(1/3, N)), w0 = "qp",
-                                       K = K, beta = .5, alpha = 1e-1)
+                                       K = K, beta = .5)
   net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
-  #colors <- viridis(5, begin = 0, end = .1, direction = -1)
-  colors <- brewer.greys(10)
+  colors <- brewer.reds(100)
   c_scale <- colorRamp(colors)
   E(net)$color = apply(c_scale(abs(E(net)$weight) / max(abs(E(net)$weight))), 1,
                        function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
