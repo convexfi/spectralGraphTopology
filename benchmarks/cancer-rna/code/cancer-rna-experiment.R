@@ -13,7 +13,7 @@ names <- names[2, 1:Nnodes]
 
 N <- ncol(Y)
 graph <- learnLaplacianGraphTopology(cov(Y), K = 5, w0 = "naive",
-                                     beta = 4, Lwtol = 1e-6, maxiter = 100000)
+                                     beta = 5, Lwtol = 1e-6, maxiter = 100000)
 print(graph$convergence)
 net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
 colors <- c("#34495E", "#706FD3", "#FF5252", "#33D9B2", "#34ACE0")

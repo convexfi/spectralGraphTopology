@@ -5,7 +5,7 @@
 \title{Updates the value of psi, the vector whose entries correspond to the
 eigenvalues of the adjacency matrix}
 \usage{
-adjacency.psi_update(V, Aw)
+adjacency.psi_update(V, Aw, lb = -Inf, ub = Inf)
 }
 \arguments{
 \item{V}{matrix whose columns represent the eigen vectors of the Laplacian
