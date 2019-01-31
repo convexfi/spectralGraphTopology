@@ -53,7 +53,7 @@ learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 1e-4, ub = 1e4, 
   n <- nrow(S)
   # l1-norm penalty factor
   H <- alpha * (2 * diag(n) - matrix(1, n, n))
-  Kmat <- S + H
+  K <- S + H
   # find an appropriate inital guess
   Sinv <- MASS::ginv(S)
   w0 <- w_init(w0, Sinv)
@@ -62,7 +62,7 @@ learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 1e-4, ub = 1e4, 
   U0 <- laplacian.U_update(Lw0, n, k)
   lambda0 <- laplacian.lambda_update(lb, ub, beta, U0, Lw0, n, k)
   # save objective function value at initial guess
-  ll0 <- laplacian.loglikelihood(Lw0, lambda0, Kmat)
+  ll0 <- laplacian.loglikelihood(Lw0, lambda0, K)
   fun0 <- ll0 + laplacian.logprior(beta, Lw0, lambda0, U0)
   fun_seq <- c(fun0)
   ll_seq <- c(ll0)
@@ -74,12 +74,12 @@ learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 1e-4, ub = 1e4, 
   for (beta in beta_set) {
     for (i in 1:maxiter) {
       setTxtProgressBar(pb, i)
-      w <- laplacian.w_update(w0, Lw0, U0, beta, lambda0, n, Kmat)
+      w <- laplacian.w_update(w0, Lw0, U0, beta, lambda0, n, K)
       Lw <- L(w)
       U <- laplacian.U_update(Lw, n, k)
       lambda <- laplacian.lambda_update(lb, ub, beta, U, Lw, n, k)
       # compute negloglikelihood and objective function values
-      ll <- laplacian.loglikelihood(Lw, lambda, Kmat)
+      ll <- laplacian.loglikelihood(Lw, lambda, K)
       fun <- ll + laplacian.logprior(beta, Lw, lambda, U)
       # save estimates
       time_seq <- c(time_seq, proc.time()[3] - start_time)
@@ -117,10 +117,9 @@ learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
   J <- matrix(1/n, n, n)
   # l1-norm penalty factor
   H <- alpha * (2 * diag(n) - matrix(1, n, n))
-  Kmat <- S + H
+  K <- S + H
   # compute initial guess
-  Sinv <- MASS::ginv(S)
-  w0 <- w_init(w0, Sinv)
+  w0 <- w_init(w0, MASS::ginv(S))
   if (is.null(Lips))
     Lips <- 1 / min(eigenvalues(L(w0) + J))
   # compute quantities on the initial guess
@@ -128,7 +127,7 @@ learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
   V0 <- bipartite.V_update(Aw0, n, z)
   psi0 <- bipartite.psi_update(V0, Aw0)
   # save objective function value at initial guess
-  ll0 <- bipartite.loglikelihood(L(w0), Kmat, J)
+  ll0 <- bipartite.loglikelihood(L(w0), K, J)
   fun0 <- ll0 + bipartite.logprior(beta, Aw0, psi0, V0)
   fun_seq <- c(fun0)
   ll_seq <- c(ll0)
@@ -145,10 +144,10 @@ learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
       # in order to avoid divergence
       while(1) {
         # compute the update for w
-        w <- bipartite.w_update(w0, Aw0, V0, beta, psi0, Kmat, J, Lips)
+        w <- bipartite.w_update(w0, Aw0, V0, beta, psi0, K, J, Lips)
         # compute the objective function at the updated value of w
         fun_t <- tryCatch({
-                     bipartite.obj_fun(A(w), L(w), V0, psi0, Kmat, J, beta)
+                     bipartite.obj_fun(A(w), L(w), V0, psi0, K, J, beta)
                    }, warning = function(warn) return(Inf), error = function(err) return(Inf)
                  )
         # check if the current value of the objective function is
@@ -168,7 +167,7 @@ learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
       V <- bipartite.V_update(Aw, n, z)
       psi <- bipartite.psi_update(V, Aw)
       # compute negloglikelihood and objective function values
-      ll <- bipartite.loglikelihood(Lw, Kmat, J)
+      ll <- bipartite.loglikelihood(Lw, K, J)
       fun <- ll + bipartite.logprior(beta, Aw, psi, V)
       # save measurements of time and objective functions
       time_seq <- c(time_seq, proc.time()[3] - start_time)
@@ -199,15 +198,14 @@ learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
 #' @export
 learn_adjacency_and_laplacian <- function(S, z = 0, k = 1, w0 = "qp", alpha = 0.,
                                           beta1 = 1, beta2 = 1, lb = 1e-4, ub = 1e4,
-                                          maxiter = 1e4, wtol = 1e-6, ftol = 1e-6) {
+                                          maxiter = 1e4, Lwtol = 1e-6, ftol = 1e-6) {
   # number of nodes
   n <- ncol(S)
   # l1-norm penalty factor
   H <- alpha * (2 * diag(n) - matrix(1, n, n))
   K <- S + H
   # compute initial guess
-  Sinv <- MASS::ginv(S)
-  w0 <- w_init(w0, Sinv)
+  w0 <- w_init(w0, MASS::ginv(S))
   # compute quantities on the initial guess
   Aw0 <- A(w0)
   Lw0 <- L(w0)
@@ -242,9 +240,9 @@ learn_adjacency_and_laplacian <- function(S, z = 0, k = 1, w0 = "qp", alpha = 0.
     #w_seq <- rlist::list.append(w_seq, w)
     # compute the relative error and check the tolerance on the Adjacency
     # matrix and on the objective function
-    werr <- norm(w - w0, "2") / max(1, norm(w0, "2"))
+    Lwerr <- norm(Lw - Lw0, type="F") / max(1, norm(Lw0, type="F"))
     ferr <- abs(fun - fun0) / max(1, abs(fun0))
-    if ((werr < wtol && ferr < ftol) && i > 1)
+    if ((Lwerr < Lwtol && ferr < ftol) && i > 1)
       break
     # update estimates
     fun0 <- fun
