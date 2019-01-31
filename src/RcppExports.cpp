@@ -7,6 +7,58 @@
 
 using namespace Rcpp;
 
+// wiener_kernel
+Eigen::MatrixXd wiener_kernel(const unsigned int n);
+RcppExport SEXP _spectralGraphTopology_wiener_kernel(SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const unsigned int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(wiener_kernel(n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// gaussian_kernel
+Eigen::MatrixXd gaussian_kernel(const double a, const double s, const unsigned int n);
+RcppExport SEXP _spectralGraphTopology_gaussian_kernel(SEXP aSEXP, SEXP sSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const double >::type s(sSEXP);
+    Rcpp::traits::input_parameter< const unsigned int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(gaussian_kernel(a, s, n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rational_quadratic_kernel
+Eigen::MatrixXd rational_quadratic_kernel(const double a, const double b, const double s, const unsigned int n);
+RcppExport SEXP _spectralGraphTopology_rational_quadratic_kernel(SEXP aSEXP, SEXP bSEXP, SEXP sSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const double >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const double >::type s(sSEXP);
+    Rcpp::traits::input_parameter< const unsigned int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(rational_quadratic_kernel(a, b, s, n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// periodic_kernel
+Eigen::MatrixXd periodic_kernel(const double a, const double p, const double s, const unsigned int n);
+RcppExport SEXP _spectralGraphTopology_periodic_kernel(SEXP aSEXP, SEXP pSEXP, SEXP sSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const double >::type s(sSEXP);
+    Rcpp::traits::input_parameter< const unsigned int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(periodic_kernel(a, p, s, n));
+    return rcpp_result_gen;
+END_RCPP
+}
 // eigenvalues
 arma::vec eigenvalues(arma::mat M);
 RcppExport SEXP _spectralGraphTopology_eigenvalues(SEXP MSEXP) {
@@ -240,6 +292,10 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_spectralGraphTopology_wiener_kernel", (DL_FUNC) &_spectralGraphTopology_wiener_kernel, 1},
+    {"_spectralGraphTopology_gaussian_kernel", (DL_FUNC) &_spectralGraphTopology_gaussian_kernel, 3},
+    {"_spectralGraphTopology_rational_quadratic_kernel", (DL_FUNC) &_spectralGraphTopology_rational_quadratic_kernel, 4},
+    {"_spectralGraphTopology_periodic_kernel", (DL_FUNC) &_spectralGraphTopology_periodic_kernel, 4},
     {"_spectralGraphTopology_eigenvalues", (DL_FUNC) &_spectralGraphTopology_eigenvalues, 1},
     {"_spectralGraphTopology_eigenvectors", (DL_FUNC) &_spectralGraphTopology_eigenvectors, 1},
     {"_spectralGraphTopology_inv_sympd", (DL_FUNC) &_spectralGraphTopology_inv_sympd, 1},

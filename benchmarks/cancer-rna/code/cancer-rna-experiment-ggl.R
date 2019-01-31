@@ -4,29 +4,33 @@ library(pals)
 library(R.matlab)
 set.seed(0)
 
-Nnodes <- 70
+df <- read.csv("cancer-rna-ggl-laplacian.txt", header = FALSE)
+laplacian <- matrix(as.numeric(unlist(df)), nrow = nrow(df))
+W <- diag(diag(laplacian)) - laplacian
 
-print("Connecting to MATLAB...")
-matlab <- Matlab(port = 9998)
-open(matlab)
-print("success!")
-A_mask <- matrix(1, Nnodes, Nnodes) - diag(Nnodes)
-setVariable(matlab, A_mask = A_mask)
+Nnodes <- 801
 
-df <- read.csv("data.csv", header = FALSE, nrows = Nnodes)
-Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
-Y <- Y[2:nrow(Y), 1:Nnodes]
+#print("Connecting to MATLAB...")
+#matlab <- Matlab(port = 9998)
+#open(matlab)
+#print("success!")
+#A_mask <- matrix(1, Nnodes, Nnodes) - diag(Nnodes)
+#setVariable(matlab, A_mask = A_mask)
+#
+#df <- read.csv("data.csv", header = FALSE, nrows = Nnodes)
+#Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
+#Y <- Y[2:nrow(Y), 1:Nnodes]
 df_names <- read.csv("labels.csv", header = FALSE, nrows = Nnodes)
 names <- t(matrix(unlist(df_names), nrow = nrow(df_names)))
 names <- names[2, 1:Nnodes]
-
-S <- cov(Y)
-setVariable(matlab, alpha = 1e-1)
-setVariable(matlab, S = S)
-evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-4, 1e-6, 200, 1)")
-Lcgl <- getVariable(matlab, "Lcgl")
-Lw <- Lcgl$Lcgl
-W <- diag(diag(Lw)) - Lw
+#
+#S <- cov(Y)
+#setVariable(matlab, alpha = 1.71)
+#setVariable(matlab, S = S)
+#evaluate(matlab, "[Lcgl,~,~] = estimate_ggl(S, A_mask, alpha, 1e-4, 1e-6, 300, 1)")
+#Lcgl <- getVariable(matlab, "Lcgl")
+#Lw <- Lcgl$Lcgl
+#W <- diag(diag(Lw)) - Lw
 
 net <- graph_from_adjacency_matrix(W, mode = "undirected", weighted = TRUE)
 colors <- c("#34495E", "#706FD3", "#FF5252", "#33D9B2", "#34ACE0")
@@ -52,13 +56,9 @@ E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
 V(net)$color <- c(colors[1], colors[2], colors[3], colors[4], colors[5])[clusters]
 setEPS()
 gr = .5 * (1 + sqrt(5))
-postscript("../latex/figures/cancer-rna-graph-subset-ggl.ps", family = "Helvetica", height = 5, width = gr * 3.5)
+postscript("../latex/figures/cancer-rna-graph-ggl.ps", family = "Helvetica", height = 5, width = gr * 3.5)
 #layout <- layout_in_circle(net, order = V(net))
 #plot(net, layout = layout, vertex.label = names, vertex.size = 3)
-plot(net, vertex.label = names,
-     vertex.size = 3,
-     vertex.label.dist = 1,
-     vertex.label.family = "Helvetica",
-     vertex.label.cex = .4,
-     vertex.label.color = "black")
+plot(net, vertex.label = NA,
+     vertex.size = 3)
 dev.off()

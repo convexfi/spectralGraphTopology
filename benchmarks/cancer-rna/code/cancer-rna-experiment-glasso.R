@@ -1,7 +1,7 @@
 library(spectralGraphTopology)
 library(igraph)
 library(pals)
-set.seed(0)
+library(huge)
 
 Nnodes <- 801
 df <- read.csv("data.csv", header = FALSE, nrows = Nnodes)
@@ -11,11 +11,14 @@ df_names <- read.csv("labels.csv", header = FALSE, nrows = Nnodes)
 names <- t(matrix(unlist(df_names), nrow = nrow(df_names)))
 names <- names[2, 1:Nnodes]
 
-N <- ncol(Y)
-graph <- learn_laplacian_matrix(cov(Y), k = 1, w0 = "naive",
-                                beta = 10, Lwtol = 1e-6, maxiter = 100000)
-print(graph$convergence)
-net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
+nlambda <- 10
+graph <- huge(cov(Y), method = "glasso")
+print(graph)
+print(graph$lambda)
+W <- matrix(graph$icov[[nlambda]], nrow = Nnodes)
+W <- diag(diag(W)) - W
+
+net <- graph_from_adjacency_matrix(W, mode = "undirected", weighted = TRUE)
 colors <- c("#34495E", "#706FD3", "#FF5252", "#33D9B2", "#34ACE0")
 clusters <- array(0, length(names))
 for (i in c(1:length(names))) {
@@ -35,14 +38,10 @@ V(net)$cluster <- clusters
 E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
                      function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
                                         colors[V(net)$cluster[x[1]]], brewer.greys(5)[2]))
-V(net)$color <- c(colors[1], colors[2], colors[3], colors[4], colors[5])[clusters]
-gr = .5 * (1 + sqrt(5))
+V(net)$color <- colors[clusters]
 setEPS()
-postscript("../latex/figures/cancer-rna-graph-full-k1.ps", family = "Times", height = 5, width = gr * 3.5)
+gr = .5 * (1 + sqrt(5))
+postscript("../latex/figures/cancer-rna-graph-subset-glasso.ps", family = "Helvetica", height = 5, width = gr * 3.5)
 plot(net, vertex.label = NA,
      vertex.size = 3)
 dev.off()
-
-n <- length(graph$loglike)
-plot(c(1:n), graph$obj_fun - graph$loglike)
-print(graph$obj_fun[n] - graph$loglike[n])

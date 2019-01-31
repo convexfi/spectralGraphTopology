@@ -52,7 +52,7 @@ test_that("test that V remains orthonormal after being updated", {
   w <- runif(4*9)
   n <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
   z <- 3
-  V <- adjacency.V_update(A(w), n, z)
+  V <- bipartite.V_update(A(w), n, z)
   q <- n - z
   expect_that(all.equal(crossprod(V), diag(array(1., q)),
                         check.attributes = FALSE), is_true())
@@ -66,8 +66,8 @@ test_that("test that the eigenvalues of the adjacency matrix meet the criterion"
   n <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
   z <- 3
   Aw <- A(w)
-  V <- adjacency.V_update(Aw, n, z)
-  psi <- adjacency.psi_update(V, Aw)
+  V <- bipartite.V_update(Aw, n, z)
+  psi <- bipartite.psi_update(V, Aw)
   psi_cvx <- psi_update_cvx(V, Aw)
   expect_equal(psi, psi_cvx, tolerance = 1e-4)
 })

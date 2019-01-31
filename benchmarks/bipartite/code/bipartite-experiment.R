@@ -4,21 +4,35 @@ library(pals)
 library(extrafont)
 library(igraph)
 set.seed(42)
+n1 <- 8
+n2 <- 4
+bipartite <- sample_bipartite(n1, n2, type="Gnp", p = .9, directed=FALSE)
+E(bipartite)$weight <- runif(gsize(bipartite), min = 1, max = 2)
 
-bipartite <- sample_bipartite(24, 8, type="Gnp", p = .4, directed=FALSE)
-E(bipartite)$weight <- runif(gsize(bipartite), min = 1e-1, max = 1)
+#erdos_renyi <- erdos.renyi.game(n1 + n2, .3)
+#E(erdos_renyi)$weight <- runif(gsize(erdos_renyi), min = 0, max = .5)
+#Lerdo <- as.matrix(laplacian_matrix(erdos_renyi))
+
 Lw <- as.matrix(laplacian_matrix(bipartite))
 Aw <- diag(diag(Lw)) - Lw
 w_true <- Linv(Lw)
 n <- ncol(Lw)
-T <- 100 * n
+T <- 10 * n
 # get datapoints
 Y <- MASS::mvrnorm(T, rep(0, n), Sigma = MASS::ginv(Lw))
 # learn underlying graph
-graph <- learnAdjacencyGraphTopology(cov(Y), w0 = "qp", beta = 1, beta_max = 100, nbeta = 20, maxiter = 1e5)
-print(graph)
+S <- cov(Y)
+graph <- learn_adjacency_and_laplacian(S, w0 = "naive", beta1 = 10, beta2 = .5, maxiter = 1e5)
+print(graph$lambda)
+print(graph$psi)
+print(graph$obj_fun)
+Sinv <- MASS::ginv(S)
+w_naive <- spectralGraphTopology:::w_init(w0 = "naive", Sinv)
+w_qp <- spectralGraphTopology:::w_init(w0 = "qp", Sinv)
 print(relativeError(graph$Aw, Aw))
-print(Fscore(graph$Aw, Aw, 5e-2))
+print(Fscore(graph$Aw, Aw, 5e-1))
+print(relativeError(A(w_qp), Aw))
+print(Fscore(A(w_qp), Aw, 5e-1))
 # build the network
 net <- graph_from_adjacency_matrix(Aw, mode = "undirected", weighted = TRUE)
 V(net)$type = V(bipartite)$type
@@ -61,8 +75,7 @@ postscript("test_trend.ps", family = "ComputerModern", height = 5, width = gr * 
 plot(iterations, graph$obj_fun, type = "b", lty = 1, pch = 15, cex=.75, col = "#706FD3",
      xlab = "Iteration number", ylab = "Objective value")
 grid()
-lines(iterations, graph$loglike, type = "b", xaxt = "n", lty = 2, pch=16, cex=.75, col = "#33D9B2")
-legend("topright", legend = c("posterior", "loglikelihood"),
-       col=c("#706FD3", "#33D9B2"), pch=c(15, 16), lty=c(1, 2), bty="n")
+legend("topright", legend = c("objective-function"),
+       col=c("#706FD3"), pch=c(15), lty=c(1), bty="n")
 dev.off()
 embed_fonts("test_trend.ps", outfile="test_trend.ps")
