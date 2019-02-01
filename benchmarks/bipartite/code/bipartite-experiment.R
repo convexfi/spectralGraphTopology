@@ -17,9 +17,9 @@ Lw <- as.matrix(laplacian_matrix(bipartite))
 Aw <- diag(diag(Lw)) - Lw
 w_true <- Linv(Lw)
 n <- ncol(Lw)
-T <- 10 * n
+p <- 10 * n
 # get datapoints
-Y <- MASS::mvrnorm(T, rep(0, n), Sigma = MASS::ginv(Lw))
+Y <- MASS::mvrnorm(p, rep(0, n), Sigma = MASS::ginv(Lw))
 # learn underlying graph
 S <- cov(Y)
 graph <- learn_adjacency_and_laplacian(S, w0 = "naive", beta1 = 10, beta2 = .5, maxiter = 1e5)

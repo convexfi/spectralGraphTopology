@@ -1,0 +1,1716 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+         http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+<!-- Created by igraph -->
+  <key id="g_source" for="graph" attr.name="source" attr.type="string"/>
+  <key id="g_info" for="graph" attr.name="info" attr.type="string"/>
+  <key id="g_sensor" for="graph" attr.name="sensor" attr.type="string"/>
+  <key id="g_region" for="graph" attr.name="region" attr.type="string"/>
+  <key id="g_DOI" for="graph" attr.name="DOI" attr.type="string"/>
+  <key id="v_name" for="node" attr.name="name" attr.type="string"/>
+  <key id="e_synapse.ID" for="edge" attr.name="synapse.ID" attr.type="double"/>
+  <graph id="G" edgedefault="directed">
+    <data key="g_source">http://www.sciencedirect.com/science/MiamiMultiMediaURL/1-s2.0-S0092867412015000/1-s2.0-S0092867412015000-mmc2.xlsx/272196/FULL/S0092867412015000/d8aec31a81fa121e3fe2a69348ead3b5/mmc2.xlsx</data>
+    <data key="g_info">source=presynaptic, target=postsynaptic</data>
+    <data key="g_sensor">Electron Microscopy</data>
+    <data key="g_region">neural synaptic</data>
+    <data key="g_DOI">10.1016/j.cell.2012.12.013</data>
+    <node id="n0">
+      <data key="v_name">I1R</data>
+    </node>
+    <node id="n1">
+      <data key="v_name">M1</data>
+    </node>
+    <node id="n2">
+      <data key="v_name">I2R</data>
+    </node>
+    <node id="n3">
+      <data key="v_name">I1L</data>
+    </node>
+    <node id="n4">
+      <data key="v_name">I2L</data>
+    </node>
+    <node id="n5">
+      <data key="v_name">MI</data>
+    </node>
+    <node id="n6">
+      <data key="v_name">M3R</data>
+    </node>
+    <node id="n7">
+      <data key="v_name">I3</data>
+    </node>
+    <node id="n8">
+      <data key="v_name">M3L</data>
+    </node>
+    <node id="n9">
+      <data key="v_name">NSMR</data>
+    </node>
+    <node id="n10">
+      <data key="v_name">I5</data>
+    </node>
+    <node id="n11">
+      <data key="v_name">M4</data>
+    </node>
+    <node id="n12">
+      <data key="v_name">MCL</data>
+    </node>
+    <node id="n13">
+      <data key="v_name">MCR</data>
+    </node>
+    <node id="n14">
+      <data key="v_name">NSML</data>
+    </node>
+    <node id="n15">
+      <data key="v_name">I6</data>
+    </node>
+    <node id="n16">
+      <data key="v_name">M5</data>
+    </node>
+    <node id="n17">
+      <data key="v_name">pm5</data>
+    </node>
+    <node id="n18">
+      <data key="v_name">M2L</data>
+    </node>
+    <node id="n19">
+      <data key="v_name">I4</data>
+    </node>
+    <node id="n20">
+      <data key="v_name">M2R</data>
+    </node>
+    <node id="n21">
+      <data key="v_name">mc2DR</data>
+    </node>
+    <node id="n22">
+      <data key="v_name">mc1DR</data>
+    </node>
+    <node id="n23">
+      <data key="v_name">g1D</data>
+    </node>
+    <node id="n24">
+      <data key="v_name">pm1VR</data>
+    </node>
+    <node id="n25">
+      <data key="v_name">pm3VR</data>
+    </node>
+    <node id="n26">
+      <data key="v_name">e3D</data>
+    </node>
+    <node id="n27">
+      <data key="v_name">e3VL</data>
+    </node>
+    <node id="n28">
+      <data key="v_name">e3VR</data>
+    </node>
+    <node id="n29">
+      <data key="v_name">e2VL</data>
+    </node>
+    <node id="n30">
+      <data key="v_name">e2VR</data>
+    </node>
+    <node id="n31">
+      <data key="v_name">pm3VL</data>
+    </node>
+    <node id="n32">
+      <data key="v_name">pm4</data>
+    </node>
+    <node id="n33">
+      <data key="v_name">pm1D</data>
+    </node>
+    <node id="n34">
+      <data key="v_name">pm2VLL</data>
+    </node>
+    <node id="n35">
+      <data key="v_name">pm1VL</data>
+    </node>
+    <node id="n36">
+      <data key="v_name">pm2DL</data>
+    </node>
+    <node id="n37">
+      <data key="v_name">pm2DR</data>
+    </node>
+    <node id="n38">
+      <data key="v_name">pm3D</data>
+    </node>
+    <node id="n39">
+      <data key="v_name">pm2VRL</data>
+    </node>
+    <node id="n40">
+      <data key="v_name">mc1DL</data>
+    </node>
+    <node id="n41">
+      <data key="v_name">bm</data>
+    </node>
+    <node id="n42">
+      <data key="v_name">pm8</data>
+    </node>
+    <node id="n43">
+      <data key="v_name">g1VR</data>
+    </node>
+    <node id="n44">
+      <data key="v_name">e1D</data>
+    </node>
+    <node id="n45">
+      <data key="v_name">pm6VL</data>
+    </node>
+    <node id="n46">
+      <data key="v_name">mc3DR</data>
+    </node>
+    <node id="n47">
+      <data key="v_name">pm6VR</data>
+    </node>
+    <node id="n48">
+      <data key="v_name">g1VL</data>
+    </node>
+    <node id="n49">
+      <data key="v_name">mc3DL</data>
+    </node>
+    <node id="n50">
+      <data key="v_name">pm7VR</data>
+    </node>
+    <node id="n51">
+      <data key="v_name">mc3V</data>
+    </node>
+    <node id="n52">
+      <data key="v_name">mc2V</data>
+    </node>
+    <node id="n53">
+      <data key="v_name">mc2DL</data>
+    </node>
+    <edge source="n0" target="n5">
+      <data key="e_synapse.ID">28324</data>
+    </edge>
+    <edge source="n0" target="n6">
+      <data key="e_synapse.ID">19722</data>
+    </edge>
+    <edge source="n0" target="n6">
+      <data key="e_synapse.ID">19750</data>
+    </edge>
+    <edge source="n0" target="n7">
+      <data key="e_synapse.ID">19781</data>
+    </edge>
+    <edge source="n0" target="n8">
+      <data key="e_synapse.ID">19748</data>
+    </edge>
+    <edge source="n0" target="n10">
+      <data key="e_synapse.ID">19738</data>
+    </edge>
+    <edge source="n0" target="n10">
+      <data key="e_synapse.ID">19755</data>
+    </edge>
+    <edge source="n0" target="n10">
+      <data key="e_synapse.ID">19757</data>
+    </edge>
+    <edge source="n0" target="n21">
+      <data key="e_synapse.ID">19740</data>
+    </edge>
+    <edge source="n0" target="n22">
+      <data key="e_synapse.ID">19740</data>
+    </edge>
+    <edge source="n0" target="n23">
+      <data key="e_synapse.ID">19755</data>
+    </edge>
+    <edge source="n0" target="n23">
+      <data key="e_synapse.ID">19757</data>
+    </edge>
+    <edge source="n0" target="n23">
+      <data key="e_synapse.ID">19781</data>
+    </edge>
+    <edge source="n0" target="n24">
+      <data key="e_synapse.ID">27459</data>
+    </edge>
+    <edge source="n1" target="n25">
+      <data key="e_synapse.ID">19766</data>
+    </edge>
+    <edge source="n1" target="n25">
+      <data key="e_synapse.ID">19779</data>
+    </edge>
+    <edge source="n1" target="n25">
+      <data key="e_synapse.ID">27629</data>
+    </edge>
+    <edge source="n1" target="n25">
+      <data key="e_synapse.ID">27631</data>
+    </edge>
+    <edge source="n1" target="n25">
+      <data key="e_synapse.ID">27633</data>
+    </edge>
+    <edge source="n1" target="n25">
+      <data key="e_synapse.ID">27635</data>
+    </edge>
+    <edge source="n1" target="n25">
+      <data key="e_synapse.ID">27639</data>
+    </edge>
+    <edge source="n1" target="n26">
+      <data key="e_synapse.ID">27667</data>
+    </edge>
+    <edge source="n1" target="n26">
+      <data key="e_synapse.ID">27673</data>
+    </edge>
+    <edge source="n1" target="n0">
+      <data key="e_synapse.ID">19716</data>
+    </edge>
+    <edge source="n1" target="n0">
+      <data key="e_synapse.ID">19718</data>
+    </edge>
+    <edge source="n1" target="n0">
+      <data key="e_synapse.ID">19720</data>
+    </edge>
+    <edge source="n1" target="n0">
+      <data key="e_synapse.ID">19779</data>
+    </edge>
+    <edge source="n1" target="n0">
+      <data key="e_synapse.ID">27310</data>
+    </edge>
+    <edge source="n1" target="n0">
+      <data key="e_synapse.ID">27627</data>
+    </edge>
+    <edge source="n1" target="n0">
+      <data key="e_synapse.ID">27643</data>
+    </edge>
+    <edge source="n1" target="n2">
+      <data key="e_synapse.ID">19716</data>
+    </edge>
+    <edge source="n1" target="n2">
+      <data key="e_synapse.ID">19720</data>
+    </edge>
+    <edge source="n1" target="n2">
+      <data key="e_synapse.ID">19762</data>
+    </edge>
+    <edge source="n1" target="n2">
+      <data key="e_synapse.ID">19766</data>
+    </edge>
+    <edge source="n1" target="n2">
+      <data key="e_synapse.ID">27014</data>
+    </edge>
+    <edge source="n1" target="n2">
+      <data key="e_synapse.ID">27310</data>
+    </edge>
+    <edge source="n1" target="n2">
+      <data key="e_synapse.ID">27641</data>
+    </edge>
+    <edge source="n1" target="n2">
+      <data key="e_synapse.ID">27643</data>
+    </edge>
+    <edge source="n1" target="n2">
+      <data key="e_synapse.ID">19718</data>
+    </edge>
+    <edge source="n1" target="n3">
+      <data key="e_synapse.ID">27436</data>
+    </edge>
+    <edge source="n1" target="n3">
+      <data key="e_synapse.ID">27440</data>
+    </edge>
+    <edge source="n1" target="n3">
+      <data key="e_synapse.ID">27442</data>
+    </edge>
+    <edge source="n1" target="n3">
+      <data key="e_synapse.ID">27444</data>
+    </edge>
+    <edge source="n1" target="n3">
+      <data key="e_synapse.ID">27448</data>
+    </edge>
+    <edge source="n1" target="n3">
+      <data key="e_synapse.ID">27450</data>
+    </edge>
+    <edge source="n1" target="n3">
+      <data key="e_synapse.ID">27512</data>
+    </edge>
+    <edge source="n1" target="n3">
+      <data key="e_synapse.ID">27597</data>
+    </edge>
+    <edge source="n1" target="n4">
+      <data key="e_synapse.ID">27436</data>
+    </edge>
+    <edge source="n1" target="n4">
+      <data key="e_synapse.ID">27440</data>
+    </edge>
+    <edge source="n1" target="n4">
+      <data key="e_synapse.ID">27444</data>
+    </edge>
+    <edge source="n1" target="n4">
+      <data key="e_synapse.ID">27448</data>
+    </edge>
+    <edge source="n1" target="n4">
+      <data key="e_synapse.ID">27450</data>
+    </edge>
+    <edge source="n1" target="n4">
+      <data key="e_synapse.ID">27491</data>
+    </edge>
+    <edge source="n1" target="n4">
+      <data key="e_synapse.ID">27493</data>
+    </edge>
+    <edge source="n1" target="n4">
+      <data key="e_synapse.ID">27495</data>
+    </edge>
+    <edge source="n1" target="n4">
+      <data key="e_synapse.ID">27502</data>
+    </edge>
+    <edge source="n1" target="n4">
+      <data key="e_synapse.ID">27504</data>
+    </edge>
+    <edge source="n1" target="n4">
+      <data key="e_synapse.ID">27506</data>
+    </edge>
+    <edge source="n1" target="n4">
+      <data key="e_synapse.ID">27599</data>
+    </edge>
+    <edge source="n1" target="n4">
+      <data key="e_synapse.ID">27607</data>
+    </edge>
+    <edge source="n1" target="n7">
+      <data key="e_synapse.ID">27316</data>
+    </edge>
+    <edge source="n1" target="n7">
+      <data key="e_synapse.ID">27321</data>
+    </edge>
+    <edge source="n1" target="n7">
+      <data key="e_synapse.ID">27667</data>
+    </edge>
+    <edge source="n1" target="n7">
+      <data key="e_synapse.ID">27673</data>
+    </edge>
+    <edge source="n1" target="n7">
+      <data key="e_synapse.ID">27682</data>
+    </edge>
+    <edge source="n1" target="n23">
+      <data key="e_synapse.ID">27321</data>
+    </edge>
+    <edge source="n1" target="n23">
+      <data key="e_synapse.ID">27663</data>
+    </edge>
+    <edge source="n1" target="n23">
+      <data key="e_synapse.ID">27665</data>
+    </edge>
+    <edge source="n1" target="n23">
+      <data key="e_synapse.ID">27669</data>
+    </edge>
+    <edge source="n1" target="n23">
+      <data key="e_synapse.ID">27671</data>
+    </edge>
+    <edge source="n1" target="n23">
+      <data key="e_synapse.ID">27682</data>
+    </edge>
+    <edge source="n1" target="n23">
+      <data key="e_synapse.ID">27684</data>
+    </edge>
+    <edge source="n1" target="n23">
+      <data key="e_synapse.ID">27686</data>
+    </edge>
+    <edge source="n1" target="n23">
+      <data key="e_synapse.ID">27688</data>
+    </edge>
+    <edge source="n1" target="n24">
+      <data key="e_synapse.ID">19762</data>
+    </edge>
+    <edge source="n1" target="n24">
+      <data key="e_synapse.ID">27310</data>
+    </edge>
+    <edge source="n1" target="n24">
+      <data key="e_synapse.ID">27649</data>
+    </edge>
+    <edge source="n1" target="n27">
+      <data key="e_synapse.ID">27506</data>
+    </edge>
+    <edge source="n1" target="n27">
+      <data key="e_synapse.ID">27595</data>
+    </edge>
+    <edge source="n1" target="n27">
+      <data key="e_synapse.ID">27607</data>
+    </edge>
+    <edge source="n1" target="n28">
+      <data key="e_synapse.ID">27637</data>
+    </edge>
+    <edge source="n1" target="n29">
+      <data key="e_synapse.ID">27493</data>
+    </edge>
+    <edge source="n1" target="n29">
+      <data key="e_synapse.ID">27601</data>
+    </edge>
+    <edge source="n1" target="n29">
+      <data key="e_synapse.ID">27603</data>
+    </edge>
+    <edge source="n1" target="n30">
+      <data key="e_synapse.ID">27641</data>
+    </edge>
+    <edge source="n1" target="n30">
+      <data key="e_synapse.ID">27647</data>
+    </edge>
+    <edge source="n1" target="n31">
+      <data key="e_synapse.ID">27493</data>
+    </edge>
+    <edge source="n1" target="n31">
+      <data key="e_synapse.ID">27504</data>
+    </edge>
+    <edge source="n1" target="n31">
+      <data key="e_synapse.ID">27597</data>
+    </edge>
+    <edge source="n1" target="n31">
+      <data key="e_synapse.ID">27599</data>
+    </edge>
+    <edge source="n1" target="n31">
+      <data key="e_synapse.ID">27601</data>
+    </edge>
+    <edge source="n1" target="n31">
+      <data key="e_synapse.ID">27603</data>
+    </edge>
+    <edge source="n1" target="n32">
+      <data key="e_synapse.ID">27591</data>
+    </edge>
+    <edge source="n1" target="n32">
+      <data key="e_synapse.ID">27623</data>
+    </edge>
+    <edge source="n1" target="n32">
+      <data key="e_synapse.ID">27625</data>
+    </edge>
+    <edge source="n1" target="n33">
+      <data key="e_synapse.ID">27316</data>
+    </edge>
+    <edge source="n1" target="n33">
+      <data key="e_synapse.ID">27614</data>
+    </edge>
+    <edge source="n1" target="n33">
+      <data key="e_synapse.ID">27616</data>
+    </edge>
+    <edge source="n1" target="n33">
+      <data key="e_synapse.ID">27649</data>
+    </edge>
+    <edge source="n1" target="n33">
+      <data key="e_synapse.ID">27656</data>
+    </edge>
+    <edge source="n1" target="n33">
+      <data key="e_synapse.ID">27658</data>
+    </edge>
+    <edge source="n1" target="n34">
+      <data key="e_synapse.ID">27500</data>
+    </edge>
+    <edge source="n1" target="n34">
+      <data key="e_synapse.ID">27609</data>
+    </edge>
+    <edge source="n1" target="n34">
+      <data key="e_synapse.ID">27614</data>
+    </edge>
+    <edge source="n1" target="n35">
+      <data key="e_synapse.ID">27491</data>
+    </edge>
+    <edge source="n1" target="n35">
+      <data key="e_synapse.ID">27593</data>
+    </edge>
+    <edge source="n1" target="n35">
+      <data key="e_synapse.ID">27607</data>
+    </edge>
+    <edge source="n1" target="n36">
+      <data key="e_synapse.ID">27618</data>
+    </edge>
+    <edge source="n1" target="n37">
+      <data key="e_synapse.ID">27651</data>
+    </edge>
+    <edge source="n1" target="n38">
+      <data key="e_synapse.ID">27658</data>
+    </edge>
+    <edge source="n1" target="n38">
+      <data key="e_synapse.ID">27663</data>
+    </edge>
+    <edge source="n1" target="n38">
+      <data key="e_synapse.ID">27665</data>
+    </edge>
+    <edge source="n1" target="n38">
+      <data key="e_synapse.ID">27669</data>
+    </edge>
+    <edge source="n1" target="n38">
+      <data key="e_synapse.ID">27671</data>
+    </edge>
+    <edge source="n1" target="n38">
+      <data key="e_synapse.ID">27684</data>
+    </edge>
+    <edge source="n1" target="n38">
+      <data key="e_synapse.ID">27686</data>
+    </edge>
+    <edge source="n1" target="n38">
+      <data key="e_synapse.ID">27688</data>
+    </edge>
+    <edge source="n1" target="n38">
+      <data key="e_synapse.ID">27694</data>
+    </edge>
+    <edge source="n1" target="n39">
+      <data key="e_synapse.ID">28330</data>
+    </edge>
+    <edge source="n2" target="n25">
+      <data key="e_synapse.ID">27016</data>
+    </edge>
+    <edge source="n2" target="n25">
+      <data key="e_synapse.ID">27049</data>
+    </edge>
+    <edge source="n2" target="n25">
+      <data key="e_synapse.ID">27077</data>
+    </edge>
+    <edge source="n2" target="n0">
+      <data key="e_synapse.ID">19714</data>
+    </edge>
+    <edge source="n2" target="n0">
+      <data key="e_synapse.ID">27079</data>
+    </edge>
+    <edge source="n2" target="n1">
+      <data key="e_synapse.ID">19714</data>
+    </edge>
+    <edge source="n2" target="n1">
+      <data key="e_synapse.ID">27016</data>
+    </edge>
+    <edge source="n2" target="n1">
+      <data key="e_synapse.ID">27020</data>
+    </edge>
+    <edge source="n2" target="n1">
+      <data key="e_synapse.ID">27079</data>
+    </edge>
+    <edge source="n2" target="n3">
+      <data key="e_synapse.ID">27029</data>
+    </edge>
+    <edge source="n2" target="n3">
+      <data key="e_synapse.ID">27296</data>
+    </edge>
+    <edge source="n2" target="n8">
+      <data key="e_synapse.ID">27296</data>
+    </edge>
+    <edge source="n2" target="n13">
+      <data key="e_synapse.ID">27291</data>
+    </edge>
+    <edge source="n2" target="n14">
+      <data key="e_synapse.ID">27296</data>
+    </edge>
+    <edge source="n2" target="n28">
+      <data key="e_synapse.ID">27079</data>
+    </edge>
+    <edge source="n2" target="n15">
+      <data key="e_synapse.ID">27020</data>
+    </edge>
+    <edge source="n2" target="n32">
+      <data key="e_synapse.ID">27022</data>
+    </edge>
+    <edge source="n2" target="n32">
+      <data key="e_synapse.ID">27298</data>
+    </edge>
+    <edge source="n2" target="n32">
+      <data key="e_synapse.ID">27306</data>
+    </edge>
+    <edge source="n2" target="n32">
+      <data key="e_synapse.ID">28299</data>
+    </edge>
+    <edge source="n2" target="n32">
+      <data key="e_synapse.ID">28311</data>
+    </edge>
+    <edge source="n2" target="n32">
+      <data key="e_synapse.ID">28313</data>
+    </edge>
+    <edge source="n2" target="n17">
+      <data key="e_synapse.ID">27300</data>
+    </edge>
+    <edge source="n2" target="n17">
+      <data key="e_synapse.ID">27306</data>
+    </edge>
+    <edge source="n2" target="n17">
+      <data key="e_synapse.ID">27308</data>
+    </edge>
+    <edge source="n2" target="n17">
+      <data key="e_synapse.ID">28299</data>
+    </edge>
+    <edge source="n3" target="n26">
+      <data key="e_synapse.ID">27489</data>
+    </edge>
+    <edge source="n3" target="n2">
+      <data key="e_synapse.ID">27467</data>
+    </edge>
+    <edge source="n3" target="n5">
+      <data key="e_synapse.ID">27465</data>
+    </edge>
+    <edge source="n3" target="n5">
+      <data key="e_synapse.ID">27477</data>
+    </edge>
+    <edge source="n3" target="n6">
+      <data key="e_synapse.ID">27430</data>
+    </edge>
+    <edge source="n3" target="n6">
+      <data key="e_synapse.ID">27481</data>
+    </edge>
+    <edge source="n3" target="n8">
+      <data key="e_synapse.ID">27463</data>
+    </edge>
+    <edge source="n3" target="n8">
+      <data key="e_synapse.ID">27467</data>
+    </edge>
+    <edge source="n3" target="n8">
+      <data key="e_synapse.ID">27469</data>
+    </edge>
+    <edge source="n3" target="n8">
+      <data key="e_synapse.ID">27473</data>
+    </edge>
+    <edge source="n3" target="n8">
+      <data key="e_synapse.ID">27485</data>
+    </edge>
+    <edge source="n3" target="n8">
+      <data key="e_synapse.ID">27585</data>
+    </edge>
+    <edge source="n3" target="n10">
+      <data key="e_synapse.ID">27585</data>
+    </edge>
+    <edge source="n3" target="n23">
+      <data key="e_synapse.ID">27430</data>
+    </edge>
+    <edge source="n3" target="n23">
+      <data key="e_synapse.ID">27485</data>
+    </edge>
+    <edge source="n3" target="n23">
+      <data key="e_synapse.ID">27487</data>
+    </edge>
+    <edge source="n3" target="n23">
+      <data key="e_synapse.ID">27489</data>
+    </edge>
+    <edge source="n3" target="n23">
+      <data key="e_synapse.ID">28322</data>
+    </edge>
+    <edge source="n3" target="n15">
+      <data key="e_synapse.ID">27473</data>
+    </edge>
+    <edge source="n3" target="n32">
+      <data key="e_synapse.ID">27479</data>
+    </edge>
+    <edge source="n3" target="n18">
+      <data key="e_synapse.ID">28320</data>
+    </edge>
+    <edge source="n3" target="n35">
+      <data key="e_synapse.ID">27457</data>
+    </edge>
+    <edge source="n3" target="n35">
+      <data key="e_synapse.ID">27510</data>
+    </edge>
+    <edge source="n4" target="n0">
+      <data key="e_synapse.ID">19724</data>
+    </edge>
+    <edge source="n4" target="n1">
+      <data key="e_synapse.ID">19768</data>
+    </edge>
+    <edge source="n4" target="n1">
+      <data key="e_synapse.ID">27452</data>
+    </edge>
+    <edge source="n4" target="n1">
+      <data key="e_synapse.ID">27514</data>
+    </edge>
+    <edge source="n4" target="n3">
+      <data key="e_synapse.ID">27438</data>
+    </edge>
+    <edge source="n4" target="n3">
+      <data key="e_synapse.ID">27452</data>
+    </edge>
+    <edge source="n4" target="n6">
+      <data key="e_synapse.ID">27408</data>
+    </edge>
+    <edge source="n4" target="n6">
+      <data key="e_synapse.ID">27412</data>
+    </edge>
+    <edge source="n4" target="n6">
+      <data key="e_synapse.ID">27526</data>
+    </edge>
+    <edge source="n4" target="n6">
+      <data key="e_synapse.ID">27540</data>
+    </edge>
+    <edge source="n4" target="n6">
+      <data key="e_synapse.ID">27542</data>
+    </edge>
+    <edge source="n4" target="n9">
+      <data key="e_synapse.ID">19724</data>
+    </edge>
+    <edge source="n4" target="n9">
+      <data key="e_synapse.ID">27412</data>
+    </edge>
+    <edge source="n4" target="n12">
+      <data key="e_synapse.ID">28326</data>
+    </edge>
+    <edge source="n4" target="n15">
+      <data key="e_synapse.ID">27412</data>
+    </edge>
+    <edge source="n4" target="n15">
+      <data key="e_synapse.ID">27514</data>
+    </edge>
+    <edge source="n4" target="n15">
+      <data key="e_synapse.ID">27518</data>
+    </edge>
+    <edge source="n4" target="n15">
+      <data key="e_synapse.ID">27520</data>
+    </edge>
+    <edge source="n4" target="n31">
+      <data key="e_synapse.ID">19768</data>
+    </edge>
+    <edge source="n4" target="n31">
+      <data key="e_synapse.ID">19770</data>
+    </edge>
+    <edge source="n4" target="n32">
+      <data key="e_synapse.ID">27408</data>
+    </edge>
+    <edge source="n4" target="n32">
+      <data key="e_synapse.ID">27524</data>
+    </edge>
+    <edge source="n4" target="n32">
+      <data key="e_synapse.ID">27526</data>
+    </edge>
+    <edge source="n4" target="n32">
+      <data key="e_synapse.ID">28326</data>
+    </edge>
+    <edge source="n4" target="n17">
+      <data key="e_synapse.ID">27516</data>
+    </edge>
+    <edge source="n4" target="n17">
+      <data key="e_synapse.ID">27528</data>
+    </edge>
+    <edge source="n4" target="n17">
+      <data key="e_synapse.ID">27544</data>
+    </edge>
+    <edge source="n5" target="n1">
+      <data key="e_synapse.ID">27349</data>
+    </edge>
+    <edge source="n5" target="n1">
+      <data key="e_synapse.ID">27355</data>
+    </edge>
+    <edge source="n5" target="n6">
+      <data key="e_synapse.ID">28332</data>
+    </edge>
+    <edge source="n5" target="n7">
+      <data key="e_synapse.ID">27353</data>
+    </edge>
+    <edge source="n5" target="n7">
+      <data key="e_synapse.ID">27377</data>
+    </edge>
+    <edge source="n5" target="n7">
+      <data key="e_synapse.ID">27379</data>
+    </edge>
+    <edge source="n5" target="n8">
+      <data key="e_synapse.ID">27355</data>
+    </edge>
+    <edge source="n5" target="n8">
+      <data key="e_synapse.ID">27369</data>
+    </edge>
+    <edge source="n5" target="n10">
+      <data key="e_synapse.ID">27357</data>
+    </edge>
+    <edge source="n5" target="n10">
+      <data key="e_synapse.ID">27363</data>
+    </edge>
+    <edge source="n5" target="n10">
+      <data key="e_synapse.ID">27365</data>
+    </edge>
+    <edge source="n5" target="n10">
+      <data key="e_synapse.ID">27711</data>
+    </edge>
+    <edge source="n5" target="n11">
+      <data key="e_synapse.ID">27395</data>
+    </edge>
+    <edge source="n5" target="n12">
+      <data key="e_synapse.ID">27357</data>
+    </edge>
+    <edge source="n5" target="n13">
+      <data key="e_synapse.ID">27369</data>
+    </edge>
+    <edge source="n5" target="n13">
+      <data key="e_synapse.ID">27395</data>
+    </edge>
+    <edge source="n5" target="n15">
+      <data key="e_synapse.ID">27361</data>
+    </edge>
+    <edge source="n5" target="n32">
+      <data key="e_synapse.ID">27373</data>
+    </edge>
+    <edge source="n5" target="n17">
+      <data key="e_synapse.ID">27361</data>
+    </edge>
+    <edge source="n5" target="n17">
+      <data key="e_synapse.ID">27367</data>
+    </edge>
+    <edge source="n5" target="n17">
+      <data key="e_synapse.ID">27375</data>
+    </edge>
+    <edge source="n6" target="n23">
+      <data key="e_synapse.ID">27426</data>
+    </edge>
+    <edge source="n6" target="n23">
+      <data key="e_synapse.ID">27428</data>
+    </edge>
+    <edge source="n6" target="n32">
+      <data key="e_synapse.ID">27418</data>
+    </edge>
+    <edge source="n6" target="n32">
+      <data key="e_synapse.ID">27422</data>
+    </edge>
+    <edge source="n6" target="n32">
+      <data key="e_synapse.ID">27424</data>
+    </edge>
+    <edge source="n6" target="n32">
+      <data key="e_synapse.ID">27428</data>
+    </edge>
+    <edge source="n6" target="n32">
+      <data key="e_synapse.ID">27432</data>
+    </edge>
+    <edge source="n7" target="n1">
+      <data key="e_synapse.ID">27325</data>
+    </edge>
+    <edge source="n7" target="n1">
+      <data key="e_synapse.ID">27329</data>
+    </edge>
+    <edge source="n7" target="n2">
+      <data key="e_synapse.ID">27018</data>
+    </edge>
+    <edge source="n7" target="n2">
+      <data key="e_synapse.ID">27294</data>
+    </edge>
+    <edge source="n7" target="n5">
+      <data key="e_synapse.ID">27018</data>
+    </edge>
+    <edge source="n7" target="n5">
+      <data key="e_synapse.ID">27294</data>
+    </edge>
+    <edge source="n7" target="n5">
+      <data key="e_synapse.ID">27325</data>
+    </edge>
+    <edge source="n7" target="n5">
+      <data key="e_synapse.ID">27327</data>
+    </edge>
+    <edge source="n7" target="n5">
+      <data key="e_synapse.ID">27329</data>
+    </edge>
+    <edge source="n7" target="n5">
+      <data key="e_synapse.ID">27333</data>
+    </edge>
+    <edge source="n7" target="n12">
+      <data key="e_synapse.ID">27327</data>
+    </edge>
+    <edge source="n7" target="n12">
+      <data key="e_synapse.ID">27331</data>
+    </edge>
+    <edge source="n7" target="n13">
+      <data key="e_synapse.ID">27327</data>
+    </edge>
+    <edge source="n7" target="n15">
+      <data key="e_synapse.ID">27294</data>
+    </edge>
+    <edge source="n7" target="n32">
+      <data key="e_synapse.ID">27343</data>
+    </edge>
+    <edge source="n7" target="n32">
+      <data key="e_synapse.ID">27345</data>
+    </edge>
+    <edge source="n7" target="n32">
+      <data key="e_synapse.ID">27397</data>
+    </edge>
+    <edge source="n8" target="n32">
+      <data key="e_synapse.ID">27570</data>
+    </edge>
+    <edge source="n8" target="n32">
+      <data key="e_synapse.ID">27572</data>
+    </edge>
+    <edge source="n8" target="n32">
+      <data key="e_synapse.ID">27574</data>
+    </edge>
+    <edge source="n8" target="n32">
+      <data key="e_synapse.ID">27576</data>
+    </edge>
+    <edge source="n8" target="n32">
+      <data key="e_synapse.ID">27581</data>
+    </edge>
+    <edge source="n8" target="n32">
+      <data key="e_synapse.ID">27583</data>
+    </edge>
+    <edge source="n8" target="n40">
+      <data key="e_synapse.ID">27576</data>
+    </edge>
+    <edge source="n9" target="n10">
+      <data key="e_synapse.ID">27703</data>
+    </edge>
+    <edge source="n9" target="n10">
+      <data key="e_synapse.ID">27705</data>
+    </edge>
+    <edge source="n9" target="n10">
+      <data key="e_synapse.ID">27707</data>
+    </edge>
+    <edge source="n9" target="n10">
+      <data key="e_synapse.ID">28053</data>
+    </edge>
+    <edge source="n9" target="n10">
+      <data key="e_synapse.ID">28096</data>
+    </edge>
+    <edge source="n9" target="n10">
+      <data key="e_synapse.ID">28106</data>
+    </edge>
+    <edge source="n9" target="n10">
+      <data key="e_synapse.ID">28118</data>
+    </edge>
+    <edge source="n9" target="n15">
+      <data key="e_synapse.ID">28132</data>
+    </edge>
+    <edge source="n9" target="n15">
+      <data key="e_synapse.ID">27778</data>
+    </edge>
+    <edge source="n9" target="n15">
+      <data key="e_synapse.ID">27789</data>
+    </edge>
+    <edge source="n9" target="n17">
+      <data key="e_synapse.ID">27705</data>
+    </edge>
+    <edge source="n9" target="n17">
+      <data key="e_synapse.ID">28049</data>
+    </edge>
+    <edge source="n9" target="n17">
+      <data key="e_synapse.ID">28094</data>
+    </edge>
+    <edge source="n9" target="n17">
+      <data key="e_synapse.ID">28098</data>
+    </edge>
+    <edge source="n9" target="n17">
+      <data key="e_synapse.ID">28102</data>
+    </edge>
+    <edge source="n9" target="n17">
+      <data key="e_synapse.ID">28104</data>
+    </edge>
+    <edge source="n9" target="n17">
+      <data key="e_synapse.ID">28106</data>
+    </edge>
+    <edge source="n9" target="n17">
+      <data key="e_synapse.ID">28110</data>
+    </edge>
+    <edge source="n9" target="n17">
+      <data key="e_synapse.ID">28112</data>
+    </edge>
+    <edge source="n9" target="n17">
+      <data key="e_synapse.ID">28114</data>
+    </edge>
+    <edge source="n9" target="n17">
+      <data key="e_synapse.ID">28116</data>
+    </edge>
+    <edge source="n9" target="n17">
+      <data key="e_synapse.ID">28122</data>
+    </edge>
+    <edge source="n9" target="n19">
+      <data key="e_synapse.ID">27707</data>
+    </edge>
+    <edge source="n9" target="n19">
+      <data key="e_synapse.ID">28094</data>
+    </edge>
+    <edge source="n9" target="n19">
+      <data key="e_synapse.ID">28104</data>
+    </edge>
+    <edge source="n9" target="n19">
+      <data key="e_synapse.ID">28110</data>
+    </edge>
+    <edge source="n9" target="n20">
+      <data key="e_synapse.ID">27703</data>
+    </edge>
+    <edge source="n9" target="n20">
+      <data key="e_synapse.ID">27707</data>
+    </edge>
+    <edge source="n9" target="n20">
+      <data key="e_synapse.ID">28053</data>
+    </edge>
+    <edge source="n9" target="n20">
+      <data key="e_synapse.ID">28096</data>
+    </edge>
+    <edge source="n9" target="n20">
+      <data key="e_synapse.ID">28100</data>
+    </edge>
+    <edge source="n9" target="n20">
+      <data key="e_synapse.ID">28118</data>
+    </edge>
+    <edge source="n9" target="n41">
+      <data key="e_synapse.ID">28098</data>
+    </edge>
+    <edge source="n9" target="n41">
+      <data key="e_synapse.ID">28100</data>
+    </edge>
+    <edge source="n9" target="n41">
+      <data key="e_synapse.ID">28108</data>
+    </edge>
+    <edge source="n9" target="n41">
+      <data key="e_synapse.ID">28112</data>
+    </edge>
+    <edge source="n9" target="n41">
+      <data key="e_synapse.ID">28114</data>
+    </edge>
+    <edge source="n9" target="n41">
+      <data key="e_synapse.ID">28116</data>
+    </edge>
+    <edge source="n9" target="n41">
+      <data key="e_synapse.ID">28120</data>
+    </edge>
+    <edge source="n9" target="n41">
+      <data key="e_synapse.ID">28122</data>
+    </edge>
+    <edge source="n9" target="n41">
+      <data key="e_synapse.ID">28124</data>
+    </edge>
+    <edge source="n9" target="n41">
+      <data key="e_synapse.ID">28126</data>
+    </edge>
+    <edge source="n9" target="n41">
+      <data key="e_synapse.ID">28128</data>
+    </edge>
+    <edge source="n9" target="n41">
+      <data key="e_synapse.ID">28130</data>
+    </edge>
+    <edge source="n9" target="n42">
+      <data key="e_synapse.ID">28132</data>
+    </edge>
+    <edge source="n9" target="n42">
+      <data key="e_synapse.ID">28134</data>
+    </edge>
+    <edge source="n9" target="n43">
+      <data key="e_synapse.ID">28124</data>
+    </edge>
+    <edge source="n9" target="n43">
+      <data key="e_synapse.ID">28126</data>
+    </edge>
+    <edge source="n9" target="n43">
+      <data key="e_synapse.ID">28128</data>
+    </edge>
+    <edge source="n10" target="n26">
+      <data key="e_synapse.ID">27730</data>
+    </edge>
+    <edge source="n10" target="n26">
+      <data key="e_synapse.ID">27732</data>
+    </edge>
+    <edge source="n10" target="n26">
+      <data key="e_synapse.ID">27734</data>
+    </edge>
+    <edge source="n10" target="n26">
+      <data key="e_synapse.ID">27740</data>
+    </edge>
+    <edge source="n10" target="n13">
+      <data key="e_synapse.ID">28303</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">27546</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">27709</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">27713</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">27717</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">27719</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">27728</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">27732</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">27736</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">27738</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">27748</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">27750</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">27752</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">27756</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">28303</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">28289</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">28291</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">28293</data>
+    </edge>
+    <edge source="n10" target="n32">
+      <data key="e_synapse.ID">28295</data>
+    </edge>
+    <edge source="n10" target="n44">
+      <data key="e_synapse.ID">27740</data>
+    </edge>
+    <edge source="n10" target="n44">
+      <data key="e_synapse.ID">27742</data>
+    </edge>
+    <edge source="n10" target="n44">
+      <data key="e_synapse.ID">27744</data>
+    </edge>
+    <edge source="n10" target="n44">
+      <data key="e_synapse.ID">27746</data>
+    </edge>
+    <edge source="n10" target="n44">
+      <data key="e_synapse.ID">28285</data>
+    </edge>
+    <edge source="n10" target="n44">
+      <data key="e_synapse.ID">28287</data>
+    </edge>
+    <edge source="n10" target="n44">
+      <data key="e_synapse.ID">28289</data>
+    </edge>
+    <edge source="n10" target="n44">
+      <data key="e_synapse.ID">28291</data>
+    </edge>
+    <edge source="n10" target="n44">
+      <data key="e_synapse.ID">28293</data>
+    </edge>
+    <edge source="n10" target="n44">
+      <data key="e_synapse.ID">28295</data>
+    </edge>
+    <edge source="n10" target="n41">
+      <data key="e_synapse.ID">27724</data>
+    </edge>
+    <edge source="n11" target="n13">
+      <data key="e_synapse.ID">27843</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27801</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27803</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27805</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27807</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27809</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27811</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27813</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27815</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27817</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27819</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27821</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27823</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27825</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27827</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27829</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27845</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27993</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27995</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27997</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">27999</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">28004</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">28006</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">28008</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">28011</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">28013</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">28015</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">28017</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">28019</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">28021</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">28023</data>
+    </edge>
+    <edge source="n11" target="n17">
+      <data key="e_synapse.ID">28025</data>
+    </edge>
+    <edge source="n11" target="n45">
+      <data key="e_synapse.ID">28032</data>
+    </edge>
+    <edge source="n11" target="n45">
+      <data key="e_synapse.ID">28034</data>
+    </edge>
+    <edge source="n11" target="n46">
+      <data key="e_synapse.ID">27834</data>
+    </edge>
+    <edge source="n11" target="n46">
+      <data key="e_synapse.ID">27839</data>
+    </edge>
+    <edge source="n11" target="n46">
+      <data key="e_synapse.ID">27841</data>
+    </edge>
+    <edge source="n11" target="n47">
+      <data key="e_synapse.ID">27839</data>
+    </edge>
+    <edge source="n11" target="n47">
+      <data key="e_synapse.ID">27841</data>
+    </edge>
+    <edge source="n11" target="n48">
+      <data key="e_synapse.ID">28004</data>
+    </edge>
+    <edge source="n11" target="n48">
+      <data key="e_synapse.ID">28017</data>
+    </edge>
+    <edge source="n11" target="n49">
+      <data key="e_synapse.ID">28027</data>
+    </edge>
+    <edge source="n11" target="n49">
+      <data key="e_synapse.ID">28032</data>
+    </edge>
+    <edge source="n11" target="n50">
+      <data key="e_synapse.ID">28036</data>
+    </edge>
+    <edge source="n11" target="n43">
+      <data key="e_synapse.ID">28036</data>
+    </edge>
+    <edge source="n11" target="n51">
+      <data key="e_synapse.ID">28044</data>
+    </edge>
+    <edge source="n12" target="n21">
+      <data key="e_synapse.ID">27536</data>
+    </edge>
+    <edge source="n12" target="n21">
+      <data key="e_synapse.ID">27538</data>
+    </edge>
+    <edge source="n12" target="n21">
+      <data key="e_synapse.ID">27548</data>
+    </edge>
+    <edge source="n12" target="n21">
+      <data key="e_synapse.ID">27550</data>
+    </edge>
+    <edge source="n12" target="n21">
+      <data key="e_synapse.ID">27552</data>
+    </edge>
+    <edge source="n12" target="n21">
+      <data key="e_synapse.ID">27554</data>
+    </edge>
+    <edge source="n12" target="n21">
+      <data key="e_synapse.ID">27558</data>
+    </edge>
+    <edge source="n12" target="n32">
+      <data key="e_synapse.ID">27548</data>
+    </edge>
+    <edge source="n12" target="n32">
+      <data key="e_synapse.ID">27552</data>
+    </edge>
+    <edge source="n12" target="n32">
+      <data key="e_synapse.ID">27554</data>
+    </edge>
+    <edge source="n12" target="n32">
+      <data key="e_synapse.ID">27556</data>
+    </edge>
+    <edge source="n12" target="n32">
+      <data key="e_synapse.ID">27558</data>
+    </edge>
+    <edge source="n12" target="n32">
+      <data key="e_synapse.ID">27564</data>
+    </edge>
+    <edge source="n12" target="n32">
+      <data key="e_synapse.ID">27566</data>
+    </edge>
+    <edge source="n12" target="n32">
+      <data key="e_synapse.ID">27568</data>
+    </edge>
+    <edge source="n12" target="n52">
+      <data key="e_synapse.ID">27560</data>
+    </edge>
+    <edge source="n12" target="n52">
+      <data key="e_synapse.ID">27562</data>
+    </edge>
+    <edge source="n13" target="n53">
+      <data key="e_synapse.ID">28301</data>
+    </edge>
+    <edge source="n13" target="n53">
+      <data key="e_synapse.ID">28305</data>
+    </edge>
+    <edge source="n13" target="n53">
+      <data key="e_synapse.ID">28307</data>
+    </edge>
+    <edge source="n13" target="n53">
+      <data key="e_synapse.ID">28309</data>
+    </edge>
+    <edge source="n13" target="n32">
+      <data key="e_synapse.ID">27399</data>
+    </edge>
+    <edge source="n13" target="n32">
+      <data key="e_synapse.ID">27406</data>
+    </edge>
+    <edge source="n13" target="n32">
+      <data key="e_synapse.ID">28309</data>
+    </edge>
+    <edge source="n13" target="n52">
+      <data key="e_synapse.ID">27401</data>
+    </edge>
+    <edge source="n13" target="n52">
+      <data key="e_synapse.ID">27406</data>
+    </edge>
+    <edge source="n13" target="n52">
+      <data key="e_synapse.ID">27589</data>
+    </edge>
+    <edge source="n14" target="n10">
+      <data key="e_synapse.ID">27696</data>
+    </edge>
+    <edge source="n14" target="n10">
+      <data key="e_synapse.ID">27698</data>
+    </edge>
+    <edge source="n14" target="n10">
+      <data key="e_synapse.ID">27764</data>
+    </edge>
+    <edge source="n14" target="n10">
+      <data key="e_synapse.ID">27766</data>
+    </edge>
+    <edge source="n14" target="n10">
+      <data key="e_synapse.ID">28165</data>
+    </edge>
+    <edge source="n14" target="n10">
+      <data key="e_synapse.ID">28173</data>
+    </edge>
+    <edge source="n14" target="n15">
+      <data key="e_synapse.ID">27787</data>
+    </edge>
+    <edge source="n14" target="n15">
+      <data key="e_synapse.ID">28163</data>
+    </edge>
+    <edge source="n14" target="n17">
+      <data key="e_synapse.ID">27698</data>
+    </edge>
+    <edge source="n14" target="n17">
+      <data key="e_synapse.ID">28167</data>
+    </edge>
+    <edge source="n14" target="n17">
+      <data key="e_synapse.ID">28171</data>
+    </edge>
+    <edge source="n14" target="n17">
+      <data key="e_synapse.ID">28179</data>
+    </edge>
+    <edge source="n14" target="n17">
+      <data key="e_synapse.ID">28183</data>
+    </edge>
+    <edge source="n14" target="n17">
+      <data key="e_synapse.ID">28187</data>
+    </edge>
+    <edge source="n14" target="n17">
+      <data key="e_synapse.ID">28189</data>
+    </edge>
+    <edge source="n14" target="n18">
+      <data key="e_synapse.ID">27696</data>
+    </edge>
+    <edge source="n14" target="n18">
+      <data key="e_synapse.ID">27764</data>
+    </edge>
+    <edge source="n14" target="n18">
+      <data key="e_synapse.ID">28165</data>
+    </edge>
+    <edge source="n14" target="n18">
+      <data key="e_synapse.ID">28167</data>
+    </edge>
+    <edge source="n14" target="n19">
+      <data key="e_synapse.ID">27766</data>
+    </edge>
+    <edge source="n14" target="n19">
+      <data key="e_synapse.ID">28173</data>
+    </edge>
+    <edge source="n14" target="n19">
+      <data key="e_synapse.ID">28179</data>
+    </edge>
+    <edge source="n14" target="n41">
+      <data key="e_synapse.ID">28163</data>
+    </edge>
+    <edge source="n14" target="n41">
+      <data key="e_synapse.ID">28169</data>
+    </edge>
+    <edge source="n14" target="n41">
+      <data key="e_synapse.ID">28171</data>
+    </edge>
+    <edge source="n14" target="n41">
+      <data key="e_synapse.ID">28175</data>
+    </edge>
+    <edge source="n14" target="n41">
+      <data key="e_synapse.ID">28177</data>
+    </edge>
+    <edge source="n14" target="n41">
+      <data key="e_synapse.ID">28181</data>
+    </edge>
+    <edge source="n14" target="n41">
+      <data key="e_synapse.ID">28183</data>
+    </edge>
+    <edge source="n14" target="n41">
+      <data key="e_synapse.ID">28185</data>
+    </edge>
+    <edge source="n14" target="n41">
+      <data key="e_synapse.ID">28187</data>
+    </edge>
+    <edge source="n14" target="n41">
+      <data key="e_synapse.ID">28189</data>
+    </edge>
+    <edge source="n14" target="n41">
+      <data key="e_synapse.ID">28191</data>
+    </edge>
+    <edge source="n14" target="n41">
+      <data key="e_synapse.ID">28193</data>
+    </edge>
+    <edge source="n14" target="n41">
+      <data key="e_synapse.ID">28195</data>
+    </edge>
+    <edge source="n14" target="n42">
+      <data key="e_synapse.ID">28197</data>
+    </edge>
+    <edge source="n14" target="n48">
+      <data key="e_synapse.ID">28195</data>
+    </edge>
+    <edge source="n15" target="n0">
+      <data key="e_synapse.ID">27312</data>
+    </edge>
+    <edge source="n15" target="n0">
+      <data key="e_synapse.ID">27314</data>
+    </edge>
+    <edge source="n15" target="n3">
+      <data key="e_synapse.ID">27031</data>
+    </edge>
+    <edge source="n15" target="n3">
+      <data key="e_synapse.ID">27471</data>
+    </edge>
+    <edge source="n15" target="n6">
+      <data key="e_synapse.ID">27410</data>
+    </edge>
+    <edge source="n15" target="n8">
+      <data key="e_synapse.ID">27414</data>
+    </edge>
+    <edge source="n15" target="n8">
+      <data key="e_synapse.ID">27471</data>
+    </edge>
+    <edge source="n15" target="n8">
+      <data key="e_synapse.ID">27587</data>
+    </edge>
+    <edge source="n15" target="n9">
+      <data key="e_synapse.ID">27410</data>
+    </edge>
+    <edge source="n15" target="n9">
+      <data key="e_synapse.ID">27799</data>
+    </edge>
+    <edge source="n15" target="n14">
+      <data key="e_synapse.ID">27471</data>
+    </edge>
+    <edge source="n15" target="n17">
+      <data key="e_synapse.ID">27793</data>
+    </edge>
+    <edge source="n15" target="n17">
+      <data key="e_synapse.ID">27795</data>
+    </edge>
+    <edge source="n15" target="n41">
+      <data key="e_synapse.ID">27785</data>
+    </edge>
+    <edge source="n15" target="n42">
+      <data key="e_synapse.ID">27783</data>
+    </edge>
+    <edge source="n15" target="n42">
+      <data key="e_synapse.ID">27791</data>
+    </edge>
+    <edge source="n16" target="n17">
+      <data key="e_synapse.ID">28216</data>
+    </edge>
+    <edge source="n16" target="n17">
+      <data key="e_synapse.ID">28218</data>
+    </edge>
+    <edge source="n16" target="n17">
+      <data key="e_synapse.ID">28220</data>
+    </edge>
+    <edge source="n16" target="n17">
+      <data key="e_synapse.ID">28222</data>
+    </edge>
+    <edge source="n16" target="n17">
+      <data key="e_synapse.ID">28224</data>
+    </edge>
+    <edge source="n16" target="n17">
+      <data key="e_synapse.ID">28226</data>
+    </edge>
+    <edge source="n16" target="n17">
+      <data key="e_synapse.ID">28328</data>
+    </edge>
+    <edge source="n16" target="n17">
+      <data key="e_synapse.ID">28334</data>
+    </edge>
+    <edge source="n17" target="n49">
+      <data key="e_synapse.ID">28336</data>
+    </edge>
+    <edge source="n18" target="n10">
+      <data key="e_synapse.ID">27758</data>
+    </edge>
+    <edge source="n18" target="n10">
+      <data key="e_synapse.ID">27760</data>
+    </edge>
+    <edge source="n18" target="n10">
+      <data key="e_synapse.ID">27762</data>
+    </edge>
+    <edge source="n18" target="n14">
+      <data key="e_synapse.ID">27758</data>
+    </edge>
+    <edge source="n18" target="n14">
+      <data key="e_synapse.ID">27760</data>
+    </edge>
+    <edge source="n18" target="n14">
+      <data key="e_synapse.ID">27762</data>
+    </edge>
+    <edge source="n18" target="n53">
+      <data key="e_synapse.ID">28244</data>
+    </edge>
+    <edge source="n18" target="n53">
+      <data key="e_synapse.ID">28246</data>
+    </edge>
+    <edge source="n18" target="n53">
+      <data key="e_synapse.ID">28248</data>
+    </edge>
+    <edge source="n18" target="n53">
+      <data key="e_synapse.ID">28250</data>
+    </edge>
+    <edge source="n18" target="n53">
+      <data key="e_synapse.ID">28252</data>
+    </edge>
+    <edge source="n18" target="n53">
+      <data key="e_synapse.ID">28254</data>
+    </edge>
+    <edge source="n18" target="n53">
+      <data key="e_synapse.ID">28256</data>
+    </edge>
+    <edge source="n18" target="n53">
+      <data key="e_synapse.ID">28260</data>
+    </edge>
+    <edge source="n18" target="n32">
+      <data key="e_synapse.ID">28264</data>
+    </edge>
+    <edge source="n18" target="n17">
+      <data key="e_synapse.ID">28199</data>
+    </edge>
+    <edge source="n18" target="n17">
+      <data key="e_synapse.ID">28201</data>
+    </edge>
+    <edge source="n18" target="n17">
+      <data key="e_synapse.ID">28258</data>
+    </edge>
+    <edge source="n18" target="n17">
+      <data key="e_synapse.ID">28262</data>
+    </edge>
+    <edge source="n19" target="n1">
+      <data key="e_synapse.ID">27768</data>
+    </edge>
+    <edge source="n19" target="n2">
+      <data key="e_synapse.ID">27726</data>
+    </edge>
+    <edge source="n19" target="n5">
+      <data key="e_synapse.ID">27341</data>
+    </edge>
+    <edge source="n19" target="n5">
+      <data key="e_synapse.ID">27359</data>
+    </edge>
+    <edge source="n19" target="n5">
+      <data key="e_synapse.ID">27371</data>
+    </edge>
+    <edge source="n19" target="n6">
+      <data key="e_synapse.ID">27420</data>
+    </edge>
+    <edge source="n19" target="n6">
+      <data key="e_synapse.ID">27770</data>
+    </edge>
+    <edge source="n19" target="n7">
+      <data key="e_synapse.ID">27341</data>
+    </edge>
+    <edge source="n19" target="n10">
+      <data key="e_synapse.ID">27359</data>
+    </edge>
+    <edge source="n19" target="n10">
+      <data key="e_synapse.ID">27715</data>
+    </edge>
+    <edge source="n19" target="n10">
+      <data key="e_synapse.ID">27726</data>
+    </edge>
+    <edge source="n19" target="n10">
+      <data key="e_synapse.ID">27754</data>
+    </edge>
+    <edge source="n19" target="n11">
+      <data key="e_synapse.ID">27371</data>
+    </edge>
+    <edge source="n19" target="n12">
+      <data key="e_synapse.ID">27371</data>
+    </edge>
+    <edge source="n19" target="n12">
+      <data key="e_synapse.ID">27534</data>
+    </edge>
+    <edge source="n20" target="n9">
+      <data key="e_synapse.ID">28051</data>
+    </edge>
+    <edge source="n20" target="n9">
+      <data key="e_synapse.ID">28092</data>
+    </edge>
+    <edge source="n20" target="n10">
+      <data key="e_synapse.ID">28051</data>
+    </edge>
+    <edge source="n20" target="n10">
+      <data key="e_synapse.ID">28092</data>
+    </edge>
+    <edge source="n20" target="n21">
+      <data key="e_synapse.ID">28232</data>
+    </edge>
+    <edge source="n20" target="n21">
+      <data key="e_synapse.ID">28234</data>
+    </edge>
+    <edge source="n20" target="n21">
+      <data key="e_synapse.ID">28236</data>
+    </edge>
+    <edge source="n20" target="n21">
+      <data key="e_synapse.ID">28238</data>
+    </edge>
+    <edge source="n20" target="n21">
+      <data key="e_synapse.ID">28240</data>
+    </edge>
+    <edge source="n20" target="n32">
+      <data key="e_synapse.ID">28228</data>
+    </edge>
+    <edge source="n20" target="n32">
+      <data key="e_synapse.ID">28230</data>
+    </edge>
+    <edge source="n20" target="n17">
+      <data key="e_synapse.ID">28242</data>
+    </edge>
+  </graph>
+</graphml>

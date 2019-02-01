@@ -27,8 +27,8 @@ knit_hooks$set(pngquant = hook_pngquant)
 <img src="static/logo.png" width="200">
 </p>
 
-Learns the topology of a class of graphs such as K-component, tree, bipartite,
-and regular.
+`spectralGraphTopology` is the R package to estimate Laplacian matrices from
+graphs such as K-component, bipartite, and d-regular.
 
 See the vignette for a detailed documentation with several illustrative examples.
 
