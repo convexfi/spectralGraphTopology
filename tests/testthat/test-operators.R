@@ -1,15 +1,14 @@
-context("testOperators.R")
+context("operators such as L, Lstar, A, Astar")
 library(patrick)
 library(testthat)
 library(spectralGraphTopology)
 
-
 # The L operator should return a symmetric positive semi-definite matrix
 # with non-positive off diagonal elements and nonnegative
 # diagonal elements
-LOpConstraints <- function(Lw) {
+L_constraints <- function(Lw) {
   expect_that(isSymmetric.matrix(Lw), is_true())
-  expect_that(all(diag(Lw) >= 0), is_true())
+  expect_that(all(diag(Lw) > 0), is_true())
   Lw_off <- Lw - diag(diag(Lw))
   expect_that(all(Lw_off <= 0), is_true())
   expect_that(all(colSums(Lw) == 0), is_true())
@@ -22,24 +21,22 @@ LOpConstraints <- function(Lw) {
   expect_that(all(eigen_values$values >= 0), is_true())
 }
 
+
 test_that("inverse of the L operator works", {
   w <- runif(10)
-  Lw <- L(w)
-  w_test <- Linv(Lw)
-  expect_that(all(w == w_test), is_true())
+  expect_that(all(w == Linv(L(w))), is_true())
 })
+
 
 test_that("inverse of the A operator works", {
   w <- runif(10)
-  Aw <- A(w)
-  w_test <- Ainv(Aw)
-  expect_that(all(w == w_test), is_true())
+  expect_that(all(w == Ainv(A(w))), is_true())
 })
 
 
 with_parameters_test_that("L operator works in simple, manually verifiable cases", {
     Lw <- L(w)
-    LOpConstraints(Lw)
+    L_constraints(Lw)
     expect_that(all(Lw == answer), is_true())
   },
   cases(
@@ -55,9 +52,9 @@ with_parameters_test_that("L operator works in simple, manually verifiable cases
        )
 )
 
+
 with_parameters_test_that("A operator works in simple, manually verifiable cases", {
-    Aw <- A(w)
-    expect_equal(Aw, answer)
+    expect_equal(A(w), answer)
   },
   cases(
         list(w = c(1, 2, 3, 4, 5, 6), answer = matrix(c(0, 1, 2, 3,
@@ -72,7 +69,8 @@ with_parameters_test_that("A operator works in simple, manually verifiable cases
        )
 )
 
-with_parameters_test_that("L and A operators are linear", {
+
+with_parameters_test_that("L and A are linear operators", {
     w1 <- c(1, 2, 3, 4, 5, 6)
     w2 <- rev(w1)
     a <- runif(1)
@@ -84,27 +82,25 @@ with_parameters_test_that("L and A operators are linear", {
   cases(list(operator = L), list(operator = A))
 )
 
-test_that("test_LStarOp", {
-   # Test the LStar operator in a basic case
-   Y <- diag(4)
-   w <- LStarOp(Y)
-   expect_that(all(w == array(2, 6)), is_true())
 
-   w <- Lstar(Y)
-   expect_that(all(w == array(2, 6)), is_true())
+test_that("verify in L star operator in basic case", {
+   Y <- diag(4)
+   expect_that(all(LStarOp(Y) == array(2, 6)), is_true())
+   expect_that(all(Lstar(Y) == array(2, 6)), is_true())
 })
 
-test_that("test_LStarOp_random", {
-   # Test the LStar operator implementations are compatible among themselves
+
+test_that("test the agreement of different implementations of the Lstar operator", {
    Y <- matrix(rnorm(16), 4, 4)
    w1 <- LStarOp(Y)
    w2 <- LStarOpImpl(Y)
    w3 <- Lstar(Y)
-   expect_that(all(abs(w1 - w2) < 1e-6), is_true())
-   expect_that(all(abs(w2 - w3) < 1e-6), is_true())
+   expect_that(all(abs(w1 - w2) < 1e-9), is_true())
+   expect_that(all(abs(w2 - w3) < 1e-9), is_true())
 })
 
-test_that("test_inner_product_relation_between_LOp_and_LStarOp", {
+
+test_that("test the inner product relation between the operators L and Lstar", {
   # section 1.1 talks about an inner product equality relation
   # involving LOp and LStarOp, let's verify that
   n <- 4
@@ -113,55 +109,54 @@ test_that("test_inner_product_relation_between_LOp_and_LStarOp", {
   Lw <- LOp(w)
   y <- LStarOp(Y)
   expect_that(sum(diag(t(Y) %*% Lw)) == w %*% y, is_true())
-
   Lw <- L(w)
   y <- Lstar(Y)
   expect_that(sum(diag(t(Y) %*% Lw)) == w %*% y, is_true())
 })
 
-# Unfortunately, neither Eigen nor base R provide the canonical vec operator,
+
+# Neither Eigen nor base R provide the canonical vec operator,
 # so we need to code our own in C++ in order to compute the matrix form of
 # vec(L). Anyways, let's test our vec against matrixcalc::vec.
-test_that("test_vec_operator_against_matrixcalc", {
-    ncols <- sample(1:10, 1)
-    nrows <- sample(1:10, 1)
-    M <- matrix(runif(ncols * nrows), nrows, ncols)
-    expect_that(all(vec(M) == matrixcalc::vec(M)), is_true())
+test_that("test our vec operator with matrixcalc::vec", {
+  ncols <- sample(1:10, 1)
+  nrows <- sample(1:10, 1)
+  M <- matrix(runif(ncols * nrows), nrows, ncols)
+  expect_that(all(vec(M) == matrixcalc::vec(M)), is_true())
 })
 
-test_that("test_vec(L)_operator", {
-    # N = 2
-    R2 <- matrix(c(1, -1, -1, 1), 4, 1)
-    expect_that(all(R2 == vecLmat(2)), is_true())
 
-    # N = 3
-    R3 <- matrix(c(1, 1, 0,
-                  -1, 0, 0,
-                   0,-1, 0,
-                  -1, 0, 0,
-                   1, 0, 1,
-                   0, 0,-1,
-                   0,-1, 0,
-                   0, 0,-1,
-                   0, 1, 1), 9, 3, byrow = TRUE)
-    expect_that(all(R3 == vecLmat(3)), is_true())
-
-    # N = 4
-    R4 <- matrix(c(1, 1, 1, 0, 0, 0,
-                  -1, 0, 0, 0, 0, 0,
-                   0,-1, 0, 0, 0, 0,
-                   0, 0,-1, 0, 0, 0,
-                  -1, 0, 0, 0, 0, 0,
-                   1, 0, 0, 1, 1, 0,
-                   0, 0, 0,-1, 0, 0,
-                   0, 0, 0, 0,-1, 0,
-                   0,-1, 0, 0, 0, 0,
-                   0, 0, 0,-1, 0, 0,
-                   0, 1, 0, 1, 0, 1,
-                   0, 0, 0, 0, 0,-1,
-                   0, 0,-1, 0, 0, 0,
-                   0, 0, 0, 0,-1, 0,
-                   0, 0, 0, 0, 0,-1,
-                   0, 0, 1, 0, 1, 1), 16, 6, byrow = TRUE)
-    expect_that(all(R4 == vecLmat(4)), is_true())
+test_that("test the composition of the operator vec and L in manually verifiable cases", {
+  # n = 2
+  R2 <- matrix(c(1, -1, -1, 1), 4, 1)
+  expect_that(all(R2 == vecLmat(2)), is_true())
+  # n = 3
+  R3 <- matrix(c(1, 1, 0,
+                -1, 0, 0,
+                 0,-1, 0,
+                -1, 0, 0,
+                 1, 0, 1,
+                 0, 0,-1,
+                 0,-1, 0,
+                 0, 0,-1,
+                 0, 1, 1), 9, 3, byrow = TRUE)
+  expect_that(all(R3 == vecLmat(3)), is_true())
+  # n = 4
+  R4 <- matrix(c(1, 1, 1, 0, 0, 0,
+                -1, 0, 0, 0, 0, 0,
+                 0,-1, 0, 0, 0, 0,
+                 0, 0,-1, 0, 0, 0,
+                -1, 0, 0, 0, 0, 0,
+                 1, 0, 0, 1, 1, 0,
+                 0, 0, 0,-1, 0, 0,
+                 0, 0, 0, 0,-1, 0,
+                 0,-1, 0, 0, 0, 0,
+                 0, 0, 0,-1, 0, 0,
+                 0, 1, 0, 1, 0, 1,
+                 0, 0, 0, 0, 0,-1,
+                 0, 0,-1, 0, 0, 0,
+                 0, 0, 0, 0,-1, 0,
+                 0, 0, 0, 0, 0,-1,
+                 0, 0, 1, 0, 1, 1), 16, 6, byrow = TRUE)
+  expect_that(all(R4 == vecLmat(4)), is_true())
 })

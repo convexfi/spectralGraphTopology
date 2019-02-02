@@ -1,4 +1,4 @@
-context("Laplacian Matrix Estimation")
+context("Laplacian matrix estimation")
 library(testthat)
 library(spectralGraphTopology)
 
