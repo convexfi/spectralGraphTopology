@@ -5,7 +5,7 @@ library(viridis)
 library(latex2exp)
 set.seed(0)
 
-nnodes <- 120
+nnodes <- 60
 # get feature data
 df <- read.csv("Hymapfeat.txt", header = FALSE, sep = " ")
 Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
@@ -15,9 +15,12 @@ Y <- Y[, ns]
 df_names <- read.csv("Hymaplabel.txt", header = FALSE)
 names <- t(matrix(unlist(df_names), nrow = nrow(df_names)))
 names <- names[, ns]
+k <- length(unique(names))
+print(k)
 # estimate graph
-graph <- learn_laplacian_matrix(cov(Y)/max(Y), w0 = "naive", k = 7, beta = .25, beta_max = 10, nbeta = 10, maxiter = 1e5)
+graph <- learn_laplacian_matrix(cov(Y)/max(Y), w0 = "naive", k = k, beta = 10, maxiter = 1e5)
 print(graph$convergence)
+print(graph$lambda)
 net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
 # colorify edges and nodes
 colors <- c("#B33771", "#1B9CFC", "#EAB543", "#58B19F", "#D6A2E8", "#BDC581", "#182C61")

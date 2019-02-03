@@ -4,35 +4,33 @@ library(pals)
 library(extrafont)
 library(igraph)
 set.seed(42)
-n1 <- 8
-n2 <- 4
+n1 <- 5
+n2 <- 3
 bipartite <- sample_bipartite(n1, n2, type="Gnp", p = .9, directed=FALSE)
 E(bipartite)$weight <- runif(gsize(bipartite), min = 1, max = 2)
-
-#erdos_renyi <- erdos.renyi.game(n1 + n2, .3)
-#E(erdos_renyi)$weight <- runif(gsize(erdos_renyi), min = 0, max = .5)
-#Lerdo <- as.matrix(laplacian_matrix(erdos_renyi))
-
 Lw <- as.matrix(laplacian_matrix(bipartite))
 Aw <- diag(diag(Lw)) - Lw
 w_true <- Linv(Lw)
 n <- ncol(Lw)
-p <- 10 * n
+p <- n
 # get datapoints
 Y <- MASS::mvrnorm(p, rep(0, n), Sigma = MASS::ginv(Lw))
 # learn underlying graph
 S <- cov(Y)
-graph <- learn_adjacency_and_laplacian(S, w0 = "naive", beta1 = 10, beta2 = .5, maxiter = 1e5)
-print(graph$lambda)
-print(graph$psi)
+graph <- learn_bipartite_graph(S, z = 2, w0 = "qp", beta = 1e5, maxiter = 1e5)
 print(graph$obj_fun)
+print(graph$Lips_seq)
+print(Aw)
+print(graph$Aw)
 Sinv <- MASS::ginv(S)
 w_naive <- spectralGraphTopology:::w_init(w0 = "naive", Sinv)
 w_qp <- spectralGraphTopology:::w_init(w0 = "qp", Sinv)
+print(A(w_qp))
+print(A(w_naive))
 print(relativeError(graph$Aw, Aw))
-print(Fscore(graph$Aw, Aw, 5e-1))
+print(Fscore(graph$Aw, Aw, 5e-2))
 print(relativeError(A(w_qp), Aw))
-print(Fscore(A(w_qp), Aw, 5e-1))
+print(Fscore(A(w_qp), Aw, 5e-2))
 # build the network
 net <- graph_from_adjacency_matrix(Aw, mode = "undirected", weighted = TRUE)
 V(net)$type = V(bipartite)$type

@@ -111,7 +111,7 @@ learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 1e-4, ub = 1e4, 
 #' @export
 learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
                                   beta_max = beta, nbeta = 1, Lips = NULL,
-                                  maxiter = 1e4, Awtol = 1e-4, ftol = 1e-7) {
+                                  maxiter = 1e4, Awtol = 1e-4, ftol = 1e-6) {
   # number of nodes
   n <- ncol(S)
   J <- matrix(1/n, n, n)
@@ -127,10 +127,12 @@ learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
   V0 <- bipartite.V_update(Aw0, z)
   psi0 <- bipartite.psi_update(V0, Aw0)
   # save objective function value at initial guess
-  ll0 <- bipartite.loglikelihood(L(w0), K, J)
-  fun0 <- ll0 + bipartite.logprior(beta, Aw0, psi0, V0)
-  fun_seq <- c(fun0)
-  ll_seq <- c(ll0)
+  #ll0 <- bipartite.loglikelihood(L(w0), K, J)
+  #fun0 <- ll0 + bipartite.logprior(beta, Aw0, psi0, V0)
+  #fun_seq <- c(fun0)
+  #ll_seq <- c(ll0)
+  fun_seq <- c()
+  ll_seq <- c()
   Lips_seq <- c()
   #w_seq <- list(w0)
   time_seq <- c(0)
@@ -138,6 +140,10 @@ learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
   start_time <- proc.time()[3]
   beta_set <- beta * exp(seq(from = 0, to = log(beta_max/beta), length.out = nbeta))
   for (beta in beta_set) {
+    ll0 <- bipartite.loglikelihood(L(w0), K, J)
+    fun0 <- ll0 + bipartite.logprior(beta, Aw0, psi0, V0)
+    fun_seq <- c(fun_seq, fun0)
+    ll_seq <- c(ll_seq, ll0)
     for (i in 1:maxiter) {
       setTxtProgressBar(pb, i)
       # we need to make sure that the Lipschitz constant is large enough
@@ -197,7 +203,7 @@ learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
 #' @export
 learn_adjacency_and_laplacian <- function(S, z = 0, k = 1, w0 = "qp", alpha = 0.,
                                           beta1 = 1, beta2 = 1, lb = 1e-4, ub = 1e4,
-                                          maxiter = 1e4, Lwtol = 1e-6, ftol = 1e-6) {
+                                          maxiter = 1e4, Lwtol = 1e-4, ftol = 1e-6) {
   # number of nodes
   n <- ncol(S)
   # l1-norm penalty factor

@@ -1,8 +1,8 @@
-context("testUtils.R")
+context("utility functions")
 library(testthat)
 library(spectralGraphTopology)
 
-test_that("testBlockDiagonal", {
+test_that("consistency of blockDiag function", {
   N1 <- sample(1:10, 1)
   N2 <- sample(1:10, 1)
   L1 <- matrix(-1, N1, N1)
@@ -12,7 +12,7 @@ test_that("testBlockDiagonal", {
   expect_that(all(L == blockDiag(L1, L2)), is_true())
 })
 
-test_that("testBlockDiagonalThrowsException", {
+test_that("blockDiag throws an exception when shape is not square", {
   N1 <- sample(1:10, 1)
   N2 <- N1 + 1
   L2 <- matrix(2, N1, N2)
