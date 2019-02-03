@@ -36,6 +36,17 @@ test_that("learn_bipartite_graph converges with simple bipartite graph", {
 })
 
 
+test_that("learn_adjancecy_and_laplacian can learn k-component bipartite graph", {
+  w <- c(1, 0, 0, 1, 0, 1)
+  Lw <- blockDiag(L(w), L(w))
+  n <- ncol(Lw)
+  Y <- MASS::mvrnorm(2 * length(w) * 100, rep(0, n), MASS::ginv(Lw))
+  graph <- learn_adjacency_and_laplacian(cov(Y), k = 2, beta1 = 20)
+  expect_that(relativeError(Lw, graph$Lw) < 1e-1, is_true())
+  expect_that(Fscore(Lw, graph$Lw, 1e-1) > .9, is_true())
+})
+
+
 test_that("learn_adjacency_and_laplacian_graph converges with simple bipartite graph", {
   w <- c(1, 0, 0, 1, 0, 1)
   Aw <- A(w)
