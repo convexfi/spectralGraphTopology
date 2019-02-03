@@ -30,7 +30,7 @@ test_that("learn_bipartite_graph converges with simple bipartite graph", {
   Aw <- A(w)
   n <- ncol(Aw)
   Y <- MASS::mvrnorm(1000, rep(0, n), MASS::ginv(L(w)))
-  res <- learn_bipartite_graph(cov(Y))
+  res <- learn_bipartite_graph(cov(Y), beta = 1e3)
   expect_that(relativeError(Aw, res$Aw) < 1e-1, is_true())
   expect_that(Fscore(Aw, res$Aw, 1e-1) > .9, is_true())
 })

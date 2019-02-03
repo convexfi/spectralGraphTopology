@@ -62,8 +62,8 @@ learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 1e-4, ub = 1e4, 
   U0 <- laplacian.U_update(Lw0, k)
   lambda0 <- laplacian.lambda_update(lb, ub, beta, U0, Lw0, k)
   # save objective function value at initial guess
-  ll0 <- laplacian.loglikelihood(Lw0, lambda0, K)
-  fun0 <- ll0 + laplacian.logprior(beta, Lw0, lambda0, U0)
+  ll0 <- laplacian.likelihood(Lw0, lambda0, K)
+  fun0 <- ll0 + laplacian.prior(beta, Lw0, lambda0, U0)
   fun_seq <- c(fun0)
   ll_seq <- c(ll0)
   #w_seq <- list(w0)
@@ -79,8 +79,8 @@ learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 1e-4, ub = 1e4, 
       U <- laplacian.U_update(Lw, k)
       lambda <- laplacian.lambda_update(lb, ub, beta, U, Lw, k)
       # compute negloglikelihood and objective function values
-      ll <- laplacian.loglikelihood(Lw, lambda, K)
-      fun <- ll + laplacian.logprior(beta, Lw, lambda, U)
+      ll <- laplacian.likelihood(Lw, lambda, K)
+      fun <- ll + laplacian.prior(beta, Lw, lambda, U)
       # save estimates
       time_seq <- c(time_seq, proc.time()[3] - start_time)
       ll_seq <- c(ll_seq, ll)
@@ -128,7 +128,7 @@ learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
   psi0 <- bipartite.psi_update(V0, Aw0)
   # save objective function value at initial guess
   #ll0 <- bipartite.loglikelihood(L(w0), K, J)
-  #fun0 <- ll0 + bipartite.logprior(beta, Aw0, psi0, V0)
+  #fun0 <- ll0 + bipartite.prior(beta, Aw0, psi0, V0)
   #fun_seq <- c(fun0)
   #ll_seq <- c(ll0)
   fun_seq <- c()
@@ -140,8 +140,8 @@ learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
   start_time <- proc.time()[3]
   beta_set <- beta * exp(seq(from = 0, to = log(beta_max/beta), length.out = nbeta))
   for (beta in beta_set) {
-    ll0 <- bipartite.loglikelihood(L(w0), K, J)
-    fun0 <- ll0 + bipartite.logprior(beta, Aw0, psi0, V0)
+    ll0 <- bipartite.likelihood(L(w0), K, J)
+    fun0 <- ll0 + bipartite.prior(beta, Aw0, psi0, V0)
     fun_seq <- c(fun_seq, fun0)
     ll_seq <- c(ll_seq, ll0)
     for (i in 1:maxiter) {
@@ -173,8 +173,8 @@ learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
       V <- bipartite.V_update(Aw, z)
       psi <- bipartite.psi_update(V, Aw)
       # compute negloglikelihood and objective function values
-      ll <- bipartite.loglikelihood(Lw, K, J)
-      fun <- ll + bipartite.logprior(beta, Aw, psi, V)
+      ll <- bipartite.likelihood(Lw, K, J)
+      fun <- ll + bipartite.prior(beta, Aw, psi, V)
       # save measurements of time and objective functions
       time_seq <- c(time_seq, proc.time()[3] - start_time)
       ll_seq <- c(ll_seq, ll)
@@ -219,8 +219,8 @@ learn_adjacency_and_laplacian <- function(S, z = 0, k = 1, w0 = "qp", alpha = 0.
   U0 <- joint.U_update(Lw0, k)
   lambda0 <- joint.lambda_update(lb, ub, beta1, U0, Lw0, k)
   # save objective function value at initial guess
-  ll0 <- joint.loglikelihood(Lw0, lambda0, K)
-  fun0 <- ll0 + joint.logprior(beta1, beta2, Lw0, Aw0, U0, V0, lambda0, psi0)
+  ll0 <- joint.likelihood(Lw0, lambda0, K)
+  fun0 <- ll0 + joint.prior(beta1, beta2, Lw0, Aw0, U0, V0, lambda0, psi0)
   fun_seq <- c(fun0)
   ll_seq <- c(ll0)
   time_seq <- c(0)
@@ -236,8 +236,8 @@ learn_adjacency_and_laplacian <- function(S, z = 0, k = 1, w0 = "qp", alpha = 0.
     lambda <- joint.lambda_update(lb, ub, beta1, U, Lw, k)
     psi <- joint.psi_update(V, Aw)
     # compute negloglikelihood and objective function values
-    ll <- joint.loglikelihood(Lw, lambda, K)
-    fun <- ll + joint.logprior(beta1, beta2, Lw, Aw, U, V, lambda, psi)
+    ll <- joint.likelihood(Lw, lambda, K)
+    fun <- ll + joint.prior(beta1, beta2, Lw, Aw, U, V, lambda, psi)
     # save measurements of time and objective functions
     time_seq <- c(time_seq, proc.time()[3] - start_time)
     ll_seq <- c(ll_seq, ll)
@@ -282,8 +282,8 @@ learn_dregular_graph <- function(S, d = 1, k = 1, w0 = "qp", alpha = 0.,
   U0 <- dregular.U_update(Lw0, k)
   lambda0 <- dregular.lambda_update(lb, ub, beta1, U0, Lw0, k)
   # save objective function value at initial guess
-  ll0 <- dregular.loglikelihood(Lw0, lambda0, K)
-  fun0 <- ll0 + dregular.logprior(beta1, beta2, Lw0, Aw0, U0, lambda0)
+  ll0 <- dregular.likelihood(Lw0, lambda0, K)
+  fun0 <- ll0 + dregular.prior(beta1, beta2, Lw0, Aw0, U0, lambda0)
   fun_seq <- c(fun0)
   ll_seq <- c(ll0)
   time_seq <- c(0)
@@ -297,8 +297,8 @@ learn_dregular_graph <- function(S, d = 1, k = 1, w0 = "qp", alpha = 0.,
     U <- dregular.U_update(Lw, n, k)
     lambda <- dregular.lambda_update(lb, ub, beta1, U, Lw, k)
     # compute negloglikelihood and objective function values
-    ll <- dregular.loglikelihood(Lw, lambda, K)
-    fun <- ll + dregular.logprior(beta1, beta2, Lw, Aw, U, lambda)
+    ll <- dregular.likelihood(Lw, lambda, K)
+    fun <- ll + dregular.prior(beta1, beta2, Lw, Aw, U, lambda)
     # save measurements of time and objective functions
     time_seq <- c(time_seq, proc.time()[3] - start_time)
     ll_seq <- c(ll_seq, ll)
