@@ -292,7 +292,7 @@ learn_dregular_graph <- function(S, d = 1, k = 1, w0 = "qp", alpha = 0.,
     lambda <- dregular.lambda_update(lb, ub, beta1, U, Lw, k)
     # compute negloglikelihood and objective function values
     ll <- dregular.loglikelihood(Lw, lambda, K)
-    fun <- ll + dregular.logprior(beta1, beta2, Lw, Aw, U, V, lambda, psi)
+    fun <- ll + dregular.logprior(beta1, beta2, Lw, Aw, U, lambda)
     # save measurements of time and objective functions
     time_seq <- c(time_seq, proc.time()[3] - start_time)
     ll_seq <- c(ll_seq, ll)
