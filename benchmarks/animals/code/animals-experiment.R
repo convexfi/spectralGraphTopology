@@ -6,21 +6,21 @@ library(latex2exp)
 library(huge)
 set.seed(0)
 
-run_animals <- function(K) {
+run_animals <- function(k) {
   df <- read.csv("animals.txt", header = FALSE)
   names <- matrix(unlist(read.csv("animals_names.txt", header = FALSE)))
   Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
   N <- ncol(Y)
-  graph <- learnLaplacianGraphTopology(cov(Y) + diag(rep(1/3, N)), w0 = "qp",
-                                       K = K, beta = .5)
-  net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
+  graph <- learn_laplacian_matrix(cov(Y) + diag(rep(1/3, N)), w0 = "qp",
+                                  k = k, beta = .5)
+  net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
   colors <- brewer.reds(100)
   c_scale <- colorRamp(colors)
   E(net)$color = apply(c_scale(abs(E(net)$weight) / max(abs(E(net)$weight))), 1,
                        function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
   V(net)$color = "pink"
   setEPS()
-  postscript(paste0("../latex/figures/animals_graph_k", toString(K), ".ps"))
+  postscript(paste0("../latex/figures/animals_graph_k", toString(k), ".ps"))
   #layout <- layout_in_circle(net, order = V(net))
   #plot(net, layout = layout, vertex.label = names, vertex.size = 3)
   plot(net, vertex.label = names,
@@ -30,9 +30,14 @@ run_animals <- function(K) {
        vertex.label.cex = .8,
        vertex.label.color = "black")
   dev.off()
+  gr = .5 * (1 + sqrt(5))
+  setEPS()
+  postscript("est_animal_adjacency_matrix.ps", family = "Times", height = 5, width = gr * 3.5)
+  corrplot(graph$Aw / max(graph$Aw), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+  dev.off()
 }
 
-for(k in c(1, 2, 4, 8, 10)) {
+for(k in c(10)) {
   print(paste("running animals exp. for K =", toString(k)))
-  run_animals(K = k)
+  run_animals(k)
 }

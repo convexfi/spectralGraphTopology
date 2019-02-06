@@ -1,4 +1,4 @@
-context("operators such as L, Lstar, A, Astar")
+context("operators")
 library(patrick)
 library(testthat)
 library(spectralGraphTopology)

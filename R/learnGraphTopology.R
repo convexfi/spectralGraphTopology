@@ -109,7 +109,7 @@ learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 1e-4, ub = 1e4, 
 
 
 #' @export
-learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
+learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1e3,
                                   beta_max = beta, nbeta = 1, Lips = NULL,
                                   maxiter = 1e4, Awtol = 1e-4, ftol = 1e-6) {
   # number of nodes
@@ -201,8 +201,8 @@ learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1.,
 
 
 #' @export
-learn_adjacency_and_laplacian <- function(S, z = 0, k = 1, w0 = "qp", alpha = 0.,
-                                          beta1 = 1, beta2 = 1, lb = 1e-4, ub = 1e4,
+learn_adjacency_and_laplacian <- function(S, z = 0, k = 1, w0 = "naive", alpha = 0.,
+                                          beta1 = 1, beta2 = 1e3, lb = 1e-4, ub = 1e4,
                                           maxiter = 1e4, Lwtol = 1e-4, ftol = 1e-6) {
   # number of nodes
   n <- ncol(S)
@@ -267,8 +267,8 @@ learn_adjacency_and_laplacian <- function(S, z = 0, k = 1, w0 = "qp", alpha = 0.
 
 #' @export
 learn_dregular_graph <- function(S, d = 1, k = 1, w0 = "qp", alpha = 0.,
-                                 beta1 = 1, beta2 = 1, lb = 1e-4, ub = 1e4,
-                                 maxiter = 1e4, Lwtol = 1e-6, ftol = 1e-6) {
+                                 beta1 = 1, beta2 = 1e3, lb = 1e-4, ub = 1e4,
+                                 maxiter = 1e4, Lwtol = 1e-4, ftol = 1e-6) {
   # number of nodes
   n <- ncol(S)
   # l1-norm penalty factor

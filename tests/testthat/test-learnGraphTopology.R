@@ -80,9 +80,11 @@ test_that("learn_adjacency_and_laplacian with two components graph", {
               c(0, -1, 0, 1))
   n <- ncol(Lw)
   Y <- MASS::mvrnorm(1000, rep(0, n), MASS::ginv(Lw))
-  res <- learn_adjacency_and_laplacian(cov(Y), k = 2, beta1 = 20)
-  expect_that(relativeError(Lw, res$Lw) < 1e-1, is_true())
-  expect_that(Fscore(Lw, res$Lw, 1e-1) > .9, is_true())
+  S <- cov(Y)
+  res1 <- learn_adjacency_and_laplacian(S, w0 = "qp", k = 2, beta1 = 40, beta2 = 0)
+  res2 <- learn_laplacian_matrix(S, w0 = "qp", k = 2, beta = 40)
+  expect_that(all(abs(res1$obj_fun - res2$obj_fun) < 1e-9), is_true())
+  expect_that(all(abs(res1$w - res2$w) < 1e-9), is_true())
 })
 
 
@@ -108,7 +110,7 @@ test_that("learn_adjacency_and_laplacian with two components graph #2", {
 
   Lw <- blockDiag(Lw1, Lw2)
   Y <- MASS::mvrnorm(5000, rep(0, n1 + n2), MASS::ginv(Lw))
-  res <- learn_adjacency_and_laplacian(cov(Y), k = 2, beta1 = 40, beta2 = 0)
+  res <- learn_adjacency_and_laplacian(cov(Y), k = 2, beta1 = 100, beta2 = 0)
   expect_that(relativeError(Lw, res$Lw) < 1e-1, is_true())
   expect_that(Fscore(Lw, res$Lw, 1e-1) > .9, is_true())
 })
