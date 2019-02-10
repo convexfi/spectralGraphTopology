@@ -1,6 +1,6 @@
 library(extrafont)
 library(latex2exp)
-ratios <- c(10, 30, 100, 250, 500, 1000)
+ratios <- c(10, 30, 100, 250, 500, 1000, 2000, 4000, 8000)
 n_ratios <- c(1:length(ratios))
 
 rel_err_cgl   <- readRDS(file = "rel-err-CGL.rds")
@@ -41,6 +41,6 @@ lines(n_ratios, fscore_cgl,  type = "b", lty=lty[3], pch=pch[3], cex=.75, col = 
 #lines(n_ratios, fscore_cglA, type = "b", lty=lty[4], pch=pch[4], cex=.75, col = colors[4], xaxt = "n")
 lines(n_ratios, fscore_spec, type = "b", lty=lty[4], pch=pch[4], cex=.75, col = colors[4], xaxt = "n")
 axis(side = 1, at = n_ratios, labels = ratios)
-legend("topleft", legend=legend, col=colors, pch=pch, lty=lty, bty="n")
+legend("bottomright", legend=legend, col=colors, pch=pch, lty=lty, bty="n")
 dev.off()
 embed_fonts("../latex/figures/fscore_bipartite.ps", outfile="../latex/figures/fscore_bipartite.ps")

@@ -12,7 +12,7 @@ n <- n1 + n2
 pc <- .6
 
 n_realizations <- 20
-ratios <- c(.5, .75, 1, 2, 5, 10, 30, 100, 250, 500, 1000)
+ratios <- c(10, 30, 100, 250, 500, 1000, 2000, 4000, 8000)
 rel_err_sgl <- array(0, length(ratios))
 rel_err_cgl <- array(0, length(ratios))
 rel_err_naive <- array(0, length(ratios))
@@ -59,7 +59,7 @@ for (j in n_ratios) {
       tmp_rel_cgl <- relativeError(Aw, Acgl)
       if (tmp_rel_cgl < rel_cgl) {
         rel_cgl <- tmp_rel_cgl
-        fs_cgl <- Fscore(Aw, Acgl, 1e-2)
+        fs_cgl <- Fscore(Aw, Acgl, 1e-1)
       }
     }
     Sinv <- MASS::ginv(S)
@@ -70,11 +70,11 @@ for (j in n_ratios) {
     Anaive <- A(w_naive)
     Aqp <- A(w_qp)
     rel_sgl = relativeError(Aw, graph$Aw)
-    fs_sgl = Fscore(Aw, graph$Aw, 1e-2)
+    fs_sgl = Fscore(Aw, graph$Aw, 1e-1)
     rel_naive = relativeError(Aw, Anaive)
-    fs_naive = Fscore(Aw, Anaive, 1e-2)
+    fs_naive = Fscore(Aw, Anaive, 1e-1)
     rel_qp = relativeError(Aw, Aqp)
-    fs_qp = Fscore(Aw, Aqp, 1e-2)
+    fs_qp = Fscore(Aw, Aqp, 1e-1)
     rel_err_sgl[j] <- rel_err_sgl[j] + rel_sgl
     fscore_sgl[j] <- fscore_sgl[j] + fs_sgl
     rel_err_cgl[j] <- rel_err_cgl[j] + rel_cgl

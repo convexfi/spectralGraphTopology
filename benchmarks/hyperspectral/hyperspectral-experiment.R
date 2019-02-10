@@ -9,6 +9,7 @@ nnodes <- 60
 # get feature data
 df <- read.csv("Hymapfeat.txt", header = FALSE, sep = " ")
 Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
+print(dim(Y))
 ns <- sample(c(1:nrow(df)), nnodes)
 Y <- Y[, ns]
 # get labels
@@ -18,7 +19,8 @@ names <- names[, ns]
 k <- length(unique(names))
 print(k)
 # estimate graph
-graph <- learn_laplacian_matrix(cov(Y)/max(Y), w0 = "naive", k = k, beta = 10, maxiter = 1e5)
+S <- cov(Y)
+graph <- learn_laplacian_matrix(S/max(S), w0 = "qp", k = k, beta = 2, maxiter = 1e5)
 print(graph$convergence)
 print(graph$lambda)
 net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)

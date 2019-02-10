@@ -48,7 +48,7 @@
 #' @export
 learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alpha = 0.,
                                    beta = 1., beta_max = beta, nbeta = 1, maxiter = 10000,
-                                   Lwtol = 1e-4, ftol = 1e-6) {
+                                   Lwtol = 1e-4, ftol = 1e-4) {
   # number of nodes
   n <- nrow(S)
   # l1-norm penalty factor
@@ -111,7 +111,7 @@ learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 1e-4, ub = 1e4, 
 #' @export
 learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1e3,
                                   beta_max = beta, nbeta = 1, Lips = NULL,
-                                  maxiter = 1e4, Awtol = 1e-4, ftol = 1e-6) {
+                                  maxiter = 1e4, Awtol = 1e-4, ftol = 1e-4) {
   # number of nodes
   n <- ncol(S)
   J <- matrix(1/n, n, n)
@@ -203,7 +203,7 @@ learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1e3
 #' @export
 learn_adjacency_and_laplacian <- function(S, z = 0, k = 1, w0 = "naive", alpha = 0.,
                                           beta1 = 1, beta2 = 1e3, lb = 1e-4, ub = 1e4,
-                                          maxiter = 1e4, Lwtol = 1e-4, ftol = 1e-6) {
+                                          maxiter = 1e4, Lwtol = 1e-4, ftol = 1e-4) {
   # number of nodes
   n <- ncol(S)
   # l1-norm penalty factor
@@ -266,9 +266,9 @@ learn_adjacency_and_laplacian <- function(S, z = 0, k = 1, w0 = "naive", alpha =
 
 
 #' @export
-learn_dregular_graph <- function(S, d = 1, k = 1, w0 = "qp", alpha = 0.,
+learn_dregular_graph <- function(S, k = 1, w0 = "qp", alpha = 0.,
                                  beta1 = 1, beta2 = 1e3, lb = 1e-4, ub = 1e4,
-                                 maxiter = 1e4, Lwtol = 1e-4, ftol = 1e-6) {
+                                 maxiter = 1e4, Lwtol = 1e-4, ftol = 1e-4) {
   # number of nodes
   n <- ncol(S)
   # l1-norm penalty factor
@@ -281,6 +281,7 @@ learn_dregular_graph <- function(S, d = 1, k = 1, w0 = "qp", alpha = 0.,
   Lw0 <- L(w0)
   U0 <- dregular.U_update(Lw0, k)
   lambda0 <- dregular.lambda_update(lb, ub, beta1, U0, Lw0, k)
+  d <- mean(lambda0 + diag(t(U0) %*% Aw0 %*% U0))
   # save objective function value at initial guess
   ll0 <- dregular.likelihood(Lw0, lambda0, K)
   fun0 <- ll0 + dregular.prior(beta1, beta2, Lw0, Aw0, U0, lambda0)
@@ -296,6 +297,7 @@ learn_dregular_graph <- function(S, d = 1, k = 1, w0 = "qp", alpha = 0.,
     Aw <- A(w)
     U <- dregular.U_update(Lw, n, k)
     lambda <- dregular.lambda_update(lb, ub, beta1, U, Lw, k)
+    d <- mean(lambda + diag(t(U) %*% Aw %*% U))
     # compute negloglikelihood and objective function values
     ll <- dregular.likelihood(Lw, lambda, K)
     fun <- ll + dregular.prior(beta1, beta2, Lw, Aw, U, lambda)
@@ -318,7 +320,7 @@ learn_dregular_graph <- function(S, d = 1, k = 1, w0 = "qp", alpha = 0.,
     Lw0 <- Lw
     Aw0 <- Aw
   }
-  return(list(Lw = Lw, Aw = Aw, obj_fun = fun_seq, loglike = ll_seq, w = w,
+  return(list(Lw = Lw, Aw = Aw, d = d, obj_fun = fun_seq, loglike = ll_seq, w = w,
               lambda = lambda, U = U, elapsed_time = time_seq,
               convergence = !(i == maxiter)))
 }
