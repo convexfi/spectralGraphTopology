@@ -1,9 +1,12 @@
 w_init <- function(w0, Sinv) {
   if (is.character(w0)) {
     if (w0 == "qp") {
-      R <- vecLmat(ncol(Sinv))
-      qp <- quadprog::solve.QP(crossprod(R), t(R) %*% vec(Sinv), diag(ncol(R)))
-      w0 <- qp$solution
+      R <- Matrix::Matrix(vecLmat(ncol(Sinv)), sparse = TRUE)
+      qp <- osqp::solve_osqp(P = Matrix::crossprod(R), q = -Matrix::t(R) %*% vec(Sinv),
+                             A = Matrix::Matrix(diag(ncol(R)), sparse = TRUE),
+                             l = rep_len(0, ncol(R)), u = rep_len(Inf, ncol(R)),
+                             osqp::osqpSettings(verbose = FALSE))
+      w0 <- qp$x
     } else if (w0 == "naive") {
       w0 <- Linv(Sinv)
       w0[w0 < 0] <- 0
@@ -40,12 +43,13 @@ bipartite.w_update <- function(w, Aw, V, beta, psi, K, J, Lips) {
 }
 
 
-dregular.w_update <- function(w, Lw, Aw, U, beta1, beta2, lambda, K, d) {
+dregular.w_update <- function(w, Lw, Aw, U, beta1, beta2, lambda, d, K) {
   n <- ncol(Aw)
   ULmdUT <- crossprod(sqrt(lambda) * t(U))
   grad_f <- Lstar(beta1 * (Lw - ULmdUT) + K) + beta2 * Astar(Aw - ULmdUT + diag(d, n))
   w_update <- w - .5 * grad_f / (beta1 * n + beta2)
   w_update[w_update < 0] <- 0
+  return(w_update)
 }
 
 

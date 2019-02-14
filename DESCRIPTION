@@ -7,7 +7,7 @@ Authors@R: c(
   person("Ze", "Vinicius", role = "aut", email = "jvmirca@gmail.com"),
   person(c("Daniel", "P."), "Palomar", role = c("cre", "aut"), email = "daniel.p.palomar@gmail.com")
   )
-Maintainer: Vinicius Ze <jvmirca@gmail.com>
+Maintainer: Ze Vinicius <jvmirca@gmail.com>
 URL: https://github.com/dppalomar/spectralGraphTopology
 BugReports: https://github.com/dppalomar/spectralGraphTopology/issues
 Depends:

@@ -27,18 +27,20 @@ alpha = 0.003584478
 setVariable(matlab, alpha = alpha)
 evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-6, 1e-6, 40, 1)")
 Lcgl <- getVariable(matlab, "Lcgl")
-graph <- learnLaplacianGraphTopology(S, w0 = "naive", beta = 10, alpha = 5e-3)
+graph <- learn_laplacian_matrix(S, w0 = "naive", beta = 10, alpha = 5e-3,
+                                ftol = 1e-6, Lwtol = 1e-4, maxiter = 1e5)
+print(graph$convergence)
 
+eps <- 5e-2
 # compute adjacency matrices
-W <- diag(diag(graph$Lw)) - graph$Lw
-W[W < eps] <- 0
+graph$Aw[graph$Aw < eps] <- 0
 W_cgl <- diag(diag(Lcgl$Lcgl)) - Lcgl$Lcgl
 W_cgl[W_cgl < eps] <- 0
 # compute grids
-grid_spec <- graph_from_adjacency_matrix(W, mode = "undirected", weighted = TRUE)
+grid_spec <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
 grid_cgl <- graph_from_adjacency_matrix(W_cgl, mode = "undirected", weighted = TRUE)
 
-colors <- viridis(5, begin = 0, end = 1, direction = -1)
+colors <- inferno(5, begin = 0, end = 1, direction = -1)
 c_scale <- colorRamp(colors)
 E(grid_spec)$color = apply(c_scale(E(grid_spec)$weight / max(E(grid_spec)$weight)), 1,
                           function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
@@ -46,6 +48,9 @@ E(grid_cgl)$color = apply(c_scale(E(grid_cgl)$weight / max(E(grid_cgl)$weight)),
                           function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
 E(grid)$color = apply(c_scale(E(grid)$weight / max(E(grid)$weight)), 1,
                       function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+V(grid_spec)$color = "pink"
+V(grid_cgl)$color = "pink"
+V(grid)$color = "pink"
 
 la_spec <- layout_on_grid(grid_spec)
 la_cgl <- layout_on_grid(grid_cgl)

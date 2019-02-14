@@ -37,16 +37,16 @@ joint.prior <- function(beta1, beta2, Lw, Aw, U, V, lambda, psi) {
   return(laplacian.prior(beta1, Lw, lambda, U) + bipartite.prior(beta2, Aw, psi, V))
 }
 
-dregular.obj_fun <- function(Lw, Aw, U, lambda, beta1, beta2, K) {
+dregular.obj_fun <- function(Lw, Aw, U, lambda, beta1, beta2, K, d) {
   return(dregular.likelihood(Lw, lambda, K) +
-         dregular.prior(beta1, beta2, Lw, Aw, U, lambda))
+         dregular.prior(beta1, beta2, Lw, Aw, U, lambda, d))
 }
 
 dregular.likelihood <- function(...) {
   return(laplacian.likelihood(...))
 }
 
-dregular.prior <- function(beta1, beta2, Lw, Aw, U, lambda) {
+dregular.prior <- function(beta1, beta2, Lw, Aw, U, lambda, d) {
   return(laplacian.prior(beta1, Lw, lambda, U) +
          .5 * beta2 * norm(Aw - U %*% diag(d - lambda) %*% t(U), type="F")^2)
 }

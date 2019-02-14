@@ -6,7 +6,7 @@
 \usage{
 learn_laplacian_matrix(S, k = 1, w0 = "naive", lb = 1e-04,
   ub = 10000, alpha = 0, beta = 1, beta_max = beta, nbeta = 1,
-  maxiter = 10000, Lwtol = 1e-04, ftol = 1e-06)
+  maxiter = 10000, Lwtol = 1e-04, ftol = 1e-04)
 }
 \arguments{
 \item{S}{N-by-N sample covariance matrix, where N is the number of nodes}

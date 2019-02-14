@@ -13,6 +13,7 @@ k <- 7
 k_set <- c(1:14)
 fs <- array(0, length(k_set))
 re <- array(0, length(k_set))
+bic <- array(0, length(k_set))
 P <- diag(1, k)
 # K-component graph
 mgraph <- sample_sbm(n, pref.matrix = P, block.sizes = c(rep(n / k, k)))
@@ -34,14 +35,17 @@ for (l in c(1:n_realizations)) {
   w0 <- qp$solution
   for (j in c(1:length(k_set))) {
     cat("\nRunning simulation for K = ", k_set[j], "\n")
-    graph <- learn_laplacian_matrix(S, k = k_set[j], w0 = w0, beta = 1e-1,
-                                    alpha = 1e-2, ftol = 1e-4, Lwtol = 1e-4)
+    graph <- learn_laplacian_matrix(S, k = k_set[j], w0 = w0, beta = 1e-1, alpha = 1e-2)
     re[j] <- re[j] + relativeError(Ltrue, graph$Lw)
     fs[j] <- fs[j] + Fscore(Ltrue, graph$Lw, 1e-2)
+    bic[j] <- bic[j] + k_set[j] + graph$obj_fun[length(graph$obj_fun)]
   }
 }
 re <- re / n_realizations
 fs <- fs / n_realizations
+bic <- bic / n_realizations
 
 saveRDS(re, "relerror.rds")
 saveRDS(fs, "fscore.rds")
+saveRDS(bic, "bic.rds")
+

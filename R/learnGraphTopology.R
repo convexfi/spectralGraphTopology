@@ -281,10 +281,10 @@ learn_dregular_graph <- function(S, k = 1, w0 = "qp", alpha = 0.,
   Lw0 <- L(w0)
   U0 <- dregular.U_update(Lw0, k)
   lambda0 <- dregular.lambda_update(lb, ub, beta1, U0, Lw0, k)
-  d <- mean(lambda0 + diag(t(U0) %*% Aw0 %*% U0))
+  d0 <- mean(lambda0)
   # save objective function value at initial guess
   ll0 <- dregular.likelihood(Lw0, lambda0, K)
-  fun0 <- ll0 + dregular.prior(beta1, beta2, Lw0, Aw0, U0, lambda0)
+  fun0 <- ll0 + dregular.prior(beta1, beta2, Lw0, Aw0, U0, lambda0, d0)
   fun_seq <- c(fun0)
   ll_seq <- c(ll0)
   time_seq <- c(0)
@@ -292,15 +292,15 @@ learn_dregular_graph <- function(S, k = 1, w0 = "qp", alpha = 0.,
   start_time <- proc.time()[3]
   for (i in c(1:maxiter)) {
     setTxtProgressBar(pb, i)
-    w <- dregular.w_update(w0, Lw0, Aw0, U0, beta1, beta2, lambda0, K, d)
+    w <- dregular.w_update(w0, Lw0, Aw0, U0, beta1, beta2, lambda0, d0, K)
     Lw <- L(w)
     Aw <- A(w)
-    U <- dregular.U_update(Lw, n, k)
-    lambda <- dregular.lambda_update(lb, ub, beta1, U, Lw, k)
-    d <- mean(lambda + diag(t(U) %*% Aw %*% U))
+    U <- dregular.U_update(Lw, k)
+    lambda <- dregular.lambda_update(lb, ub, beta1 + beta2, U, Lw, k)
+    d <- mean(lambda)
     # compute negloglikelihood and objective function values
     ll <- dregular.likelihood(Lw, lambda, K)
-    fun <- ll + dregular.prior(beta1, beta2, Lw, Aw, U, lambda)
+    fun <- ll + dregular.prior(beta1, beta2, Lw, Aw, U, lambda, d)
     # save measurements of time and objective functions
     time_seq <- c(time_seq, proc.time()[3] - start_time)
     ll_seq <- c(ll_seq, ll)

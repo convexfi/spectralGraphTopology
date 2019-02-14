@@ -13,6 +13,7 @@ run_animals <- function(k) {
   N <- ncol(Y)
   graph <- learn_laplacian_matrix(cov(Y) + diag(rep(1/3, N)), w0 = "qp",
                                   k = k, beta = .5)
+  U <- eigenvectors(graph$Lw)
   net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
   colors <- brewer.reds(100)
   c_scale <- colorRamp(colors)

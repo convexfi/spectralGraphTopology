@@ -1,17 +1,18 @@
 library(spectralGraphTopology)
 library(igraph)
 library(pals)
+library(matrixStats)
 library(viridis)
 library(latex2exp)
 set.seed(0)
 
-nnodes <- 60
+nnodes <- 1000
 # get feature data
 df <- read.csv("Hymapfeat.txt", header = FALSE, sep = " ")
 Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
-print(dim(Y))
 ns <- sample(c(1:nrow(df)), nnodes)
 Y <- Y[, ns]
+Y <- scale(Y)
 # get labels
 df_names <- read.csv("Hymaplabel.txt", header = FALSE)
 names <- t(matrix(unlist(df_names), nrow = nrow(df_names)))
@@ -20,7 +21,7 @@ k <- length(unique(names))
 print(k)
 # estimate graph
 S <- cov(Y)
-graph <- learn_laplacian_matrix(S/max(S), w0 = "qp", k = k, beta = 2, maxiter = 1e5)
+graph <- learn_laplacian_matrix(S/max(S), w0 = "naive", k = k, beta = 1.5, alpha = 1.5, maxiter = 1e5)
 print(graph$convergence)
 print(graph$lambda)
 net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)

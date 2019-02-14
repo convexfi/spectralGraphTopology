@@ -7,11 +7,11 @@ Y <- log(stockdata$data[2:1258,]/stockdata$data[1:1257,])
 labels <- stockdata$info[, 2]
 unique_labels <- unique(labels)
 k <- length(unique_labels)
+print(k)
 S <- cov(Y)
 print(dim(S))
-graph <- learn_laplacian_matrix(S/max(S), k = 1, beta = 10, maxiter = 1e5)
+graph <- learn_laplacian_matrix(S/max(S), k = k, beta = 2, alpha = 5e-1, maxiter = 1e5)
 print(graph$convergence)
-iter <- length(graph$obj_fun)
 clusters <- numeric(k)
 for (i in 1:k) {
   clusters[labels == unique_labels[i]] <- i
