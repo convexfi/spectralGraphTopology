@@ -12,7 +12,7 @@ df_names <- read.csv("labels.csv", header = FALSE, nrows = n)
 names <- t(matrix(unlist(df_names), nrow = nrow(df_names)))
 names <- names[2, 1:n]
 
-spec <- specc(t(Y), centers = 5)
+spec <- specc(t(Y), centers = 5, iterations = 1e3)
 spec_cluster <- as.vector(as.numeric(factor(spec)))
 A <- matrix(0, n, n)
 for (i in c(1:(n-1)))
@@ -20,7 +20,7 @@ for (i in c(1:(n-1)))
     if (spec_cluster[i] == spec_cluster[j])
       A[i, j] <- 1
 A <- A + t(A)
-spec_net <- graph_from_adjacency_matrix(0.05 * A, mode = "undirected", weighted = TRUE)
+spec_net <- graph_from_adjacency_matrix(0.01 * A, mode = "undirected", weighted = TRUE)
 colors <- c("#34495E", "#706FD3", "#FF5252", "#33D9B2", "#34ACE0")
 clusters <- array(0, length(names))
 for (i in c(1:length(names))) {
