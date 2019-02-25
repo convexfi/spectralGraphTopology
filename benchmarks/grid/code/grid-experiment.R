@@ -3,7 +3,7 @@ library(R.matlab)
 library(spectralGraphTopology)
 library(extrafont)
 library(latex2exp)
-set.seed(23)
+set.seed(42)
 
 N_realizations <- 20
 ratios <- c(1., 5., 10, 30, 100, 250, 500, 1000)
@@ -44,7 +44,8 @@ for (j in n_ratios) {
     alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(N)/ T), 0)
     # run spectralGraphTopology
     if (ratios[j] <= 1)
-      graph <- learn_laplacian_matrix(S, w0 = "naive", beta = 1e-2, beta_max = 4, nbeta = 20)#, alpha = 5e-3)
+      graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 1e-1, beta_max = 4, nbeta = 20,
+                                      ftol = 1e-6, maxiter = 1e5)#, alpha = 5e-3)
     else
       graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 10,
                                       alpha = 5e-3, ftol = 1e-6)
@@ -67,10 +68,9 @@ for (j in n_ratios) {
         fs_cgl <- Fscore(Ltrue, Lcgl$Lcgl, 5e-2)
       }
     }
-
     rel_spec <- relativeError(Ltrue, graph$Lw)
-    fs_spec <- Fscore(Ltrue, graph$Lw, 5e-2)
     print(rel_spec)
+    fs_spec <- Fscore(Ltrue, graph$Lw, 5e-2)
     rel_naive <- relativeError(Ltrue, Lnaive)
     fs_naive <- Fscore(Ltrue, Lnaive, 5e-2)
     rel_qp <- relativeError(Ltrue, Lqp)

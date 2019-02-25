@@ -31,69 +31,43 @@ Anoisy <- diag(diag(Lnoisy)) - Lnoisy
 Y <- MASS::mvrnorm(p, rep(0, n), Sigma = MASS::ginv(Lnoisy))
 S <- cov(Y)
 graph <- learn_bipartite_graph(S, z = abs(n2 - n1), w0 = "qp", beta = 1e5, ftol = 1e-6, maxiter = 1e5)
-#Sinv <- MASS::ginv(S)
-#w_naive <- spectralGraphTopology:::w_init(w0 = "naive", Sinv)
-#w_qp <- spectralGraphTopology:::w_init(w0 = "qp", Sinv)
-#Lnaive <- L(w_naive)
-#Lqp <- L(w_qp)
-#Aqp <- diag(diag(Lqp)) - Lqp
 print(relativeError(Aw, graph$Aw))
 print(Fscore(Aw, graph$Aw, 1e-2))
-#print(relativeError(Aw, Lqp))
-#print(Fscore(Aw, Aqp, 1e-2))
 
-## build the network
-#net <- graph_from_adjacency_matrix(Aw, mode = "undirected", weighted = TRUE)
-#V(net)$type = V(bipartite)$type
-## plot network
-#colors <- brewer.blues(20)
-#c_scale <- colorRamp(colors)
-#E(net)$color = apply(c_scale(E(net)$weight / max(E(net)$weight)), 1, function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
-#E(bipartite)$color = apply(c_scale(E(bipartite)$weight / max(E(bipartite)$weight)), 1, function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
-gr = .5 * (1 + sqrt(5))
-#setEPS()
-#postscript("test.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
-#plot(net, vertex.label = NA, layout = layout_as_bipartite,
-#     vertex.color=c("#706FD3", "#33D9B2")[V(net)$type+1],
-#     vertex.size = 3)
-#dev.off()
-#embed_fonts("test.ps", outfile="test.ps")
-#
-#setEPS()
-#postscript("test_true.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
-#plot(bipartite, vertex.label = NA, layout = layout_as_bipartite,
-#     vertex.color=c("#706FD3", "#33D9B2")[V(bipartite)$type+1],
-#     vertex.size = 3)
-#dev.off()
-#embed_fonts("test_true.ps", outfile="test_true.ps")
-#
+gr <- .5 * (1 + sqrt(5))
 setEPS()
-postscript("est_mat.ps", family = "Times", height = 5, width = gr * 3.5)
+postscript("bipartite_est_mat.ps", family = "Times", height = 5, width = gr * 3.5)
 corrplot(graph$Aw / max(graph$Aw), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 dev.off()
 setEPS()
-postscript("noisy_mat.ps", family = "Times", height = 5, width = gr * 3.5)
+postscript("bipartite_noisy_mat.ps", family = "Times", height = 5, width = gr * 3.5)
 corrplot(Anoisy / max(Anoisy), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 dev.off()
 setEPS()
-postscript("true_mat.ps", family = "Times", height = 5, width = gr * 3.5)
+postscript("bipartite_true_mat.ps", family = "Times", height = 5, width = gr * 3.5)
 corrplot(Aw / max(Aw), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 dev.off()
 
 ## build the network
-net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
-#V(net)$type = V(bipartite)$type
+est_net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
 ## plot network
-colors <- alpha(brewer.greys(100), alpha = .1)
+colors <- brewer.blues(100)
 c_scale <- colorRamp(colors)
-E(net)$color = apply(c_scale(E(net)$weight / max(E(net)$weight)), 1, function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+E(est_net)$color <- apply(c_scale(E(est_net)$weight / max(E(est_net)$weight)), 1, function(x) rgb(x[1]/255, x[2]/255, x[3]/255, alpha = .5))
 clusters <- c(rep(1, n1), rep(2, n2))
-V(net)$color <- c("#706FD3", "#33D9B2")[clusters]
-V(net)$shape <- c("circle", "square")[clusters]
-setEPS()
-postscript("test.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
+V(est_net)$color <- c("#706FD3", "#33D9B2")[clusters]
+V(est_net)$shape <- c("circle", "square")[clusters]
+pdf("bipartite_est_graph.pdf", height = 5, width = gr * 3.5)
 y <- c(rep(.2, n1), rep(.9, n2))
 x <- c(.5 * c(1:n1) - .4, .5 * c(1:n2))
-plot(net, vertex.label = NA, layout = t(rbind(y, x)), vertex.size = 4)
+plot(est_net, vertex.label = NA, layout = t(rbind(x, y)), vertex.size = 3)
 dev.off()
-embed_fonts("test.ps", outfile="test.ps")
+
+# build the network
+E(bipartite)$color <- apply(c_scale(E(bipartite)$weight / max(E(bipartite)$weight)), 1, function(x) rgb(x[1]/255, x[2]/255, x[3]/255, alpha = .5))
+V(bipartite)$shape <- c("circle", "square")[clusters]
+pdf("bipartite_true_graph.pdf", height = 5, width = gr * 3.5)
+plot(bipartite, vertex.label = NA, layout = t(rbind(x, y)),
+     vertex.color = c("#706FD3", "#33D9B2")[V(bipartite)$type+1],
+     vertex.size = 3)
+dev.off()

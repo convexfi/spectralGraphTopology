@@ -4,26 +4,25 @@ library(spectralGraphTopology)
 library(extrafont)
 library(latex2exp)
 
-set.seed(1)
+set.seed(42)
 
 N_realizations <- 10
-#ratios <- c(.5, .75, 1, 5, 10, 30, 100, 250, 500, 1000)
-ratios <- c(500)
+ratios <- c(.5, .75, 1, 5, 10, 30, 100, 250, 500, 1000)
 n_ratios <- c(1:length(ratios))
 # design synthetic Laplacian of a erdos_renyi graph
 N <- 64
 p <- .1
 rel_err_spec <- array(0, length(ratios))
 rel_err_cgl <- array(0, length(ratios))
-rel_err_cglA <- array(0, length(ratios))
+rel_err_qp <- array(0, length(ratios))
 rel_err_naive <- array(0, length(ratios))
 fscore_spec <- array(0, length(ratios))
 fscore_cgl <- array(0, length(ratios))
-fscore_cglA <- array(0, length(ratios))
+fscore_qp <- array(0, length(ratios))
 fscore_naive <- array(0, length(ratios))
 
 print("Connecting to MATLAB...")
-matlab <- Matlab(port=9998)
+matlab <- Matlab(port=9999)
 open(matlab)
 print("success!")
 A_mask <- matrix(1, N, N) - diag(N)
@@ -42,31 +41,28 @@ for (j in n_ratios) {
     # the pseudo inverse of the true Laplacian
     Y <- MASS::mvrnorm(T, mu = rep(0, N), Sigma = MASS::ginv(Ltrue))
     S <- cov(Y)
+    Lnaive <- MASS::ginv(S)
+    w_qp <- spectralGraphTopology:::w_init("qp", Lnaive)
+    Lqp <- L(w_qp)
     s_max <- max(abs(S - diag(diag(S))))
-    alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(N)/ T), 0)
+    alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(N)/T), 0)
     # run spectralGraphTopology
     if (ratios[j] <= 1) {
-      graph <- learnLaplacianGraphTopology(S, w0 = "naive", beta = 0.2, beta_max = 1, nbeta = 10,
-                                  alpha = 1.3e-2, maxiter = 100000)
+      graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 0.2, beta_max = 1, nbeta = 10,
+                                           alpha = 1.3e-2, maxiter = 100000)
     } else {
-      graph <- learnGraphTopology(S, w0 = "naive", beta = 1.29, maxiter = 100000)
+      graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 1.29, maxiter = 100000)
     }
     print(graph$lambda)
     print(graph$beta)
     print(graph$convergence)
-    # compute naive
-    Lnaive <- MASS::ginv(S)
-    # set data variable to MATLAB
     setVariable(matlab, S = S)
     rel_cgl <- 9999999999
-    rel_cglA <- 9999999999
     for (alpha in alphas) {
       setVariable(matlab, alpha = alpha)
       evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-4, 1e-6, 100, 1)")
-      evaluate(matlab, "[LcglA,~,~] = estimate_cgl(S, A_erdos_renyi_mask, alpha, 1e-4, 1e-6, 100, 1)")
       Lcgl <- getVariable(matlab, "Lcgl")
-      LcglA <- getVariable(matlab, "LcglA")
-      if (anyNA(Lcgl$Lcgl) || anyNA(LcglA$LcglA)) {
+      if (anyNA(Lcgl$Lcgl)) {
         next
       }
       tmp_rel_cgl <- relativeError(Ltrue, Lcgl$Lcgl)
@@ -74,23 +70,20 @@ for (j in n_ratios) {
         rel_cgl <- tmp_rel_cgl
         fs_cgl <- Fscore(Ltrue, Lcgl$Lcgl, 1e-1)
       }
-      tmp_rel_cglA <- relativeError(Ltrue, LcglA$LcglA)
-      if (tmp_rel_cglA < rel_cglA) {
-        rel_cglA <- tmp_rel_cglA
-        fs_cglA <- Fscore(Ltrue, LcglA$LcglA, 1e-1)
-      }
     }
 
     rel_spec <- relativeError(Ltrue, graph$Lw)
-    fs_spec <- Fscore(Ltrue, graph$Lw, 1e-1)
+    fs_spec <- Fscore(Ltrue, graph$Lw, 5e-2)
     rel_naive <- relativeError(Ltrue, Lnaive)
-    fs_naive <- Fscore(Ltrue, Lnaive, 1e-1)
+    fs_naive <- Fscore(Ltrue, Lnaive, 5e-2)
+    rel_qp <- relativeError(Ltrue, Lqp)
+    fs_qp <- Fscore(Ltrue, Lqp, 5e-2)
     rel_err_spec[j] <- rel_err_spec[j] + rel_spec
     fscore_spec[j] <- fscore_spec[j] + fs_spec
     rel_err_cgl[j] <- rel_err_cgl[j] + rel_cgl
     fscore_cgl[j] <- fscore_cgl[j] + fs_cgl
-    rel_err_cglA[j] <- rel_err_cglA[j] + rel_cglA
-    fscore_cglA[j] <- fscore_cglA[j] + fs_cglA
+    rel_err_qp[j] <- rel_err_qp[j] + rel_qp
+    fscore_qp[j] <- fscore_qp[j] + fs_qp
     rel_err_naive[j] <- rel_err_naive[j] + rel_naive
     fscore_naive[j] <- fscore_naive[j] + fs_naive
   }
@@ -98,8 +91,8 @@ for (j in n_ratios) {
   fscore_spec[j] <- fscore_spec[j] / N_realizations
   rel_err_cgl[j] <- rel_err_cgl[j] / N_realizations
   fscore_cgl[j] <- fscore_cgl[j] / N_realizations
-  rel_err_cglA[j] <- rel_err_cglA[j] / N_realizations
-  fscore_cglA[j] <- fscore_cglA[j] / N_realizations
+  rel_err_qp[j] <- rel_err_qp[j] / N_realizations
+  fscore_qp[j] <- fscore_qp[j] / N_realizations
   rel_err_naive[j] <- rel_err_naive[j] / N_realizations
   fscore_naive[j] <- fscore_naive[j] / N_realizations
   cat("\n** spectralGraphTopology results **\n")

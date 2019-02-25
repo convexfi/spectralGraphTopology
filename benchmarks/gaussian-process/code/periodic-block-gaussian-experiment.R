@@ -2,22 +2,44 @@ library(igraph)
 library(corrplot)
 library(spectralGraphTopology)
 library(pals)
+library(huge)
 library(extrafont)
+library(R.matlab)
 set.seed(0)
 
 n <- 128
 p <- 30 * n
-S1 <- periodic_kernel(2, sqrt(2), 10, n/4) + gaussian_kernel(2, 5e-1, n/4)
-S2 <- periodic_kernel(2, sqrt(2), 10, n/4) + gaussian_kernel(2, 5e-1, n/4)
-S3 <- periodic_kernel(2, sqrt(2), 10, n/4) + gaussian_kernel(2, 5e-1, n/4)
-S4 <- periodic_kernel(2, sqrt(2), 10, n/4) + gaussian_kernel(2, 5e-1, n/4)
-Strue <- blockDiag(S1, S2, S3, S4)
+S1 <- periodic_kernel(.5, sqrt(2), 10, n/4) + gaussian_kernel(.5, 5e-1, n/4)
+S2 <- periodic_kernel(.5, sqrt(2), 10, n/4) + gaussian_kernel(.5, 5e-1, n/4)
+S3 <- periodic_kernel(.5, sqrt(2), 10, n/4) + gaussian_kernel(.5, 5e-1, n/4)
+S4 <- periodic_kernel(.5, sqrt(2), 10, n/4) + gaussian_kernel(.5, 5e-1, n/4)
+Strue <- blockDiag(S1, S2, S3, S4) + wiener_kernel(n)
+Strue <- Strue / mean(Strue)
 Ptrue <- spectralGraphTopology:::inv_sympd(Strue)
 Wtrue <- diag(diag(Ptrue)) - Ptrue
 true_net <- graph_from_adjacency_matrix(abs(Wtrue), mode = "undirected", weighted = TRUE)
 Y <- MASS::mvrnorm(p, mu = rep(0, n), Sigma = Strue)
-graph <- learn_laplacian_matrix(cov(Y), k = 4, w0 = "naive", beta = 20, maxiter = 1e5)
-est_net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
+SCM <- cov(Y)
+# SGL
+graph <- learn_laplacian_matrix(SCM, k = 4, w0 = "qp", beta = 10, maxiter = 1e5)
+# GLasso
+glasso <- huge(SCM, method = "glasso")
+Pglasso <- matrix(glasso$icov[[10]], nrow = 128)
+# GGL
+print("Connecting to MATLAB...")
+matlab <- Matlab()
+open(matlab)
+print("success!")
+A_mask <- matrix(1, n, n) - diag(n)
+setVariable(matlab, A_mask = A_mask)
+setVariable(matlab, SCM = SCM)
+alpha = 1e-2
+setVariable(matlab, alpha = alpha)
+evaluate(matlab, "[Lggl,~,~] = estimate_ggl(SCM, A_mask, alpha, 1e-6, 1e-6, 40, 1)")
+Lggl <- getVariable(matlab, "Lggl")$Lggl
+# construct nets
+glasso_net <- graph_from_adjacency_matrix(abs(diag(diag(Ptrue)) - Ptrue), mode = "undirected", weighted = TRUE)
+est_net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
 blues <- brewer.blues(100)
 reds <- brewer.reds(100)
 blue_scale <- colorRamp(blues)
@@ -36,7 +58,7 @@ print(graph$lambda)
 
 gr = .5 * (1 + sqrt(5))
 setEPS()
-postscript("../latex/figures/periodic_gaussian_block_graph.ps",
+postscript("../latex/figures/periodic_gaussian_block_sgl_graph.ps",
            family = "Times", height = 5, width = gr * 3.5)
 plot(est_net, vertex.label = NA, vertex.size = 3)
 dev.off()
@@ -51,6 +73,13 @@ postscript("../latex/figures/periodic_gaussian_block_laplacian.ps",
 corrplot(graph$Lw / max(graph$Lw), is.corr = FALSE, method = "square",
          addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 dev.off()
+setEPS()
+postscript("../latex/figures/periodic_gaussian_block_ggl.ps",
+           family = "Times", height = 5, width = gr * 3.5)
+corrplot(Lggl / max(Lggl), is.corr = FALSE, method = "square",
+         addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+dev.off()
+setEPS()
 postscript("../latex/figures/periodic_gaussian_block_covariance.ps",
            family = "Times", height = 5, width = gr * 3.5)
 corrplot(Strue / max(Strue), is.corr = FALSE, method = "square",
@@ -60,6 +89,12 @@ setEPS()
 postscript("../latex/figures/periodic_gaussian_block_precision.ps",
            family = "Times", height = 5, width = gr * 3.5)
 corrplot(Ptrue / max(Ptrue), is.corr = FALSE, method = "square",
+         addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+dev.off()
+setEPS()
+postscript("../latex/figures/periodic_gaussian_block_glasso_precision.ps",
+           family = "Times", height = 5, width = gr * 3.5)
+corrplot(Pglasso / max(Pglasso), is.corr = FALSE, method = "square",
          addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 dev.off()
 #colors <- c("#0B032D", "#843B62", "#F67E7D", "#6ABA81")

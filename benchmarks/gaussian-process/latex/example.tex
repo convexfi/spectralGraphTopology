@@ -30,8 +30,17 @@ $[\boldsymbol{\Sigma}]_{ij} = \sigma_1 \exp{\left(-l_1 \sin^2\left(\frac{\pi|\bm
     %(or a blank line to force the subfigure onto a new line)
     \begin{subfigure}[b]{0.3\textwidth}
         \includegraphics[width=\textwidth]{gaussian-process/latex/figures/periodic_gaussian_block_laplacian.eps}
-        \caption{Learned Laplacian}
+        \caption{SGL Learned Laplacian}
+    \end{subfigure} \\
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{gaussian-process/latex/figures/periodic_gaussian_block_glasso_precision.eps}
+        \caption{GLasso Learned Inverse Covariance}
     \end{subfigure}
-    \caption{add caption}
+    ~
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{gaussian-process/latex/figures/periodic_gaussian_block_ggl.eps}
+        \caption{GGL Learned Laplacian}
+    \end{subfigure}
+    \caption{Learning the inverse covariance matrix of a Gaussian process.}
         \label{fig:gps}
 \end{figure}

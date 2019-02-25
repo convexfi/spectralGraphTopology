@@ -96,7 +96,7 @@ test_that("learn_laplacian_matrix with two components graph #2", {
 
   Lw <- blockDiag(Lw1, Lw2)
   Y <- MASS::mvrnorm(5000, rep(0, n1 + n2), MASS::ginv(Lw))
-  res <- learn_laplacian_matrix(cov(Y), k = 2, beta = 40)
+  res <- learn_laplacian_matrix(cov(Y), k = 2, beta = 100)
   expect_that(relativeError(Lw, res$Lw) < 1e-1, is_true())
   expect_that(Fscore(Lw, res$Lw, 1e-1) > .9, is_true())
 })
