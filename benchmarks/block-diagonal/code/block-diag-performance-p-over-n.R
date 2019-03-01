@@ -2,7 +2,6 @@ library(igraph)
 library(spectralGraphTopology)
 library(extrafont)
 library(latex2exp)
-library(R.matlab)
 
 set.seed(123)
 N_realizations <- 10
@@ -25,21 +24,18 @@ for (j in n_ratios) {
   for (n in 1:N_realizations) {
     mgraph <- sample_sbm(N, pref.matrix = P, block.sizes = c(rep(N / K, K)))
     E(mgraph)$weight <- runif(gsize(mgraph), min = .1, max = 3)
-    A_grid_mask <- as.matrix(laplacian_matrix(mgraph)) != 0
     Ltrue <- as.matrix(laplacian_matrix(mgraph))
     Y <- MASS::mvrnorm(T, mu = rep(0, N), Sigma = MASS::ginv(Ltrue))
     S <- cov(Y)
     Lnaive <- MASS::ginv(S)
-    R <- vecLmat(ncol(Lnaive))
-    llqp <- quadprog::solve.QP(crossprod(R), t(R) %*% vec(Lnaive), diag(ncol(R)))
-    w0_qp <- llqp$solution
+    w0_qp <- spectralGraphTopology:::w_init("qp", Lnaive)
     Lqp <- L(w0_qp)
     s_max <- max(abs(S - diag(diag(S))))
     alphas <- c(0, .75 ^ (c(1:14)) * s_max * sqrt(log(N)/ T))
     rel_spec <- 9999999999
     for (alpha in alphas) {
-      graph <- learnLaplacianGraphTopology(S, w0 = w0_qp, K = K, beta = 10*N,
-                                           alpha = alpha, ub = 2*N, maxiter = 1e5)
+      graph <- learn_laplacian_matrix(S, w0 = w0_qp, K = K, beta = 10*N,
+                                      alpha = alpha, ub = 2*N, maxiter = 1e5)
       print(graph$convergence)
       tmp_rel_spec <- relativeError(Ltrue, graph$Lw)
       if (tmp_rel_spec < rel_spec) {
