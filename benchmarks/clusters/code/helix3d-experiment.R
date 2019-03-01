@@ -44,5 +44,5 @@ V(net)$color <- colors[clusters]
 gr = .5 * (1 + sqrt(5))
 setEPS()
 postscript("../latex/figures/helix3d.ps", height = 5, width = gr * 3.5)
-plot(net, layout = Y, vertex.label = NA, vertex.size = 3)
+plot(net, layout = Y[,2:3], vertex.label = NA, vertex.size = 3)
 dev.off()

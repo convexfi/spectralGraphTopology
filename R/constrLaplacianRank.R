@@ -53,11 +53,11 @@ objective_function <- function(A, S, LS, F, lmd) {
 initial_graph <- function(Y, m) {
   n <- nrow(Y)
   A <- matrix(0, n, n)
-  E <- pairwise_matrix_row_norm(Y)
+  E <- pairwise_matrix_rownorm(Y)
   for (i in c(1:n)) {
     sorted_index <- order(E[i, ])
-    for (j in sorted_index[1:m]) {
-      A[i, j] <- (E[i, sorted_index[m+1]] - E[i, j]) / (m * E[i, sorted_index[m+1]] - sum(E[i, sorted_index[1:m]]))
+    for (j in sorted_index[2:m]) {
+      A[i, j] <- (E[i, sorted_index[m+1]] - E[i, j]) / (m * E[i, sorted_index[m+1]] - sum(E[i, sorted_index[2:m]]))
       A[j, i] <- A[i, j]
     }
   }

@@ -3,6 +3,7 @@ library(spectralGraphTopology)
 library(igraph)
 library(viridis)
 library(extrafont)
+library(corrplot)
 
 set.seed(1)
 # number of nodes per cluster
@@ -10,11 +11,16 @@ N <- 100
 # generate datapoints
 twomoon <- shapes.two.moon(N)
 # estimate underlying graph
-S <- crossprod(t(twomoon$data)) + diag(rep(1/3, 2 * N))
-graph <- learn_laplacian_matrix(S, w0 = "naive", k = 2, beta = .25, ftol = 1e-3, Lwtol = 1e-3)
-graph$obj_fun
+#S <- crossprod(t(twomoon$data)) + diag(rep(1/3, 2 * N))
+#w0 <- pmax(0, Linv(MASS::ginv(A)))
+#graph <- learn_laplacian_matrix(S, w0 = w0, k = 2, beta = .25, ftol = 1e-3, Lwtol = 1e-3)
+A <- initial_graph(twomoon$data, m = 7)
+LA <- diag(.5 * colSums(A + t(A))) - .5 * (A + t(A))
+Aw <- diag(diag(LA)) - LA
+#Lw <- constr_laplacian_rank(twomoon$data, m = 5, k = 2, lmd = 1, maxiter = 1)
+#Aw <- diag(diag(Lw)) - Lw
 # build network
-net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
+net <- graph_from_adjacency_matrix(Aw, mode = "undirected", weighted = TRUE)
 # colorify nodes and edges
 colors <- c("#706FD3", "#FF5252", "#33D9B2")
 V(net)$cluster <- twomoon$clusters
@@ -25,10 +31,9 @@ V(net)$color <- c(colors[1], colors[2])[twomoon$clusters]
 # plot network
 gr = .5 * (1 + sqrt(5))
 setEPS()
-postscript("../latex/figures/twomoon.ps", family = "Times", height = 5, width = gr * 3.5)
+postscript("twomoon.ps", family = "Times", height = 5, width = gr * 3.5)
 plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
 dev.off()
-#colors <- c("#706FD3", "#FF5252", "#33D9B2")
 ## plot convergence trend
 #setEPS()
 #postscript("../latex/figures/twomoon_trend.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
