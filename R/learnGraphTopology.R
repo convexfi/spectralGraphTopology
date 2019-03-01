@@ -46,7 +46,7 @@
 #' # relative error between the true Laplacian and the learned one
 #' norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
 #' @export
-learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 1e-4, ub = 1e4, alpha = 0.,
+learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0.,
                                    beta = 1., beta_max = beta, nbeta = 1, maxiter = 10000,
                                    Lwtol = 1e-4, ftol = 1e-4) {
   # number of nodes
@@ -202,7 +202,7 @@ learn_bipartite_graph <- function(S, z = 0, w0 = "naive", alpha = 0., beta = 1e3
 
 #' @export
 learn_adjacency_and_laplacian <- function(S, z = 0, k = 1, w0 = "naive", alpha = 0.,
-                                          beta1 = 1, beta2 = 1e3, lb = 1e-4, ub = 1e4,
+                                          beta1 = 1, beta2 = 1e3, lb = 0, ub = 1e4,
                                           maxiter = 1e4, Lwtol = 1e-4, ftol = 1e-4) {
   # number of nodes
   n <- ncol(S)
@@ -267,7 +267,7 @@ learn_adjacency_and_laplacian <- function(S, z = 0, k = 1, w0 = "naive", alpha =
 
 #' @export
 learn_dregular_graph <- function(S, k = 1, w0 = "qp", alpha = 0.,
-                                 beta1 = 1, beta2 = 1e3, lb = 1e-4, ub = 1e4,
+                                 beta1 = 1, beta2 = 1e3, lb = 0, ub = 1e4,
                                  maxiter = 1e4, Lwtol = 1e-4, ftol = 1e-4) {
   # number of nodes
   n <- ncol(S)
