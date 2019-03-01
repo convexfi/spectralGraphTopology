@@ -21,7 +21,8 @@ LinkingTo:
 Imports:
     Rcpp,
     RcppArmadillo,
-    RcppEigen
+    RcppEigen,
+    osqp
 Remotes:
     google/patrick
 RoxygenNote: 6.1.1
