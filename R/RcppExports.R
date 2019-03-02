@@ -185,3 +185,7 @@ Fscore <- function(Wtrue, West, eps) {
     .Call('_spectralGraphTopology_Fscore', PACKAGE = 'spectralGraphTopology', Wtrue, West, eps)
 }
 
+pairwise_matrix_rownorm <- function(M) {
+    .Call('_spectralGraphTopology_pairwise_matrix_rownorm', PACKAGE = 'spectralGraphTopology', M)
+}
+

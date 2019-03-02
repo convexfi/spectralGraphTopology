@@ -14,13 +14,10 @@ twomoon <- shapes.two.moon(N)
 #S <- crossprod(t(twomoon$data)) + diag(rep(1/3, 2 * N))
 #w0 <- pmax(0, Linv(MASS::ginv(A)))
 #graph <- learn_laplacian_matrix(S, w0 = w0, k = 2, beta = .25, ftol = 1e-3, Lwtol = 1e-3)
-A <- initial_graph(twomoon$data, m = 7)
-LA <- diag(.5 * colSums(A + t(A))) - .5 * (A + t(A))
-Aw <- diag(diag(LA)) - LA
-#Lw <- constr_laplacian_rank(twomoon$data, m = 5, k = 2, lmd = 1, maxiter = 1)
-#Aw <- diag(diag(Lw)) - Lw
+graph <- constr_laplacian_rank(twomoon$data, m = 7, k = 2, lmd = 1, regularization_type = 2)
+print(graph)
 # build network
-net <- graph_from_adjacency_matrix(Aw, mode = "undirected", weighted = TRUE)
+net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 # colorify nodes and edges
 colors <- c("#706FD3", "#FF5252", "#33D9B2")
 V(net)$cluster <- twomoon$clusters

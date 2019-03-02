@@ -56,3 +56,14 @@ double Fscore(const Eigen::MatrixXd& Wtrue, const Eigen::MatrixXd& West,
 
   return 2 * tp / (2 * tp + fn + fp);
 }
+
+
+// [[Rcpp::export]]
+Eigen::MatrixXd pairwise_matrix_rownorm(const Eigen::MatrixXd& M) {
+  const unsigned int n = M.rows();
+  Eigen::MatrixXd V = Eigen::MatrixXd::Zero(n, n);
+  for (int i = 0; i < n-1; ++i)
+    for (int j = i+1; j < n; ++j)
+      V(i, j) = (M.row(i) - M.row(j)).squaredNorm();
+  return V.selfadjointView<Upper>();
+}
