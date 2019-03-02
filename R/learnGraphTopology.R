@@ -46,9 +46,9 @@
 #' # relative error between the true Laplacian and the learned one
 #' norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
 #' @export
-learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0.,
-                                   beta = 1., beta_max = beta, nbeta = 1, maxiter = 10000,
-                                   Lwtol = 1e-4, ftol = 1e-4) {
+learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0,
+                                   beta = 1, maxiter = 10000, Lwtol = 1e-4, ftol = 1e-4,
+                                   eig_tol = 1e-9) {
   # number of nodes
   n <- nrow(S)
   # l1-norm penalty factor
@@ -66,45 +66,50 @@ learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 0, ub = 1e4, alp
   fun0 <- ll0 + laplacian.prior(beta, Lw0, lambda0, U0)
   fun_seq <- c(fun0)
   ll_seq <- c(ll0)
+  beta_seq <- c(beta)
   #w_seq <- list(w0)
   time_seq <- c(0)
   pb = txtProgressBar(min = 0, max = maxiter, initial = 0)
   start_time <- proc.time()[3]
-  beta_set <- beta * exp(seq(from = 0, to = log(beta_max/beta), length.out = nbeta))
-  for (beta in beta_set) {
-    for (i in 1:maxiter) {
-      setTxtProgressBar(pb, i)
-      w <- laplacian.w_update(w0, Lw0, U0, beta, lambda0, K)
-      Lw <- L(w)
-      U <- laplacian.U_update(Lw, k)
-      lambda <- laplacian.lambda_update(lb, ub, beta, U, Lw, k)
-      # compute negloglikelihood and objective function values
-      ll <- laplacian.likelihood(Lw, lambda, K)
-      fun <- ll + laplacian.prior(beta, Lw, lambda, U)
-      # save estimates
-      time_seq <- c(time_seq, proc.time()[3] - start_time)
-      ll_seq <- c(ll_seq, ll)
-      fun_seq <- c(fun_seq, fun)
-      #w_seq <- rlist::list.append(w_seq, w)
-      # compute the relative error and check the tolerance on the Laplacian
-      # matrix and on the objective function
-      Lwerr <- norm(Lw - Lw0, type="F") / max(1, norm(Lw0, type="F"))
-      ferr <- abs(fun - fun0) / max(1, abs(fun0))
-      if ((Lwerr < Lwtol && ferr < ftol) && i > 1)
-        break
-      # update estimates
-      fun0 <- fun
-      w0 <- w
-      U0 <- U
-      lambda0 <- lambda
-      Lw0 <- Lw
-    }
+  for (i in 1:maxiter) {
+    setTxtProgressBar(pb, i)
+    w <- laplacian.w_update(w0, Lw0, U0, beta, lambda0, K)
+    Lw <- L(w)
+    U <- laplacian.U_update(Lw, k)
+    lambda <- laplacian.lambda_update(lb, ub, beta, U, Lw, k)
+    # compute negloglikelihood and objective function values
+    ll <- laplacian.likelihood(Lw, lambda, K)
+    fun <- ll + laplacian.prior(beta, Lw, lambda, U)
+    # save estimates
+    time_seq <- c(time_seq, proc.time()[3] - start_time)
+    ll_seq <- c(ll_seq, ll)
+    fun_seq <- c(fun_seq, fun)
+    #w_seq <- rlist::list.append(w_seq, w)
+    # compute the relative error and check the tolerance on the Laplacian
+    # matrix and on the objective function
+    Lwerr <- norm(Lw - Lw0, type="F") / max(1, norm(Lw0, type="F"))
+    ferr <- abs(fun - fun0) / max(1, abs(fun0))
+    eig_vals <- eigenvalues(Lw)
+    n_zero_eigenvalues <- sum(abs(eig_vals) < eig_tol)
+    if (k < n_zero_eigenvalues)
+      beta <- .99 * beta
+    else if (k > n_zero_eigenvalues)
+      beta <- 1.01 * beta
+    if ((Lwerr < Lwtol) && (i > 1) && k == n_zero_eigenvalues)
+      break
+    # update estimates
+    fun0 <- fun
+    w0 <- w
+    U0 <- U
+    lambda0 <- lambda
+    Lw0 <- Lw
+    beta_seq <- c(beta_seq, beta)
   }
   # compute the adjancency matrix
   Aw <- A(w)
   return(list(Lw = Lw, Aw = Aw, obj_fun = fun_seq, loglike = ll_seq,
               w = w, lambda = lambda, U = U, elapsed_time = time_seq,
-              convergence = !(i == maxiter), beta = beta))
+              convergence = !(i == maxiter), beta_seq = beta_seq))
 }
 
 

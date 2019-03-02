@@ -5,8 +5,8 @@
 \title{Learn Graph Topology}
 \usage{
 learn_laplacian_matrix(S, k = 1, w0 = "naive", lb = 0, ub = 10000,
-  alpha = 0, beta = 1, beta_max = beta, nbeta = 1,
-  maxiter = 10000, Lwtol = 1e-04, ftol = 1e-04)
+  alpha = 0, beta = 1, maxiter = 10000, Lwtol = 1e-04,
+  ftol = 1e-04, eig_tol = 1e-06)
 }
 \arguments{
 \item{S}{N-by-N sample covariance matrix, where N is the number of nodes}
