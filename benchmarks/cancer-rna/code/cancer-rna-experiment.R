@@ -12,10 +12,9 @@ names <- t(matrix(unlist(df_names), nrow = nrow(df_names)))
 names <- names[2, 1:Nnodes]
 
 N <- ncol(Y)
-graph <- learn_laplacian_matrix(cov(Y), k = 1, w0 = "naive",
-                                beta = 10, Lwtol = 1e-6, maxiter = 100000)
-print(graph$convergence)
-net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
+graph <- learn_laplacian_matrix(t(Y), k = 5, beta = 1e2)
+print(graph)
+net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 colors <- c("#34495E", "#706FD3", "#FF5252", "#33D9B2", "#34ACE0")
 clusters <- array(0, length(names))
 for (i in c(1:length(names))) {
@@ -35,14 +34,10 @@ V(net)$cluster <- clusters
 E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
                      function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
                                         colors[V(net)$cluster[x[1]]], brewer.greys(5)[2]))
-V(net)$color <- c(colors[1], colors[2], colors[3], colors[4], colors[5])[clusters]
+V(net)$color <- colors[clusters]
 gr = .5 * (1 + sqrt(5))
 setEPS()
-postscript("../latex/figures/cancer-rna-graph-full-k1.ps", family = "Times", height = 5, width = gr * 3.5)
+postscript("../latex/figures/cancer-rna-graph-full-k5.ps", family = "Times", height = 5, width = gr * 3.5)
 plot(net, vertex.label = NA,
      vertex.size = 3)
 dev.off()
-
-n <- length(graph$loglike)
-plot(c(1:n), graph$obj_fun - graph$loglike)
-print(graph$obj_fun[n] - graph$loglike[n])

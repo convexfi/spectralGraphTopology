@@ -35,15 +35,12 @@ for (i in c(1:n_curves)) {
 }
 
 print(meta_data)
-Y <- t(Y)
-S <- cov(Y)
-graph <- learn_laplacian_matrix(S / max(S), k = 2, w0 = "qp", beta = .25, alpha = 1e-1, maxiter = 1e5)
-glasso <- huge(S / max(S), method = "glasso")
-W <- matrix(glasso$icov[[length(glasso$lambda)]], nrow = n_curves)
-W <- diag(diag(W)) - W
+graph <- learn_laplacian_matrix(Y, k = 2, w0 = "qp", beta = 1e2)
+print(graph$convergence)
+graph_clr <- constr_laplacian_rank(Y, k = 2)
 gr = .5 * (1 + sqrt(5))
-est_net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
-lasso_net <- graph_from_adjacency_matrix(W, mode = "undirected", weighted = TRUE)
+est_net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+lasso_net <- graph_from_adjacency_matrix(graph_clr$Adjacency, mode = "undirected", weighted = TRUE)
 colors <- brewer.blues(10)
 c_scale <- colorRamp(colors)
 E(est_net)$color = apply(c_scale(E(est_net)$weight / max(E(est_net)$weight)), 1, function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
@@ -52,7 +49,6 @@ setEPS()
 postscript("est_graph.ps", height = 5, width = gr * 3.5)
 plot(est_net, vertex.label = NA, vertex.size = 3)
 dev.off()
-print(glasso)
 E(lasso_net)$color = apply(c_scale(abs(E(lasso_net)$weight / max(E(lasso_net)$weight))), 1, function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
 V(lasso_net)$color = c("red", "green")[meta_data[, 6] + 1]
 setEPS()

@@ -28,10 +28,9 @@ h2_sample_z <- rnorm(n_nodes, mean = h2$z, sd = 5e-2)
 # learn underlying graph
 Y <- rbind(cbind(h1_sample_x, h1_sample_y, h1_sample_z),
            cbind(h2_sample_x, h2_sample_y, h2_sample_z))
-graph <- learn_laplacian_matrix(crossprod(t(Y)) + diag(rep(1/3, 2 * n_nodes)),
-                                w0 = "naive", k = 2, beta = .25, ftol = 1e-4, Lwtol = 1e-4)
+graph <- learn_laplacian_matrix(crossprod(t(Y)), k = 2, beta = 1, tol = 1e-2)
 # construct network
-net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
+net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 # use pretty colors for the nodes and edges
 colors <- c("#706FD3", "#FF5252")
 clusters <- c(rep(1, n_nodes), rep(2, n_nodes))

@@ -5,8 +5,9 @@
 \title{Learn Graph Topology}
 \usage{
 learn_laplacian_matrix(S, k = 1, w0 = "naive", lb = 0, ub = 10000,
-  alpha = 0, beta = 1, maxiter = 10000, Lwtol = 1e-04,
-  ftol = 1e-04, eig_tol = 1e-06)
+  alpha = 0, beta = 10000, fix_beta = FALSE, rho = 0.01, m = 7,
+  maxiter = 10000, tol = 1e-04, eig_tol = 1e-09,
+  record_objective = FALSE, record_weights = FALSE)
 }
 \arguments{
 \item{S}{N-by-N sample covariance matrix, where N is the number of nodes}
@@ -25,17 +26,17 @@ the glasso solution}
 
 \item{beta}{parameter that controls the strength of the regularization term}
 
+\item{rho}{how much to increase beta after a complete round of iterations}
+
 \item{maxiter}{the maximum number of iterations for each beta}
+
+\item{K}{the number of components of the graph}
+
+\item{maxiter_beta}{the maximum number of iterations for the outer loop}
 
 \item{Lwtol}{relative tolerance on the Laplacian matrix}
 
 \item{ftol}{relative tolerance on the objective function}
-
-\item{K}{the number of components of the graph}
-
-\item{rho}{how much to increase beta after a complete round of iterations}
-
-\item{maxiter_beta}{the maximum number of iterations for the outer loop}
 }
 \value{
 Lw the learned Laplacian matrix

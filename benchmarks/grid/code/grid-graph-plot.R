@@ -27,17 +27,15 @@ alpha = 0.003584478
 setVariable(matlab, alpha = alpha)
 evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-6, 1e-6, 40, 1)")
 Lcgl <- getVariable(matlab, "Lcgl")
-graph <- learn_laplacian_matrix(S, w0 = "naive", beta = 10, alpha = 5e-3,
-                                ftol = 1e-6, Lwtol = 1e-4, maxiter = 1e5)
-print(graph$convergence)
+graph <- learn_laplacian_matrix(S, w0 = "qp", beta = 20, alpha = 5e-3, tol = 1e-6)
 
 eps <- 5e-2
 # compute adjacency matrices
-graph$Aw[graph$Aw < eps] <- 0
+graph$Adjacency[graph$Adjacency < eps] <- 0
 W_cgl <- diag(diag(Lcgl$Lcgl)) - Lcgl$Lcgl
 W_cgl[W_cgl < eps] <- 0
 # compute grids
-grid_spec <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
+grid_spec <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 grid_cgl <- graph_from_adjacency_matrix(W_cgl, mode = "undirected", weighted = TRUE)
 
 colors <- inferno(5, begin = 0, end = 1, direction = -1)
@@ -56,8 +54,8 @@ la_spec <- layout_on_grid(grid_spec)
 la_cgl <- layout_on_grid(grid_cgl)
 la_true <- layout_on_grid(grid)
 
-relativeError(Ltrue, graph$Lw)
-Fscore(Ltrue, graph$Lw, eps)
+relativeError(Ltrue, graph$Laplacian)
+Fscore(Ltrue, graph$Laplacian, eps)
 relativeError(Ltrue, Lcgl$Lcgl)
 Fscore(Ltrue, Lcgl$Lcgl, eps)
 

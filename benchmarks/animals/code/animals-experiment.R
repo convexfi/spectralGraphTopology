@@ -11,9 +11,9 @@ run_animals <- function(k) {
   names <- matrix(unlist(read.csv("animals_names.txt", header = FALSE)))
   Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
   N <- ncol(Y)
-  graph <- learn_laplacian_matrix(cov(Y) + diag(rep(1/3, N)), w0 = "qp",
-                                  k = k, beta = .5)
-  net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
+  graph <- learn_laplacian_matrix(cov(Y) + diag(1/3, N, N), w0 = "qp",
+                                  k = k, beta = .5, alpha = 5e-2)
+  net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
   colors <- brewer.reds(100)
   c_scale <- colorRamp(colors)
   E(net)$color = apply(c_scale(abs(E(net)$weight) / max(abs(E(net)$weight))), 1,
@@ -30,14 +30,9 @@ run_animals <- function(k) {
        vertex.label.cex = .8,
        vertex.label.color = "black")
   dev.off()
-  gr = .5 * (1 + sqrt(5))
-  setEPS()
-  postscript("est_animal_adjacency_matrix.ps", family = "Times", height = 5, width = gr * 3.5)
-  corrplot(graph$Aw / max(graph$Aw), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
-  dev.off()
 }
 
-for(k in c(10)) {
+for(k in c(1, 10)) {
   print(paste("running animals exp. for K =", toString(k)))
   run_animals(k)
 }

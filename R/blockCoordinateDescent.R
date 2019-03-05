@@ -24,30 +24,30 @@ laplacian.w_update <- function(w, Lw, U, beta, lambda, K) {
 }
 
 
-joint.w_update <- function(w, Lw, Aw, U, V, lambda, psi, beta1, beta2, K) {
+joint.w_update <- function(w, Lw, Aw, U, V, lambda, psi, beta, nu, K) {
   ULmdUT <- crossprod(sqrt(lambda) * t(U))
   VPsiVT <- V %*% diag(psi) %*% t(V)
-  grad_f1 <- Lstar(beta1 * (Lw - ULmdUT) + K)
-  grad_f2 <- beta2 * Astar(Aw - VPsiVT)
-  w_update <- w - .5 * (grad_f1 + grad_f2) / (nrow(Lw) * beta1 + beta2)
+  grad_f1 <- Lstar(beta * (Lw - ULmdUT) + K)
+  grad_f2 <- nu * Astar(Aw - VPsiVT)
+  w_update <- w - .5 * (grad_f1 + grad_f2) / (nrow(Lw) * beta + nu)
   w_update[w_update < 0] <- 0
   return(w_update)
 }
 
 
-bipartite.w_update <- function(w, Aw, V, beta, psi, K, J, Lips) {
+bipartite.w_update <- function(w, Aw, V, nu, psi, K, J, Lips) {
   grad_h <- 2 * w - Astar(V %*% diag(psi) %*% t(V)) #+ Lstar(K) / beta
-  w_update <- w - (Lstar(inv_sympd(L(w) + J) + K) + beta * grad_h) / (2 * beta + Lips)
+  w_update <- w - (Lstar(inv_sympd(L(w) + J) + K) + nu * grad_h) / (2 * nu + Lips)
   w_update[w_update < 0] <- 0
   return(w_update)
 }
 
 
-dregular.w_update <- function(w, Lw, Aw, U, beta1, beta2, lambda, d, K) {
+dregular.w_update <- function(w, Lw, Aw, U, beta, nu, lambda, d, K) {
   n <- ncol(Aw)
   ULmdUT <- crossprod(sqrt(lambda) * t(U))
-  grad_f <- Lstar(beta1 * (Lw - ULmdUT) + K) + beta2 * Astar(Aw - ULmdUT + diag(d, n))
-  w_update <- w - .5 * grad_f / (beta1 * n + beta2)
+  grad_f <- Lstar(beta * (Lw - ULmdUT) + K) + nu * Astar(Aw - ULmdUT + diag(d, n))
+  w_update <- w - .5 * grad_f / (beta * n + nu)
   w_update[w_update < 0] <- 0
   return(w_update)
 }

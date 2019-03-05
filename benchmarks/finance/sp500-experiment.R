@@ -7,16 +7,14 @@ Y <- log(stockdata$data[2:1258,]/stockdata$data[1:1257,])
 labels <- stockdata$info[, 2]
 unique_labels <- unique(labels)
 k <- length(unique_labels)
-print(k)
-S <- cov(Y)
-print(dim(S))
-graph <- learn_laplacian_matrix(S/max(S), k = k, beta = 2, alpha = 5e-1, maxiter = 1e5)
-print(graph$convergence)
+graph <- learn_laplacian_matrix(t(Y), k = k, beta = 1e3, alpha = 1)
+print(graph$beta_seq)
+#graph <- constr_laplacian_rank(t(Y), k = k)
 clusters <- numeric(k)
 for (i in 1:k) {
   clusters[labels == unique_labels[i]] <- i
 }
-net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
+net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 colors <- rainbow(k)
 V(net)$cluster <- clusters
 E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
@@ -25,6 +23,6 @@ E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
 V(net)$color <- colors[clusters]
 gr = .5 * (1 + sqrt(5))
 setEPS()
-postscript("finance.ps", family = "Times", height = 5, width = gr * 3.5)
+postscript("finance-sgl.ps", family = "Times", height = 5, width = gr * 3.5)
 plot(net, vertex.label = NA, vertex.size = 3)
 dev.off()

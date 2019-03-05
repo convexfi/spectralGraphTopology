@@ -7,9 +7,10 @@ data(spirals)
 
 # learn underlying graph
 n <- nrow(spirals)
-graph <- learn_laplacian_matrix(crossprod(t(spirals)), k = 2, beta = 1, tol = 1e-2)
+graph <- learn_laplacian_matrix(crossprod(t(spirals)) + diag(1/3, n), w0 = "naive", k = 2,
+                                beta = .15, alpha = 1e-2, ftol = 1e-4, Lwtol = 1e-4)
 # construct network
-net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
 clusters <- components(net)$membership
 colors <- c("#706FD3", "#FF5252")
 V(net)$cluster <- clusters
