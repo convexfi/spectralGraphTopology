@@ -7,18 +7,18 @@ library(pals)
 abalone_df <- read.csv("abalone.data")
 # use one-hot enconding for the "sex" categorical variable
 abalone_df_ext <- dummy_cols(abalone_df)
-# let's drop "sex" categorical variable and "ring", which is the variable
+# let's drop the "ring" feature which is the variable
 # we want to cluster for
-drops <- c("sex", "rings")
+drops <- c("rings")
 rings <- matrix(unlist(abalone_df_ext["rings"]))
 unique_rings <- c(unique(rings))
 clean_df <- abalone_df_ext[, !(names(abalone_df_ext) %in% drops)]
 data_df <- data.matrix(clean_df)
 # estimate graph
-Y <- t(data_df)
+Y <- data_df
 k <- length(unique(rings))
-graph <- constr_laplacian_rank(t(Y), k = k)
-#graph <- learn_laplacian_matrix(S / max(S), w0 = "qp", k = k, beta = 5)
+graph <- constr_laplacian_rank(Y, k = k)
+saveRDS(graph$Adjacency, "clr-adjacency.rds")
 # plots
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 clusters <- array(0, length(rings))
