@@ -36,11 +36,14 @@ Eigen::MatrixXd blockDiagCpp(const std::vector<Eigen::MatrixXd>& matrices) {
 }
 
 
+// TODO: put your sh*t together and write a class for this thing
 // [[Rcpp::export]]
-double Fscore(const Eigen::MatrixXd& Wtrue, const Eigen::MatrixXd& West,
-              const double eps) {
+std::vector<double> metrics(const Eigen::MatrixXd& Wtrue, const Eigen::MatrixXd& West,
+                            const double eps) {
+  std::vector<double> metrics_list;
+  double fscore, recall, specificity, accuracy;
   bool isthere_edge, isthere_est_edge;
-  double tp = 0, fp = 0, fn = 0;
+  double tp = 0, fp = 0, fn = 0, tn = 0;
   const int n = Wtrue.cols();
   for (int i = 0; i < (n-1); ++i)
     for (int j = i+1; j < n; ++j) {
@@ -52,9 +55,18 @@ double Fscore(const Eigen::MatrixXd& Wtrue, const Eigen::MatrixXd& West,
         fp += 1;
       else if (isthere_edge && !isthere_est_edge)
         fn += 1;
+      else
+        tn += 1;
     }
-
-  return 2 * tp / (2 * tp + fn + fp);
+  fscore = 2 * tp / (2 * tp + fn + fp);
+  recall = tp / (tp + fn);
+  specificity = tn / (tn + fp);
+  accuracy = (tp + tn) / (tp + tn + fp + fn);
+  metrics_list.push_back(fscore);
+  metrics_list.push_back(recall);
+  metrics_list.push_back(specificity);
+  metrics_list.push_back(accuracy);
+  return metrics_list;
 }
 
 

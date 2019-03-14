@@ -13,14 +13,16 @@ pc <- .6
 
 n_realizations <- 20
 ratios <- c(10, 30, 100, 250, 500, 1000, 2000, 4000, 8000)
-rel_err_sgl <- array(0, length(ratios))
-rel_err_cgl <- array(0, length(ratios))
-rel_err_naive <- array(0, length(ratios))
-rel_err_qp <- array(0, length(ratios))
-fscore_sgl <- array(0, length(ratios))
-fscore_cgl <- array(0, length(ratios))
-fscore_naive <- array(0, length(ratios))
-fscore_qp <- array(0, length(ratios))
+rel_err_sgl <- matrix(0, n_realizations, length(ratios))
+rel_err_cgl <- matrix(0, n_realizations, length(ratios))
+rel_err_cglA <- matrix(0, n_realizations, length(ratios))
+rel_err_naive <- matrix(0, n_realizations, length(ratios))
+rel_err_qp <- matrix(0, n_realizations, length(ratios))
+fscore_sgl <- matrix(0, n_realizations, length(ratios))
+fscore_cgl <- matrix(0, n_realizations, length(ratios))
+fscore_cglA <- matrix(0, n_realizations, length(ratios))
+fscore_naive <- matrix(0, n_realizations, length(ratios))
+fscore_qp <- matrix(0, n_realizations, length(ratios))
 
 print("Connecting to MATLAB...")
 matlab <- Matlab(port=9998)
@@ -38,85 +40,74 @@ for (j in n_ratios) {
     # randomly assign edge weights to connected nodes
     E(bipartite)$weight <- runif(gsize(bipartite), min = 1, max = 3)
     # get true Laplacian and Adjacency
-    Lw <- as.matrix(laplacian_matrix(bipartite))
-    Aw <- diag(diag(Lw)) - Lw
-    w_true <- Linv(Lw)
+    Ltrue <- as.matrix(laplacian_matrix(bipartite))
+    Atrue <- diag(diag(Ltrue)) - Ltrue
+    w_true <- Linv(Ltrue)
     # set number of samples
-    Y <- MASS::mvrnorm(p, rep(0, n), Sigma = MASS::ginv(Lw))
+    Y <- MASS::mvrnorm(p, rep(0, n), Sigma = MASS::ginv(Ltrue))
     S <- cov(Y)
     setVariable(matlab, S = S)
+    evaluate(matlab, "[~, ~, A] = best_bipartite_approx(S)")
     s_max <- max(abs(S - diag(diag(S))))
     alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(n)/p), 0)
     rel_cgl <- Inf
+    rel_cglA <- Inf
     for (alpha in alphas) {
       setVariable(matlab, alpha = alpha)
-      evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-4, 1e-4, 40, 1)")
+      evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-6, 1e-6, 300, 1)")
       Lcgl <- getVariable(matlab, "Lcgl")
       Acgl <- diag(diag(Lcgl$Lcgl)) - Lcgl$Lcgl
       if (anyNA(Lcgl$Lcgl)) {
         next
       }
-      tmp_rel_cgl <- relativeError(Aw, Acgl)
+      tmp_rel_cgl <- relativeError(Atrue, Acgl)
       if (tmp_rel_cgl < rel_cgl) {
         rel_cgl <- tmp_rel_cgl
-        fs_cgl <- Fscore(Aw, Acgl, 1e-1)
+        fs_cgl <- Fscore(Atrue, Acgl, 1e-1)
+      }
+      evaluate(matlab, "[LcglA,~,~] = estimate_cgl(S, A, alpha, 1e-6, 1e-6, 300, 1)")
+      LcglA <- getVariable(matlab, "LcglA")
+      AcglA <- diag(diag(LcglA$LcglA)) - LcglA$LcglA
+      if (anyNA(LcglA$LcglA)) {
+        next
+      }
+      tmp_rel_cglA <- relativeError(Atrue, AcglA)
+      if (tmp_rel_cglA < rel_cglA) {
+        rel_cglA <- tmp_rel_cglA
+        fs_cglA <- Fscore(Atrue, AcglA, 1e-1)
       }
     }
     Sinv <- MASS::ginv(S)
     w_naive <- spectralGraphTopology:::w_init(w0 = "naive", Sinv)
     w_qp <- spectralGraphTopology:::w_init(w0 = "qp", Sinv)
-    graph <- learn_bipartite_graph(S, z = abs(n2 - n1), w0 = w_qp, beta = 1e5, ftol = 1e-4, maxiter = 1e5)
+    graph <- learn_bipartite_graph(S, z = abs(n2 - n1), w0 = w_qp, maxiter = 1e5)
     print(graph$convergence)
     Anaive <- A(w_naive)
     Aqp <- A(w_qp)
-    rel_sgl = relativeError(Aw, graph$Aw)
-    fs_sgl = Fscore(Aw, graph$Aw, 1e-1)
-    rel_naive = relativeError(Aw, Anaive)
-    fs_naive = Fscore(Aw, Anaive, 1e-1)
-    rel_qp = relativeError(Aw, Aqp)
-    fs_qp = Fscore(Aw, Aqp, 1e-1)
-    rel_err_sgl[j] <- rel_err_sgl[j] + rel_sgl
-    fscore_sgl[j] <- fscore_sgl[j] + fs_sgl
-    rel_err_cgl[j] <- rel_err_cgl[j] + rel_cgl
-    fscore_cgl[j] <- fscore_cgl[j] + fs_cgl
-    rel_err_naive[j] <- rel_err_naive[j] + rel_naive
-    fscore_naive[j] <- fscore_naive[j] + fs_naive
-    rel_err_qp[j] <- rel_err_qp[j] + rel_qp
-    fscore_qp[j] <- fscore_qp[j] + fs_qp
+    rel_sgl = relativeError(Atrue, graph$Adjacency)
+    fs_sgl = Fscore(Atrue, graph$Adjacency, 1e-1)
+    rel_naive = relativeError(Atrue, Anaive)
+    fs_naive = Fscore(Atrue, Anaive, 1e-1)
+    rel_qp = relativeError(Atrue, Aqp)
+    fs_qp = Fscore(Atrue, Aqp, 1e-1)
+    rel_err_sgl[r, j] <- rel_sgl
+    fscore_sgl[r, j] <- fs_sgl
+    rel_err_cgl[r, j] <- rel_cgl
+    fscore_cgl[r, j] <- fs_cgl
+    rel_err_cglA[r, j] <- rel_cglA
+    fscore_cglA[r, j] <- fs_cglA
+    rel_err_naive[r, j] <- rel_naive
+    fscore_naive[r, j] <- fs_naive
+    rel_err_qp[r, j] <- rel_qp
+    fscore_qp[r, j] <- fs_qp
   }
-  rel_err_sgl[j] <- rel_err_sgl[j] / n_realizations
-  fscore_sgl[j] <- fscore_sgl[j] / n_realizations
-  rel_err_cgl[j] <- rel_err_cgl[j] / n_realizations
-  fscore_cgl[j] <- fscore_cgl[j] / n_realizations
-  rel_err_naive[j] <- rel_err_naive[j] / n_realizations
-  fscore_naive[j] <- fscore_naive[j] / n_realizations
-  rel_err_qp[j] <- rel_err_qp[j] / n_realizations
-  fscore_qp[j] <- fscore_qp[j] / n_realizations
-  cat("\n** spectralGraphTopology results **\n")
-  cat("Avg Relative error: ")
-  cat(rel_err_sgl[j], "\n")
-  cat("Avg Fscore: ")
-  cat(fscore_sgl[j], "\n")
-  cat("\n** CGL results **\n")
-  cat("Avg Relative error: ")
-  cat(rel_err_cgl[j], "\n")
-  cat("Avg Fscore: ")
-  cat(fscore_cgl[j], "\n")
-  cat("\n** Naive results **\n")
-  cat("Avg Relative error: ")
-  cat(rel_err_naive[j], "\n")
-  cat("Avg Fscore: ")
-  cat(fscore_naive[j], "\n")
-  cat("\n** QP results **\n")
-  cat("Avg Relative error: ")
-  cat(rel_err_qp[j], "\n")
-  cat("Avg Fscore: ")
-  cat(fscore_qp[j], "\n")
 }
 saveRDS(rel_err_sgl, file = "rel-err-SGL.rds")
 saveRDS(fscore_sgl, file = "fscore-SGL.rds")
 saveRDS(rel_err_cgl, file = "rel-err-CGL.rds")
 saveRDS(fscore_cgl, file = "fscore-CGL.rds")
+saveRDS(rel_err_cglA, file = "rel-err-CGLA.rds")
+saveRDS(fscore_cglA, file = "fscore-CGLA.rds")
 saveRDS(rel_err_naive, file = "rel-err-naive.rds")
 saveRDS(fscore_naive, file = "fscore-naive.rds")
 saveRDS(rel_err_qp, file = "rel-err-QP.rds")

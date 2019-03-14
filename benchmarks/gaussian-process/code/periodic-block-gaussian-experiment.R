@@ -21,7 +21,7 @@ true_net <- graph_from_adjacency_matrix(abs(Wtrue), mode = "undirected", weighte
 Y <- MASS::mvrnorm(p, mu = rep(0, n), Sigma = Strue)
 SCM <- cov(Y)
 # SGL
-graph <- learn_laplacian_matrix(SCM, k = 4, w0 = "qp", beta = 10, maxiter = 1e5)
+graph <- learn_laplacian_matrix(SCM, k = 1, w0 = "qp")
 # GLasso
 glasso <- huge(SCM, method = "glasso")
 Pglasso <- matrix(glasso$icov[[10]], nrow = 128)
@@ -39,7 +39,7 @@ evaluate(matlab, "[Lggl,~,~] = estimate_ggl(SCM, A_mask, alpha, 1e-6, 1e-6, 40, 
 Lggl <- getVariable(matlab, "Lggl")$Lggl
 # construct nets
 glasso_net <- graph_from_adjacency_matrix(abs(diag(diag(Ptrue)) - Ptrue), mode = "undirected", weighted = TRUE)
-est_net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
+est_net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 blues <- brewer.blues(100)
 reds <- brewer.reds(100)
 blue_scale <- colorRamp(blues)
@@ -54,7 +54,6 @@ edge_colors <- (blue_scale(pos_edges * E(true_net)$weight / max(pos_edges * E(tr
 edge_colors <- 255 * edge_colors / max(edge_colors)
 E(true_net)$color = apply(edge_colors, 1, function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
 print(graph$convergence)
-print(graph$lambda)
 
 gr = .5 * (1 + sqrt(5))
 setEPS()
@@ -70,7 +69,7 @@ dev.off()
 setEPS()
 postscript("../latex/figures/periodic_gaussian_block_laplacian.ps",
            family = "Times", height = 5, width = gr * 3.5)
-corrplot(graph$Lw / max(graph$Lw), is.corr = FALSE, method = "square",
+corrplot(graph$Laplacian / max(graph$Laplacian), is.corr = FALSE, method = "square",
          addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 dev.off()
 setEPS()

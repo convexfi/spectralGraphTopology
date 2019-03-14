@@ -6,20 +6,20 @@ library(latex2exp)
 
 set.seed(42)
 
-N_realizations <- 10
-ratios <- c(.5, .75, 1, 5, 10, 30, 100, 250, 500, 1000)
+N_realizations <- 2
+ratios <- c(.5, .75, 1.5, 5, 10, 30, 50, 100, 250, 500, 1000)
 n_ratios <- c(1:length(ratios))
 # design synthetic Laplacian of a erdos_renyi graph
 N <- 64
-p <- .1
-rel_err_spec <- array(0, length(ratios))
-rel_err_cgl <- array(0, length(ratios))
-rel_err_qp <- array(0, length(ratios))
-rel_err_naive <- array(0, length(ratios))
-fscore_spec <- array(0, length(ratios))
-fscore_cgl <- array(0, length(ratios))
-fscore_qp <- array(0, length(ratios))
-fscore_naive <- array(0, length(ratios))
+p <- .4
+rel_err_spec <- matrix(0, N_realizations, length(ratios))
+rel_err_cgl <- matrix(0, N_realizations, length(ratios))
+rel_err_qp <- matrix(0, N_realizations, length(ratios))
+rel_err_naive <- matrix(0, N_realizations, length(ratios))
+fscore_spec <- matrix(0, N_realizations, length(ratios))
+fscore_cgl <- matrix(0, N_realizations, length(ratios))
+fscore_qp <- matrix(0, N_realizations, length(ratios))
+fscore_naive <- matrix(0, N_realizations, length(ratios))
 
 print("Connecting to MATLAB...")
 matlab <- Matlab(port=9999)
@@ -46,21 +46,17 @@ for (j in n_ratios) {
     Lqp <- L(w_qp)
     s_max <- max(abs(S - diag(diag(S))))
     alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(N)/T), 0)
-    # run spectralGraphTopology
-    if (ratios[j] <= 1) {
-      graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 0.2, beta_max = 1, nbeta = 10,
-                                           alpha = 1.3e-2, maxiter = 100000)
-    } else {
-      graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 1.29, maxiter = 100000)
-    }
-    print(graph$lambda)
-    print(graph$beta)
+    if (ratios[j] <= 10)
+      graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 1, tol = 1e-6, maxiter = 1e6)
+    else
+      graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 100, tol = 1e-6, maxiter = 1e6)
+    print(graph$beta_seq)
     print(graph$convergence)
     setVariable(matlab, S = S)
-    rel_cgl <- 9999999999
+    rel_cgl <- Inf
     for (alpha in alphas) {
       setVariable(matlab, alpha = alpha)
-      evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-4, 1e-6, 100, 1)")
+      evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-6, 1e-6, 100, 1)")
       Lcgl <- getVariable(matlab, "Lcgl")
       if (anyNA(Lcgl$Lcgl)) {
         next
@@ -68,80 +64,29 @@ for (j in n_ratios) {
       tmp_rel_cgl <- relativeError(Ltrue, Lcgl$Lcgl)
       if (tmp_rel_cgl < rel_cgl) {
         rel_cgl <- tmp_rel_cgl
-        fs_cgl <- Fscore(Ltrue, Lcgl$Lcgl, 1e-1)
+        fs_cgl <- Fscore(Ltrue, Lcgl$Lcgl, 5e-2)
       }
     }
-
-    rel_spec <- relativeError(Ltrue, graph$Lw)
-    fs_spec <- Fscore(Ltrue, graph$Lw, 5e-2)
-    rel_naive <- relativeError(Ltrue, Lnaive)
-    fs_naive <- Fscore(Ltrue, Lnaive, 5e-2)
-    rel_qp <- relativeError(Ltrue, Lqp)
-    fs_qp <- Fscore(Ltrue, Lqp, 5e-2)
-    rel_err_spec[j] <- rel_err_spec[j] + rel_spec
-    fscore_spec[j] <- fscore_spec[j] + fs_spec
-    rel_err_cgl[j] <- rel_err_cgl[j] + rel_cgl
-    fscore_cgl[j] <- fscore_cgl[j] + fs_cgl
-    rel_err_qp[j] <- rel_err_qp[j] + rel_qp
-    fscore_qp[j] <- fscore_qp[j] + fs_qp
-    rel_err_naive[j] <- rel_err_naive[j] + rel_naive
-    fscore_naive[j] <- fscore_naive[j] + fs_naive
+    rel_err_spec[n, j] <- relativeError(Ltrue, graph$Laplacian)
+    fscore_spec[n, j] <- Fscore(Ltrue, graph$Laplacian, 5e-2)
+    print(rel_err_spec)
+    print(fscore_spec)
+    rel_err_cgl[n, j] <- rel_cgl
+    fscore_cgl[n, j] <- fs_cgl
+    print(rel_err_cgl)
+    print(fscore_cgl)
+    rel_err_qp[n, j] <- relativeError(Ltrue, Lqp)
+    fscore_qp[n, j] <- Fscore(Ltrue, Lqp, 5e-2)
+    rel_err_naive[n, j] <- relativeError(Ltrue, Lnaive)
+    fscore_naive[n, j] <- Fscore(Ltrue, Lnaive, 5e-2)
   }
-  rel_err_spec[j] <- rel_err_spec[j] / N_realizations
-  fscore_spec[j] <- fscore_spec[j] / N_realizations
-  rel_err_cgl[j] <- rel_err_cgl[j] / N_realizations
-  fscore_cgl[j] <- fscore_cgl[j] / N_realizations
-  rel_err_qp[j] <- rel_err_qp[j] / N_realizations
-  fscore_qp[j] <- fscore_qp[j] / N_realizations
-  rel_err_naive[j] <- rel_err_naive[j] / N_realizations
-  fscore_naive[j] <- fscore_naive[j] / N_realizations
-  cat("\n** spectralGraphTopology results **\n")
-  cat("Avg Relative error: ")
-  cat(rel_err_spec[j], "\n")
-  cat("Avg Fscore: ")
-  cat(fscore_spec[j], "\n")
-  cat("\n** CGL results **\n")
-  cat("Avg Relative error: ")
-  cat(rel_err_cgl[j], "\n")
-  cat("Avg Fscore: ")
-  cat(fscore_cgl[j], "\n")
-  cat("\n** CGL with A results **\n")
-  cat("Avg Relative error: ")
-  cat(rel_err_cglA[j], "\n")
-  cat("Avg Fscore: ")
-  cat(fscore_cglA[j], "\n")
-  cat("\n** Naive results **\n")
-  cat("Avg Relative error: ")
-  cat(rel_err_naive[j], "\n")
-  cat("Avg Fscore: ")
-  cat(fscore_naive[j], "\n")
 }
 
-colors <- c("#0B032D", "#843B62", "#F67E7D", "#FFB997")
-gr = .5 * (1 + sqrt(5))
-setEPS()
-postscript("../latex/figures/relative_error_erdos_renyi.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
-plot(n_ratios, rel_err_naive, type = "b", pch=15, cex=.75, ylim=c(0, .65),
-     xlab = TeX("$\\mathit{T} / \\mathit{N}$"), ylab = "Average Relative Error", col = colors[1], xaxt = "n")
-grid()
-lines(n_ratios, rel_err_cgl, type = "b", pch=16, cex=.75, col = colors[2], xaxt = "n")
-lines(n_ratios, rel_err_cglA, type = "b", pch=17, cex=.75, col = colors[3], xaxt = "n")
-lines(n_ratios, rel_err_spec, type = "b", pch=18, cex=.85, col = colors[4], xaxt = "n")
-axis(side = 1, at = n_ratios, labels = ratios)
-legend("topright", legend = c("ISCM", "CGL", TeX("CGL($\\mathbf{A}$)"), "SGL"),
-       col=colors, pch=c(15, 16, 17, 18), lty=c(1, 1, 1, 1), bty="n")
-dev.off()
-embed_fonts("../latex/figures/relative_error_erdos_renyi.ps", outfile="../latex/figures/relative_error_erdos_renyi.ps")
-setEPS()
-postscript("../latex/figures/fscore_erdos_renyi.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
-plot(n_ratios, fscore_naive, ylim=c(.3, 1.), xlab = TeX("$\\mathit{T} / \\mathit{N}$"),
-     ylab = "Average F-score", type = "b", pch=15, cex=.75, col = colors[1], xaxt = "n")
-grid()
-lines(n_ratios, fscore_cgl, type = "b", pch=16, cex=.75, col = colors[2], xaxt = "n")
-lines(n_ratios, fscore_cglA, type = "b", pch=17, cex=.75, col = colors[3], xaxt = "n")
-lines(n_ratios, fscore_spec, type = "b", pch=18, cex=.85, col = colors[4], xaxt = "n")
-axis(side = 1, at = n_ratios, labels = ratios)
-legend("bottomright", legend = c("ISCM", "CGL", TeX("CGL($\\mathbf{A}$)"), "SGL"),
-       col=colors, pch=c(15, 16, 17, 18), lty=c(1, 1, 1, 1), bty="n")
-dev.off()
-embed_fonts("../latex/figures/fscore_erdos_renyi.ps", outfile="../latex/figures/fscore_erdos_renyi.ps")
+saveRDS(rel_err_spec, file = "rel-err-SGL.rds")
+saveRDS(fscore_spec, file = "fscore-SGL.rds")
+saveRDS(rel_err_cgl, file = "rel-err-CGL.rds")
+saveRDS(fscore_cgl, file = "fscore-CGL.rds")
+saveRDS(rel_err_naive, file = "rel-err-naive.rds")
+saveRDS(fscore_naive, file = "fscore-naive.rds")
+saveRDS(rel_err_qp, file = "rel-err-QP.rds")
+saveRDS(fscore_qp, file = "fscore-QP.rds")

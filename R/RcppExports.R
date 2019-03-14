@@ -181,8 +181,8 @@ blockDiagCpp <- function(matrices) {
     .Call('_spectralGraphTopology_blockDiagCpp', PACKAGE = 'spectralGraphTopology', matrices)
 }
 
-Fscore <- function(Wtrue, West, eps) {
-    .Call('_spectralGraphTopology_Fscore', PACKAGE = 'spectralGraphTopology', Wtrue, West, eps)
+metrics <- function(Wtrue, West, eps) {
+    .Call('_spectralGraphTopology_metrics', PACKAGE = 'spectralGraphTopology', Wtrue, West, eps)
 }
 
 pairwise_matrix_rownorm <- function(M) {

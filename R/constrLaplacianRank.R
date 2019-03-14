@@ -1,5 +1,7 @@
 constr_laplacian_rank <- function(Y, k = 1, m = 5, S0 = NULL, lmd = 1, eig_tol = 1e-6,
                                   edge_tol = 1e-6, maxiter = 1000, regularization_type = 2) {
+  time_seq <- c(0)
+  start_time <- proc.time()[3]
   A <- build_initial_graph(Y, m)
   n <- ncol(A)
   if (is.null(S0)) S <- matrix(1/n, n, n)
@@ -8,23 +10,26 @@ constr_laplacian_rank <- function(Y, k = 1, m = 5, S0 = NULL, lmd = 1, eig_tol =
   LS <-  DS - .5 * (S + t(S))
   DA <- diag(.5 * colSums(A + t(A)))
   LA <- DA - .5 * (A + t(A))
-  F <- eigenvectors(LA)[, 1:k]
+  if (k == 1)
+    F <- matrix(eigenvectors(LA)[, 1:k])
+  else
+    F <- eigenvectors(LA)[, 1:k]
   # bounds for variables in the QP solver
   bvec <- c(1, rep(0, n))
   Amat <- cbind(rep(1, n), diag(n))
   # objective function placeholder
-  fun_k <- objective_function(A, S, LS, F, lmd)
-  fun_seq <- c(fun_k)
+  #fun_k <- objective_function(A, S, LS, F, lmd)
+  #fun_seq <- c(fun_k)
   lmd_seq <- c(lmd)
-  pb = txtProgressBar(min = 0, max = maxiter, initial = 0)
+  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  lambda: :lmd  null_eigvals: :null_eigvals",
+                                   total = maxiter, clear = FALSE, width = 100)
   for (ii in c(1:maxiter)) {
-    setTxtProgressBar(pb, ii)
     V <- pairwise_matrix_rownorm(F)
     if (regularization_type == 1) {
       for (i in c(1:n)) {
-        U <- diag(.5 / abs(S[i, ] - A[i, ]))
-        p <- diag(U) * A[i, ] - .5 * lmd * V[i, ]
-        qp <- quadprog::solve.QP(Dmat = U, dvec = p, Amat = Amat, bvec = bvec, meq = 1)
+        u <- .5 / abs(S[i, ] - A[i, ])
+        p <- u * A[i, ] - .5 * lmd * V[i, ]
+        qp <- quadprog::solve.QP(Dmat = diag(u), dvec = p, Amat = Amat, bvec = bvec, meq = 1)
         S[i, ] <- qp$solution
       }
     } else if (regularization_type == 2) {
@@ -37,10 +42,12 @@ constr_laplacian_rank <- function(Y, k = 1, m = 5, S0 = NULL, lmd = 1, eig_tol =
     DS <- diag(.5 * colSums(S + t(S)))
     LS <- DS - .5 * (S + t(S))
     F <- eigenvectors(LS)[, 1:k]
-    fun_next <- objective_function(A, S, LS, F, lmd)
-    fun_seq <- c(fun_seq, fun_next)
+    #fun_next <- objective_function(A, S, LS, F, lmd)
+    #fun_seq <- c(fun_seq, fun_next)
     eig_vals <- eigenvalues(LS)
     n_zero_eigenvalues <- sum(abs(eig_vals) < eig_tol)
+    time_seq <- c(time_seq, proc.time()[3] - start_time)
+    pb$tick(token = list(lmd = lmd, null_eigvals = n_zero_eigenvalues))
     if (k < n_zero_eigenvalues)
       lmd <- .5 * lmd
     else if (k > n_zero_eigenvalues)
@@ -52,7 +59,7 @@ constr_laplacian_rank <- function(Y, k = 1, m = 5, S0 = NULL, lmd = 1, eig_tol =
   LS[abs(LS) < edge_tol] <- 0
   AS <- diag(diag(LS)) - LS
   return(list(Laplacian = LS, Adjacency = AS, eigenvalues = eig_vals,
-              obj_fun = fun_seq, lmd_seq = lmd_seq))
+              lmd_seq = lmd_seq, elapsed_time = time_seq))
 }
 
 
@@ -76,4 +83,3 @@ build_initial_graph <- function(Y, m) {
 objective_function <- function(A, S, LS, F, lmd) {
   return(sum(abs(A - S)) + 2 * lmd * sum(diag(t(F) %*% LS %*% F)))
 }
-

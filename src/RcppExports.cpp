@@ -277,16 +277,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// Fscore
-double Fscore(const Eigen::MatrixXd& Wtrue, const Eigen::MatrixXd& West, const double eps);
-RcppExport SEXP _spectralGraphTopology_Fscore(SEXP WtrueSEXP, SEXP WestSEXP, SEXP epsSEXP) {
+// metrics
+std::vector<double> metrics(const Eigen::MatrixXd& Wtrue, const Eigen::MatrixXd& West, const double eps);
+RcppExport SEXP _spectralGraphTopology_metrics(SEXP WtrueSEXP, SEXP WestSEXP, SEXP epsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type Wtrue(WtrueSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type West(WestSEXP);
     Rcpp::traits::input_parameter< const double >::type eps(epsSEXP);
-    rcpp_result_gen = Rcpp::wrap(Fscore(Wtrue, West, eps));
+    rcpp_result_gen = Rcpp::wrap(metrics(Wtrue, West, eps));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -326,7 +326,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spectralGraphTopology_altLstar", (DL_FUNC) &_spectralGraphTopology_altLstar, 1},
     {"_spectralGraphTopology_altAstar", (DL_FUNC) &_spectralGraphTopology_altAstar, 1},
     {"_spectralGraphTopology_blockDiagCpp", (DL_FUNC) &_spectralGraphTopology_blockDiagCpp, 1},
-    {"_spectralGraphTopology_Fscore", (DL_FUNC) &_spectralGraphTopology_Fscore, 3},
+    {"_spectralGraphTopology_metrics", (DL_FUNC) &_spectralGraphTopology_metrics, 3},
     {"_spectralGraphTopology_pairwise_matrix_rownorm", (DL_FUNC) &_spectralGraphTopology_pairwise_matrix_rownorm, 1},
     {NULL, NULL, 0}
 };

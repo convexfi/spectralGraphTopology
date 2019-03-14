@@ -46,18 +46,16 @@
 #' # relative error between the true Laplacian and the learned one
 #' norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
 #' @export
-learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0,
-                                   beta = 1e4, fix_beta = FALSE, rho = 1e-2, m = 7,
-                                   maxiter = 1e4, tol = 1e-4, eig_tol = 1e-9,
+learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0,
+                                   beta = 1e4, beta_max = 1e6, fix_beta = FALSE, rho = 1e-2, m = 7,
+                                   maxiter = 1e4, abstol = 1e-6, reltol = 1e-4, eig_tol = 1e-9,
                                    record_objective = FALSE, record_weights = FALSE) {
-  if (nrow(S) != ncol(S)) {
+  if (is_data_matrix || ncol(S) != nrow(S)) {
     A <- build_initial_graph(S, m = m)
     D <- diag(.5 * colSums(A + t(A)))
     L <- D - .5 * (A + t(A))
     S <- MASS::ginv(L)
     is_data_matrix <- TRUE
-  } else {
-    is_data_matrix <- FALSE
   }
   # number of nodes
   n <- nrow(S)
@@ -69,6 +67,7 @@ learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 0, ub = 1e4, alp
     Sinv <- L
   else
     Sinv <- MASS::ginv(S)
+  # if w0 is either "naive" or "qp", compute it, else return w0
   w0 <- w_init(w0, Sinv)
   # compute quantities on the initial guess
   Lw0 <- L(w0)
@@ -76,17 +75,20 @@ learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 0, ub = 1e4, alp
   lambda0 <- laplacian.lambda_update(lb = lb, ub = ub, beta = beta, U = U0,
                                      Lw = Lw0, k = k)
   # save objective function value at initial guess
-  ll0 <- laplacian.likelihood(Lw = Lw0, lambda = lambda0, K = K)
-  fun0 <- ll0 + laplacian.prior(beta = beta, Lw = Lw0, lambda = lambda0, U = U0)
-  fun_seq <- c(fun0)
-  ll_seq <- c(ll0)
+  if (record_objective) {
+    ll0 <- laplacian.likelihood(Lw = Lw0, lambda = lambda0, K = K)
+    fun0 <- ll0 + laplacian.prior(beta = beta, Lw = Lw0, lambda = lambda0, U = U0)
+    fun_seq <- c(fun0)
+    ll_seq <- c(ll0)
+  }
   beta_seq <- c(beta)
-  w_seq <- list(Matrix::Matrix(w0, sparse = TRUE))
+  if (record_weights)
+    w_seq <- list(Matrix::Matrix(w0, sparse = TRUE))
   time_seq <- c(0)
-  pb = txtProgressBar(min = 0, max = maxiter, initial = 0)
+  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  beta: :beta  null_eigvals: :null_eigvals",
+                                   total = maxiter, clear = FALSE, width = 100)
   start_time <- proc.time()[3]
   for (i in 1:maxiter) {
-    setTxtProgressBar(pb, i)
     w <- laplacian.w_update(w = w0, Lw = Lw0, U = U0, beta = beta,
                             lambda = lambda0, K = K)
     Lw <- L(w)
@@ -103,17 +105,22 @@ learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 0, ub = 1e4, alp
     if (record_weights)
       w_seq <- rlist::list.append(w_seq, Matrix::Matrix(w, sparse = TRUE))
     # check for convergence
-    Lwerr <- norm(Lw - Lw0, "F") / norm(Lw0, "F")
+    werr <- abs(w0 - w)
+    has_w_converged <- ((all(werr <= .5 * reltol * (w + w0)) && (reltol > 0)) ||
+                        (all(werr <= abstol) && (abstol > 0)))
     n_zero_eigenvalues <- sum(abs(eigenvalues(Lw)) < eig_tol)
     time_seq <- c(time_seq, proc.time()[3] - start_time)
+    pb$tick(token = list(beta = beta, null_eigvals = n_zero_eigenvalues))
     if (!fix_beta) {
       if (k < n_zero_eigenvalues)
         beta <- (1 + rho) * beta
       else if (k > n_zero_eigenvalues)
         beta <- beta / (1 + rho)
+      if (beta > beta_max)
+        beta <- beta_max
       beta_seq <- c(beta_seq, beta)
     }
-    if (Lwerr < tol && n_zero_eigenvalues == k)
+    if (has_w_converged && n_zero_eigenvalues == k)
       break
     # update estimates
     w0 <- w
@@ -123,10 +130,16 @@ learn_laplacian_matrix <- function(S, k = 1, w0 = "naive", lb = 0, ub = 1e4, alp
   }
   # compute the adjancency matrix
   Aw <- A(w)
-  return(list(Laplacian = Lw, Adjacency = Aw, obj_fun = fun_seq, loglike = ll_seq,
-              w = w, lambda = lambda, eigenvalues = eigenvalues(Lw), U = U,
-              elapsed_time = time_seq, convergence = !(i == maxiter), beta_seq = beta_seq,
-              w_seq = w_seq))
+  results <- list(Laplacian = Lw, Adjacency = Aw, w = w, lambda = lambda, U = U,
+                  Lw_eigvals = eigenvalues(Lw), elapsed_time = time_seq,
+                  convergence = !(i == maxiter), beta_seq = beta_seq)
+  if (record_objective) {
+    results$obj_fun <- fun_seq
+    results$loglike <- ll_seq
+  }
+  if (record_weights)
+    results$w_seq <- w_seq
+  return(results)
 }
 
 
@@ -275,7 +288,8 @@ learn_adjacency_and_laplacian <- function(S, z = 0, k = 1, w0 = "naive", alpha =
     # compute the relative error and check the tolerance on the Adjacency
     # matrix and on the objective function
     # check for convergence
-    Lwerr <- norm(Lw - Lw0, "F") / norm(Lw0, "F")
+    #Lwerr <- norm(Lw - Lw0, "F") / norm(Lw0, "F")
+    has_w_converged <- all(abs(w0 - w) <= .5 * tol * (w + w0))
     n_zero_eigenvalues <- sum(abs(eigenvalues(Lw)) < eig_tol)
     time_seq <- c(time_seq, proc.time()[3] - start_time)
     if (!fix_beta) {
@@ -285,7 +299,7 @@ learn_adjacency_and_laplacian <- function(S, z = 0, k = 1, w0 = "naive", alpha =
         beta <- beta / (1 + rho)
       beta_seq <- c(beta_seq, beta)
     }
-    if (Lwerr < tol && n_zero_eigenvalues == k)
+    if (has_w_converged && n_zero_eigenvalues == k)
       break
     # update estimates
     fun0 <- fun

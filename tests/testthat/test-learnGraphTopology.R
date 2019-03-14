@@ -10,7 +10,7 @@ test_that("learn_laplacian_matrix with single component random graph", {
   Y <- MASS::mvrnorm(n * 500, rep(0, n), MASS::ginv(Laplacian))
   res <- learn_laplacian_matrix(cov(Y))
   expect_that(relativeError(Laplacian, res$Laplacian) < 1e-1, is_true())
-  expect_that(Fscore(Laplacian, res$Laplacian, 1e-1) > .9, is_true())
+  expect_that(metrics(Laplacian, res$Laplacian, 1e-1)[1] > .9, is_true())
 })
 
 
@@ -21,7 +21,7 @@ test_that("learn_laplacian_matrix with diamond graph", {
   Y <- MASS::mvrnorm(n * 500, rep(0, n), MASS::ginv(Laplacian))
   res <- learn_laplacian_matrix(cov(Y))
   expect_that(relativeError(Laplacian, res$Laplacian) < 1e-1, is_true())
-  expect_that(Fscore(Laplacian, res$Laplacian, 1e-1) > .9, is_true())
+  expect_that(metrics(Laplacian, res$Laplacian, 1e-1)[1] > .9, is_true())
 })
 
 
@@ -32,7 +32,7 @@ test_that("learn_bipartite_graph converges with simple bipartite graph", {
   Y <- MASS::mvrnorm(n * 500, rep(0, n), MASS::ginv(L(w)))
   res <- learn_bipartite_graph(cov(Y))
   expect_that(relativeError(Adjacency, res$Adjacency) < 1e-1, is_true())
-  expect_that(Fscore(Adjacency, res$Adjacency, 1e-1) > .9, is_true())
+  expect_that(metrics(Adjacency, res$Adjacency, 1e-1)[1] > .9, is_true())
 })
 
 
@@ -43,7 +43,7 @@ test_that("learn_adjancecy_and_laplacian can learn k-component bipartite graph",
   Y <- MASS::mvrnorm(2 * n * 100, rep(0, n), MASS::ginv(Laplacian))
   graph <- learn_adjacency_and_laplacian(cov(Y), k = 2)
   expect_that(relativeError(Laplacian, graph$Laplacian) < 1e-1, is_true())
-  expect_that(Fscore(Laplacian, graph$Laplacian, 1e-1) > .9, is_true())
+  expect_that(metrics(Laplacian, graph$Laplacian, 1e-1)[1] > .9, is_true())
 })
 
 
@@ -54,7 +54,7 @@ test_that("learn_adjacency_and_laplacian_graph converges with simple bipartite g
   Y <- MASS::mvrnorm(n * 500, rep(0, n), MASS::ginv(L(w)))
   res <- learn_adjacency_and_laplacian(cov(Y))
   expect_that(relativeError(Adjacency, res$Adjacency) < 1e-1, is_true())
-  expect_that(Fscore(Adjacency, res$Adjacency, 1e-1) > .9, is_true())
+  expect_that(metrics(Adjacency, res$Adjacency, 1e-1)[1] > .9, is_true())
 })
 
 
@@ -64,10 +64,10 @@ test_that("learn_laplacian_matrix with two components", {
                      c(0, 0, 1, -1),
                      c(0, 0, -1, 1))
   n <- ncol(Laplacian)
-  Y <- MASS::mvrnorm(n * 1000, rep(0, n), MASS::ginv(Laplacian))
-  res <- learn_laplacian_matrix(cov(Y), k = 2)
+  Y <- MASS::mvrnorm(n * 300, rep(0, n), MASS::ginv(Laplacian))
+  res <- learn_laplacian_matrix(cov(Y), k = 2, beta = 40, fix_beta = TRUE)
   expect_that(relativeError(Laplacian, res$Laplacian) < 1e-1, is_true())
-  expect_that(Fscore(Laplacian, res$Laplacian, 1e-1) > .9, is_true())
+  expect_that(metrics(Laplacian, res$Laplacian, 1e-1)[1] > .9, is_true())
 })
 
 
@@ -78,7 +78,7 @@ test_that("check that learn_adjacency_and_laplacian and learn_laplacian_matrix a
   Y <- MASS::mvrnorm(n * 100, rep(0, n), MASS::ginv(Laplacian))
   S <- cov(Y)
   res1 <- learn_adjacency_and_laplacian(S, w0 = "qp", fix_beta = TRUE, nu = 0)
-  res2 <- learn_laplacian_matrix(S, w0 = "qp", fix_beta = TRUE, record_objective = TRUE)
+  res2 <- learn_laplacian_matrix(S, w0 = "qp", fix_beta = TRUE)
   expect_that(all(abs(res1$obj_fun - res2$obj_fun) < 1e-9), is_true())
   expect_that(all(abs(res1$w - res2$w) < 1e-9), is_true())
 })
@@ -94,7 +94,7 @@ test_that("learn_laplacian_matrix with two components graph #2", {
   Y <- MASS::mvrnorm(500 * (n1 + n2), rep(0, n1 + n2), MASS::ginv(Laplacian))
   res <- learn_laplacian_matrix(cov(Y), k = 2, fix_beta = TRUE, eig_tol = 1e-5)
   expect_that(relativeError(Laplacian, res$Laplacian) < 1e-1, is_true())
-  expect_that(Fscore(Laplacian, res$Laplacian, 1e-1) > .9, is_true())
+  expect_that(metrics(Laplacian, res$Laplacian, 1e-1)[1] > .9, is_true())
 })
 
 
@@ -107,8 +107,6 @@ test_that("learn_adjacency_and_laplacian with two components graph #2", {
   Laplacian <- blockDiag(Laplacian1, Laplacian2)
   Y <- MASS::mvrnorm(500 * (n1 + n2), rep(0, n1 + n2), MASS::ginv(Laplacian))
   res <- learn_adjacency_and_laplacian(cov(Y), k = 2, w0 = "qp", nu = 0, fix_beta = TRUE, eig_tol = 1e-5)
-  print(Laplacian)
-  print(res$Laplacian)
   expect_that(relativeError(Laplacian, res$Laplacian) < 1e-1, is_true())
-  expect_that(Fscore(Laplacian, res$Laplacian, 1e-1) > .9, is_true())
+  expect_that(metrics(Laplacian, res$Laplacian, 1e-1)[1] > .9, is_true())
 })

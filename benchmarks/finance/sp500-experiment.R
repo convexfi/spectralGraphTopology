@@ -7,7 +7,7 @@ Y <- log(stockdata$data[2:1258,]/stockdata$data[1:1257,])
 labels <- stockdata$info[, 2]
 unique_labels <- unique(labels)
 k <- length(unique_labels)
-graph <- learn_laplacian_matrix(t(Y), k = k, beta = 1e3, alpha = 1)
+graph <- learn_laplacian_matrix(t(Y), k = k, beta = 1e2, tol = 1e-6, maxiter = 1e5)
 print(graph$beta_seq)
 #graph <- constr_laplacian_rank(t(Y), k = k)
 clusters <- numeric(k)
@@ -15,7 +15,7 @@ for (i in 1:k) {
   clusters[labels == unique_labels[i]] <- i
 }
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
-colors <- rainbow(k)
+colors <- kovesi.rainbow(k)
 V(net)$cluster <- clusters
 E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
                       function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],

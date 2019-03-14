@@ -11,8 +11,12 @@ run_animals <- function(k) {
   names <- matrix(unlist(read.csv("animals_names.txt", header = FALSE)))
   Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
   N <- ncol(Y)
-  graph <- learn_laplacian_matrix(cov(Y) + diag(1/3, N, N), w0 = "qp",
-                                  k = k, beta = .5, alpha = 5e-2)
+  if (k == 1)
+    graph <- learn_laplacian_matrix(cov(Y) + diag(1/3, N, N), w0 = "qp", k = k,
+                                    beta = .5, alpha = 5e-2)
+  else
+    graph <- learn_laplacian_matrix(cov(Y) + diag(1/3, N, N), w0 = "qp", beta = 1, k = k)
+  print(graph$elapsed_time)
   net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
   colors <- brewer.reds(100)
   c_scale <- colorRamp(colors)
