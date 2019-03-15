@@ -79,5 +79,5 @@ norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
 our paper soon to be submitted
 }
 \author{
-Convex group - HKUST
+Ze Vinicius and Daniel Palomar
 }
