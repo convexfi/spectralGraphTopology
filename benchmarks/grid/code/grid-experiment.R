@@ -56,9 +56,9 @@ for (j in 1:length(ratios)) {
     alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(N)/ T), 0)
     # run spectralGraphTopology
     if (ratios[j] <= 50)
-      graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 1e1, maxiter = 1000000)
+      graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 1e1, abstol = 0, maxiter = 1000000)
     else
-      graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 1e2, maxiter = 1000000)
+      graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 1e2, abstol = 0, maxiter = 1000000)
     print(graph$convergence)
     # compute naive
     # set data variable to MATLAB

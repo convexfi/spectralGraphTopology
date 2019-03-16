@@ -251,7 +251,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
 #' @export
 learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 1,
                                           w0 = "naive", m = 7, alpha = 0., beta = 1e4,
-                                          rho = 1e-2, fix_beta = FALSE, nu = 1e4,
+                                          rho = 1e-2, fix_beta = FALSE, beta_max = 1e6, nu = 1e4,
                                           lb = 0, ub = 1e4, maxiter = 1e4, abstol = 1e-6,
                                           reltol = 1e-4, eig_tol = 1e-9,
                                           record_weights = FALSE, record_objective = FALSE) {
@@ -319,6 +319,8 @@ learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 
         beta <- (1 + rho) * beta
       else if (k > n_zero_eigenvalues)
         beta <- beta / (1 + rho)
+      if (beta > beta_max)
+        beta <- beta_max
       beta_seq <- c(beta_seq, beta)
     }
     werr <- abs(w0 - w)
