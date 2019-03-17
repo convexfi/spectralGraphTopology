@@ -61,7 +61,6 @@ legend("right", legend = c("negloglike", "obj-func", "constr"), col=colors, pch 
 dev.off()
 embed_fonts("grid_trend.ps", outfile="grid_trend.ps")
 
-
 setEPS()
 postscript("relative_error.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
 plot(c(1:niter), relative_error, type = "b", lty = 1, pch = 15, cex=.2, col = "black",

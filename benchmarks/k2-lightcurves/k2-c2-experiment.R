@@ -14,8 +14,10 @@ labels <- results_df[, 2]
 unique_labels <- unique(labels)
 # estimate graph
 k <- length(unique_labels)
+data <- t(scale(t(data)))
 S <- cov(t(data))
-graph <- learn_laplacian_matrix(data, k = k, beta = 4, fix_beta = TRUE)
+print(dim(S))
+graph <- learn_laplacian_matrix(data, k = k, beta = 4)
 ## plots
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 clusters <- array(0, length(labels))

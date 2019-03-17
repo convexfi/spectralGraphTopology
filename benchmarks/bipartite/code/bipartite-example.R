@@ -30,14 +30,14 @@ Anoisy <- diag(diag(Lnoisy)) - Lnoisy
 # set number of samples
 Y <- MASS::mvrnorm(p, rep(0, n), Sigma = MASS::ginv(Lnoisy))
 S <- cov(Y)
-graph <- learn_bipartite_graph(S, z = abs(n2 - n1), w0 = "qp", beta = 1e5, ftol = 1e-6, maxiter = 1e5)
-print(relativeError(Aw, graph$Aw))
-print(Fscore(Aw, graph$Aw, 1e-2))
+graph <- learn_bipartite_graph(S, z = abs(n2 - n1), w0 = "qp", nu = 1e5)
+print(relativeError(Lw, graph$Laplacian))
+print(metrics(Lw, graph$Laplacian, 1e-2))
 
 gr <- .5 * (1 + sqrt(5))
 setEPS()
 postscript("bipartite_est_mat.ps", family = "Times", height = 5, width = gr * 3.5)
-corrplot(graph$Aw / max(graph$Aw), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 dev.off()
 setEPS()
 postscript("bipartite_noisy_mat.ps", family = "Times", height = 5, width = gr * 3.5)
@@ -49,7 +49,7 @@ corrplot(Aw / max(Aw), is.corr = FALSE, method = "square", addgrid.col = NA, tl.
 dev.off()
 
 ## build the network
-est_net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
+est_net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 ## plot network
 colors <- brewer.blues(100)
 c_scale <- colorRamp(colors)

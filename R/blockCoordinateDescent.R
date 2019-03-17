@@ -43,11 +43,11 @@ bipartite.w_update <- function(w, Aw, V, nu, psi, K, J, Lips) {
 }
 
 
-dregular.w_update <- function(w, Lw, Aw, U, beta, nu, lambda, d, K) {
+dregular.w_update <- function(w, Lw, Aw, U, beta, eta, lambda, d, K) {
   n <- ncol(Aw)
   ULmdUT <- crossprod(sqrt(lambda) * t(U))
-  grad_f <- Lstar(beta * (Lw - ULmdUT) + K) + nu * Astar(Aw - ULmdUT + diag(d, n))
-  w_update <- w - .5 * grad_f / (beta * n + nu)
+  grad_f <- Lstar(beta * (Lw - ULmdUT) + K) + eta * Astar(Aw) - rep(2 * eta * d,  .5 * n * (n - 1))
+  w_update <- w - .5 * grad_f / ((beta + eta) * n + eta)
   w_update[w_update < 0] <- 0
   return(w_update)
 }

@@ -155,8 +155,8 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
     is_data_matrix <- TRUE
   }
   # number of nodes
+  n <- nrow(S)
   # note now that S is always some sort of similarity matrix
-  n <- ncol(S)
   J <- matrix(1/n, n, n)
   # l1-norm penalty factor
   H <- alpha * (2 * diag(n) - matrix(1, n, n))
@@ -186,7 +186,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
   pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  Lipschitz: :Lips ",
                                    total = maxiter, clear = FALSE, width = 70)
   for (i in 1:maxiter) {
-    pb$tick(token = list(Lipschitz = Lips))
+    pb$tick(token = list(Lips = Lips))
     # we need to make sure that the Lipschitz constant is large enough
     # in order to avoid divergence
     while(1) {
@@ -351,61 +351,104 @@ learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 
 
 
 #' @export
-learn_dregular_graph <- function(S, k = 1, w0 = "qp", alpha = 0.,
-                                 beta = 1, nu = 1e3, lb = 0, ub = 1e4,
-                                 maxiter = 1e4, Lwtol = 1e-4, ftol = 1e-4) {
+learn_dregular_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "qp",
+                                 alpha = 0. beta = 1e3, beta_max = 1e6, fix_beta = FALSE,
+                                 eta = 1e3, lb = 0, ub = 1e4, maxiter = 1e4,
+                                 abstol = 1e-6, reltol = 1e-4, record_objective = FALSE,
+                                 record_weights = FALSE) {
+  if (is_data_matrix || ncol(S) != nrow(S)) {
+    A <- build_initial_graph(S, m = m)
+    D <- diag(.5 * colSums(A + t(A)))
+    L <- D - .5 * (A + t(A))
+    S <- MASS::ginv(L)
+    is_data_matrix <- TRUE
+  }
   # number of nodes
-  n <- ncol(S)
+  n <- nrow(S)
+  # note now that S is always some sort of similarity matrix
+  J <- matrix(1/n, n, n)
   # l1-norm penalty factor
   H <- alpha * (2 * diag(n) - matrix(1, n, n))
   K <- S + H
   # compute initial guess
-  w0 <- w_init(w0, MASS::ginv(S))
+  if (is_data_matrix)
+    Sinv <- L
+  else
+    Sinv <- MASS::ginv(S)
+  # if w0 is either "naive" or "qp", compute it, else return w0
+  w0 <- w_init(w0, Sinv)
   # compute quantities on the initial guess
   Aw0 <- A(w0)
   Lw0 <- L(w0)
-  U0 <- dregular.U_update(Lw0, k)
-  lambda0 <- dregular.lambda_update(lb, ub, beta, U0, Lw0, k)
-  d0 <- mean(lambda0)
+  U0 <- dregular.U_update(Lw = Lw0, k = k)
+  lambda0 <- dregular.lambda_update(lb = lb, ub = ub, beta = beta, U = U0,
+                                    Lw = Lw0, k = k)
+  d0 <- mean(diag(Aw0) + diag(Lw0))
   # save objective function value at initial guess
-  ll0 <- dregular.likelihood(Lw0, lambda0, K)
-  fun0 <- ll0 + dregular.prior(beta, nu, Lw0, Aw0, U0, lambda0, d0)
-  fun_seq <- c(fun0)
-  ll_seq <- c(ll0)
+  if (record_objective) {
+    ll0 <- dregular.likelihood(Lw0, lambda0, K)
+    fun0 <- ll0 + dregular.prior(beta, nu, Lw0, Aw0, U0, lambda0, d0)
+    fun_seq <- c(fun0)
+    ll_seq <- c(ll0)
+  }
   time_seq <- c(0)
-  pb = txtProgressBar(min = 0, max = maxiter, initial = 0)
   start_time <- proc.time()[3]
+  if (record_weights)
+    w_seq <- list(Matrix::Matrix(w0, sparse = TRUE))
+  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  beta: :beta  null_eigvals: :null_eigvals",
+                                   total = maxiter, clear = FALSE, width = 100)
   for (i in c(1:maxiter)) {
-    setTxtProgressBar(pb, i)
-    w <- dregular.w_update(w0, Lw0, Aw0, U0, beta, nu, lambda0, d0, K)
+    pb$tick(token = list(beta = beta, null_eigvals = n_zero_eigenvalues))
+    w <- dregular.w_update(w = w0, Lw = Lw0, Aw = Aw0, U = U0, beta = beta,
+                           eta = eta, lambda = lambda0, d = d0, K = K)
     Lw <- L(w)
     Aw <- A(w)
     U <- dregular.U_update(Lw, k)
-    lambda <- dregular.lambda_update(lb, ub, beta + nu, U, Lw, k)
-    d <- mean(lambda)
-    # compute negloglikelihood and objective function values
-    ll <- dregular.likelihood(Lw, lambda, K)
-    fun <- ll + dregular.prior(beta, nu, Lw, Aw, U, lambda, d)
-    # save measurements of time and objective functions
+    lambda <- dregular.lambda_update(lb = lb, ub = ub, beta = beta, U = U,
+                                     Lw = Lw, k = k)
+    d <- mean(diag(Aw) + diag(Lw))
+    if (record_objective) {
+      # compute negloglikelihood and objective function values
+      ll <- dregular.likelihood(Lw, lambda, K)
+      fun <- ll + dregular.prior(beta, nu, Lw, Aw, U, lambda, d)
+      # save measurements of time and objective functions
+      ll_seq <- c(ll_seq, ll)
+      fun_seq <- c(fun_seq, fun)
+    }
+    if (record_weights)
+      w_seq <- rlist::list.append(w_seq, Matrix::Matrix(w, sparse = TRUE))
+    n_zero_eigenvalues <- sum(abs(eigenvalues(Lw)) < eig_tol)
     time_seq <- c(time_seq, proc.time()[3] - start_time)
-    ll_seq <- c(ll_seq, ll)
-    fun_seq <- c(fun_seq, fun)
-    #w_seq <- rlist::list.append(w_seq, w)
-    # compute the relative error and check the tolerance on the Adjacency
-    # matrix and on the objective function
-    Lwerr <- norm(Lw - Lw0, type="F") / max(1, norm(Lw0, type="F"))
-    ferr <- abs(fun - fun0) / max(1, abs(fun0))
-    if ((Lwerr < Lwtol && ferr < ftol) && i > 1)
+    pb$tick(token = list(beta = beta, null_eigvals = n_zero_eigenvalues))
+    if (!fix_beta) {
+      if (k < n_zero_eigenvalues)
+        beta <- (1 + rho) * beta
+      else if (k > n_zero_eigenvalues)
+        beta <- beta / (1 + rho)
+      if (beta > beta_max)
+        beta <- beta_max
+      beta_seq <- c(beta_seq, beta)
+    }
+    werr <- abs(w0 - w)
+    has_w_converged <- ((all(werr <= .5 * reltol * (w + w0)) && (reltol > 0)) ||
+                        (all(werr <= abstol) && (abstol > 0)))
+    if (has_w_converged && n_zero_eigenvalues == k)
       break
     # update estimates
-    fun0 <- fun
     w0 <- w
     U0 <- U
     lambda0 <- lambda
     Lw0 <- Lw
     Aw0 <- Aw
   }
-  return(list(Lw = Lw, Aw = Aw, d = d, obj_fun = fun_seq, loglike = ll_seq, w = w,
-              lambda = lambda, U = U, elapsed_time = time_seq,
-              convergence = !(i == maxiter)))
+  results <- list(Laplacian = Lw, Adjacency = Aw, w = w, lambda = lambda,
+                  U = U, elapsed_time = time_seq, beta_seq = beta_seq, eta = eta,
+                  convergence = (i < maxiter))
+  if (record_objective) {
+    results$obj_fun <- fun_seq
+    results$loglike <- ll_seq
+  }
+  if (record_weights)
+    results$w_seq <- w_seq
+  return(results)
 }

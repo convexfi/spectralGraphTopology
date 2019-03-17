@@ -11,8 +11,9 @@ names <- matrix(unlist(read.csv("animals_names.txt", header = FALSE)))
 Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
 n <- ncol(Y)
 #cov(Y) + diag(rep(1/3, n))
-graph <- learn_adjacency_and_laplacian(t(Y), w0 = "qp", k = 5, z = 1,
-                                       nu = 1e4, beta = 4, fix_beta = TRUE, maxiter = 5e4)
+graph <- learn_adjacency_and_laplacian(t(Y), w0 = "qp", k = 5, nu = 1e4, z = 1,
+                                       beta = 4, fix_beta = TRUE, maxiter = 5e4)
+plot(c(eigenvalues(graph$Adjacency)))
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 colors <- brewer.reds(100)
 c_scale <- colorRamp(colors)

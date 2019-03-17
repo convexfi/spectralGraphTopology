@@ -33,7 +33,7 @@ fscore_naive <- matrix(0, N_realizations, length(ratios))
 fscore_qp <- matrix(0, N_realizations, length(ratios))
 
 print("Connecting to MATLAB...")
-matlab <- Matlab(port=9998)
+matlab <- Matlab(port=9999)
 open(matlab)
 print("success!")
 A_mask <- matrix(1, 64, 64) - diag(64)
