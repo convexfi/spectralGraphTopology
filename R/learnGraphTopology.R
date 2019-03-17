@@ -383,7 +383,7 @@ learn_dregular_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "qp",
   U0 <- dregular.U_update(Lw = Lw0, k = k)
   lambda0 <- dregular.lambda_update(lb = lb, ub = ub, beta = beta, U = U0,
                                     Lw = Lw0, k = k)
-  d0 <- mean(diag(Aw0) + diag(Lw0))
+  d0 <- mean(diag(Lw0))
   # save objective function value at initial guess
   if (record_objective) {
     ll0 <- dregular.likelihood(Lw0, lambda0, K)
@@ -406,7 +406,7 @@ learn_dregular_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "qp",
     U <- dregular.U_update(Lw, k)
     lambda <- dregular.lambda_update(lb = lb, ub = ub, beta = beta, U = U,
                                      Lw = Lw, k = k)
-    d <- mean(diag(Aw) + diag(Lw))
+    d <- mean(diag(Lw))
     if (record_objective) {
       # compute negloglikelihood and objective function values
       ll <- dregular.likelihood(Lw, lambda, K)
