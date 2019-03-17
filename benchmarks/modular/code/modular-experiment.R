@@ -59,7 +59,7 @@ for (j in n_ratios) {
     Lnaive <- MASS::ginv(S)
     w_qp <- spectralGraphTopology:::w_init("qp", Lnaive)
     Lqp <- L(w_qp)
-    graph <- learn_laplacian_matrix(S, w0 = w_qp, ub = 32, k = 4, beta = 1e2, abstol = 0, maxiter = 5e4)
+    graph <- learn_laplacian_matrix(S, w0 = w_qp, ub = 32, k = 1, beta = 1e2, abstol = 0, maxiter = 5e4)
     rel_cgl <- Inf
     for (alpha in alphas) {
       setVariable(matlab, alpha = alpha)
