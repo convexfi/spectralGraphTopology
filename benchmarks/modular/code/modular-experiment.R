@@ -7,8 +7,8 @@ library(latex2exp)
 set.seed(42)
 
 eps <- 5e-2
-N_realizations <- 1
-ratios <- c(.5, .75, 1.5, 5., 10, 30, 100, 250, 5e2, 1e3)
+N_realizations <- 20
+ratios <- c(.5, .75, 1.5, 5., 10, 30, 50, 100, 250, 5e2, 1e3)
 n_ratios <- c(1:length(ratios))
 
 rel_err_sgl <- matrix(0, N_realizations, length(ratios))
