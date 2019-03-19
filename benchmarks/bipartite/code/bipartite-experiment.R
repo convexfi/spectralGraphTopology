@@ -11,10 +11,10 @@ eps <- 1e-1
 n1 <- 40
 n2 <- 24
 n <- n1 + n2
-pc <- .6
+pc <- .3
 
 n_realizations <- 1
-ratios <- c(1000, 2000, 4000, 8000)
+ratios <- c(10, 30, 50, 100, 250, 500, 1000)
 
 rel_err_sgl <- matrix(0, n_realizations, length(ratios))
 rel_err_cgl <- matrix(0, n_realizations, length(ratios))
@@ -67,14 +67,16 @@ for (j in n_ratios) {
     setVariable(matlab, S = S)
     setVariable(matlab, rr = diag(1/sqrt(diag(S))))
     evaluate(matlab, "[~, ~, Abi] = best_bipartite_approx(rr * S * rr)")
+    Abi <- as.matrix(getVariable(matlab, "Abi")$Abi)
+    setVariable(matlab, Abi = Abi)
     s_max <- max(abs(S - diag(diag(S))))
     alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(n)/p), 0)
     rel_cgl <- Inf
     rel_pavez <- Inf
     for (alpha in alphas) {
       setVariable(matlab, alpha = alpha)
-      evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-6, 1e-6, 300, 1)")
-      evaluate(matlab, "[LcglA,~,~] = estimate_cgl(S, Abi, alpha, 1e-6, 1e-6, 300, 2)")
+      evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-4, 1e-4, 100, 1)")
+      evaluate(matlab, "[LcglA,~,~] = estimate_cgl(S, Abi, alpha, 1e-4, 1e-4, 100, 1)")
       Lcgl <- getVariable(matlab, "Lcgl")$Lcgl
       LcglA <- getVariable(matlab, "LcglA")$LcglA
       if (anyNA(Lcgl) || anyNA(LcglA)) {
@@ -94,21 +96,26 @@ for (j in n_ratios) {
     Sinv <- MASS::ginv(S)
     w_naive <- spectralGraphTopology:::w_init(w0 = "naive", Sinv)
     w_qp <- spectralGraphTopology:::w_init(w0 = "qp", Sinv)
-    graph <- learn_bipartite_graph(S, z = abs(n2 - n1), w0 = w_qp, maxiter = 1e4)
+    graph <- learn_bipartite_graph(S, z = abs(n2 - n1), w0 = w_qp, nu = 1e3, maxiter = 1e5)
+    print(graph$convergence)
     Lnaive <- L(w_naive)
     Lqp <- L(w_qp)
 
     metrics_sgl <- metrics(Ltrue, graph$Laplacian, eps)
     print(metrics_sgl)
     print(metrics_pavez)
+    print(metrics_cgl)
     metrics_naive <- metrics(Ltrue, Lnaive, eps)
     metrics_qp <- metrics(Ltrue, Lqp, eps)
 
     rel_err_sgl[r, j] <- relativeError(Ltrue, graph$Laplacian)
+    print(rel_err_sgl[r, j])
     rel_err_cgl[r, j] <- rel_cgl
     rel_err_naive[r, j] <- relativeError(Ltrue, Lnaive)
     rel_err_qp[r, j] <- relativeError(Ltrue, Lqp)
     rel_err_pavez[r, j] <- rel_pavez
+    print(rel_pavez)
+    print(rel_cgl)
 
     fscore_sgl[r, j] <-   metrics_sgl[1]
     fscore_naive[r, j] <- metrics_naive[1]
@@ -133,10 +140,8 @@ for (j in n_ratios) {
     accuracy_qp[r, j] <-    metrics_qp[4]
     accuracy_cgl[r, j] <-   metrics_cgl[4]
     accuracy_pavez[r, j] <- metrics_pavez[4]
-
   }
 }
-
 
 saveRDS(rel_err_sgl, file = "rel_err_sgl.rds")
 saveRDS(rel_err_cgl, file = "rel_err_cgl.rds")

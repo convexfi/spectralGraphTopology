@@ -10,11 +10,9 @@ df <- read.csv("animals.txt", header = FALSE)
 names <- matrix(unlist(read.csv("animals_names.txt", header = FALSE)))
 Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
 N <- ncol(Y)
-graph <- learn_dregular_graph(cov(Y) + diag(rep(1/3, N)), w0 = "naive",
-                              k = 1, beta1 = 1, beta2 = 1, maxiter = 500)
-print(graph$obj_fun)
-print(graph$d)
-net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
+graph <- learn_dregular_graph(cov(Y) + diag(rep(1/3, N)), w0 = "qp",
+                              k = 1, beta = 1, fix_beta = TRUE, record_objective = TRUE, maxiter = 1)
+net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 colors <- brewer.reds(100)
 c_scale <- colorRamp(colors)
 E(net)$color = apply(c_scale(abs(E(net)$weight) / max(abs(E(net)$weight))), 1,

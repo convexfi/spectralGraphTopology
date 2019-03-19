@@ -70,7 +70,7 @@ test_that("learn_laplacian_matrix with two components", {
                      c(0, 0, -1, 1))
   n <- ncol(Laplacian)
   Y <- MASS::mvrnorm(n * 500, rep(0, n), MASS::ginv(Laplacian))
-  res <- learn_laplacian_matrix(cov(Y), k = 2, beta = 40)
+  res <- learn_laplacian_matrix(cov(Y), k = 2, beta = 10)
   expect_that(res$convergence, is_true())
   expect_that(relativeError(Laplacian, res$Laplacian) < 1e-1, is_true())
   expect_that(metrics(Laplacian, res$Laplacian, 1e-1)[1] > .9, is_true())
@@ -100,7 +100,7 @@ test_that("learn_laplacian_matrix with two components graph #2", {
 
   Laplacian <- blockDiag(Laplacian1, Laplacian2)
   Y <- MASS::mvrnorm(500 * (n1 + n2), rep(0, n1 + n2), MASS::ginv(Laplacian))
-  res <- learn_laplacian_matrix(cov(Y), k = 2, fix_beta = TRUE, eig_tol = 1e-5)
+  res <- learn_laplacian_matrix(cov(Y), k = 2, fix_beta = TRUE)
   expect_that(res$convergence, is_true())
   expect_that(relativeError(Laplacian, res$Laplacian) < 1e-1, is_true())
   expect_that(metrics(Laplacian, res$Laplacian, 1e-1)[1] > .9, is_true())
