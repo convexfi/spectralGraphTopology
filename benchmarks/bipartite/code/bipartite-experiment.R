@@ -6,15 +6,15 @@ library(igraph)
 library(R.matlab)
 set.seed(234)
 
-eps <- 1e-1
+eps <- 5e-2
 
 n1 <- 40
 n2 <- 24
 n <- n1 + n2
 pc <- .3
 
-n_realizations <- 1
-ratios <- c(10, 30, 50, 100, 250, 500, 1000)
+n_realizations <- 10
+ratios <- c(2, 10, 100, 500, 1000)
 
 rel_err_sgl <- matrix(0, n_realizations, length(ratios))
 rel_err_cgl <- matrix(0, n_realizations, length(ratios))
@@ -56,7 +56,7 @@ for (j in n_ratios) {
   for (r in 1:n_realizations) {
     bipartite <- sample_bipartite(n1, n2, type="Gnp", p = pc, directed=FALSE)
     # randomly assign edge weights to connected nodes
-    E(bipartite)$weight <- runif(gsize(bipartite), min = 1, max = 3)
+    E(bipartite)$weight <- runif(gsize(bipartite), min = .1, max = 3)
     # get true Laplacian and Adjacency
     Ltrue <- as.matrix(laplacian_matrix(bipartite))
     Atrue <- diag(diag(Ltrue)) - Ltrue
