@@ -1,124 +1,88 @@
 library(igraph)
-library(corrplot)
-library(spectralGraphTopology)
-library(pals)
-library(extrafont)
-library(huge)
 library(R.matlab)
-set.seed(0)
+library(spectralGraphTopology)
+library(extrafont)
+library(latex2exp)
 
-N <- 20
-T <- 30 * N
-K <- 4
-P <- diag(1, K)
+set.seed(42)
+
+eps <- 5e-2
+N_realizations <- 5
+ratios <- c(.5, 1.5, 5., 10, 100, 5e2, 1e3)
+n_ratios <- c(1:length(ratios))
+
+rel_err_sgl <- matrix(0, N_realizations, length(ratios))
+rel_err_naive <- matrix(0, N_realizations, length(ratios))
+rel_err_qp <- matrix(0, N_realizations, length(ratios))
+recall_sgl <- matrix(0, N_realizations, length(ratios))
+recall_naive <- matrix(0, N_realizations, length(ratios))
+recall_qp <- matrix(0, N_realizations, length(ratios))
+specificity_sgl <- matrix(0, N_realizations, length(ratios))
+specificity_naive <- matrix(0, N_realizations, length(ratios))
+specificity_qp <- matrix(0, N_realizations, length(ratios))
+accuracy_sgl <- matrix(0, N_realizations, length(ratios))
+accuracy_naive <- matrix(0, N_realizations, length(ratios))
+accuracy_qp <- matrix(0, N_realizations, length(ratios))
+fscore_sgl <- matrix(0, N_realizations, length(ratios))
+fscore_naive <- matrix(0, N_realizations, length(ratios))
+fscore_qp <- matrix(0, N_realizations, length(ratios))
+
+n <- 64
+k <- 4
+P <- diag(.3, k)
 # K-component graph
-mgraph <- sample_sbm(N, pref.matrix = P, block.sizes = c(rep(N / K, K)))
-E(mgraph)$weight <- runif(gsize(mgraph), min = 0, max = 1)
-Ltrue <- as.matrix(laplacian_matrix(mgraph))
-Wtrue <- diag(diag(Ltrue)) - Ltrue
-# Erdo-Renyi as noise model
-p <- .35
-a <- .45
-erdos_renyi <- erdos.renyi.game(N, p)
-E(erdos_renyi)$weight <- runif(gsize(erdos_renyi), min = 0, max = a)
-Lerdo <- as.matrix(laplacian_matrix(erdos_renyi))
-# Noisy Laplacian
-Lnoisy <- Ltrue + Lerdo
-Wnoisy <- diag(diag(Lnoisy)) - Lnoisy
-Y <- MASS::mvrnorm(T, mu = rep(0, N), Sigma = MASS::ginv(Lnoisy))
-S <- cov(Y)
-Sinv <- MASS::ginv(S)
-w_qp <- spectralGraphTopology:::w_init("qp", Sinv)
-w_naive <- spectralGraphTopology:::w_init("naive", Sinv)
-Lqp <- L(w_qp)
-Lnaive <- L(w_naive)
-graph <- learn_laplacian_matrix(S, k = K, w0 = "naive", beta = 400, fix_beta = TRUE,
-                                ub = 2*N, record_objective = TRUE, alpha = 0.1,
-                                abstol = 0, maxiter = 1e4)
-graph_glasso <- huge(S, method = "glasso", nlambda = 100)
-Lglasso <- matrix(graph_glasso$icov[[100]], N, N)
 
-matlab <- Matlab()
-open(matlab)
-A_mask <- matrix(1, N, N) - diag(N)
-alpha = 5e-2
-setVariable(matlab, S = S)
-setVariable(matlab, A_mask = A_mask)
-setVariable(matlab, alpha = alpha)
-evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-4, 1e-4, 100, 1)")
-Lcgl <- getVariable(matlab, "Lcgl")
+for (j in n_ratios) {
+  T <- as.integer(ratios[j] * n)
+  cat("\nRunning simulation for", T, "samples per node, p/n = ", ratios[j], "\n")
+  for (i in 1:N_realizations) {
+    mgraph <- sample_sbm(n, pref.matrix = P, block.sizes = c(rep(n / k, k)))
+    E(mgraph)$weight <- runif(gsize(mgraph), min = 1e-1, max = 3)
+    Ltrue <- as.matrix(laplacian_matrix(mgraph))
+    Y <- MASS::mvrnorm(T, mu = rep(0, n), Sigma = MASS::ginv(Ltrue))
+    S <- cov(Y)
+    Lnaive <- MASS::ginv(S)
+    w_qp <- spectralGraphTopology:::w_init("qp", Lnaive)
+    Lqp <- L(w_qp)
+    graph <- learn_laplacian_matrix(S, w0 = "naive", k = 4, beta = 1e2, fix_beta = TRUE,
+                                    abstol = 1e-4, edge_tol = eps, maxiter = 5e5)
+    metrics_sgl <- metrics(Ltrue, graph$Laplacian, eps)
+    metrics_qp <- metrics(Ltrue, Lqp, eps)
+    metrics_naive <- metrics(Ltrue, Lnaive, eps)
+    rel_err_sgl[i, j] <- relativeError(Ltrue, graph$Laplacian)
+    rel_err_qp[i, j] <- relativeError(Ltrue, Lqp)
+    rel_err_naive[i, j] <- relativeError(Ltrue, Lnaive)
+    fscore_sgl[i, j] <- metrics_sgl[1]
+    fscore_qp[i, j] <- metrics_qp[1]
+    fscore_naive[i, j] <- metrics_naive[1]
+    recall_sgl[i, j] <- metrics_sgl[2]
+    recall_qp[i, j] <- metrics_qp[2]
+    recall_naive[i, j] <- metrics_naive[2]
+    specificity_sgl[i, j] <- metrics_sgl[3]
+    specificity_qp[i, j] <- metrics_qp[3]
+    specificity_naive[i, j] <- metrics_naive[3]
+    accuracy_sgl[i, j] <- metrics_sgl[4]
+    accuracy_qp[i, j] <- metrics_qp[4]
+    accuracy_naive[i, j] <- metrics_naive[4]
+    print(rel_err_sgl)
+    print(rel_err_qp)
+    print(fscore_sgl)
+    print(fscore_qp)
+  }
+}
 
-est_net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
-noisy_net <- graph_from_adjacency_matrix(Wnoisy, mode = "undirected", weighted = TRUE)
-true_net <- graph_from_adjacency_matrix(Wtrue, mode = "undirected", weighted = TRUE)
-colors <- brewer.blues(20)
-c_scale <- colorRamp(colors)
-E(est_net)$color = apply(c_scale(E(est_net)$weight / max(E(est_net)$weight)), 1, function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
-E(noisy_net)$color = apply(c_scale(E(noisy_net)$weight / max(E(noisy_net)$weight)), 1, function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
-E(true_net)$color = apply(c_scale(E(true_net)$weight / max(E(true_net)$weight)), 1, function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
-
-cat("SGL results: \n")
-print(relativeError(Ltrue, graph$Laplacian))
-print(metrics(Ltrue, graph$Laplacian, 1e-3))
-print(spectralGraphTopology:::laplacian.likelihood(graph$Laplacian, graph$lambda, S))
-cat("QP results: \n")
-print(relativeError(Ltrue, Lqp))
-print(metrics(Ltrue, Lqp, 1e-3))
-lambda_qp <- eigenvalues(Lqp)
-print(spectralGraphTopology:::laplacian.likelihood(Lqp, lambda_qp[lambda_qp > 1e-9], S))
-cat("Naive results: \n")
-print(relativeError(Ltrue, Lnaive))
-print(metrics(Ltrue, Lnaive, 1e-3))
-lambda_naive <- eigenvalues(Lnaive)
-print(spectralGraphTopology:::laplacian.likelihood(Lnaive, lambda_naive[lambda_naive > 1e-9], S))
-cat("Glasso results: \n")
-print(relativeError(Ltrue, Lglasso))
-print(metrics(Ltrue, Lglasso, 1e-3))
-lambda_glasso <- eigenvalues(Lglasso)
-print(spectralGraphTopology:::laplacian.likelihood(Lglasso, lambda_glasso[lambda_glasso > 1e-9], S))
-cat("CGL results: \n")
-print(relativeError(Ltrue, Lcgl$Lcgl))
-print(metrics(Ltrue, Lcgl$Lcgl, 1e-3))
-lambda_cgl <- eigenvalues(Lcgl$Lcgl)
-print(spectralGraphTopology:::laplacian.likelihood(Lcgl$Lcgl, lambda_cgl[lambda_cgl > 1e-9], S))
-
-
-gr = .5 * (1 + sqrt(5))
-setEPS()
-postscript("../latex/figures/est_graph.ps", family = "Times", height = 5, width = gr * 3.5)
-plot(est_net, vertex.label = NA, vertex.size = 3)
-dev.off()
-setEPS()
-postscript("../latex/figures/noisy_graph.ps", family = "Times", height = 5, width = gr * 3.5)
-plot(noisy_net, vertex.label = NA, vertex.size = 3)
-dev.off()
-setEPS()
-postscript("../latex/figures/true_graph.ps", family = "Times", height = 5, width = gr * 3.5)
-plot(true_net, vertex.label = NA, vertex.size = 3)
-dev.off()
-setEPS()
-postscript("../latex/figures/est_mat.ps", family = "Times", height = 5, width = gr * 3.5)
-corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
-dev.off()
-setEPS()
-postscript("../latex/figures/noisy_mat.ps", family = "Times", height = 5, width = gr * 3.5)
-corrplot(Wnoisy / max(Wnoisy), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
-dev.off()
-setEPS()
-postscript("../latex/figures/true_mat.ps", family = "Times", height = 5, width = gr * 3.5)
-corrplot(Wtrue / max(Wtrue), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
-dev.off()
-
-colors <- c("#706FD3", "#FF5252", "#33D9B2")
-setEPS()
-postscript("../latex/figures/bd_trend.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
-plot(c(1:length(graph$loglike)), graph$loglike, type = "b", lty = 1, pch = 15, cex=.75, col = colors[1],
-     xlab = "Iteration Number", ylab = "", ylim=c(0, 15))
-grid()
-lines(c(1:length(graph$loglike)), graph$obj_fun, type = "b", xaxt = "n", lty = 2, pch=16, cex=.75, col = colors[2])
-lines(c(1:length(graph$loglike)), graph$obj_fun - graph$loglike, type = "b", xaxt = "n", lty = 3, pch=17, cex=.75,
-      col = colors[3])
-legend("topright", legend = c("likelihood", "posterior", "prior"),
-       col=colors, pch=c(15, 16, 17), lty=c(1, 2, 3), bty="n")
-dev.off()
-embed_fonts("../latex/figures/bd_trend.ps", outfile="../latex/figures/bd_trend.ps")
+saveRDS(rel_err_sgl, file = "rel-err-SGL.rds")
+saveRDS(rel_err_naive, file = "rel-err-naive.rds")
+saveRDS(rel_err_qp, file = "rel-err-QP.rds")
+saveRDS(fscore_sgl, file = "fscore-SGL.rds")
+saveRDS(fscore_naive, file = "fscore-naive.rds")
+saveRDS(fscore_qp, file = "fscore-QP.rds")
+saveRDS(recall_sgl, file = "recall-SGL.rds")
+saveRDS(recall_naive, file = "recall-naive.rds")
+saveRDS(recall_qp, file = "recall-QP.rds")
+saveRDS(specificity_sgl, file = "specificity-SGL.rds")
+saveRDS(specificity_naive, file = "specificity-naive.rds")
+saveRDS(specificity_qp, file = "specificity-QP.rds")
+saveRDS(accuracy_sgl, file = "accuracy-SGL.rds")
+saveRDS(accuracy_naive, file = "accuracy-naive.rds")
+saveRDS(accuracy_qp, file = "accuracy-QP.rds")
