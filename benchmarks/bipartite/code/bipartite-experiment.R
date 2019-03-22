@@ -4,17 +4,16 @@ library(pals)
 library(extrafont)
 library(igraph)
 library(R.matlab)
-set.seed(234)
+set.seed(42)
 
-eps <- 5e-2
-
+eps <- 1e-1
 n1 <- 40
 n2 <- 24
 n <- n1 + n2
-pc <- .3
+pc <- .6
 
 n_realizations <- 10
-ratios <- c(2, 10, 100, 500, 1000)
+ratios <- c(10, 100, 500, 1000, 5000)
 
 rel_err_sgl <- matrix(0, n_realizations, length(ratios))
 rel_err_cgl <- matrix(0, n_realizations, length(ratios))
@@ -43,7 +42,7 @@ accuracy_qp <- matrix(0, n_realizations, length(ratios))
 accuracy_pavez <- matrix(0, n_realizations, length(ratios))
 
 print("Connecting to MATLAB...")
-matlab <- Matlab(port=9999)
+matlab <- Matlab(port=9998)
 is_matlab_open <- open(matlab)
 cat("MATLAB connection status: ", is_matlab_open)
 A_mask <- matrix(1, n, n) - diag(n)
@@ -56,11 +55,10 @@ for (j in n_ratios) {
   for (r in 1:n_realizations) {
     bipartite <- sample_bipartite(n1, n2, type="Gnp", p = pc, directed=FALSE)
     # randomly assign edge weights to connected nodes
-    E(bipartite)$weight <- runif(gsize(bipartite), min = .1, max = 3)
+    E(bipartite)$weight <- runif(gsize(bipartite), min = 1, max = 3)
     # get true Laplacian and Adjacency
     Ltrue <- as.matrix(laplacian_matrix(bipartite))
     Atrue <- diag(diag(Ltrue)) - Ltrue
-    w_true <- Linv(Ltrue)
     # set number of samples
     Y <- MASS::mvrnorm(p, rep(0, n), Sigma = MASS::ginv(Ltrue))
     S <- cov(Y)
@@ -71,6 +69,7 @@ for (j in n_ratios) {
     setVariable(matlab, Abi = Abi)
     s_max <- max(abs(S - diag(diag(S))))
     alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(n)/p), 0)
+    alpha_tmp <- alphas[1]
     rel_cgl <- Inf
     rel_pavez <- Inf
     for (alpha in alphas) {
@@ -82,38 +81,44 @@ for (j in n_ratios) {
       if (anyNA(Lcgl) || anyNA(LcglA)) {
         next
       }
-      tmp_rel_cgl <- relativeError(Ltrue, Lcgl)
-      tmp_rel_pavez <- relativeError(Ltrue, LcglA)
+      Acgl <- diag(diag(Lcgl)) - Lcgl
+      AcglA <- diag(diag(LcglA)) - LcglA
+      tmp_rel_cgl <- relativeError(Atrue, Acgl)
+      tmp_rel_pavez <- relativeError(Atrue, AcglA)
       if (tmp_rel_cgl < rel_cgl) {
+        alpha_tmp <- alpha
         rel_cgl <- tmp_rel_cgl
-        metrics_cgl <- metrics(Ltrue, Lcgl, eps)
+        metrics_cgl <- metrics(Atrue, Acgl, eps)
       }
       if (tmp_rel_pavez < rel_pavez) {
         rel_pavez <- tmp_rel_pavez
-        metrics_pavez <- metrics(Ltrue, LcglA, eps)
+        metrics_pavez <- metrics(Atrue, AcglA, eps)
       }
     }
     Sinv <- MASS::ginv(S)
     w_naive <- spectralGraphTopology:::w_init(w0 = "naive", Sinv)
     w_qp <- spectralGraphTopology:::w_init(w0 = "qp", Sinv)
-    graph <- learn_bipartite_graph(S, z = abs(n2 - n1), w0 = w_qp, nu = 1e3, maxiter = 1e5)
+    graph <- learn_bipartite_graph(S, z = abs(n1 - n2), w0 = w_qp,
+                                   nu = 1e5, abstol = 1e-4, maxiter = 1e5, edge_tol = 0)
     print(graph$convergence)
-    Lnaive <- L(w_naive)
-    Lqp <- L(w_qp)
+    Anaive <- A(w_naive)
+    Aqp <- A(w_qp)
 
-    metrics_sgl <- metrics(Ltrue, graph$Laplacian, eps)
+    metrics_sgl <- metrics(Atrue, graph$Adjacency, eps)
+    metrics_naive <- metrics(Atrue, Anaive, eps)
+    metrics_qp <- metrics(Atrue, Aqp, eps)
     print(metrics_sgl)
+    print(metrics_qp)
     print(metrics_pavez)
     print(metrics_cgl)
-    metrics_naive <- metrics(Ltrue, Lnaive, eps)
-    metrics_qp <- metrics(Ltrue, Lqp, eps)
 
-    rel_err_sgl[r, j] <- relativeError(Ltrue, graph$Laplacian)
+    rel_err_sgl[r, j] <- .5 * relativeError(Atrue, graph$Adjacency)
+    rel_err_cgl[r, j] <- .5 * rel_cgl
+    rel_err_naive[r, j] <- .5 * relativeError(Atrue, Anaive)
+    rel_err_qp[r, j] <- .5 * relativeError(Atrue, Aqp)
+    rel_err_pavez[r, j] <- .5 * rel_pavez
     print(rel_err_sgl[r, j])
-    rel_err_cgl[r, j] <- rel_cgl
-    rel_err_naive[r, j] <- relativeError(Ltrue, Lnaive)
-    rel_err_qp[r, j] <- relativeError(Ltrue, Lqp)
-    rel_err_pavez[r, j] <- rel_pavez
+    print(rel_err_qp[r, j])
     print(rel_pavez)
     print(rel_cgl)
 

@@ -103,7 +103,7 @@ test_that("learn_laplacian_matrix with two components graph #2", {
   res <- learn_laplacian_matrix(cov(Y), k = 2, fix_beta = TRUE)
   expect_that(res$convergence, is_true())
   expect_that(relativeError(Laplacian, res$Laplacian) < 1e-1, is_true())
-  expect_that(metrics(Laplacian, res$Laplacian, 1e-1)[1] > .9, is_true())
+  expect_that(metrics(Laplacian, res$Laplacian, 1e-1)[1] > .85, is_true())
 })
 
 
@@ -119,4 +119,18 @@ test_that("learn_adjacency_and_laplacian with two components graph #2", {
   expect_that(res$convergence, is_true())
   expect_that(relativeError(Laplacian, res$Laplacian) < 1e-1, is_true())
   expect_that(metrics(Laplacian, res$Laplacian, 1e-1)[1] > .9, is_true())
+})
+
+
+test_that("learn_dregular_graph works as expected", {
+   Lw1 <- L(c(1, 1, 1))
+   Lw2 <- L(c(1, 0, 1, 1, 0, 1))
+   Lw <- blockDiag(Lw1, Lw2)
+   n1 <- ncol(Lw1)
+   n2 <- ncol(Lw2)
+   Y <- MASS::mvrnorm(500 * (n1 + n2), rep(0, n1 + n2), MASS::ginv(Lw))
+   res <- learn_dregular_graph(cov(Y), k = 2, w0 = "qp", fix_beta = TRUE)
+   expect_that(res$convergence, is_true())
+   expect_that(relativeError(Lw, res$Laplacian) < 1e-1, is_true())
+   expect_that(metrics(Lw, res$Laplacian, 1e-1)[1] > .9, is_true())
 })

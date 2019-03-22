@@ -7,7 +7,7 @@ set.seed(123)
 eps <- 1e-2
 n_realizations <- 100
 ratios <- c(100)
-n <- 16
+n <- 64
 grid <- make_lattice(length = sqrt(n), dim = 2)
 maxiter <- 5e4
 relative_error_list <- list()
@@ -21,15 +21,14 @@ for (j in 1:length(ratios)) {
   t <- as.integer(ratios[j] * n)
   cat("\nRunning simulation for", t, "samples per node, t/n = ", ratios[j], "\n")
   for (r in 1:n_realizations) {
-    print(r)
     E(grid)$weight <- runif(gsize(grid), min = 1e-1, max = 3)
     Ltrue <- as.matrix(laplacian_matrix(grid))
     # sample data from GP with covariance matrix set as
     # the pseudo inverse of the true Laplacian
     Y <- MASS::mvrnorm(t, mu = rep(0, n), Sigma = MASS::ginv(Ltrue))
     S <- cov(Y)
-    graph <- learn_laplacian_matrix(S, w0 = "naive", k = 1, beta = 4, fix_beta = TRUE,
-                                    maxiter = maxiter, edge_tol = eps, record_weights = TRUE,
+    graph <- learn_laplacian_matrix(S, w0 = "naive", k = 1, beta = 10, fix_beta = TRUE,
+                                    maxiter = maxiter, abstol = 1e-4, record_weights = TRUE,
                                     record_objective = TRUE)
     niter <- length(graph$loglike)
     relative_error <- array(0, niter)

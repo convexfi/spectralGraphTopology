@@ -8,7 +8,7 @@ library(R.matlab)
 set.seed(0)
 
 N <- 196
-T <- 30 * N
+T <- 100 * N
 K <- 4
 P <- diag(.15, K)
 # K-component graph
@@ -18,7 +18,7 @@ Ltrue <- as.matrix(laplacian_matrix(mgraph))
 Wtrue <- diag(diag(Ltrue)) - Ltrue
 # Erdo-Renyi as noise model
 p <- .2
-a <- .3
+a <- 1
 erdos_renyi <- erdos.renyi.game(N, p)
 E(erdos_renyi)$weight <- runif(gsize(erdos_renyi), min = 0, max = a)
 Lerdo <- as.matrix(laplacian_matrix(erdos_renyi))
@@ -30,8 +30,8 @@ S <- cov(Y)
 Sinv <- MASS::ginv(S)
 w_naive <- spectralGraphTopology:::w_init("naive", Sinv)
 Lnaive <- L(w_naive)
-graph <- learn_laplacian_matrix(S, k = K, w0 = "naive", beta = 100, fix_beta = TRUE,
-                                record_objective = TRUE, edge_tol = 1e-2, maxiter = 1e5)
+graph <- learn_laplacian_matrix(S, k = K, w0 = "naive", beta = 10, fix_beta = TRUE,
+                                record_objective = TRUE, edge_tol = 0, maxiter = 1e5)
 #graph_glasso <- huge(S, method = "glasso", nlambda = 100)
 #Lglasso <- matrix(graph_glasso$icov[[100]], N, N)
 

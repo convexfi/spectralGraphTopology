@@ -48,7 +48,7 @@
 #' @export
 learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0,
                                    beta = 1e4, beta_max = 1e6, fix_beta = FALSE, rho = 1e-2, m = 7,
-                                   maxiter = 1e4, abstol = 1e-6, reltol = 1e-4, eig_tol = 1e-9, edge_tol = 1e-3,
+                                   maxiter = 1e4, abstol = 1e-6, reltol = 1e-4, eig_tol = 1e-9, edge_tol = 1e-4,
                                    record_objective = FALSE, record_weights = FALSE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
     A <- build_initial_graph(S, m = m)
@@ -86,8 +86,7 @@ learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive
   if (record_weights)
     w_seq <- list(Matrix::Matrix(w0, sparse = TRUE))
   time_seq <- c(0)
-  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  beta: :beta  kth_eigval: :kth_eigval",
-                                   total = maxiter, clear = FALSE, width = 100)
+  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  beta: :beta  kth_eigval: :kth_eigval abstol: :abstol", total = maxiter, clear = FALSE, width = 120)
   start_time <- proc.time()[3]
   for (i in 1:maxiter) {
     w <- laplacian.w_update(w = w0, Lw = Lw0, U = U0, beta = beta,
@@ -108,14 +107,13 @@ learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive
       w_seq <- rlist::list.append(w_seq, Matrix::Matrix(w, sparse = TRUE))
     # check for convergence
     werr <- abs(w0 - w)
-    has_w_converged <- ((all(werr <= .5 * reltol * (w + w0)) && (reltol > 0)) ||
-                        (all(werr <= abstol) && (abstol > 0)))
+    has_w_converged <- (all(werr <= .5 * reltol * (w + w0)) || all(werr <= abstol))
     eigvals <- eigenvalues(Lw)
     n_zero_eigenvalues <- sum(abs(eigvals) < eig_tol)
     time_seq <- c(time_seq, proc.time()[3] - start_time)
-    pb$tick(token = list(beta = beta, kth_eigval = eigvals[k]))
+    pb$tick(token = list(beta = beta, kth_eigval = eigvals[k], abstol = max(werr)))
     if (!fix_beta) {
-      if (k <= n_zero_eigenvalues)
+      if (k < n_zero_eigenvalues)
         beta <- (1 + rho) * beta
       else if (k > n_zero_eigenvalues)
         beta <- beta / (1 + rho)
@@ -149,7 +147,7 @@ learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive
 #' @export
 learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive", alpha = 0., nu = 1e4,
                                   Lips = NULL, m = 7, rho = 1, maxiter = 1e4, abstol = 1e-6, reltol = 1e-4,
-                                  record_objective = FALSE, record_weights = FALSE) {
+                                  edge_tol = 1e-4, record_weights = FALSE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
     A <- build_initial_graph(S, m = m)
     D <- diag(.5 * colSums(A + t(A)))
@@ -171,6 +169,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
     Sinv <- MASS::ginv(S)
   # if w0 is either "naive" or "qp", compute it, else return w0
   w0 <- w_init(w0, Sinv)
+  w0[w0 < edge_tol] <- 0
   if (is.null(Lips))
     Lips <- 1 / min(eigenvalues(L(w0) + J))
   # compute quantities on the initial guess
@@ -186,16 +185,16 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
   ll_seq <- c(ll0)
   if (record_weights)
     w_seq <- list(Matrix::Matrix(w0, sparse = TRUE))
-  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  Lipschitz: :Lips ",
-                                   total = maxiter, clear = FALSE, width = 70)
+  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  Lipschitz: :Lips  abstol: :abstol",
+                                   total = maxiter, clear = FALSE, width = 100)
   for (i in 1:maxiter) {
-    pb$tick(token = list(Lips = Lips))
     # we need to make sure that the Lipschitz constant is large enough
     # in order to avoid divergence
     while(1) {
       # compute the update for w
       w <- bipartite.w_update(w = w0, Aw = Aw0, V = V0, nu = nu, psi = psi0,
                               K = K, J = J, Lips = Lips)
+      w[w < edge_tol] <- 0
       # compute the objective function at the updated value of w
       fun_t <- tryCatch({
                    bipartite.obj_fun(Aw = A(w), Lw = L(w), V = V0, psi = psi0,
@@ -233,9 +232,9 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
       w_seq <- rlist::list.append(w_seq, Matrix::Matrix(w, sparse = TRUE))
     # check for convergence
     werr <- abs(w0 - w)
-    has_w_converged <- ((all(werr <= .5 * reltol * (w + w0)) && (reltol > 0)) ||
-                        (all(werr <= abstol) && (abstol > 0)))
-    if (has_w_converged && i > 1)
+    has_w_converged <- (all(werr <= .5 * reltol * (w + w0)) || all(werr <= abstol))
+    pb$tick(token = list(Lips = Lips, abstol = max(werr)))
+    if (has_w_converged)
       break
     # update estimates
     fun0 <- fun
@@ -258,7 +257,7 @@ learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 
                                           w0 = "naive", m = 7, alpha = 0., beta = 1e4,
                                           rho = 1e-2, fix_beta = FALSE, beta_max = 1e6, nu = 1e4,
                                           lb = 0, ub = 1e4, maxiter = 1e4, abstol = 1e-6,
-                                          reltol = 1e-4, eig_tol = 1e-9, edge_tol = 1e-3,
+                                          reltol = 1e-4, eig_tol = 1e-9, edge_tol = 1e-4,
                                           record_weights = FALSE, record_objective = FALSE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
     A <- build_initial_graph(S, m = m)
@@ -331,8 +330,7 @@ learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 
       beta_seq <- c(beta_seq, beta)
     }
     werr <- abs(w0 - w)
-    has_w_converged <- ((all(werr <= .5 * reltol * (w + w0)) && (reltol > 0)) ||
-                        (all(werr <= abstol) && (abstol > 0)))
+    has_w_converged <- (all(werr <= .5 * reltol * (w + w0)) || all(werr <= abstol))
     if (has_w_converged && n_zero_eigenvalues == k)
       break
     # update estimates
@@ -358,11 +356,11 @@ learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 
 
 
 #' @export
-learn_dregular_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "qp",
+learn_dregular_graph <- function(S, is_data_matrix = FALSE, d = 2, k = 1, w0 = "qp",
                                  alpha = 0, beta = 1e3, beta_max = 1e6, rho = 1e-2,
                                  fix_beta = FALSE, eta = 1e3, lb = 0, ub = 1e4,
                                  maxiter = 1e4, abstol = 1e-6, reltol = 1e-4,
-                                 eig_tol = 1e-9, record_objective = FALSE,
+                                 eig_tol = 1e-9, edge_tol = 1e-4, record_objective = FALSE,
                                  record_weights = FALSE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
     A <- build_initial_graph(S, m = m)
@@ -383,14 +381,15 @@ learn_dregular_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "qp",
     Sinv <- MASS::ginv(S)
   # if w0 is either "naive" or "qp", compute it, else return w0
   w0 <- w_init(w0, Sinv)
+  w0[w0 < edge_tol] <- 0
   # compute quantities on the initial guess
   Aw0 <- A(w0)
   Lw0 <- L(w0)
   U0 <- dregular.U_update(Lw = Lw0, k = k)
   lambda0 <- dregular.lambda_update(lb = lb, ub = ub, beta = beta, U = U0,
                                     Lw = Lw0, k = k)
-  d0 <- mean(diag(Lw0))
   # save objective function value at initial guess
+  d0 <- mean(diag(Lw0))
   if (record_objective) {
     ll0 <- dregular.likelihood(Lw = Lw0, lambda = lambda0, K = K)
     fun0 <- ll0 + dregular.prior(beta = beta, eta = eta, Lw = Lw0, Aw = Aw0,
@@ -398,31 +397,22 @@ learn_dregular_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "qp",
     fun_seq <- c(fun0)
     ll_seq <- c(ll0)
   }
-  print(fun0)
   time_seq <- c(0)
   start_time <- proc.time()[3]
   beta_seq <- c(beta)
   if (record_weights)
     w_seq <- list(Matrix::Matrix(w0, sparse = TRUE))
-  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  beta: :beta  null_eigvals: :null_eigvals",
+  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  beta: :beta  kth_eigval: :kth_eigval",
                                    total = maxiter, clear = FALSE, width = 100)
   for (i in c(1:maxiter)) {
     w <- dregular.w_update(w = w0, Lw = Lw0, Aw = Aw0, U = U0, beta = beta,
                            eta = eta, lambda = lambda0, d = d0, K = K)
-    fun0 <- dregular.likelihood(Lw = L(w), lambda = lambda0, K = K) + dregular.prior(beta = beta, eta = eta, Lw = L(w), Aw = A(w),
-                                                                                     U = U0, lambda = lambda0, d = d0)
-    print(fun0)
+    w[w < edge_tol] <- 0
     Lw <- L(w)
     Aw <- A(w)
     U <- dregular.U_update(Lw = Lw, k = k)
-    fun0 <- dregular.likelihood(Lw = Lw, lambda = lambda0, K = K) + dregular.prior(beta = beta, eta = eta, Lw = Lw, Aw = Aw,
-                                                                                     U = U, lambda = lambda0, d = d0)
-    print(fun0)
     lambda <- dregular.lambda_update(lb = lb, ub = ub, beta = beta, U = U,
                                      Lw = Lw, k = k)
-    fun0 <- dregular.likelihood(Lw = Lw, lambda = lambda, K = K) + dregular.prior(beta = beta, eta = eta, Lw = Lw, Aw = Aw,
-                                                                                    U = U, lambda = lambda, d = d0)
-    print(fun0)
     d <- mean(diag(Lw))
     if (record_objective) {
       # compute negloglikelihood and objective function values
@@ -434,9 +424,10 @@ learn_dregular_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "qp",
     }
     if (record_weights)
       w_seq <- rlist::list.append(w_seq, Matrix::Matrix(w, sparse = TRUE))
-    n_zero_eigenvalues <- sum(abs(eigenvalues(Lw)) < eig_tol)
     time_seq <- c(time_seq, proc.time()[3] - start_time)
-    pb$tick(token = list(beta = beta, null_eigvals = n_zero_eigenvalues))
+    eigvals <- eigenvalues(Lw)
+    n_zero_eigenvalues <- sum(abs(eigvals) < eig_tol)
+    pb$tick(token = list(beta = beta, kth_eigval = eigvals[k]))
     if (!fix_beta) {
       if (k < n_zero_eigenvalues)
         beta <- (1 + rho) * beta
@@ -447,8 +438,7 @@ learn_dregular_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "qp",
       beta_seq <- c(beta_seq, beta)
     }
     werr <- abs(w0 - w)
-    has_w_converged <- ((all(werr <= .5 * reltol * (w + w0)) && (reltol > 0)) ||
-                        (all(werr <= abstol) && (abstol > 0)))
+    has_w_converged <- (all(werr <= .5 * reltol * (w + w0)) || all(werr <= abstol))
     if (has_w_converged && n_zero_eigenvalues == k)
       break
     # update estimates

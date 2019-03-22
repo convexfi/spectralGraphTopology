@@ -20,7 +20,7 @@ net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighte
 colors <- c("#706FD3", "#FF5252", "#33D9B2")
 V(net)$cluster <- twomoon$clusters
 E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
-                     function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
+                      function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
                                         colors[V(net)$cluster[x[1]]], '#000000'))
 V(net)$color <- c(colors[1], colors[2])[twomoon$clusters]
 # plot network
