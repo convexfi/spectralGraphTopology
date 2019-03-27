@@ -38,11 +38,11 @@ Anoisy <- diag(diag(Lnoisy)) - Lnoisy
 # set number of samples
 Y <- MASS::mvrnorm(p, rep(0, n), Sigma = MASS::ginv(Lnoisy))
 S <- cov(Y)
-graph <- learn_adjacency_and_laplacian(S, k = 3, z = 0, w0 = "qp", beta1 = 1e4,
-                                       beta2 = 1e5, alpha = 1e-2)
+graph <- learn_adjacency_and_laplacian(S, k = 3, z = 0, w0 = "qp", beta = 1e5, fix_beta = TRUE,
+                                       nu = 1e5, alpha = 1e-2)
 print(graph$convergence)
-print(relativeError(Aw, graph$Aw))
-print(Fscore(Aw, graph$Aw, 1e-1))
+print(relativeError(Aw, graph$Adjacency))
+print(metrics(Aw, graph$Adjacency, 1e-1))
 
 ## build the network
 #net <- graph_from_adjacency_matrix(Aw, mode = "undirected", weighted = TRUE)
@@ -71,7 +71,7 @@ gr = .5 * (1 + sqrt(5))
 #
 setEPS()
 postscript("../latex/figures/est_block_mat.ps", family = "Times", height = 5, width = gr * 3.5)
-corrplot(graph$Aw / max(graph$Aw), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 dev.off()
 setEPS()
 postscript("../latex/figures/true_block_mat.ps", family = "Times", height = 5, width = gr * 3.5)
@@ -84,8 +84,8 @@ dev.off()
 
 
 ## build the network
-graph$Aw[graph$Aw < 1e-1] <- 0
-net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)
+graph$Adjacency[graph$Adjacency < 1e-1] <- 0
+net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 #V(net)$type = V(bipartite)$type
 ## plot network
 colors <- c("#706FD3", "#33D9B2")

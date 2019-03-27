@@ -5,21 +5,29 @@ library(extrafont)
 library(latex2exp)
 
 set.seed(42)
-
-N_realizations <- 2
-ratios <- c(.5, .75, 1.5, 5, 10, 30, 50, 100, 250, 500, 1000)
+eps <- 5e-2
+N_realizations <- 10
+ratios <- c(.5, 1.5, 5, 10, 50, 100, 500, 1e3, 5e3, 1e4)
 n_ratios <- c(1:length(ratios))
 # design synthetic Laplacian of a erdos_renyi graph
 N <- 64
-p <- .4
-rel_err_spec <- matrix(0, N_realizations, length(ratios))
+p <- .2
+rel_err_sgl <- matrix(0, N_realizations, length(ratios))
 rel_err_cgl <- matrix(0, N_realizations, length(ratios))
 rel_err_qp <- matrix(0, N_realizations, length(ratios))
 rel_err_naive <- matrix(0, N_realizations, length(ratios))
-fscore_spec <- matrix(0, N_realizations, length(ratios))
+fscore_sgl <- matrix(0, N_realizations, length(ratios))
 fscore_cgl <- matrix(0, N_realizations, length(ratios))
 fscore_qp <- matrix(0, N_realizations, length(ratios))
 fscore_naive <- matrix(0, N_realizations, length(ratios))
+accuracy_sgl <- matrix(0, N_realizations, length(ratios))
+accuracy_cgl <- matrix(0, N_realizations, length(ratios))
+accuracy_qp <- matrix(0, N_realizations, length(ratios))
+accuracy_naive <- matrix(0, N_realizations, length(ratios))
+specificity_sgl <- matrix(0, N_realizations, length(ratios))
+specificity_cgl <- matrix(0, N_realizations, length(ratios))
+specificity_qp <- matrix(0, N_realizations, length(ratios))
+specificity_naive <- matrix(0, N_realizations, length(ratios))
 
 print("Connecting to MATLAB...")
 matlab <- Matlab(port=9999)
@@ -41,22 +49,21 @@ for (j in n_ratios) {
     # the pseudo inverse of the true Laplacian
     Y <- MASS::mvrnorm(T, mu = rep(0, N), Sigma = MASS::ginv(Ltrue))
     S <- cov(Y)
-    Lnaive <- MASS::ginv(S)
-    w_qp <- spectralGraphTopology:::w_init("qp", Lnaive)
+    Sinv <- MASS::ginv(S)
+    w_qp <- spectralGraphTopology:::w_init("qp", Sinv)
+    w_naive <- spectralGraphTopology:::w_init("naive", Sinv)
+    Lnaive <- L(w_naive)
     Lqp <- L(w_qp)
     s_max <- max(abs(S - diag(diag(S))))
     alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(N)/T), 0)
-    if (ratios[j] <= 10)
-      graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 1, tol = 1e-6, maxiter = 1e6)
-    else
-      graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 100, tol = 1e-6, maxiter = 1e6)
-    print(graph$beta_seq)
-    print(graph$convergence)
+    graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 20, fix_beta = TRUE,
+                                    edge_tol = 0, maxiter = 5e5, abstol = 0)
+    print(graph$lambda)
     setVariable(matlab, S = S)
     rel_cgl <- Inf
     for (alpha in alphas) {
       setVariable(matlab, alpha = alpha)
-      evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-6, 1e-6, 100, 1)")
+      evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-4, 1e-4, 100, 1)")
       Lcgl <- getVariable(matlab, "Lcgl")
       if (anyNA(Lcgl$Lcgl)) {
         next
@@ -64,29 +71,48 @@ for (j in n_ratios) {
       tmp_rel_cgl <- relativeError(Ltrue, Lcgl$Lcgl)
       if (tmp_rel_cgl < rel_cgl) {
         rel_cgl <- tmp_rel_cgl
-        fs_cgl <- Fscore(Ltrue, Lcgl$Lcgl, 5e-2)
+        metrics_cgl <- metrics(Ltrue, Lcgl$Lcgl, eps)
       }
     }
-    rel_err_spec[n, j] <- relativeError(Ltrue, graph$Laplacian)
-    fscore_spec[n, j] <- Fscore(Ltrue, graph$Laplacian, 5e-2)
-    print(rel_err_spec)
-    print(fscore_spec)
+    metrics_sgl <- metrics(Ltrue, graph$Laplacian, eps)
+    metrics_qp <- metrics(Ltrue, Lqp, eps)
+    metrics_naive <- metrics(Ltrue, Lnaive, eps)
+    rel_err_sgl[n, j] <- relativeError(Ltrue, graph$Laplacian)
     rel_err_cgl[n, j] <- rel_cgl
-    fscore_cgl[n, j] <- fs_cgl
-    print(rel_err_cgl)
-    print(fscore_cgl)
     rel_err_qp[n, j] <- relativeError(Ltrue, Lqp)
-    fscore_qp[n, j] <- Fscore(Ltrue, Lqp, 5e-2)
     rel_err_naive[n, j] <- relativeError(Ltrue, Lnaive)
-    fscore_naive[n, j] <- Fscore(Ltrue, Lnaive, 5e-2)
+    fscore_sgl[n, j] <- metrics_sgl[1]
+    fscore_cgl[n, j] <- metrics_cgl[1]
+    fscore_qp[n, j] <- metrics_qp[1]
+    fscore_naive[n, j] <- metrics_naive[1]
+    specificity_sgl[n, j] <- metrics_sgl[3]
+    specificity_cgl[n, j] <- metrics_cgl[3]
+    specificity_qp[n, j] <- metrics_qp[3]
+    specificity_naive[n, j] <- metrics_naive[3]
+    accuracy_sgl[n, j] <- metrics_sgl[4]
+    accuracy_cgl[n, j] <- metrics_cgl[4]
+    accuracy_qp[n, j] <- metrics_qp[4]
+    accuracy_naive[n, j] <- metrics_naive[4]
+    print(rel_err_sgl)
+    print(rel_err_cgl)
+    print(fscore_sgl)
+    print(fscore_cgl)
   }
 }
 
-saveRDS(rel_err_spec, file = "rel-err-SGL.rds")
-saveRDS(fscore_spec, file = "fscore-SGL.rds")
+saveRDS(rel_err_sgl, file = "rel-err-SGL.rds")
 saveRDS(rel_err_cgl, file = "rel-err-CGL.rds")
-saveRDS(fscore_cgl, file = "fscore-CGL.rds")
 saveRDS(rel_err_naive, file = "rel-err-naive.rds")
-saveRDS(fscore_naive, file = "fscore-naive.rds")
 saveRDS(rel_err_qp, file = "rel-err-QP.rds")
+saveRDS(fscore_sgl, file = "fscore-SGL.rds")
+saveRDS(fscore_cgl, file = "fscore-CGL.rds")
+saveRDS(fscore_naive, file = "fscore-naive.rds")
 saveRDS(fscore_qp, file = "fscore-QP.rds")
+saveRDS(specificity_sgl, file = "specificity-SGL.rds")
+saveRDS(specificity_cgl, file = "specificity-CGL.rds")
+saveRDS(specificity_naive, file = "specificity-naive.rds")
+saveRDS(specificity_qp, file = "specificity-QP.rds")
+saveRDS(accuracy_sgl, file = "accuracy-SGL.rds")
+saveRDS(accuracy_cgl, file = "accuracy-CGL.rds")
+saveRDS(accuracy_naive, file = "accuracy-naive.rds")
+saveRDS(accuracy_qp, file = "accuracy-QP.rds")

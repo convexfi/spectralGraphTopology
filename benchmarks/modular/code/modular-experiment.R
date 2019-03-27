@@ -8,7 +8,7 @@ set.seed(42)
 
 eps <- 5e-2
 N_realizations <- 5
-ratios <- c(.5, 1.5, 10, 100, 5e2, 1e3)
+ratios <- rev(c(.5, 2, 10, 50, 100, 5e2, 1e3))
 n_ratios <- c(1:length(ratios))
 
 rel_err_sgl <- matrix(0, N_realizations, length(ratios))
@@ -39,7 +39,7 @@ print(is_matlab_open)
 
 N <- 64
 K <- 4
-P <- diag(.3, K) + .01
+P <- diag(.49, K) + .01
 # K-component graph
 A_mask <- matrix(1, N, N) - diag(N)
 setVariable(matlab, A_mask = A_mask)
@@ -60,7 +60,7 @@ for (j in n_ratios) {
     w_qp <- spectralGraphTopology:::w_init("qp", Lnaive)
     Lqp <- L(w_qp)
     graph <- learn_laplacian_matrix(S, w0 = w_qp, ub = 32, beta = 1e2,
-                                    edge_tol = 0, maxiter = 5e5, abstol = 0)
+                                    edge_tol = 0, maxiter = 1e6, abstol = 0)
     print(graph$convergence)
     rel_cgl <- Inf
     for (alpha in alphas) {

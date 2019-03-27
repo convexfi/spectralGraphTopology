@@ -8,7 +8,7 @@ set.seed(42)
 
 eps <- 5e-2
 N_realizations <- 5
-ratios <- c(5e3, 1e3, 5e2, 1e2, 1e1, 1.5, .5)
+ratios <- c(.5, 1.5, 1e1, 5e1, 1e2, 5e2, 1e3)
 n_ratios <- c(1:length(ratios))
 
 rel_err_sgl <- matrix(0, N_realizations, length(ratios))
@@ -41,11 +41,13 @@ for (j in n_ratios) {
     Ltrue <- as.matrix(laplacian_matrix(mgraph))
     Y <- MASS::mvrnorm(T, mu = rep(0, n), Sigma = MASS::ginv(Ltrue))
     S <- cov(Y)
-    Lnaive <- MASS::ginv(S)
-    w_qp <- spectralGraphTopology:::w_init("qp", Lnaive)
+    Sinv <- MASS::ginv(S)
+    w_qp <- spectralGraphTopology:::w_init("qp", Sinv)
+    w_naive <- spectralGraphTopology:::w_init("naive", Sinv)
+    Lnaive <- L(w_naive)
     Lqp <- L(w_qp)
     graph <- learn_laplacian_matrix(S, w0 = w_qp, k = 4, ub = 32, beta = 1e2, fix_beta = TRUE,
-                                    edge_tol = 1e-3, abstol = 1e-4, maxiter = 5e5)
+                                    edge_tol = 1e-2, maxiter = 5e5)
     metrics_sgl <- metrics(Ltrue, graph$Laplacian, eps)
     metrics_qp <- metrics(Ltrue, Lqp, eps)
     metrics_naive <- metrics(Ltrue, Lnaive, eps)

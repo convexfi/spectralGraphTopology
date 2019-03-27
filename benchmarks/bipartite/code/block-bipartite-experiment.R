@@ -2,10 +2,11 @@ library(spectralGraphTopology)
 library(igraph)
 set.seed(234)
 
-n1 <- 10
-n2 <- 4
-n <- 3*(n1+n2)-10
-n_realizations <- 10
+eps <- 5e-2
+n1 <- 20
+n2 <- 8
+n <- 3*(n1+n2)-20
+n_realizations <- 1
 ratios <- c(5, 10, 30, 100, 250, 500, 1000)
 rel_err_sgl <- array(0, length(ratios))
 rel_err_naive <- array(0, length(ratios))
@@ -19,12 +20,12 @@ for (j in n_ratios) {
   p <- as.integer(ratios[j] * n)
   cat("\nRunning simulation for", p, "samples per node, p/n = ", ratios[j], "\n")
   for (r in 1:n_realizations) {
-    b1 <- sample_bipartite(n1, n2, type="Gnp", p = .7, directed=FALSE)
-    b2 <- sample_bipartite(n1-4, n2, type="Gnp", p = .8, directed=FALSE)
-    b3 <- sample_bipartite(n1-6, n2, type="Gnp", p = .9, directed=FALSE)
-    E(b1)$weight <- runif(gsize(b1), min = 1, max = 3)
-    E(b2)$weight <- runif(gsize(b2), min = 1, max = 3)
-    E(b3)$weight <- runif(gsize(b3), min = 1, max = 3)
+    b1 <- sample_bipartite(n1, n2, type="Gnp", p = .5, directed=FALSE)
+    b2 <- sample_bipartite(n1-8, n2, type="Gnp", p = .6, directed=FALSE)
+    b3 <- sample_bipartite(n1-12, n2, type="Gnp", p = .7, directed=FALSE)
+    E(b1)$weight <- runif(gsize(b1), min = .1, max = 3)
+    E(b2)$weight <- runif(gsize(b2), min = .1, max = 3)
+    E(b3)$weight <- runif(gsize(b3), min = .1, max = 3)
     Lw1 <- as.matrix(laplacian_matrix(b1))
     Aw1 <- diag(diag(Lw1)) - Lw1
     Lw2 <- as.matrix(laplacian_matrix(b2))
@@ -39,17 +40,17 @@ for (j in n_ratios) {
     Sinv <- MASS::ginv(S)
     w_naive <- spectralGraphTopology:::w_init(w0 = "naive", Sinv)
     w_qp <- spectralGraphTopology:::w_init(w0 = "qp", Sinv)
-    graph <- learn_adjacency_and_laplacian(S, k = 3, z = 0,
-                                           w0 = w_qp, beta1 = 1e3, beta2 = 1e3, ftol = 1e-4, maxiter = 1e5)
+    graph <- learn_adjacency_and_laplacian(S, k = 3, z = 0, w0 = w_qp, beta = 1e1, fix_beta = TRUE, nu = 1e3,
+                                           alpha = 1e-2, maxiter = 5e5)
     print(graph$convergence)
     Anaive <- A(w_naive)
     Aqp <- A(w_qp)
-    rel_sgl = relativeError(Aw, graph$Aw)
-    fs_sgl = Fscore(Aw, graph$Aw, 1e-1)
+    rel_sgl = relativeError(Aw, graph$Adjacency)
+    fs_sgl = metrics(Aw, graph$Adjacency, eps)[1]
     rel_naive = relativeError(Aw, Anaive)
-    fs_naive = Fscore(Aw, Anaive, 1e-1)
+    fs_naive = metrics(Aw, Anaive, eps)[1]
     rel_qp = relativeError(Aw, Aqp)
-    fs_qp = Fscore(Aw, Aqp, 1e-1)
+    fs_qp = metrics(Aw, Aqp, eps)[1]
     rel_err_sgl[j] <- rel_err_sgl[j] + rel_sgl
     fscore_sgl[j] <- fscore_sgl[j] + fs_sgl
     rel_err_naive[j] <- rel_err_naive[j] + rel_naive

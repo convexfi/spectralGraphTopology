@@ -2,7 +2,7 @@ library(igraph)
 library(corrplot)
 library(spectralGraphTopology)
 library(pals)
-library(huge)
+library(glasso)
 library(extrafont)
 library(R.matlab)
 set.seed(0)
@@ -21,22 +21,23 @@ true_net <- graph_from_adjacency_matrix(abs(Wtrue), mode = "undirected", weighte
 Y <- MASS::mvrnorm(p, mu = rep(0, n), Sigma = Strue)
 SCM <- cov(Y)
 # SGL
-graph <- learn_laplacian_matrix(SCM, k = 1, w0 = "qp")
+graph <- learn_laplacian_matrix(SCM, k = 1, w0 = "qp", fix_beta = TRUE, edge_tol = 0, abstol = 1e-4)
+print(diag(graph$Laplacian / max(graph$Laplacian)))
 # GLasso
-glasso <- huge(SCM, method = "glasso")
-Pglasso <- matrix(glasso$icov[[10]], nrow = 128)
+glasso <- glasso(SCM, rho = 1e-2)
+Pglasso <- matrix(glasso$wi, nrow = 128)
 # GGL
-print("Connecting to MATLAB...")
-matlab <- Matlab()
-open(matlab)
-print("success!")
-A_mask <- matrix(1, n, n) - diag(n)
-setVariable(matlab, A_mask = A_mask)
-setVariable(matlab, SCM = SCM)
-alpha = 1e-2
-setVariable(matlab, alpha = alpha)
-evaluate(matlab, "[Lggl,~,~] = estimate_ggl(SCM, A_mask, alpha, 1e-6, 1e-6, 40, 1)")
-Lggl <- getVariable(matlab, "Lggl")$Lggl
+#print("Connecting to MATLAB...")
+#matlab <- Matlab()
+#open(matlab)
+#print("success!")
+#A_mask <- matrix(1, n, n) - diag(n)
+#setVariable(matlab, A_mask = A_mask)
+#setVariable(matlab, SCM = SCM)
+#alpha = 1e-2
+#setVariable(matlab, alpha = alpha)
+#evaluate(matlab, "[Lggl,~,~] = estimate_ggl(SCM, A_mask, alpha, 1e-6, 1e-6, 40, 1)")
+#Lggl <- getVariable(matlab, "Lggl")$Lggl
 # construct nets
 glasso_net <- graph_from_adjacency_matrix(abs(diag(diag(Ptrue)) - Ptrue), mode = "undirected", weighted = TRUE)
 est_net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
@@ -70,31 +71,31 @@ setEPS()
 postscript("../latex/figures/periodic_gaussian_block_laplacian.ps",
            family = "Times", height = 5, width = gr * 3.5)
 corrplot(graph$Laplacian / max(graph$Laplacian), is.corr = FALSE, method = "square",
-         addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+         addgrid.col = NA, tl.pos = "n", cl.cex = 1)
 dev.off()
-setEPS()
-postscript("../latex/figures/periodic_gaussian_block_ggl.ps",
-           family = "Times", height = 5, width = gr * 3.5)
-corrplot(Lggl / max(Lggl), is.corr = FALSE, method = "square",
-         addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
-dev.off()
+#setEPS()
+#postscript("../latex/figures/periodic_gaussian_block_ggl.ps",
+#           family = "Times", height = 5, width = gr * 3.5)
+#corrplot(Lggl / max(Lggl), is.corr = FALSE, method = "square",
+#         addgrid.col = NA, tl.pos = "n", cl.cex = 1)
+#dev.off()
 setEPS()
 postscript("../latex/figures/periodic_gaussian_block_covariance.ps",
            family = "Times", height = 5, width = gr * 3.5)
 corrplot(Strue / max(Strue), is.corr = FALSE, method = "square",
-         addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+         addgrid.col = NA, tl.pos = "n", cl.cex = 1)
 dev.off()
 setEPS()
 postscript("../latex/figures/periodic_gaussian_block_precision.ps",
            family = "Times", height = 5, width = gr * 3.5)
 corrplot(Ptrue / max(Ptrue), is.corr = FALSE, method = "square",
-         addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+         addgrid.col = NA, tl.pos = "n", cl.cex = 1)
 dev.off()
 setEPS()
 postscript("../latex/figures/periodic_gaussian_block_glasso_precision.ps",
            family = "Times", height = 5, width = gr * 3.5)
 corrplot(Pglasso / max(Pglasso), is.corr = FALSE, method = "square",
-         addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+         addgrid.col = NA, tl.pos = "n", cl.cex = 1)
 dev.off()
 #colors <- c("#0B032D", "#843B62", "#F67E7D", "#6ABA81")
 #pch <- c(15, 7, 8, 9)

@@ -80,47 +80,42 @@ std_nll_cgl <- colSds(nll_cgl)
 
 legend <- c("SGL (proposed)", "CGL")
 gr = .5 * (1 + sqrt(5))
-colors <- c("#B53471", "#006266")
+colors <- rev(c("#ff793f", "#2c2c54"))
 setEPS()
 cairo_ps("relative_error.ps", family = "Serif", height = 5, width = gr * 3.5)
 plot(avg_time, avg_relerr, type = "l", lty = 1, col = colors[1],
-     xlab = "Average CPU time", ylab = "Average Relative Error", ylim = c(0, .8))
-lines(avg_time_cgl, avg_relerr_cgl, type = "l", lty = 2, col = colors[2])
+     xlab = "Average CPU time", ylab = "Average Relative Error", ylim = c(0, .8), lwd = 2)
+lines(avg_time_cgl, avg_relerr_cgl, type = "l", lty = 3, col = colors[2], lwd = 2)
 polygon(x = c(avg_time, rev(avg_time)), y = c(avg_relerr - std_relerr, rev(avg_relerr + std_relerr)),
         col = alpha(colors[1], alpha = .1), border = NA)
 polygon(x = c(avg_time_cgl, rev(avg_time_cgl)),
         y = c(avg_relerr_cgl - std_relerr_cgl, rev(avg_relerr_cgl + std_relerr_cgl)),
         col = alpha(colors[2], alpha = .1), border = NA)
-legend("topright", legend=legend, col=colors, lty = c(1, 2), bty="n")
+legend("topright", legend=legend, col=colors, lty = c(1, 3), bty="n", lwd = c(2, 2))
 dev.off()
 embed_fonts("relative_error.ps", outfile="relative_error.ps")
 
 setEPS()
 cairo_ps("fscore.ps", family = "Serif", height = 5, width = gr * 3.5)
 plot(avg_time, avg_fscore, type = "l", lty = 1, col = colors[1],
-     xlab = "Average CPU time", ylab = "Average F - score", ylim = c(0.1, 0.8))
+     xlab = "Average CPU time", ylab = "Average F - score", ylim = c(0.1, 0.8), lwd = 2)
 polygon(x = c(avg_time, rev(avg_time)), y = c(avg_fscore - std_fscore, rev(avg_fscore + std_fscore)),
         col = alpha(colors[1], alpha = .1), border = NA)
-lines(avg_time_cgl, avg_fscore_cgl, type = "l", lty = 2, col = colors[2])
+lines(avg_time_cgl, avg_fscore_cgl, type = "l", lty = 3, col = colors[2], lwd = 2)
 polygon(x = c(avg_time_cgl, rev(avg_time_cgl)),
         y = c(avg_fscore_cgl - std_fscore_cgl, rev(avg_fscore_cgl + std_fscore_cgl)),
         col = alpha(colors[2], alpha = .1), border = NA)
-legend("bottomright", legend=legend, col=colors, lty = c(1, 2), bty="n")
+legend("bottomright", legend=legend, col=colors, lty = c(1, 3), bty="n", lwd = c(2, 2))
 dev.off()
 embed_fonts("fscore.ps", outfile="fscore.ps")
 
 setEPS()
 cairo_ps("nll.ps", family = "Serif", height = 5, width = gr * 3.5)
 plot(avg_time, avg_nll, type = "l", lty = 1, col = colors[1],
-     xlab = "Average CPU time", ylab = "Average Negative Loglikelihood", ylim = c(-30, 3))
-polygon(x = c(avg_time, rev(avg_time)), y = c(avg_nll - std_nll, rev(avg_nll + std_nll)),
-        col = alpha(colors[1], alpha = .1), border = NA)
-lines(avg_time_cgl, avg_nll_cgl, type = "l", lty = 2, col = colors[2],
-     xlab = "Average CPU time", ylab = "Average Negative Loglikelihood", ylim = c(-8, -1))
-polygon(x = c(avg_time_cgl, rev(avg_time_cgl)),
-        y = c(avg_nll_cgl - std_nll_cgl, rev(avg_nll_cgl + std_nll_cgl)),
-        col = alpha(colors[2], alpha = .1), border = NA)
-legend("topright", legend=legend, col=colors, lty = c(1, 2), bty="n")
+     xlab = "Average CPU time", ylab = "Average Negative Loglikelihood", ylim = c(-25, 3), lwd = 2)
+lines(avg_time_cgl, avg_nll_cgl, type = "l", lty = 3, col = colors[2],
+     xlab = "Average CPU time", ylab = "Average Negative Loglikelihood", lwd = 2)
+legend("topright", legend=legend, col=colors, lty = c(1, 3), bty="n", lwd = c(2, 2))
 dev.off()
 embed_fonts("nll.ps", outfile="nll.ps")
 
