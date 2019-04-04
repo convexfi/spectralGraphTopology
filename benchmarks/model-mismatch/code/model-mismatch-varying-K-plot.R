@@ -7,11 +7,11 @@ fs <- readRDS(file = "fscore.rds")
 bic <- readRDS(file = "bic.rds")
 
 gr = .5 * (1 + sqrt(5))
-colors <- c("blue", "red")
+colors <- c("#2c3e50", "#e74c3c")
 pch <- c(15, 16)
 lty <- c(1, 2)
 setEPS()
-postscript("../latex/figures/performance_model_mismatch.ps", family = "ComputerModern", height = 5, width = gr * 3.5)
+postscript("../latex/figures/performance_model_mismatch.ps", family = "ComputerModern", height = 5, width = gr * 4)
 par(mar = c(5, 5, 3, 5))
 plot(k_set, fs, type = "b", pch = pch[1], cex=.75, ylim=c(min(fs), max(fs)), lty = lty[1],
      xlab = TeX("$\\mathit{k}$"), ylab = "Average F-score", col = colors[1])

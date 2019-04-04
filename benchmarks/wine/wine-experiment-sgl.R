@@ -9,7 +9,7 @@ unique_labels <- c(unique(labels))
 Y <- matrix(unlist(wine_df[, 2:ncol(wine_df)]), nrow = nrow(wine_df))
 k <- length(unique(labels))
 Y <- scale(Y)
-graph <- learn_laplacian_matrix(Y, k = k, beta = 100, maxiter = 1e5)
+graph <- learn_laplacian_matrix(Y, k = k, beta = 2, fix_beta = TRUE, maxiter = 1e5)
 # plots
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 clusters <- array(0, length(labels))

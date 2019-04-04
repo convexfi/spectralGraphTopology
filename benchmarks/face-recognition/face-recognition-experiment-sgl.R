@@ -3,15 +3,15 @@ library(spectralGraphTopology)
 library(igraph)
 library(pals)
 
-S <- readRDS("correlation-matrix.rds")
-graph <- learn_laplacian_matrix(S, k = 40, beta = 1e3, edge_tol = 1e-1, fix_beta = TRUE)
+Y <- readRDS("data-matrix.rds")
+graph <- learn_laplacian_matrix(Y, k = 40, beta = 10, fix_beta = TRUE, edge_tol = 0)
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 colors <- rainbow(40)
 clusters <- c()
 for (i in c(1:40))
   clusters <- c(clusters, rep(i, 10))
 results <- components(net)$membership
-acc <- sum(results == clusters) / nrow(Y)
+acc <- sum(results == clusters) / length(results)
 print(acc)
 V(net)$cluster <- clusters
 E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,

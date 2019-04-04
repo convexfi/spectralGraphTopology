@@ -3,74 +3,85 @@ library(spectralGraphTopology)
 library(extrafont)
 library(latex2exp)
 library(scales)
+library(matrixStats)
 
 relative_error_list <- readRDS(file = "relerr.RDS")
 fscore_list <- readRDS(file = "fscore.RDS")
 nll_list <- readRDS(file = "nll.RDS")
 objfun_list <- readRDS(file = "objfun.RDS")
-constr_list <- readRDS(file = "constr.RDS")
-beta <- 1e3
-# plot convergence trend
-gr = .5 * (1 + sqrt(5))
-colors <- c("#706FD3", "#FF5252", "#33D9B2")
-pch <- c(15, 16, 17)
-lty <- c(1, 2, 3)
+time_list <- readRDS(file = "time.RDS")
 
-setEPS()
-cairo_ps("constraint_value.ps", family = "Serif", height = 5, width = gr * 3.5)
-constr <- constr_list[[1]]
-iter <- c(1:length(constr))
-plot(iter, 2 * constr / beta, type = "l", lty = 1, col = alpha("black", alpha = 0.1),
-     xlab = "Iteration Number", ylab = "Constraint Value")
-abline(h = 0, col = "red", lty = 2)
-for (i in 2:length(constr_list)) {
-  constr <- constr_list[[i]]
-  iter <- c(1:length(constr))
-  lines(iter, 2 * constr / beta, type = "l", lty = 1, col = alpha("black", alpha = 0.1))
-}
-dev.off()
-embed_fonts("constraint_value.ps", outfile="constraint_value.ps")
-
-setEPS()
-cairo_ps("objective_function.ps", family = "Serif", height = 5, width = gr * 3.5)
+n_lists <- length(objfun_list)
 objfun <- objfun_list[[1]]
-iter <- c(1:length(objfun))
-plot(iter, objfun, type = "l", lty = 1, col = alpha("black", alpha = 0.1),
-     xlab = "Iteration Number", ylab = "Objective Function")
-abline(h = 0, col = "red", lty = 2)
-for (i in 2:length(objfun_list)) {
+min_len <- length(objfun)
+for (i in 2:n_lists) {
   objfun <- objfun_list[[i]]
-  iter <- c(1:length(objfun))
-  lines(iter, objfun, type = "l", lty = 1, col = alpha("black", alpha = 0.1))
+  len <- length(objfun)
+  if (len < min_len)
+    min_len <- len
 }
-dev.off()
-embed_fonts("objective_function.ps", outfile="objective_function.ps")
+iter <- c(1:min_len)
+relerr <- matrix(0, n_lists, min_len)
+fscore <- matrix(0, n_lists, min_len)
+nll <- matrix(0, n_lists, min_len)
+objfun <- matrix(0, n_lists, min_len)
+time <- matrix(0, n_lists, min_len)
 
+for (i in 1:n_lists) {
+  relerr[i, ] <- c(relative_error_list[[i]])[1:min_len]
+  fscore[i, ] <- c(fscore_list[[i]])[1:min_len]
+  nll[i, ] <- c(nll_list[[i]])[1:min_len]
+  objfun[i, ] <- c(objfun_list[[i]])[1:min_len]
+  time[i, ] <- c(time_list[[i]])[1:min_len]
+}
+
+avg_relerr <- colMeans(relerr)
+avg_fscore <- colMeans(fscore)
+avg_nll <- colMeans(nll)
+avg_objfun <- colMeans(objfun)
+avg_time <- colMeans(time)
+std_relerr <- colSds(relerr)
+std_fscore <- colSds(fscore)
+std_nll <- colSds(nll)
+std_objfun <- colSds(objfun)
+
+legend <- c("Relative Error", "F-score")
+gr = .5 * (1 + sqrt(5))
+lty = c(1, 3)
+colors <- c("#ff5252", "black")
 setEPS()
-cairo_ps("relative_error.ps", family = "Serif", height = 5, width = gr * 3.5)
-relative_error <- relative_error_list[[1]]
-iter <- c(1:length(relative_error))
-plot(iter, relative_error, type = "l", lty = 1, col = alpha("black", alpha = 0.1),
-     xlab = "Iteration Number", ylab = "Relative Error", ylim = c(.1, .8))
-for (i in 2:length(relative_error_list)) {
-  relative_error <- relative_error_list[[i]]
-  iter <- c(1:length(relative_error))
-  lines(iter, relative_error, type = "l", lty = 1, col = alpha("black", alpha = 0.1))
-}
+cairo_ps("convergence-block-diagonal.ps", family = "Times", height = 5,
+         width = gr * 3.5, fallback_resolution = 1500, pointsize = 14)
+par(mar = c(5, 5, 3, 5))
+plot(iter, avg_relerr, type = "l", lty = lty[1], col = colors[1],
+     xlab = "Iteration number", ylab = "Relative Error", ylim = c(.07, .3), lwd = 2)
+#polygon(x = c(iter, rev(iter)), y = c(avg_relerr - std_relerr, rev(avg_relerr + std_relerr)),
+#        col = alpha(colors[1], alpha = .3), border = NA)
+par(new = TRUE)
+plot(iter, avg_fscore, type = "l", lty = lty[2], col = colors[2],
+     xlab = "", ylab = "", ylim = c(0.5, 1), lwd = 2, xaxt = "n", yaxt = "n")
+#polygon(x = c(iter, rev(iter)), y = c(avg_fscore - std_fscore, rev(avg_fscore + std_fscore)),
+#        col = alpha(colors[2], alpha = .3), border = NA)
+axis(side = 4)
+mtext("F-score", side = 4, line = 3)
+legend("right", legend=rev(legend), col=rev(colors), lty = rev(lty), bty="n", lwd = c(2, 2))
 dev.off()
-embed_fonts("relative_error.ps", outfile="relative_error.ps")
 
+legend <- c("Avg. Negative Loglikelihood", "Avg. Objective Function")
 setEPS()
-cairo_ps("fscore.ps", family = "Serif", height = 5, width = gr * 3.5)
-fscore <- fscore_list[[1]]
-iter <- c(1:length(fscore))
-plot(iter, fscore, type = "l", lty = 1, col = alpha("black", alpha = 0.1),
-     xlab = "Iteration Number", ylab = "F-score", ylim = c(.4, 1))
-for (i in 2:length(fscore_list)) {
-  fscore <- fscore_list[[i]]
-  iter <- c(1:length(fscore))
-  lines(iter, fscore, type = "l", lty = 1, col = alpha("black", alpha = 0.1))
-}
+cairo_ps("objective-trend-block-diagonal.ps", family = "Times", height = 5,
+         width = gr * 3.5, fallback_resolution = 1500, pointsize = 14)
+par(mar = c(5, 5, 3, 5))
+plot(iter, avg_nll, type = "l", lty = lty[1], col = colors[1],
+     xlab = "Iteration number", ylab = "Avg. Negative Loglikelihood", lwd = 2)
+#polygon(x = c(iter, rev(iter)), y = c(avg_nll - .5*std_nll, rev(avg_nll + .5*std_nll)),
+#        col = alpha(colors[1], alpha = .3), border = NA)
+par(new = TRUE)
+plot(iter, avg_objfun, type = "l", lty = lty[2], col = colors[2],
+     xlab = "", ylab = "", lwd = 2, xaxt = "n", yaxt = "n")
+#polygon(x = c(iter, rev(iter)), y = c(avg_objfun - std_objfun, rev(avg_objfun + std_objfun)),
+#        col = alpha(colors[2], alpha = .3), border = NA)
+axis(side = 4)
+mtext("Avg. Objective Function", side = 4, line = 3)
+legend("topright", legend=legend, col=colors, lty = lty, bty="n", lwd = c(2, 2))
 dev.off()
-embed_fonts("fscore.ps", outfile="fscore.ps")
-

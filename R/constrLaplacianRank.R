@@ -1,4 +1,4 @@
-constr_laplacian_rank <- function(Y, k = 1, m = 5, S0 = NULL, lmd = 1, eig_tol = 1e-6,
+constr_laplacian_rank <- function(Y, k = 1, m = 5, S0 = NULL, lmd = 1, eig_tol = 1e-9,
                                   edge_tol = 1e-6, maxiter = 1000, regularization_type = 2) {
   time_seq <- c(0)
   start_time <- proc.time()[3]

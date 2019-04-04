@@ -8,7 +8,7 @@ learn_laplacian_matrix(S, is_data_matrix = FALSE, k = 1,
   w0 = "naive", lb = 0, ub = 10000, alpha = 0, beta = 10000,
   beta_max = 1e+06, fix_beta = FALSE, rho = 0.01, m = 7,
   maxiter = 10000, abstol = 1e-06, reltol = 1e-04, eig_tol = 1e-09,
-  edge_tol = 1e-04, record_objective = FALSE, record_weights = FALSE)
+  record_objective = FALSE, record_weights = FALSE)
 }
 \arguments{
 \item{S}{N-by-N sample covariance matrix, where N is the number of nodes}

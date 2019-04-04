@@ -2,16 +2,16 @@ library(igraph)
 library(spectralGraphTopology)
 library(extrafont)
 library(latex2exp)
-set.seed(123)
+set.seed(42)
 
 eps <- 1e-2
-n_realizations <- 100
-ratios <- c(10)
+n_realizations <- 50
+ratios <- c(30)
 n <- 64
 n1 <- 40
 n2 <- 24
 bipartite <- sample_bipartite(n1, n2, type="Gnp", p = .35, directed=FALSE)
-erdos_renyi <- erdos.renyi.game(n, p = .35)
+#erdos_renyi <- erdos.renyi.game(n, p = .35)
 maxiter <- 5e4
 relative_error_list <- list()
 fscore_list <- list()
@@ -25,15 +25,16 @@ for (j in 1:length(ratios)) {
   cat("\nRunning simulation for", t, "samples per node, t/n = ", ratios[j], "\n")
   for (r in 1:n_realizations) {
     E(bipartite)$weight <- runif(gsize(bipartite), min = 1e-1, max = 3)
-    E(erdos_renyi)$weight <- runif(gsize(erdos_renyi), min = 0, max = .4)
+    #E(erdos_renyi)$weight <- runif(gsize(erdos_renyi), min = 0, max = .4)
     Ltrue <- as.matrix(laplacian_matrix(bipartite))
-    Lerdo <- as.matrix(laplacian_matrix(erdos_renyi))
+    #Lerdo <- as.matrix(laplacian_matrix(erdos_renyi))
     # sample data from GP with covariance matrix set as
     # the pseudo inverse of the true Laplacian
-    Y <- MASS::mvrnorm(t, mu = rep(0, n), Sigma = MASS::ginv(Ltrue + Lerdo))
+    #Y <- MASS::mvrnorm(t, mu = rep(0, n), Sigma = MASS::ginv(Ltrue + Lerdo))
+    Y <- MASS::mvrnorm(t, mu = rep(0, n), Sigma = MASS::ginv(Ltrue))
     S <- cov(Y)
-    graph <- learn_bipartite_graph(S, z = abs(n2 - n1), w0 = "qp",
-                                   nu = 1e1, record_weights = TRUE)
+    graph <- learn_bipartite_graph(S, z = abs(n2 - n1), w0 = "naive",
+                                   nu = 1e1, abstol = 0, record_weights = TRUE)
     print(graph$convergence)
     niter <- length(graph$loglike)
     relative_error <- array(0, niter)

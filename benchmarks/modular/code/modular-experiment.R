@@ -60,7 +60,7 @@ for (j in n_ratios) {
     w_qp <- spectralGraphTopology:::w_init("qp", Lnaive)
     Lqp <- L(w_qp)
     graph <- learn_laplacian_matrix(S, w0 = w_qp, ub = 32, beta = 1e2,
-                                    edge_tol = 0, maxiter = 1e6, abstol = 0)
+                                    maxiter = 1e6, abstol = 0)
     print(graph$convergence)
     rel_cgl <- Inf
     for (alpha in alphas) {

@@ -11,7 +11,7 @@ names <- matrix(unlist(read.csv("animals_names.txt", header = FALSE)))
 Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
 N <- ncol(Y)
 graph <- learn_dregular_graph(cov(Y) + diag(rep(1/3, N)), w0 = "qp",
-                              k = 10, beta = 10, eta = 1e3, fix_beta = TRUE, maxiter = 1e5)
+                              k = 1, beta = 10, eta = 1e3, fix_beta = TRUE, maxiter = 1e5)
 print(diag(graph$Laplacian))
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 colors <- brewer.reds(100)

@@ -6,12 +6,12 @@ library(latex2exp)
 
 set.seed(42)
 eps <- 5e-2
-N_realizations <- 10
-ratios <- c(.5, 1.5, 5, 10, 50, 100, 500, 1e3, 5e3, 1e4)
+N_realizations <- 2
+ratios <- rev(c(.5, 5, 10, 50, 100, 500, 1e3, 5e3))
 n_ratios <- c(1:length(ratios))
 # design synthetic Laplacian of a erdos_renyi graph
 N <- 64
-p <- .2
+p <- .25
 rel_err_sgl <- matrix(0, N_realizations, length(ratios))
 rel_err_cgl <- matrix(0, N_realizations, length(ratios))
 rel_err_qp <- matrix(0, N_realizations, length(ratios))
@@ -30,7 +30,7 @@ specificity_qp <- matrix(0, N_realizations, length(ratios))
 specificity_naive <- matrix(0, N_realizations, length(ratios))
 
 print("Connecting to MATLAB...")
-matlab <- Matlab(port=9999)
+matlab <- Matlab(port=9998)
 open(matlab)
 print("success!")
 A_mask <- matrix(1, N, N) - diag(N)
@@ -56,9 +56,6 @@ for (j in n_ratios) {
     Lqp <- L(w_qp)
     s_max <- max(abs(S - diag(diag(S))))
     alphas <- c(.75 ^ (c(1:14)) * s_max * sqrt(log(N)/T), 0)
-    graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 20, fix_beta = TRUE,
-                                    edge_tol = 0, maxiter = 5e5, abstol = 0)
-    print(graph$lambda)
     setVariable(matlab, S = S)
     rel_cgl <- Inf
     for (alpha in alphas) {
@@ -70,10 +67,14 @@ for (j in n_ratios) {
       }
       tmp_rel_cgl <- relativeError(Ltrue, Lcgl$Lcgl)
       if (tmp_rel_cgl < rel_cgl) {
+        alpha_tmp <- alpha
         rel_cgl <- tmp_rel_cgl
         metrics_cgl <- metrics(Ltrue, Lcgl$Lcgl, eps)
       }
     }
+    print(alpha_tmp)
+    graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 1, ub = 32, fix_beta = TRUE,
+                                    alpha = 0, maxiter = 5e5, abstol = 0)
     metrics_sgl <- metrics(Ltrue, graph$Laplacian, eps)
     metrics_qp <- metrics(Ltrue, Lqp, eps)
     metrics_naive <- metrics(Ltrue, Lnaive, eps)

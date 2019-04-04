@@ -99,7 +99,7 @@ for (j in n_ratios) {
     w_naive <- spectralGraphTopology:::w_init(w0 = "naive", Sinv)
     w_qp <- spectralGraphTopology:::w_init(w0 = "qp", Sinv)
     graph <- learn_bipartite_graph(S, z = abs(n1 - n2), w0 = w_qp,
-                                   nu = 1e5, abstol = 1e-4, maxiter = 1e5, edge_tol = 0)
+                                   nu = 1e5, abstol = 1e-4, maxiter = 1e5)
     print(graph$convergence)
     Anaive <- A(w_naive)
     Aqp <- A(w_qp)

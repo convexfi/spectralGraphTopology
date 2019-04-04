@@ -70,7 +70,7 @@ test_that("learn_laplacian_matrix with two components", {
                      c(0, 0, -1, 1))
   n <- ncol(Laplacian)
   Y <- MASS::mvrnorm(n * 500, rep(0, n), MASS::ginv(Laplacian))
-  res <- learn_laplacian_matrix(cov(Y), k = 2, beta = 10, edge_tol = 1e-1)
+  res <- learn_laplacian_matrix(cov(Y), k = 2, beta = 10, fix_beta = TRUE)
   expect_that(res$convergence, is_true())
   expect_that(relativeError(Laplacian, res$Laplacian) < 1e-1, is_true())
   expect_that(metrics(Laplacian, res$Laplacian, 1e-1)[1] > .9, is_true())
