@@ -7,10 +7,10 @@ library(extrafont)
 set.seed(42)
 
 N_realizations <- 10
-N <- 32
-T <- 100 * N
+N <- 20
+T <- 30 * N
 K <- 4
-P <- diag(.5, K)
+P <- diag(1, K)
 # probability of node connection
 kappa_seq <- c(.1, .2, .3, .4, .5, .6)
 # K-component graph
@@ -24,14 +24,14 @@ for (k in c(1:length(kappa_seq))) {
     E(mgraph)$weight <- runif(gsize(mgraph), min = 0, max = 1)
     Ltrue <- as.matrix(laplacian_matrix(mgraph))
     # Erdo-Renyi as noise model
-    erdos_renyi <- erdos.renyi.game(N, p)
+    erdos_renyi <- erdos.renyi.game(N, p = .35)
     E(erdos_renyi)$weight <- runif(gsize(erdos_renyi), min = 0, max = a)
     Lerdo <- as.matrix(laplacian_matrix(erdos_renyi))
     # Noisy Laplacian
     Lnoisy <- Ltrue + Lerdo
     Y <- MASS::mvrnorm(T, mu = rep(0, N), Sigma = MASS::ginv(Lnoisy))
     S <- cov(Y)
-    graph <- learn_laplacian_matrix(S, w0 = "qp", k = 4, beta = 2, fix_beta = TRUE,
+    graph <- learn_laplacian_matrix(S, w0 = "qp", k = 4, beta = 400, fix_beta = TRUE,
                                     maxiter = 100000, abstol = 0)
     print(graph$convergence)
     fs <- metrics(Ltrue, graph$Laplacian, 1e-3)[1]

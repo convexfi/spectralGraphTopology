@@ -1,8 +1,8 @@
 library(igraph)
 library(spectralGraphTopology)
-library(viridis)
 library(corrplot)
 library(scales)
+library(pals)
 library(R.matlab)
 
 set.seed(0)
@@ -27,7 +27,7 @@ alpha = 5e-3
 setVariable(matlab, alpha = alpha)
 evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-6, 1e-6, 40, 1)")
 Lcgl <- getVariable(matlab, "Lcgl")
-graph <- learn_laplacian_matrix(S, w0 = "qp", beta = 20, alpha = alpha, abstol = 1e-5)
+graph <- learn_laplacian_matrix(S, w0 = "qp", beta = 20, alpha = alpha, abstol = 1e-5, fix_beta = TRUE)
 
 eps <- 5e-2
 # compute adjacency matrices
@@ -38,7 +38,7 @@ W_cgl[W_cgl < eps] <- 0
 grid_spec <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 grid_cgl <- graph_from_adjacency_matrix(W_cgl, mode = "undirected", weighted = TRUE)
 
-colors <- viridis(5, begin = 0, end = 1, direction = -1)
+colors <- brewer.blues(100)
 c_scale <- colorRamp(colors)
 E(grid_spec)$color = apply(c_scale(E(grid_spec)$weight / max(E(grid_spec)$weight)), 1,
                           function(x) rgb(x[1]/255, x[2]/255, x[3]/255))

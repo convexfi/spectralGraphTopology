@@ -10,13 +10,13 @@ N <- 100
 # generate datapoints
 circles3 <- shapes.circles3(N)
 # learn underlying graph
-graph <- learn_laplacian_matrix(crossprod(t(circles3$data)), k = 3, beta = 1, reltol = 1e-1,
-                                abstol = 1e-1, record_weights = TRUE, record_objective = TRUE)
+S <- crossprod(t(circles3$data))
+print(eigenvalues(S))
+graph <- learn_laplacian_matrix(S, k = 3, beta = 1,
+                                maxiter = 570, record_weights = TRUE, record_objective = TRUE)
+print(graph$obj_fun)
 # pretty colors
 colors <- c("#706FD3", "#FF5252", "#33D9B2")
-# colorify edges and nodes
-# construct the network
-# plot
 gr = .5 * (1 + sqrt(5))
 index <- c(1, 50, 100, 150, 200, 250, 300, 400, 500, length(graph$obj_fun))
 j <- 0

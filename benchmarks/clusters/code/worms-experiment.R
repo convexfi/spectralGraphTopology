@@ -11,7 +11,7 @@ N <- 100
 worms <- shapes.worms(N)
 # learn underlying graph
 graph <- learnLaplacianGraphTopology(crossprod(t(worms$data)) + diag(rep(1/3, 2 * N)),
-                            w0 = "naive", K = 2, beta = .25, ftol = 1e-2, Lwtol = 1e-2)
+                                     w0 = "naive", K = 2, beta = .25, ftol = 1e-2, Lwtol = 1e-2)
 # build the network
 net <- graph_from_adjacency_matrix(graph$W, mode = "undirected", weighted = TRUE)
 # colorify edges and nodes
