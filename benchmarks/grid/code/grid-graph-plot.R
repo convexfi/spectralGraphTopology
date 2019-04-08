@@ -2,7 +2,7 @@ library(igraph)
 library(spectralGraphTopology)
 library(corrplot)
 library(scales)
-library(pals)
+library(viridis)
 library(R.matlab)
 
 set.seed(0)
@@ -38,7 +38,7 @@ W_cgl[W_cgl < eps] <- 0
 grid_spec <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 grid_cgl <- graph_from_adjacency_matrix(W_cgl, mode = "undirected", weighted = TRUE)
 
-colors <- brewer.blues(100)
+colors <- viridis(5, begin = 0, end = .75, direction = -1)
 c_scale <- colorRamp(colors)
 E(grid_spec)$color = apply(c_scale(E(grid_spec)$weight / max(E(grid_spec)$weight)), 1,
                           function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
