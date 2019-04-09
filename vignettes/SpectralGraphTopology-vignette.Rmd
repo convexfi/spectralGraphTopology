@@ -51,16 +51,15 @@ knit_hooks$set(pngquant = hook_pngquant)
 
 # Installation
 
-For installation instructions, please visit
-[https://github.com/dppalomar/spectralGraphTopology](https://github.com/dppalomar/spectralGraphTopology)
+Please visit [https://github.com/dppalomar/spectralGraphTopology](https://github.com/dppalomar/spectralGraphTopology)
+for installation instructions.
 
 # Problem Statement
 The Laplacian matrix $\boldsymbol{\Theta}$ of a graph contains the information
-of its topology and weight connections. By definition a Laplacian matrix is
-positive semi-definite, symmetric, and with sum of rows equal to zero. The
-Laplacian linear operator $\mathcal{L}\mathbf{w}$ maps a vector of weights
-$\mathbf{w}$ into a valid Laplacian matrix so that the conditions are satisfied
-by construction.
+of its topology. By definition a Laplacian matrix is positive semi-definite,
+symmetric, and with sum of rows equal to zero. The Laplacian linear operator
+$\mathcal{L}\mathbf{w}$ maps a vector of weights $\mathbf{w}$ into a valid
+Laplacian matrix so that the conditions are satisfied by construction.
 
 One common approach to estimate the Laplacian matrix would be via the generalized
 inverse of the covariance matrix, which is an assymptotically unbiased and efficient
@@ -95,18 +94,20 @@ library(spectralGraphTopology)
 set.seed(123)
 
 # Number of samples
-T <- 200
+n <- 10
 # Vector to generate the Laplacian matrix of the graph
 w <- runif(10)
 # Laplacian matrix
 Lw <- L(w)
 # Sample data from a Multivariate Gaussian
-N <- ncol(Lw)
-Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Lw))
+p <- ncol(Lw)
+Y <- MASS::mvrnorm(n, rep(0, p), MASS::ginv(Lw))
 # Number of components of the graph
-K <- 1
+k <- 1
 # Learn the Laplacian matrix
-res <- learnGraphTopology(cov(Y), K, beta = 10)
+res <- learn_laplacian_matrix(cov(Y), k, beta = 10)
+mean((Lw - res$Lw) ^ 2)
+max((Lw - res$Lw) ^ 2 / Lw)
 ```
 
 Let's visually inspect the true Laplacian and the estimated one:
