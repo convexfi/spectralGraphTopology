@@ -16,9 +16,23 @@ w_init <- function(w0, Sinv) {
 }
 
 
+#laplacian.w_update <- function(w, Lw, U, beta, lambda, K) {
+#  grad_f <- Lstar(Lw - crossprod(sqrt(lambda) * t(U)) + K / beta)
+#  w_update <- w - .5 * grad_f / nrow(Lw)
+#  w_update[w_update < 0] <- 0
+#  return(w_update)
+#}
+
+
 laplacian.w_update <- function(w, Lw, U, beta, lambda, K) {
-  grad_f <- Lstar(Lw - crossprod(sqrt(lambda) * t(U)) + K / beta)
-  w_update <- w - .5 * grad_f / nrow(Lw)
+  c <- Lstar(crossprod(sqrt(lambda) * t(U)) - K / beta)
+  grad_f <- Lstar(Lw) - c
+  M_grad_f <- Lstar(L(grad_f))
+  wT_M_grad_f <- sum(w * M_grad_f)
+  dwT_M_dw <- sum(grad_f * M_grad_f)
+  # exact line search
+  t <- (wT_M_grad_f - sum(c * grad_f)) / dwT_M_dw
+  w_update <- w - t * grad_f
   w_update[w_update < 0] <- 0
   return(w_update)
 }
