@@ -47,9 +47,9 @@
 #' norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
 #' @export
 learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0,
-                                   beta = 1e4, beta_max = 1e6, fix_beta = FALSE, rho = 1e-2, m = 7,
+                                   beta = 1e4, beta_max = 1e6, fix_beta = TRUE, rho = 1e-2, m = 7,
                                    maxiter = 1e4, abstol = 1e-6, reltol = 1e-4, eig_tol = 1e-9,
-                                   record_objective = FALSE, record_weights = FALSE) {
+                                   record_objective = FALSE, record_weights = FALSE, verbose = TRUE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
     A <- build_initial_graph(S, m = m)
     D <- diag(.5 * colSums(A + t(A)))
@@ -85,8 +85,9 @@ learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive
   if (record_weights)
     w_seq <- list(Matrix::Matrix(w0, sparse = TRUE))
   time_seq <- c(0)
-  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  beta: :beta  kth_eigval: :kth_eigval relerr: :relerr",
-                                   total = maxiter, clear = FALSE, width = 120)
+  if (verbose)
+    pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  beta: :beta  kth_eigval: :kth_eigval relerr: :relerr",
+                                     total = maxiter, clear = FALSE, width = 120)
   start_time <- proc.time()[3]
   for (i in 1:maxiter) {
     w <- laplacian.w_update(w = w0, Lw = Lw0, U = U0, beta = beta,
@@ -110,7 +111,9 @@ learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive
     eigvals <- eigenvalues(Lw)
     n_zero_eigenvalues <- sum(abs(eigvals) < eig_tol)
     time_seq <- c(time_seq, proc.time()[3] - start_time)
-    pb$tick(token = list(beta = beta, kth_eigval = eigvals[k], relerr = 2 * max(werr / (w + w0), na.rm = 'ignore')))
+    if (verbose)
+      pb$tick(token = list(beta = beta, kth_eigval = eigvals[k],
+                           relerr = 2 * max(werr / (w + w0), na.rm = 'ignore')))
     if (!fix_beta) {
       if (k <= n_zero_eigenvalues)
         beta <- (1 + rho) * beta
