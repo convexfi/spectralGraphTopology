@@ -36,7 +36,6 @@ Eigen::MatrixXd blockDiagCpp(const std::vector<Eigen::MatrixXd>& matrices) {
 }
 
 
-// TODO: put your sh*t together and write a class for this thing
 // [[Rcpp::export]]
 std::vector<double> metrics(const Eigen::MatrixXd& Wtrue, const Eigen::MatrixXd& West,
                             const double eps) {

@@ -3,7 +3,7 @@
 #' @param ... list of matrices or individual matrices
 #' @return block diagonal matrix
 #' @export
-blockDiag <- function(...) {
+block_diag <- function(...) {
   return(blockDiagCpp(list(...)))
 }
 
@@ -12,7 +12,7 @@ blockDiag <- function(...) {
 #' @param Ltrue true Laplacian matrix
 #' @param Lest estimated Laplacian matrix
 #' @export
-relativeError <- function(Ltrue, Lest) {
+relative_error <- function(Ltrue, Lest) {
   return(norm(Ltrue - Lest, type = "F") / norm(Ltrue, type = "F"))
 }
 

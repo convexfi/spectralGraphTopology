@@ -17,7 +17,7 @@ bipartite.obj_fun <- function(Aw, Lw, V, psi, K, J, nu) {
 }
 
 bipartite.likelihood <- function(Lw, K, J) {
-  return(sum(-log(eigenvalues(Lw + J)) + c(diag(K %*% Lw))))
+  return(sum(-log(eigval_sym(Lw + J)) + c(diag(K %*% Lw))))
 }
 
 bipartite.prior <- function(nu, Aw, psi, V) {

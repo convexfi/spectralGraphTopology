@@ -4,22 +4,21 @@ constr_laplacian_rank <- function(Y, k = 1, m = 5, S0 = NULL, lmd = 1, eig_tol =
   start_time <- proc.time()[3]
   A <- build_initial_graph(Y, m)
   n <- ncol(A)
-  if (is.null(S0)) S <- matrix(1/n, n, n)
-  else S <- S0
+  if (is.null(S0))
+    S <- matrix(1/n, n, n)
+  else
+    S <- S0
   DS <- diag(.5 * colSums(S + t(S)))
   LS <-  DS - .5 * (S + t(S))
   DA <- diag(.5 * colSums(A + t(A)))
   LA <- DA - .5 * (A + t(A))
-  if (k == 1)
-    F <- matrix(eigenvectors(LA)[, 1:k])
-  else
-    F <- eigenvectors(LA)[, 1:k]
+  #if (k == 1)
+  F <- matrix(eigvec_sym(LA)[, 1:k])
+  #else
+  #  F <- eigvec_sym(LA)[, 1:k]
   # bounds for variables in the QP solver
   bvec <- c(1, rep(0, n))
   Amat <- cbind(rep(1, n), diag(n))
-  # objective function placeholder
-  #fun_k <- objective_function(A, S, LS, F, lmd)
-  #fun_seq <- c(fun_k)
   lmd_seq <- c(lmd)
   pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  lambda: :lmd  null_eigvals: :null_eigvals",
                                    total = maxiter, clear = FALSE, width = 100)
@@ -41,10 +40,8 @@ constr_laplacian_rank <- function(Y, k = 1, m = 5, S0 = NULL, lmd = 1, eig_tol =
     }
     DS <- diag(.5 * colSums(S + t(S)))
     LS <- DS - .5 * (S + t(S))
-    F <- eigenvectors(LS)[, 1:k]
-    #fun_next <- objective_function(A, S, LS, F, lmd)
-    #fun_seq <- c(fun_seq, fun_next)
-    eig_vals <- eigenvalues(LS)
+    F <- eigvec_sym(LS)[, 1:k]
+    eig_vals <- eigval_sym(LS)
     n_zero_eigenvalues <- sum(abs(eig_vals) < eig_tol)
     time_seq <- c(time_seq, proc.time()[3] - start_time)
     pb$tick(token = list(lmd = lmd, null_eigvals = n_zero_eigenvalues))

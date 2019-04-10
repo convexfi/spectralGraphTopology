@@ -2,12 +2,12 @@ Package: spectralGraphTopology
 Type: Package
 Title: Learning Laplacian and adjacency matrices of graphs via spectral constraints.
 Version: 0.1.0
-Description: This package provides estimators of Laplacian and adjacency matrices
-of Gaussian graphical models.  Those estimators take advantage of the
-spectral properties from the graphical models as a prior information.  This allows
-the learning of a variety of graphs such as k-component, bipartite, and k-component bipartite,
-which play key roles in unsupervised machine learning tasks such as community detection
-and clustering.
+Description: This package provides estimators of Laplacian and adjacency matrices of Gaussian graphical models.
+    Those estimators take advantage of the
+    spectral properties from the graphical models as a prior information.  This allows
+    the learning of a variety of graphs such as k-component, bipartite, and k-component bipartite,
+    which play key roles in unsupervised machine learning tasks such as community detection
+    and clustering.
 Authors@R: c(
   person("Ze", "Vinicius", role = "aut", email = "jvmirca@gmail.com"),
   person(c("Daniel", "P."), "Palomar", role = c("cre", "aut"), email = "daniel.p.palomar@gmail.com")

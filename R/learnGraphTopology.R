@@ -2,22 +2,38 @@
 #'
 #' Learns the topology of a K-connected graph given an observed data matrix
 #'
-#' @param S N-by-N sample covariance matrix, where N is the number of nodes
-#' @param K the number of components of the graph
+#' @param S either a pxp sample covariance/correlation matrix, or a pxn data
+#'        matrix, where p is the number of nodes and n is the number of
+#'        features (or data points per node)
+#' @param is_data_matrix whether the matrix S should be treated as data matrix
+#'        or sample covariance matrix
+#' @param m in case is_data_matrix = TRUE, then we build an affinity matrix based
+#'        on Nie et. al. 2017, where m is the maximum number of possible connections
+#'        for a given node
+#' @param k the number of components of the graph
 #' @param w0 initial estimate for the weight vector the graph or a string
-#' selecting an appropriate method. Available methods are: "qp": solves a
-#' simple quadratic program; "naive": sets w0 to the negative of the
-#' off-diagonal elements of the generalized precision matrix; "glasso": uses
-#' the glasso solution
+#'        selecting an appropriate method. Available methods are: "qp": finds w0 that minimizes
+#'        ||ginv(S) - L(w0)||_F, w0 >= 0; "naive": takes w0 as the negative of the
+#'        off-diagonal elements of the pseudo inverse, setting to 0 any elements s.t.
+#'        w0 < 0
 #' @param lb lower bound for the eigenvalues of the Laplacian matrix
 #' @param ub upper bound for the eigenvalues of the Laplacian matrix
-#' @param alpha tunning parameter
-#' @param beta parameter that controls the strength of the regularization term
-#' @param rho how much to increase beta after a complete round of iterations
-#' @param maxiter the maximum number of iterations for each beta
-#' @param maxiter_beta the maximum number of iterations for the outer loop
-#' @param Lwtol relative tolerance on the Laplacian matrix
-#' @param ftol relative tolerance on the objective function
+#' @param alpha L1 regularization hyperparameter
+#' @param beta regularization hyperparameter for the term ||L(w) - U Lambda U'||^2_F
+#' @param beta_max maximum allowed value for beta
+#' @param fix_beta whether or not to fix the value of beta. In case this parameter
+#'        is set to false, then beta will increase (decrease) depending whether the number of
+#'        zero eigenvalues is lesser (greater) than k
+#' @param rho how much to increase (decrease) beta in case fix_beta = FALSE
+#' @param maxiter the maximum number of iterations
+#' @param abstol absolute tolerance on the weight vector w
+#' @param reltol relative tolerance on the weight vector w
+#' @param eigtol value below which eigenvalues are considered to be zero
+#' @param record_objective whether to record the objective function values at
+#'        each iteration
+#' @param record_weights whether to record the edge values at each iteration
+#' @param verbose whether to output a progress bar showing the evolution of the
+#'        iterations
 #' @return Lw the learned Laplacian matrix
 #' @return W the learned weighted adjacency matrix
 #' @return obj_fun the objective function value at every iteration
@@ -30,21 +46,30 @@
 #' @references our paper soon to be submitted
 #' @examples
 #' library(spectralGraphTopology)
-#'
-#' # simulate a Laplacian matrix of a single-component graph
-#' w <- sample(1:10, 10)
-#' Lw <- L(w)
-#'
-#' # create fake data
-#' T <- 40
-#' N <- ncol(Lw)
-#' Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Lw))
-#'
-#' # learn the Laplacian matrix from the simulated data
-#' res <- learn_laplacian_matrix(cov(Y))
-#'
-#' # relative error between the true Laplacian and the learned one
-#' norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
+#' library(clusterSim)
+#' library(igraph)
+#' set.seed(42)
+#' # number of nodes per cluster
+#' n <- 50
+#' # generate datapoints
+#' twomoon <- shapes.two.moon(n)
+#' # number of components
+#' k <- 2
+#' # compute sample correlation matrix
+#' S <- crossprod(t(twomoon$data))
+#' # estimate underlying graph
+#' graph <- learn_laplacian_matrix(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
+#' # build network
+#' net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+#' # colorify nodes and edges
+#' colors <- c("#706FD3", "#FF5252")
+#' V(net)$cluster <- twomoon$clusters
+#' E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
+#'                       function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
+#'                                         colors[V(net)$cluster[x[1]]], '#000000'))
+#' V(net)$color <- colors[twomoon$clusters]
+#' # plot nodes
+#' plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
 #' @export
 learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0,
                                    beta = 1e4, beta_max = 1e6, fix_beta = TRUE, rho = 1e-2, m = 7,
@@ -108,13 +133,14 @@ learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive
     # check for convergence
     werr <- abs(w0 - w)
     has_w_converged <- all(werr <= .5 * reltol * (w + w0)) || all(werr <= abstol)
-    eigvals <- eigenvalues(Lw)
-    n_zero_eigenvalues <- sum(abs(eigvals) < eig_tol)
     time_seq <- c(time_seq, proc.time()[3] - start_time)
-    if (verbose)
+    if (verbose || (!fix_beta)) eigvals <- eigval_sym(Lw)
+    if (verbose) {
       pb$tick(token = list(beta = beta, kth_eigval = eigvals[k],
                            relerr = 2 * max(werr / (w + w0), na.rm = 'ignore')))
+    }
     if (!fix_beta) {
+      n_zero_eigenvalues <- sum(abs(eigvals) < eig_tol)
       if (k <= n_zero_eigenvalues)
         beta <- (1 + rho) * beta
       else if (k > n_zero_eigenvalues)
@@ -134,7 +160,7 @@ learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive
   # compute the adjancency matrix
   Aw <- A(w)
   results <- list(Laplacian = Lw, Adjacency = Aw, w = w, lambda = lambda, U = U,
-                  Lw_eigvals = eigenvalues(Lw), elapsed_time = time_seq,
+                  Laplacian_eigvals = eigval_sym(Lw), elapsed_time = time_seq,
                   convergence = !(i == maxiter), beta_seq = beta_seq)
   if (record_objective) {
     results$obj_fun <- fun_seq
@@ -172,7 +198,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
   # if w0 is either "naive" or "qp", compute it, else return w0
   w0 <- w_init(w0, Sinv)
   if (is.null(Lips))
-    Lips <- 1 / min(eigenvalues(L(w0) + J))
+    Lips <- 1 / min(eigval_sym(L(w0) + J))
   # compute quantities on the initial guess
   Aw0 <- A(w0)
   V0 <- bipartite.V_update(Aw0, z)
@@ -186,7 +212,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
   ll_seq <- c(ll0)
   if (record_weights)
     w_seq <- list(Matrix::Matrix(w0, sparse = TRUE))
-  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  Lipschitz: :Lips  abserr: :abserr",
+  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  Lipschitz: :Lips  relerr: :relerr",
                                    total = maxiter, clear = FALSE, width = 100)
   for (i in 1:maxiter) {
     # we need to make sure that the Lipschitz constant is large enough
@@ -233,7 +259,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
     # check for convergence
     werr <- abs(w0 - w)
     has_w_converged <- (all(werr <= .5 * reltol * (w + w0)) || all(werr <= abstol))
-    pb$tick(token = list(Lips = Lips, abserr = max(werr)))
+    pb$tick(token = list(Lips = Lips, relerr = 2*max(werr/(w + w0), na.rm = 'ignore')))
     if (has_w_converged)
       break
     # update estimates
@@ -255,7 +281,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
 #' @export
 learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 1,
                                           w0 = "naive", m = 7, alpha = 0., beta = 1e4,
-                                          rho = 1e-2, fix_beta = FALSE, beta_max = 1e6, nu = 1e4,
+                                          rho = 1e-2, fix_beta = TRUE, beta_max = 1e6, nu = 1e4,
                                           lb = 0, ub = 1e4, maxiter = 1e4, abstol = 1e-6,
                                           reltol = 1e-4, eig_tol = 1e-9,
                                           record_weights = FALSE, record_objective = FALSE) {
@@ -315,13 +341,13 @@ learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 
     }
     if (record_weights)
       w_seq <- rlist::list.append(w_seq, Matrix::Matrix(w, sparse = TRUE))
-    eigvals <- eigenvalues(Lw)
-    n_zero_eigenvalues <- sum(abs(eigvals) < eig_tol)
     werr <- abs(w0 - w)
     has_w_converged <- (all(werr <= .5 * reltol * (w + w0)) || all(werr <= abstol))
     time_seq <- c(time_seq, proc.time()[3] - start_time)
+    eigvals <- eigval_sym(Lw)
     pb$tick(token = list(beta = beta, kth_eigval = eigvals[k], relerr = 2*max(werr/(w + w0), na.rm = 'ignore')))
     if (!fix_beta) {
+      n_zero_eigenvalues <- sum(abs(eigvals) < eig_tol)
       if (k < n_zero_eigenvalues)
         beta <- (1 + rho) * beta
       else if (k > n_zero_eigenvalues)
@@ -401,7 +427,7 @@ learn_dregular_graph <- function(S, is_data_matrix = FALSE, d0 = NULL, k = 1, w0
   beta_seq <- c(beta)
   if (record_weights)
     w_seq <- list(Matrix::Matrix(w0, sparse = TRUE))
-  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  beta: :beta  kth_eigval: :kth_eigval  abstol: :abstol",
+  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  beta: :beta  kth_eigval: :kth_eigval  relerr: :relerr",
                                    total = maxiter, clear = FALSE, width = 100)
   for (i in c(1:maxiter)) {
     w <- dregular.w_update(w = w0, Lw = Lw0, Aw = Aw0, U = U0, beta = beta,
@@ -423,9 +449,9 @@ learn_dregular_graph <- function(S, is_data_matrix = FALSE, d0 = NULL, k = 1, w0
     if (record_weights)
       w_seq <- rlist::list.append(w_seq, Matrix::Matrix(w, sparse = TRUE))
     time_seq <- c(time_seq, proc.time()[3] - start_time)
-    eigvals <- eigenvalues(Lw)
-    n_zero_eigenvalues <- sum(abs(eigvals) < eig_tol)
+    eigvals <- eigval_sym(Lw)
     if (!fix_beta) {
+      n_zero_eigenvalues <- sum(abs(eigvals) < eig_tol)
       if (k < n_zero_eigenvalues)
         beta <- (1 + rho) * beta
       else if (k > n_zero_eigenvalues)
@@ -436,7 +462,8 @@ learn_dregular_graph <- function(S, is_data_matrix = FALSE, d0 = NULL, k = 1, w0
     }
     werr <- abs(w0 - w)
     has_w_converged <- (all(werr <= .5 * reltol * (w + w0)) || all(werr <= abstol))
-    pb$tick(token = list(beta = beta, kth_eigval = eigvals[k], abstol = max(werr)))
+    pb$tick(token = list(beta = beta, kth_eigval = eigvals[k],
+                         relerr = 2 * max(werr / (w + w0), na.rm = 'ignore')))
     if (has_w_converged)
       break
     # update estimates

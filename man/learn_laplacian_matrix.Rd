@@ -11,33 +11,56 @@ learn_laplacian_matrix(S, is_data_matrix = FALSE, k = 1,
   record_objective = FALSE, record_weights = FALSE, verbose = TRUE)
 }
 \arguments{
-\item{S}{N-by-N sample covariance matrix, where N is the number of nodes}
+\item{S}{either a pxp sample covariance/correlation matrix, or a pxn data
+matrix, where p is the number of nodes and n is the number of
+features (or data points per node)}
+
+\item{is_data_matrix}{whether the matrix S should be treated as data matrix
+or sample covariance matrix}
+
+\item{k}{the number of components of the graph}
 
 \item{w0}{initial estimate for the weight vector the graph or a string
-selecting an appropriate method. Available methods are: "qp": solves a
-simple quadratic program; "naive": sets w0 to the negative of the
-off-diagonal elements of the generalized precision matrix; "glasso": uses
-the glasso solution}
+selecting an appropriate method. Available methods are: "qp": finds w0 that minimizes
+||ginv(S) - L(w0)||_F, w0 >= 0; "naive": takes w0 as the negative of the
+off-diagonal elements of the pseudo inverse, setting to 0 any elements s.t.
+w0 < 0}
 
 \item{lb}{lower bound for the eigenvalues of the Laplacian matrix}
 
 \item{ub}{upper bound for the eigenvalues of the Laplacian matrix}
 
-\item{alpha}{tunning parameter}
+\item{alpha}{L1 regularization hyperparameter}
 
-\item{beta}{parameter that controls the strength of the regularization term}
+\item{beta}{regularization hyperparameter for the term ||L(w) - U Lambda U'||^2_F}
 
-\item{rho}{how much to increase beta after a complete round of iterations}
+\item{beta_max}{maximum allowed value for beta}
 
-\item{maxiter}{the maximum number of iterations for each beta}
+\item{fix_beta}{whether or not to fix the value of beta. In case this parameter
+is set to false, then beta will increase (decrease) depending whether the number of
+zero eigenvalues is lesser (greater) than k}
 
-\item{K}{the number of components of the graph}
+\item{rho}{how much to increase (decrease) beta in case fix_beta = FALSE}
 
-\item{maxiter_beta}{the maximum number of iterations for the outer loop}
+\item{m}{in case is_data_matrix = TRUE, then we build an affinity matrix based
+on Nie et. al. 2017, where m is the maximum number of possible connections
+for a given node}
 
-\item{Lwtol}{relative tolerance on the Laplacian matrix}
+\item{maxiter}{the maximum number of iterations}
 
-\item{ftol}{relative tolerance on the objective function}
+\item{abstol}{absolute tolerance on the weight vector w}
+
+\item{reltol}{relative tolerance on the weight vector w}
+
+\item{record_objective}{whether to record the objective function values at
+each iteration}
+
+\item{record_weights}{whether to record the edge values at each iteration}
+
+\item{verbose}{whether to output a progress bar showing the evolution of the
+iterations}
+
+\item{eigtol}{value below which eigenvalues are considered to be zero}
 }
 \value{
 Lw the learned Laplacian matrix
@@ -59,21 +82,30 @@ Learns the topology of a K-connected graph given an observed data matrix
 }
 \examples{
 library(spectralGraphTopology)
-
-# simulate a Laplacian matrix of a single-component graph
-w <- sample(1:10, 10)
-Lw <- L(w)
-
-# create fake data
-T <- 40
-N <- ncol(Lw)
-Y <- MASS::mvrnorm(T, rep(0, N), MASS::ginv(Lw))
-
-# learn the Laplacian matrix from the simulated data
-res <- learn_laplacian_matrix(cov(Y))
-
-# relative error between the true Laplacian and the learned one
-norm(Lw - res$Lw, type="F") / norm(Lw, type="F")
+library(clusterSim)
+library(igraph)
+set.seed(42)
+# number of nodes per cluster
+n <- 50
+# generate datapoints
+twomoon <- shapes.two.moon(n)
+# number of components
+k <- 2
+# compute sample correlation matrix
+S <- crossprod(t(twomoon$data))
+# estimate underlying graph
+graph <- learn_laplacian_matrix(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
+# build network
+net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+# colorify nodes and edges
+colors <- c("#706FD3", "#FF5252")
+V(net)$cluster <- twomoon$clusters
+E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
+                      function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
+                                        colors[V(net)$cluster[x[1]]], '#000000'))
+V(net)$color <- colors[twomoon$clusters]
+# plot nodes
+plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
 }
 \references{
 our paper soon to be submitted

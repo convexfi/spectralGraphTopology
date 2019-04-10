@@ -68,13 +68,13 @@ dregular.w_update <- function(w, Lw, Aw, U, beta, eta, lambda, d, K) {
 
 
 laplacian.U_update <- function(Lw, k) {
-  return(eigenvectors(Lw)[, (k+1):ncol(Lw)])
+  return(eigvec_sym(Lw)[, (k+1):ncol(Lw)])
 }
 
 
 bipartite.V_update <- function(Aw, z) {
   n <- ncol(Aw)
-  V <- eigenvectors(Aw)
+  V <- eigvec_sym(Aw)
   return(cbind(V[, 1:(.5*(n - z))], V[, (1 + .5*(n + z)):n]))
 }
 
