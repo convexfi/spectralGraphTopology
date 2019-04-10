@@ -13,9 +13,9 @@
 # you will see them accessed via {{ site.title }}, {{ site.github_repo }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: riskParityPortfolio
-description: Fast, scalable design of risk parity portfolios
-baseurl: "/riskParityPortfolio/" # the subpath of your site, e.g. /blog
+title: spectralGraphTopology
+description: Learning structured graphs via spectral constraints
+baseurl: "/spectralGraphTopology/" # the subpath of your site, e.g. /blog
 url: "https://mirca.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 
 permalink: pretty
@@ -26,8 +26,8 @@ search_enabled: nil
 
 # Aux links for the upper right navigation
 aux_links:
-  "riskParityPortfolio on GitHub":
-    - "//github.com/dppalomar/riskParityPortfolio"
+  "spectralGraphTopology on GitHub":
+    - "//github.com/dppalomar/spectralGraphTopology"
 
 # Color scheme currently only supports "dark" or nil (default)
 color_scheme: nil
