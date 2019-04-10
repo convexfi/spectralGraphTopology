@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Animals dataset
+title: Animals
 parent: Clustering
 nav_order: 1
 ---
 
-# Spatial datasets
+# Animals
 {: .no_toc }
 
 ## Table of contents

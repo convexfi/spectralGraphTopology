@@ -5,7 +5,7 @@ parent: Clustering
 nav_order: 1
 ---
 
-# Spatial datasets
+# Two moon
 {: .no_toc }
 
 ## Table of contents
