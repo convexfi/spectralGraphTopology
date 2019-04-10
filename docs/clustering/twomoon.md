@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Spatial datasets
+title: Two moon
 parent: Clustering
 nav_order: 1
 ---
@@ -16,7 +16,7 @@ nav_order: 1
 
 ---
 
-## Twomoon dataset
+## Two moon dataset
 
 ```r
 library(spectralGraphTopology)

@@ -44,8 +44,8 @@ detailed description of the mathematical methods that are available in **spectra
 ## About the project
 
 **spectralGraphTopology** is developed on [GitHub](http://github.com/dppalomar/spectralGraphTopology)
-by [Ze Vinicius](http://mirca.github.io) and [Daniel Palomar](http://www.danielppalomar.com) with inputs
-from Jiaxi Ying and Sandeep Kumar.
+by [Ze Vinicius](http://mirca.github.io), [Daniel Palomar](http://www.danielppalomar.com), Jiaxi Ying
+and Sandeep Kumar.
 
 ### License
 
