@@ -20,6 +20,7 @@ nav_order: 1
 library(spectralGraphTopology)
 library(igraph)
 library(viridis)
+set.seed(0)
 
 p <- 64
 grid <- make_lattice(length = sqrt(p), dim = 2)
@@ -44,6 +45,7 @@ la <- layout_on_grid(grid)
 plot(grid, layout = la, vertex.label = NA, vertex.size = 3)
 plot(estimated_grid, layout = la, vertex.label = NA, vertex.size = 3)
 ```
-![](grid_files/figure-markdown_github/unnamed-chunk-1-1.png)
 
-![](grid_files/figure-markdown_github/unnamed-chunk-1-2.png)
+True grid graph            |  Learned grid graph
+:-------------------------:|:-------------------------:
+![](grid_files/figure-markdown_github/unnamed-chunk-1-1.png) | ![](grid_files/figure-markdown_github/unnamed-chunk-1-2.png)
