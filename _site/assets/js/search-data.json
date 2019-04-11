@@ -1,22 +1,43 @@
 {
   "1": {
     "id": "1",
+    "title": "Animals",
+    "content": "Animals Animal dataset Animal dataset In this animal dataset (B. M. Lake an J. B. Tenenbaum 2010), there are 102 features which are binary answers to questions such as “Does it has feathers?”, “Is it warm-blooded?”, etc. There are in total 33 animals to be clustered. library(viridis) library(spectralGraphTopology) library(igraph) df &lt;- read.csv(&quot;animals.txt&quot;, header = FALSE) names &lt;- matrix(unlist(read.csv(&quot;animals_names.txt&quot;, header = FALSE))) Y &lt;- matrix(as.numeric(unlist(df)), nrow = nrow(df)) n &lt;- nrow(Y) graph &lt;- learn_laplacian_matrix(cov(t(Y)) + diag(1/3, n, n), w0 = &quot;qp&quot;, beta = 1, k = 10, verbose = FALSE) net &lt;- graph_from_adjacency_matrix(graph$Adjacency, mode = &quot;undirected&quot;, weighted = TRUE) colors &lt;- viridis(50, begin = 0, end = 1, direction = -1) c_scale &lt;- colorRamp(colors) E(net)$color = apply(c_scale(abs(E(net)$weight) / max(abs(E(net)$weight))), 1, function(x) rgb(x[1]/255, x[2]/255, x[3]/255)) V(net)$color = &quot;pink&quot; plot(net, vertex.label = names, vertex.size = 4, vertex.label.dist = 1, vertex.label.family = &quot;Helvetica&quot;, vertex.label.cex = .8, vertex.label.color = &quot;black&quot;) Lake, Brendan and Joshua Tenenbaum. “Discovering Structure by Learning Sparse Graphs.” Proceedings of the 32nd Annual Meeting of the Cognitive Science Society CogSci 2010, Portland, Oregon, United States, 11-14 August, 2010, Cognitive Science Society, Inc., 2010. pp. 778-784.",
+    "url": "http://localhost:4000/spectralGraphTopology/docs/clustering/animals/",
+    "relUrl": "/docs/clustering/animals/"
+  },
+  "2": {
+    "id": "2",
     "title": "Clustering",
     "content": "Clustering By estimating the Laplacian matrix of a k-component graph, spectralGraphTopology may reveal interesting connections among nodes. Let’s check out a few examples on classicals and real datasets.",
     "url": "http://localhost:4000/spectralGraphTopology/docs/clustering",
     "relUrl": "/docs/clustering"
   },
-  "2": {
-    "id": "2",
+  "3": {
+    "id": "3",
+    "title": "Grid",
+    "content": "Grid library(spectralGraphTopology) library(igraph) library(viridis) set.seed(0) p &lt;- 64 grid &lt;- make_lattice(length = sqrt(p), dim = 2) n &lt;- as.integer(100 * p) E(grid)$weight &lt;- runif(gsize(grid), min = 1e-1, max = 3) Ltrue &lt;- as.matrix(laplacian_matrix(grid)) Wtrue &lt;- diag(diag(Ltrue)) - Ltrue Y &lt;- MASS::mvrnorm(n, mu = rep(0, p), Sigma = MASS::ginv(Ltrue)) S &lt;- cov(Y) graph &lt;- learn_laplacian_matrix(S, w0 = &quot;qp&quot;, beta = 20, alpha = 5e-3, abstol = 1e-5, verbose = FALSE) graph$Adjacency[graph$Adjacency &lt; 5e-2] &lt;- 0 estimated_grid &lt;- graph_from_adjacency_matrix(graph$Adjacency, mode = &quot;undirected&quot;, weighted = TRUE) colors &lt;- viridis(20, begin = 0, end = 1, direction = -1) c_scale &lt;- colorRamp(colors) E(estimated_grid)$color = apply(c_scale(E(estimated_grid)$weight / max(E(estimated_grid)$weight)), 1, function(x) rgb(x[1]/255, x[2]/255, x[3]/255)) E(grid)$color = apply(c_scale(E(grid)$weight / max(E(grid)$weight)), 1, function(x) rgb(x[1]/255, x[2]/255, x[3]/255)) V(estimated_grid)$color = &quot;grey&quot; V(grid)$color = &quot;grey&quot; la &lt;- layout_on_grid(grid) plot(grid, layout = la, vertex.label = NA, vertex.size = 3) plot(estimated_grid, layout = la, vertex.label = NA, vertex.size = 3) True grid graph Learned grid graph",
+    "url": "http://localhost:4000/spectralGraphTopology/docs/structured/grid/",
+    "relUrl": "/docs/structured/grid/"
+  },
+  "4": {
+    "id": "4",
     "title": "Home",
-    "content": "Learning similarities in graph data spectralGraphTopology provides estimators of the Laplacian and adjacency matrices of graphs by leveraing prior information in their structural form. Get started now View it on GitHub Getting started Dependencies The R version of spectralGraphTopology is build on top of awesome R packages including Rcpp, RcppEigen, and osqp. All these packages can be installed via CRAN. Installation The development version can be installed via GitHub as devtools::install_github(&quot;dppalomar/spectralGraphTopology&quot;) You must have previously installed the devtools package. Tutorials See the package vignette for a detailed description of the mathematical methods that are available in spectralGraphTopology. About the project spectralGraphTopology is developed on GitHub by Ze Vinicius and Daniel Palomar with inputs from Jiaxi Ying and Sandeep Kumar. License spectralGraphTopology is distributed by an GPL 3.0 License. Contributing We welcome all sorts of contributions. Please feel free to open an issue to report a bug or discuss a feature request in our GitHub repo. Citation If this package has been useful to you in any way, give us a star on GitHub :) Additionally, if you’ve used spectralGraphTopology on your research, please consider citing the following resource: S. Kumar, J. Ying, J. V. de M. Cardoso and D. P. Palomar (2019). A unified framework for structured graph learning via spectral constraints.",
+    "content": "Learning similarities in graph data spectralGraphTopology provides estimators of the Laplacian and adjacency matrices of graphs by leveraing prior information in their structural form. Get started now View it on GitHub Getting started Dependencies The R version of spectralGraphTopology is build on top of awesome R packages including Rcpp, RcppEigen, and osqp. All these packages can be installed via CRAN. Installation The development version can be installed via GitHub as devtools::install_github(&quot;dppalomar/spectralGraphTopology&quot;) You must have previously installed the devtools package. Tutorials See the package vignette for a detailed description of the mathematical methods that are available in spectralGraphTopology. About the project spectralGraphTopology is developed on GitHub by Ze Vinicius, Daniel Palomar, Jiaxi Ying and Sandeep Kumar. License spectralGraphTopology is distributed by an GPL 3.0 License. Contributing We welcome all sorts of contributions. Please feel free to open an issue to report a bug or discuss a feature request in our GitHub repo. Citation If this package has been useful to you in any way, give us a star on GitHub :) Additionally, if you’ve used spectralGraphTopology on your research, please consider citing the following resource: S. Kumar, J. Ying, J. V. de M. Cardoso and D. P. Palomar (2019). A unified framework for structured graph learning via spectral constraints.",
     "url": "http://localhost:4000/spectralGraphTopology/",
     "relUrl": "/"
   },
-  "3": {
-    "id": "3",
-    "title": "Spatial datasets",
-    "content": "Spatial datasets Twomoon dataset Twomoon dataset library(spectralGraphTopology) library(clusterSim) library(igraph) set.seed(42) # number of nodes per cluster n &lt;- 50 # generate datapoints twomoon &lt;- shapes.two.moon(n) # number of components k &lt;- 2 # estimate underlying graph S &lt;- crossprod(t(twomoon$data)) graph &lt;- learn_laplacian_matrix(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3) # build network net &lt;- graph_from_adjacency_matrix(graph$Adjacency, mode = &quot;undirected&quot;, weighted = TRUE) # colorify nodes and edges colors &lt;- c(&quot;#706FD3&quot;, &quot;#FF5252&quot;) V(net)$cluster &lt;- twomoon$clusters E(net)$color &lt;- apply(as.data.frame(get.edgelist(net)), 1, function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]], colors[V(net)$cluster[x[1]]], &#39;#000000&#39;)) V(net)$color &lt;- colors[twomoon$clusters] # plot nodes plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)",
+  "5": {
+    "id": "5",
+    "title": "Structured graphs",
+    "content": "Structured graphs Let’s investigate how we can learn a graph with a given structure, from simple single models to k-component graphs.",
+    "url": "http://localhost:4000/spectralGraphTopology/docs/structured",
+    "relUrl": "/docs/structured"
+  },
+  "6": {
+    "id": "6",
+    "title": "Two moon",
+    "content": "Two moon Two moon dataset Two moon dataset library(spectralGraphTopology) library(clusterSim) library(igraph) set.seed(42) # number of nodes per cluster n &lt;- 50 # generate datapoints twomoon &lt;- shapes.two.moon(n) # number of components k &lt;- 2 # estimate underlying graph S &lt;- crossprod(t(twomoon$data)) graph &lt;- learn_laplacian_matrix(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3) # build network net &lt;- graph_from_adjacency_matrix(graph$Adjacency, mode = &quot;undirected&quot;, weighted = TRUE) # colorify nodes and edges colors &lt;- c(&quot;#706FD3&quot;, &quot;#FF5252&quot;) V(net)$cluster &lt;- twomoon$clusters E(net)$color &lt;- apply(as.data.frame(get.edgelist(net)), 1, function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]], colors[V(net)$cluster[x[1]]], &#39;#000000&#39;)) V(net)$color &lt;- colors[twomoon$clusters] # plot nodes plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)",
     "url": "http://localhost:4000/spectralGraphTopology/docs/clustering/twomoon/",
     "relUrl": "/docs/clustering/twomoon/"
   }
