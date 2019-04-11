@@ -471,7 +471,7 @@ hr {
     .side-bar {
       flex-wrap: nowrap;
       position: absolute;
-      width: 248px;
+      width: 255px;
       height: 100%;
       padding-top: 4rem;
       padding-bottom: 0;
