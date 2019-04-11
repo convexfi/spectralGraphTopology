@@ -5,7 +5,7 @@ parent: Structured graphs
 nav_order: 1
 ---
 
-# Grid
+# Bipartite
 {: .no_toc }
 
 ## Table of contents
@@ -21,7 +21,6 @@ library(spectralGraphTopology)
 library(igraph)
 library(viridis)
 library(corrplot)
-
 n1 <- 10
 n2 <- 6
 n <- n1 + n2
@@ -44,12 +43,37 @@ Anoisy <- diag(diag(Lnoisy)) - Lnoisy
 Y <- MASS::mvrnorm(10 * n, rep(0, n), Sigma = MASS::ginv(Lnoisy))
 # compute sample covariance matrix
 S <- cov(Y)
+# estimate Adjacency matrix
 graph <- learn_bipartite_graph(S, w0 = "qp", verbose = FALSE)
+# Plot Adjacency matrices: true, noisy, and estimated
 corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 corrplot(Anoisy / max(Anoisy), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+# Plot networks
+estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+V(estimated_bipartite)$type <- c(rep(0, 10), rep(1, 6))
+la = layout_as_bipartite(estimated_bipartite)
+colors <- viridis(20, begin = 0, end = 1, direction = -1)
+c_scale <- colorRamp(colors)
+E(estimated_bipartite)$color = apply(c_scale(E(estimated_bipartite)$weight / max(E(estimated_bipartite)$weight)), 1,
+                          function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+E(bipartite)$color = apply(c_scale(E(bipartite)$weight / max(E(bipartite)$weight)), 1,
+                      function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+la = la[, c(2, 1)]
+# Plot networks: true and estimated
+plot(bipartite, layout = la, vertex.color=c("red","black")[V(bipartite)$type + 1],
+     vertex.shape = c("square", "circle")[V(bipartite)$type + 1],
+     vertex.label = NA, vertex.size = 3)
+plot(estimated_bipartite, layout = la, vertex.color=c("red","black")[V(estimated_bipartite)$type + 1],
+     vertex.shape = c("square", "circle")[V(estimated_bipartite)$type + 1],
+     vertex.label = NA, vertex.size = 3)
 ```
 
 True adjacency             |  Noisy adjacency          |  Estimated adjacency
 :-------------------------:|:-------------------------:|:------------------------:
 ![](bipartite_files/figure-markdown_github/unnamed-chunk-1-1.png) | ![](bipartite_files/figure-markdown_github/unnamed-chunk-1-2.png) | ![](bipartite_files/figure-markdown_github/unnamed-chunk-1-3.png)
+
+True graph                 |  Estimated graph
+:-------------------------:|:-------------------------:
+![](bipartite_files/figure-markdown_github/unnamed-chunk-1-4.png) | ![](bipartite_files/figure-markdown_github/unnamed-chunk-1-5.png)
+
