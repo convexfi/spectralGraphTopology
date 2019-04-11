@@ -1,15 +1,15 @@
-w_init <- function(w0, Sinv) {
+w_init <- function(w0, Sinv, edge_tol = 0) {
   if (is.character(w0)) {
     if (w0 == "qp") {
       R <- Matrix::Matrix(vecLmat(ncol(Sinv)), sparse = TRUE)
       qp <- osqp::solve_osqp(P = Matrix::crossprod(R), q = -Matrix::t(R) %*% vec(Sinv),
                              A = Matrix::Matrix(diag(ncol(R)), sparse = TRUE),
-                             l = rep_len(0, ncol(R)), u = rep_len(Inf, ncol(R)),
+                             l = rep_len(edge_tol, ncol(R)), u = rep_len(Inf, ncol(R)),
                              osqp::osqpSettings(verbose = FALSE))
       w0 <- qp$x
     } else if (w0 == "naive") {
       w0 <- Linv(Sinv)
-      w0[w0 < 0] <- 0
+      w0[w0 < edge_tol] <- 0
     }
   }
   return(w0)

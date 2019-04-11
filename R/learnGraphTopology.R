@@ -1,6 +1,6 @@
-#' Learn Graph Topology
+#' @title Learn the Laplacian matrix of a k-component graph
 #'
-#' Learns the topology of a K-connected graph given an observed data matrix
+#' Learns the topology of a k-component graph on the basis of an observed data matrix
 #'
 #' @param S either a pxp sample covariance/correlation matrix, or a pxn data
 #'        matrix, where p is the number of nodes and n is the number of
@@ -34,16 +34,10 @@
 #' @param record_weights whether to record the edge values at each iteration
 #' @param verbose whether to output a progress bar showing the evolution of the
 #'        iterations
-#' @return Lw the learned Laplacian matrix
-#' @return W the learned weighted adjacency matrix
-#' @return obj_fun the objective function value at every iteration
-#' @return loglike the negative loglikelihood function value at every iteration
-#' @return w the optimal value of the weight vector
-#' @return lambda the optimal value of the eigenvalues
-#' @return U the optimal value of the eigenvectors
 #'
 #' @author Ze Vinicius and Daniel Palomar
-#' @references our paper soon to be submitted
+#' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
+#'             framework for structured graph learning via spectral constraints
 #' @examples
 #' library(spectralGraphTopology)
 #' library(clusterSim)
@@ -172,6 +166,72 @@ learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive
 }
 
 
+#' @title Learn the Laplacian matrix of a k-component graph
+#'
+#' Learns the topology of a k-component graph on the basis of an observed data matrix
+#'
+#' @param S either a pxp sample covariance/correlation matrix, or a pxn data
+#'        matrix, where p is the number of nodes and n is the number of
+#'        features (or data points per node)
+#' @param is_data_matrix whether the matrix S should be treated as data matrix
+#'        or sample covariance matrix
+#' @param m in case is_data_matrix = TRUE, then we build an affinity matrix based
+#'        on Nie et. al. 2017, where m is the maximum number of possible connections
+#'        for a given node
+#' @param k the number of components of the graph
+#' @param w0 initial estimate for the weight vector the graph or a string
+#'        selecting an appropriate method. Available methods are: "qp": finds w0 that minimizes
+#'        ||ginv(S) - L(w0)||_F, w0 >= 0; "naive": takes w0 as the negative of the
+#'        off-diagonal elements of the pseudo inverse, setting to 0 any elements s.t.
+#'        w0 < 0
+#' @param lb lower bound for the eigenvalues of the Laplacian matrix
+#' @param ub upper bound for the eigenvalues of the Laplacian matrix
+#' @param alpha L1 regularization hyperparameter
+#' @param beta regularization hyperparameter for the term ||L(w) - U Lambda U'||^2_F
+#' @param beta_max maximum allowed value for beta
+#' @param fix_beta whether or not to fix the value of beta. In case this parameter
+#'        is set to false, then beta will increase (decrease) depending whether the number of
+#'        zero eigenvalues is lesser (greater) than k
+#' @param rho how much to increase (decrease) beta in case fix_beta = FALSE
+#' @param maxiter the maximum number of iterations
+#' @param abstol absolute tolerance on the weight vector w
+#' @param reltol relative tolerance on the weight vector w
+#' @param eigtol value below which eigenvalues are considered to be zero
+#' @param record_objective whether to record the objective function values at
+#'        each iteration
+#' @param record_weights whether to record the edge values at each iteration
+#' @param verbose whether to output a progress bar showing the evolution of the
+#'        iterations
+#'
+#' @author Ze Vinicius and Daniel Palomar
+#' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
+#'             framework for structured graph learning via spectral constraints
+#' @examples
+#' library(spectralGraphTopology)
+#' library(clusterSim)
+#' library(igraph)
+#' set.seed(42)
+#' # number of nodes per cluster
+#' n <- 50
+#' # generate datapoints
+#' twomoon <- shapes.two.moon(n)
+#' # number of components
+#' k <- 2
+#' # compute sample correlation matrix
+#' S <- crossprod(t(twomoon$data))
+#' # estimate underlying graph
+#' graph <- learn_laplacian_matrix(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
+#' # build network
+#' net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+#' # colorify nodes and edges
+#' colors <- c("#706FD3", "#FF5252")
+#' V(net)$cluster <- twomoon$clusters
+#' E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
+#'                       function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
+#'                                         colors[V(net)$cluster[x[1]]], '#000000'))
+#' V(net)$color <- colors[twomoon$clusters]
+#' # plot nodes
+#' plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
 #' @export
 learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive", alpha = 0., nu = 1e4,
                                   Lips = NULL, m = 7, rho = 1, maxiter = 1e4, abstol = 1e-6, reltol = 1e-4,
@@ -278,6 +338,72 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
 }
 
 
+#' @title Learn the Laplacian matrix of a k-component graph
+#'
+#' Learns the topology of a k-component graph on the basis of an observed data matrix
+#'
+#' @param S either a pxp sample covariance/correlation matrix, or a pxn data
+#'        matrix, where p is the number of nodes and n is the number of
+#'        features (or data points per node)
+#' @param is_data_matrix whether the matrix S should be treated as data matrix
+#'        or sample covariance matrix
+#' @param m in case is_data_matrix = TRUE, then we build an affinity matrix based
+#'        on Nie et. al. 2017, where m is the maximum number of possible connections
+#'        for a given node
+#' @param k the number of components of the graph
+#' @param w0 initial estimate for the weight vector the graph or a string
+#'        selecting an appropriate method. Available methods are: "qp": finds w0 that minimizes
+#'        ||ginv(S) - L(w0)||_F, w0 >= 0; "naive": takes w0 as the negative of the
+#'        off-diagonal elements of the pseudo inverse, setting to 0 any elements s.t.
+#'        w0 < 0
+#' @param lb lower bound for the eigenvalues of the Laplacian matrix
+#' @param ub upper bound for the eigenvalues of the Laplacian matrix
+#' @param alpha L1 regularization hyperparameter
+#' @param beta regularization hyperparameter for the term ||L(w) - U Lambda U'||^2_F
+#' @param beta_max maximum allowed value for beta
+#' @param fix_beta whether or not to fix the value of beta. In case this parameter
+#'        is set to false, then beta will increase (decrease) depending whether the number of
+#'        zero eigenvalues is lesser (greater) than k
+#' @param rho how much to increase (decrease) beta in case fix_beta = FALSE
+#' @param maxiter the maximum number of iterations
+#' @param abstol absolute tolerance on the weight vector w
+#' @param reltol relative tolerance on the weight vector w
+#' @param eigtol value below which eigenvalues are considered to be zero
+#' @param record_objective whether to record the objective function values at
+#'        each iteration
+#' @param record_weights whether to record the edge values at each iteration
+#' @param verbose whether to output a progress bar showing the evolution of the
+#'        iterations
+#'
+#' @author Ze Vinicius and Daniel Palomar
+#' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
+#'             framework for structured graph learning via spectral constraints
+#' @examples
+#' library(spectralGraphTopology)
+#' library(clusterSim)
+#' library(igraph)
+#' set.seed(42)
+#' # number of nodes per cluster
+#' n <- 50
+#' # generate datapoints
+#' twomoon <- shapes.two.moon(n)
+#' # number of components
+#' k <- 2
+#' # compute sample correlation matrix
+#' S <- crossprod(t(twomoon$data))
+#' # estimate underlying graph
+#' graph <- learn_laplacian_matrix(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
+#' # build network
+#' net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+#' # colorify nodes and edges
+#' colors <- c("#706FD3", "#FF5252")
+#' V(net)$cluster <- twomoon$clusters
+#' E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
+#'                       function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
+#'                                         colors[V(net)$cluster[x[1]]], '#000000'))
+#' V(net)$color <- colors[twomoon$clusters]
+#' # plot nodes
+#' plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
 #' @export
 learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 1,
                                           w0 = "naive", m = 7, alpha = 0., beta = 1e4,
@@ -380,6 +506,72 @@ learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 
 }
 
 
+#' @title Learn the Laplacian matrix of a k-component graph
+#'
+#' Learns the topology of a k-component graph on the basis of an observed data matrix
+#'
+#' @param S either a pxp sample covariance/correlation matrix, or a pxn data
+#'        matrix, where p is the number of nodes and n is the number of
+#'        features (or data points per node)
+#' @param is_data_matrix whether the matrix S should be treated as data matrix
+#'        or sample covariance matrix
+#' @param m in case is_data_matrix = TRUE, then we build an affinity matrix based
+#'        on Nie et. al. 2017, where m is the maximum number of possible connections
+#'        for a given node
+#' @param k the number of components of the graph
+#' @param w0 initial estimate for the weight vector the graph or a string
+#'        selecting an appropriate method. Available methods are: "qp": finds w0 that minimizes
+#'        ||ginv(S) - L(w0)||_F, w0 >= 0; "naive": takes w0 as the negative of the
+#'        off-diagonal elements of the pseudo inverse, setting to 0 any elements s.t.
+#'        w0 < 0
+#' @param lb lower bound for the eigenvalues of the Laplacian matrix
+#' @param ub upper bound for the eigenvalues of the Laplacian matrix
+#' @param alpha L1 regularization hyperparameter
+#' @param beta regularization hyperparameter for the term ||L(w) - U Lambda U'||^2_F
+#' @param beta_max maximum allowed value for beta
+#' @param fix_beta whether or not to fix the value of beta. In case this parameter
+#'        is set to false, then beta will increase (decrease) depending whether the number of
+#'        zero eigenvalues is lesser (greater) than k
+#' @param rho how much to increase (decrease) beta in case fix_beta = FALSE
+#' @param maxiter the maximum number of iterations
+#' @param abstol absolute tolerance on the weight vector w
+#' @param reltol relative tolerance on the weight vector w
+#' @param eigtol value below which eigenvalues are considered to be zero
+#' @param record_objective whether to record the objective function values at
+#'        each iteration
+#' @param record_weights whether to record the edge values at each iteration
+#' @param verbose whether to output a progress bar showing the evolution of the
+#'        iterations
+#'
+#' @author Ze Vinicius and Daniel Palomar
+#' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
+#'             framework for structured graph learning via spectral constraints
+#' @examples
+#' library(spectralGraphTopology)
+#' library(clusterSim)
+#' library(igraph)
+#' set.seed(42)
+#' # number of nodes per cluster
+#' n <- 50
+#' # generate datapoints
+#' twomoon <- shapes.two.moon(n)
+#' # number of components
+#' k <- 2
+#' # compute sample correlation matrix
+#' S <- crossprod(t(twomoon$data))
+#' # estimate underlying graph
+#' graph <- learn_laplacian_matrix(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
+#' # build network
+#' net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+#' # colorify nodes and edges
+#' colors <- c("#706FD3", "#FF5252")
+#' V(net)$cluster <- twomoon$clusters
+#' E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
+#'                       function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
+#'                                         colors[V(net)$cluster[x[1]]], '#000000'))
+#' V(net)$color <- colors[twomoon$clusters]
+#' # plot nodes
+#' plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
 #' @export
 learn_dregular_graph <- function(S, is_data_matrix = FALSE, d0 = NULL, k = 1, w0 = "qp",
                                  alpha = 0, beta = 1e3, beta_max = 1e6, rho = 1e-2,
