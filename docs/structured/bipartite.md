@@ -65,10 +65,10 @@ plot(estimated_bipartite, layout = la, vertex.color=c("red","black")[V(estimated
      vertex.label = NA, vertex.size = 5)
 ```
 
-True adjacency             |  Noisy adjacency          |  Estimated adjacency
-:-------------------------:|:-------------------------:|:------------------------:
-![](bipartite_files/figure-markdown_github/unnamed-chunk-1-1.png) | ![](bipartite_files/figure-markdown_github/unnamed-chunk-1-2.png) | ![](bipartite_files/figure-markdown_github/unnamed-chunk-1-3.png)
+True adjacency             |  Estimated adjacency
+:-------------------------:|:------------------------:
+![](bipartite_files/figure-markdown_github/unnamed-chunk-1-1.png) | ![](bipartite_files/figure-markdown_github/unnamed-chunk-1-2.png)
 
 True graph                 |  Estimated graph
 :-------------------------:|:-------------------------:
-![](bipartite_files/figure-markdown_github/unnamed-chunk-1-4.png) | ![](bipartite_files/figure-markdown_github/unnamed-chunk-1-5.png)
+![](bipartite_files/figure-markdown_github/unnamed-chunk-1-3.png) | ![](bipartite_files/figure-markdown_github/unnamed-chunk-1-4.png)
