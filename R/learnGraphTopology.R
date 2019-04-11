@@ -235,7 +235,7 @@ learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive
 #' @export
 learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive", alpha = 0., nu = 1e4,
                                   Lips = NULL, m = 7, rho = 1, maxiter = 1e4, abstol = 1e-6, reltol = 1e-4,
-                                  record_weights = FALSE) {
+                                  record_weights = FALSE, verbose = TRUE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
     A <- build_initial_graph(S, m = m)
     D <- diag(.5 * colSums(A + t(A)))
@@ -272,8 +272,9 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
   ll_seq <- c(ll0)
   if (record_weights)
     w_seq <- list(Matrix::Matrix(w0, sparse = TRUE))
-  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  Lipschitz: :Lips  relerr: :relerr",
-                                   total = maxiter, clear = FALSE, width = 100)
+  if (verbose)
+    pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  Lipschitz: :Lips  relerr: :relerr",
+                                     total = maxiter, clear = FALSE, width = 100)
   for (i in 1:maxiter) {
     # we need to make sure that the Lipschitz constant is large enough
     # in order to avoid divergence
@@ -319,7 +320,8 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
     # check for convergence
     werr <- abs(w0 - w)
     has_w_converged <- (all(werr <= .5 * reltol * (w + w0)) || all(werr <= abstol))
-    pb$tick(token = list(Lips = Lips, relerr = 2*max(werr/(w + w0), na.rm = 'ignore')))
+    if (verbose)
+      pb$tick(token = list(Lips = Lips, relerr = 2*max(werr/(w + w0), na.rm = 'ignore')))
     if (has_w_converged)
       break
     # update estimates
