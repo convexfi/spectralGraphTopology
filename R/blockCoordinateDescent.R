@@ -38,15 +38,34 @@ laplacian.w_update <- function(w, Lw, U, beta, lambda, K) {
 }
 
 
+#joint.w_update <- function(w, Lw, Aw, U, V, lambda, psi, beta, nu, K) {
+#  ULmdUT <- crossprod(sqrt(lambda) * t(U))
+#  VPsiVT <- V %*% diag(psi) %*% t(V)
+#  grad_f1 <- Lstar(beta * (Lw - ULmdUT) + K)
+#  grad_f2 <- nu * Astar(Aw - VPsiVT)
+#  w_update <- w - .5 * (grad_f1 + grad_f2) / (nrow(Lw) * beta + nu)
+#  w_update[w_update < 0] <- 0
+#  return(w_update)
+#}
+
 joint.w_update <- function(w, Lw, Aw, U, V, lambda, psi, beta, nu, K) {
   ULmdUT <- crossprod(sqrt(lambda) * t(U))
   VPsiVT <- V %*% diag(psi) %*% t(V)
-  grad_f1 <- Lstar(beta * (Lw - ULmdUT) + K)
-  grad_f2 <- nu * Astar(Aw - VPsiVT)
-  w_update <- w - .5 * (grad_f1 + grad_f2) / (nrow(Lw) * beta + nu)
+  c1 <- Lstar(beta * ULmdUT - K)
+  c2 <- nu * Astar(VPsiVT)
+  Mw <- Lstar(Lw)
+  Pw <- 2 * w
+  grad_f1 <- beta * Mw - c1
+  M_grad_f1 <- Lstar(L(grad_f1))
+  grad_f2 <- nu * Pw - c2
+  P_grad_f2 <- 2 * grad_f2
+  grad_f <- grad_f1 + grad_f2
+  t <- sum((beta * Mw + nu * Pw - (c1 + c2)) * grad_f) / sum(grad_f * (beta * M_grad_f1 + nu * P_grad_f2))
+  w_update <- w - t * (grad_f1 + grad_f2)
   w_update[w_update < 0] <- 0
   return(w_update)
 }
+
 
 
 bipartite.w_update <- function(w, Aw, V, nu, psi, K, J, Lips) {
