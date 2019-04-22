@@ -138,19 +138,15 @@ test_that("learn_dregular_graph works as expected", {
 with_parameters_test_that("learn_normalized_laplacian works on toy data", {
   n <- ncol(Laplacian)
   Y <- MASS::mvrnorm(n * 5, rep(0, n), MASS::ginv(Laplacian))
-  res <- learn_normalized_laplacian(cov(Y), scale = FALSE, k = 2, record_objective = TRUE, reltol = 1e-3)
+  res <- learn_normalized_laplacian(cov(Y), k = 2, scale = FALSE, record_objective = TRUE, reltol = 1e-3)
   expect_that(res$convergence, is_true())
   expect_that(relative_error(Laplacian, res$NormalizedLaplacian) < 1e-1, is_true())
   expect_that(metrics(Laplacian, res$NormalizedLaplacian, 1e-1)[1] > .9, is_true())
+  print(res$NormalizedLaplacian)
 }, cases(list(Laplacian = rbind(c( 1, -1,  0,  0),
                                 c(-1,  1,  0,  0),
                                 c( 0,  0,  1, -1),
-                                c( 0,  0, -1,  1))),
-         list(Laplacian = rbind(c(   1, -1/2, -1/2,  0,  0),
-                                c(-1/2,    1, -1/2,  0,  0),
-                                c(-1/2, -1/2,    1,  0,  0),
-                                c(   0,    0,    0,  1, -1),
-                                c(   0,    0,    0, -1,  1)))
+                                c( 0,  0, -1,  1)))
         )
 )
 

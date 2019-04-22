@@ -10,7 +10,7 @@ df <- read.csv("animals.txt", header = FALSE)
 names <- matrix(unlist(read.csv("animals_names.txt", header = FALSE)))
 Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
 N <- ncol(Y)
-graph <- learn_normalized_laplacian(cov(Y) + diag(1/3, N, N), k = 10, maxiter = 6e3)
+graph <- learn_normalized_laplacian(cov(Y) + diag(1/3, N, N), k = 15, maxiter = 6e3)
 Adjacency <- diag(diag(graph$NormalizedLaplacian)) - graph$NormalizedLaplacian
 net <- graph_from_adjacency_matrix(Adjacency, mode = "undirected", weighted = TRUE)
 colors <- brewer.reds(100)
