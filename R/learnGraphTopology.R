@@ -684,9 +684,8 @@ learn_dregular_graph <- function(S, is_data_matrix = FALSE, d0 = NULL, k = 1, w0
 learn_normalized_laplacian <- function(S, scale = TRUE, k = 1, alpha = 0,
                                        beta = 1, maxiter = 1e3, reltol = 1e-4,
                                        lb = 0, record_objective = FALSE) {
-  Sinv <- MASS::ginv(S)
   if (scale) {
-    D <- diag(diag(Sinv))
+    D <- diag(diag(MASS::ginv(S)))
     sqrtD <- sqrt(D)
     S <- sqrtD %*% S %*% sqrtD
   }
@@ -695,14 +694,14 @@ learn_normalized_laplacian <- function(S, scale = TRUE, k = 1, alpha = 0,
   K <- S + H
   # initial estimates
   M <- matrix(0, p, p)
-  Theta_t <- Sinv
+  Theta_t <- MASS::ginv(S)
   w_t <- -upper_view_vec(Theta_t)
   U <- eigvec_sym(Theta_t)[, (k+1):p]
   lambda <- pmin(pmax(eigval_sym(Theta_t)[(k+1):p], 0), 2)
   pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta relerr: :relerr",
                                    total = maxiter, clear = FALSE, width = 100)
   if (record_objective)
-    fun <- normalized_laplacian.lagragian(lambda, Theta_t, K, M, U, beta)
+    fun <- c()
   for (t in c(1:maxiter)) {
     Theta <- Theta_update(U = U, lambda = lambda, K = K, M = M, beta = beta)
     w <- -upper_view_vec(Theta)
@@ -712,9 +711,8 @@ learn_normalized_laplacian <- function(S, scale = TRUE, k = 1, alpha = 0,
     M <- M + beta * (Theta - crossprod(sqrt(lambda) * t(U)))
     werr <- abs(w_t - w)
     has_converged <- all(werr <= .5 * reltol * (w + w_t))
-    if (record_objective) {
+    if (record_objective)
       fun <- c(fun, normalized_laplacian.lagragian(lambda, Theta, K, M, U, beta))
-    }
     if (has_converged && t > 1)
       break
     Theta_t <- Theta

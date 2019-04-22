@@ -135,14 +135,34 @@ test_that("learn_dregular_graph works as expected", {
    expect_that(metrics(Lw, res$Laplacian, 1e-1)[1] > .9, is_true())
 })
 
-test_that("learn_normalized_laplacian works on toy data", {
-  Laplacian <- rbind(c(1, -1, 0, 0),
-                     c(-1, 1, 0, 0),
-                     c(0, 0, 1, -1),
-                     c(0, 0, -1, 1))
+with_parameters_test_that("learn_normalized_laplacian works on toy data", {
   n <- ncol(Laplacian)
   Y <- MASS::mvrnorm(n * 5, rep(0, n), MASS::ginv(Laplacian))
   res <- learn_normalized_laplacian(cov(Y), scale = FALSE, k = 2, record_objective = TRUE, reltol = 1e-3)
+  expect_that(res$convergence, is_true())
   expect_that(relative_error(Laplacian, res$NormalizedLaplacian) < 1e-1, is_true())
+  expect_that(metrics(Laplacian, res$NormalizedLaplacian, 1e-1)[1] > .9, is_true())
+}, cases(list(Laplacian = rbind(c( 1, -1,  0,  0),
+                                c(-1,  1,  0,  0),
+                                c( 0,  0,  1, -1),
+                                c( 0,  0, -1,  1))),
+         list(Laplacian = rbind(c(   1, -1/2, -1/2,  0,  0),
+                                c(-1/2,    1, -1/2,  0,  0),
+                                c(-1/2, -1/2,    1,  0,  0),
+                                c(   0,    0,    0,  1, -1),
+                                c(   0,    0,    0, -1,  1)))
+        )
+)
+
+test_that("learn_normalized_laplacian works on non-normalized data", {
+  Laplacian1 <- L(runif(3))
+  Laplacian2 <- L(runif(6))
+  n1 <- ncol(Laplacian1)
+  n2 <- ncol(Laplacian2)
+
+  Laplacian <- block_diag(Laplacian1, Laplacian2)
+  Y <- MASS::mvrnorm(5 * (n1 + n2), rep(0, n1 + n2), MASS::ginv(Laplacian))
+  res <- learn_normalized_laplacian(cov(Y), k = 2)
+  expect_that(res$convergence, is_true())
   expect_that(metrics(Laplacian, res$NormalizedLaplacian, 1e-1)[1] > .9, is_true())
 })
