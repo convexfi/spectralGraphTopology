@@ -679,3 +679,53 @@ learn_dregular_graph <- function(S, is_data_matrix = FALSE, d0 = NULL, k = 1, w0
     results$w_seq <- w_seq
   return(results)
 }
+
+
+learn_normalized_laplacian <- function(S, scale = TRUE, k = 1, alpha = 0,
+                                       beta = 1, maxiter = 1e3, reltol = 1e-4,
+                                       lb = 0, record_objective = FALSE) {
+  Sinv <- MASS::ginv(S)
+  if (scale) {
+    D <- diag(diag(Sinv))
+    sqrtD <- sqrt(D)
+    S <- sqrtD %*% S %*% sqrtD
+  }
+  p <- nrow(S)
+  H <- alpha * (2 * diag(p) - matrix(1, p, p))
+  K <- S + H
+  # initial estimates
+  M <- matrix(0, p, p)
+  Theta_t <- Sinv
+  w_t <- -upper_view_vec(Theta_t)
+  U <- eigvec_sym(Theta_t)[, (k+1):p]
+  lambda <- eigval_sym(Theta_t)[(k+1):p]
+  lambda <- pmin(pmax(lambda, 0), 2)
+  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta relerr: :relerr",
+                                   total = maxiter, clear = FALSE, width = 100)
+  if (record_objective)
+    fun <- normalized_laplacian.lagragian(lambda, Theta_t, K, M, U, beta)
+  for (t in c(1:maxiter)) {
+    Theta <- Theta_update(U = U, lambda = lambda, K = K, M = M, beta = beta)
+    w <- -upper_view_vec(Theta)
+    U <- normalized_laplacian.U_update(M = M, Theta = Theta, beta = beta, k = k)
+    lambda <- normalized_laplacian.lambda_update(lb = lb, beta = beta, U = U,
+                                                 Theta = Theta, M = M, k = k)
+    M <- M + beta * (Theta - crossprod(sqrt(lambda) * t(U)))
+    werr <- abs(w_t - w)
+    has_converged <- all(werr <= .5 * reltol * (w + w_t))
+    if (record_objective) {
+      fun <- c(fun, normalized_laplacian.lagragian(lambda, Theta, K, M, U, beta))
+    }
+    if (has_converged && t > 1)
+      break
+    Theta_t <- Theta
+    w_t <- w
+    pb$tick(token = list(relerr = max(werr / (w + w_t), na.rm = 'ignore')))
+  }
+  results <- list(NormalizedLaplacian = Theta,
+                  Adjacency = diag(diag(Theta)) - Theta, lambda = lambda, U = U,
+                  convergence = has_converged)
+  if (record_objective)
+    results$obj_fun <- fun
+  return(results)
+}

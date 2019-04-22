@@ -78,3 +78,18 @@ Eigen::MatrixXd pairwise_matrix_rownorm(const Eigen::MatrixXd& M) {
       V(i, j) = (M.row(i) - M.row(j)).squaredNorm();
   return V.selfadjointView<Upper>();
 }
+
+
+// [[Rcpp::export]]
+Eigen::VectorXd upper_view_vec(const Eigen::MatrixXd& M) {
+  const int p = M.cols();
+  int t = 0;
+  Eigen::VectorXd v(int(.5 * p * (p - 1)));
+  for (int i = 0; i < p-1; ++i)
+    for (int j = i+1; j < p; ++j) {
+      v(t) = M(i, j);
+      ++t;
+    }
+  return v;
+}
+

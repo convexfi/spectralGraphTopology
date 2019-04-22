@@ -43,7 +43,7 @@ test_that("learn_adjancecy_and_laplacian can learn k-component bipartite graph",
   w <- c(1, 0, 0, 1, 0, 1)
   Laplacian <- block_diag(L(w), L(w))
   n <- ncol(Laplacian)
-  Y <- MASS::mvrnorm(2 * n * 100, rep(0, n), MASS::ginv(Laplacian))
+  Y <- MASS::mvrnorm(2 * n * 200, rep(0, n), MASS::ginv(Laplacian))
   graph <- learn_adjacency_and_laplacian(cov(Y), k = 2)
   expect_that(graph$convergence, is_true())
   expect_that(relative_error(Laplacian, graph$Laplacian) < 1e-1, is_true())
@@ -133,4 +133,16 @@ test_that("learn_dregular_graph works as expected", {
    expect_that(res$convergence, is_true())
    expect_that(relative_error(Lw, res$Laplacian) < 1e-1, is_true())
    expect_that(metrics(Lw, res$Laplacian, 1e-1)[1] > .9, is_true())
+})
+
+test_that("learn_normalized_laplacian works on toy data", {
+  Laplacian <- rbind(c(1, -1, 0, 0),
+                     c(-1, 1, 0, 0),
+                     c(0, 0, 1, -1),
+                     c(0, 0, -1, 1))
+  n <- ncol(Laplacian)
+  Y <- MASS::mvrnorm(n * 5, rep(0, n), MASS::ginv(Laplacian))
+  res <- learn_normalized_laplacian(cov(Y), scale = FALSE, k = 2, record_objective = TRUE, reltol = 1e-3)
+  expect_that(relative_error(Laplacian, res$NormalizedLaplacian) < 1e-1, is_true())
+  expect_that(metrics(Laplacian, res$NormalizedLaplacian, 1e-1)[1] > .9, is_true())
 })

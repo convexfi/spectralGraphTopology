@@ -67,7 +67,6 @@ joint.w_update <- function(w, Lw, Aw, U, V, lambda, psi, beta, nu, K) {
 }
 
 
-
 bipartite.w_update <- function(w, Aw, V, nu, psi, K, J, Lips) {
   grad_h <- 2 * w - Astar(V %*% diag(psi) %*% t(V)) #+ Lstar(K) / beta
   w_update <- w - (Lstar(inv_sympd(L(w) + J) + K) + nu * grad_h) / (2 * nu + Lips)
@@ -113,6 +112,11 @@ joint.V_update <- function(...) {
 }
 
 
+normalized_laplacian.U_update <- function(M, Theta, beta, k) {
+  return(eigvec_sym(M / beta + Theta)[, (k+1):ncol(Theta)])
+}
+
+
 laplacian.lambda_update <- function(lb, ub, beta, U, Lw, k) {
   q <- ncol(Lw) - k
   d <- diag(t(U) %*% Lw %*% U)
@@ -140,6 +144,12 @@ laplacian.lambda_update <- function(lb, ub, beta, U, Lw, k) {
     stop("eigenvalues are not in increasing order,
           consider increasing the value of beta")
   }
+}
+
+
+normalized_laplacian.lambda_update <- function(lb, beta, U, Theta, M, k) {
+  laplacian.lambda_update(lb = lb, ub = 2, beta = beta, U = U,
+                          Lw = M / beta + Theta, k = k)
 }
 
 
