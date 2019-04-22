@@ -1,8 +1,8 @@
 <p align="center">
-  <img width = "200" src="./benchmarks/clusters/code/animation/circles3_reduced.gif"/>
+  <img width = "250" src="./benchmarks/clusters/code/animation/circles3_reduced.gif"/>
 </p>
 
-`spectralGraphTopology`: learning the topology of graphs by leveraging spectral constraints.
+*spectralGraphTopology*: learning the topology of graphs by leveraging spectral constraints.
 Based on: S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar (2019). A unified framework
 for structured graph learning via spectral constraints.
 
@@ -34,7 +34,7 @@ $ Rscript -e "devtools::test()"
 If any of the tests fail, please open a ticket [here](https://github.com/dppalomar/spectralGraphTopology/issues).
 
 
-# Usage
+# Usage: clustering
 We illustrate the usage of the package with simulated data, as follows:
 
 ```r
@@ -75,6 +75,8 @@ plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="75%" style="display: block; margin: auto;" />
+
+For more examples, check out our [gallery](https://mirca.github.io/spectralGraphTopology).
 
 ## Contributing
 We welcome all sorts of contributions. Please feel free to open an issue

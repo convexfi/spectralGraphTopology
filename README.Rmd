@@ -27,7 +27,7 @@ knit_hooks$set(pngquant = hook_pngquant)
   <img width = "200" src="./benchmarks/clusters/code/animation/circles3_reduced.gif"/>
 </p>
 
-`spectralGraphTopology`: learning the topology of graphs by leveraging spectral constraints.
+*spectralGraphTopology*: learning the topology of graphs by leveraging spectral constraints.
 Based on: S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar (2019). A unified framework
 for structured graph learning via spectral constraints.
 

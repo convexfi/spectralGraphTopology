@@ -698,8 +698,7 @@ learn_normalized_laplacian <- function(S, scale = TRUE, k = 1, alpha = 0,
   Theta_t <- Sinv
   w_t <- -upper_view_vec(Theta_t)
   U <- eigvec_sym(Theta_t)[, (k+1):p]
-  lambda <- eigval_sym(Theta_t)[(k+1):p]
-  lambda <- pmin(pmax(lambda, 0), 2)
+  lambda <- pmin(pmax(eigval_sym(Theta_t)[(k+1):p], 0), 2)
   pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta relerr: :relerr",
                                    total = maxiter, clear = FALSE, width = 100)
   if (record_objective)
