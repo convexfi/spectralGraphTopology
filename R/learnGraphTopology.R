@@ -637,7 +637,6 @@ learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 
 #' V(net)$color <- colors[twomoon$clusters]
 #' # plot nodes
 #' plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
-#' @export
 learn_dregular_graph <- function(S, is_data_matrix = FALSE, d0 = NULL, k = 1, w0 = "qp",
                                  alpha = 0, beta = 1e3, beta_max = 1e6, rho = 1e-2,
                                  fix_beta = FALSE, eta = 1e3, lb = 0, ub = 1e4,

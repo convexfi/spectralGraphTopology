@@ -55,48 +55,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// objfunc
-double objfunc(const Eigen::MatrixXd& Lw, const Eigen::MatrixXd& U, const Eigen::VectorXd& lambda, const Eigen::MatrixXd& Kmat, const double beta);
-RcppExport SEXP _spectralGraphTopology_objfunc(SEXP LwSEXP, SEXP USEXP, SEXP lambdaSEXP, SEXP KmatSEXP, SEXP betaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type Lw(LwSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type U(USEXP);
-    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type Kmat(KmatSEXP);
-    Rcpp::traits::input_parameter< const double >::type beta(betaSEXP);
-    rcpp_result_gen = Rcpp::wrap(objfunc(Lw, U, lambda, Kmat, beta));
-    return rcpp_result_gen;
-END_RCPP
-}
-// loglikelihood
-double loglikelihood(const Eigen::MatrixXd& Lw, const Eigen::VectorXd& lambda, const Eigen::MatrixXd& Kmat);
-RcppExport SEXP _spectralGraphTopology_loglikelihood(SEXP LwSEXP, SEXP lambdaSEXP, SEXP KmatSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type Lw(LwSEXP);
-    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type Kmat(KmatSEXP);
-    rcpp_result_gen = Rcpp::wrap(loglikelihood(Lw, lambda, Kmat));
-    return rcpp_result_gen;
-END_RCPP
-}
-// logprior
-double logprior(const double beta, const Eigen::MatrixXd& Lw, const Eigen::VectorXd& lambda, const Eigen::MatrixXd& U);
-RcppExport SEXP _spectralGraphTopology_logprior(SEXP betaSEXP, SEXP LwSEXP, SEXP lambdaSEXP, SEXP USEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const double >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type Lw(LwSEXP);
-    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type U(USEXP);
-    rcpp_result_gen = Rcpp::wrap(logprior(beta, Lw, lambda, U));
-    return rcpp_result_gen;
-END_RCPP
-}
 // L
 Eigen::MatrixXd L(const Eigen::VectorXd& w);
 RcppExport SEXP _spectralGraphTopology_L(SEXP wSEXP) {
@@ -281,9 +239,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spectralGraphTopology_eigval_sym", (DL_FUNC) &_spectralGraphTopology_eigval_sym, 1},
     {"_spectralGraphTopology_eigvec_sym", (DL_FUNC) &_spectralGraphTopology_eigvec_sym, 1},
     {"_spectralGraphTopology_inv_sympd", (DL_FUNC) &_spectralGraphTopology_inv_sympd, 1},
-    {"_spectralGraphTopology_objfunc", (DL_FUNC) &_spectralGraphTopology_objfunc, 5},
-    {"_spectralGraphTopology_loglikelihood", (DL_FUNC) &_spectralGraphTopology_loglikelihood, 3},
-    {"_spectralGraphTopology_logprior", (DL_FUNC) &_spectralGraphTopology_logprior, 4},
     {"_spectralGraphTopology_L", (DL_FUNC) &_spectralGraphTopology_L, 1},
     {"_spectralGraphTopology_A", (DL_FUNC) &_spectralGraphTopology_A, 1},
     {"_spectralGraphTopology_Mmat", (DL_FUNC) &_spectralGraphTopology_Mmat, 1},

@@ -17,21 +17,6 @@ inv_sympd <- function(M) {
     .Call('_spectralGraphTopology_inv_sympd', PACKAGE = 'spectralGraphTopology', M)
 }
 
-#' @export
-objfunc <- function(Lw, U, lambda, Kmat, beta) {
-    .Call('_spectralGraphTopology_objfunc', PACKAGE = 'spectralGraphTopology', Lw, U, lambda, Kmat, beta)
-}
-
-#' @export
-loglikelihood <- function(Lw, lambda, Kmat) {
-    .Call('_spectralGraphTopology_loglikelihood', PACKAGE = 'spectralGraphTopology', Lw, lambda, Kmat)
-}
-
-#' @export
-logprior <- function(beta, Lw, lambda, U) {
-    .Call('_spectralGraphTopology_logprior', PACKAGE = 'spectralGraphTopology', beta, Lw, lambda, U)
-}
-
 #' Computes the Laplacian linear operator which maps a vector of weights into
 #' a valid Laplacian matrix.
 #'
