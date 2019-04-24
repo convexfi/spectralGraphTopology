@@ -62,4 +62,4 @@ If this package has been useful to you in any way, give us a star on [GitHub](ht
 Additionally, if you've used **spectralGraphTopology** on your research, please consider citing the following resource:
 
 - S. Kumar, J. Ying, J. V. de M. Cardoso and D. P. Palomar (2019). A unified framework for structured graph learning
-  via spectral constraints.
+  via spectral constraints. https://arxiv.org/pdf/1904.09792.pdf
