@@ -34,7 +34,18 @@
 #' @param record_weights whether to record the edge values at each iteration
 #' @param verbose whether to output a progress bar showing the evolution of the
 #'        iterations
-#'
+#' @return A list containing possibly the following elements:
+#' \item{\code{Laplacian}}{the estimated Laplacian Matrix}
+#' \item{\code{Adjacency}}{the estimated Adjacency Matrix}
+#' \item{\code{w}}{the estimated weight vector}
+#' \item{\code{lambda}}{optimization variable accounting for the eigenvalues of the Laplacian matrix}
+#' \item{\code{U}}{eigenvectors of the estimated Laplacian matrix}
+#' \item{\code{elapsed_time}}{elapsed time recorded at every iteration}
+#' \item{\code{beta_seq}}{sequence of values taken by beta in case fix_beta = FALSE}
+#' \item{\code{convergence}}{boolean flag to indicate whether or not the optimization converged}
+#' \item{\code{obj_fun}}{values of the objective function at every iteration in case record_objective = TRUE}
+#' \item{\code{loglike}}{values of the negative loglikelihood at every iteration in case record_objective = TRUE}
+#' \item{\code{w_seq}}{sequence of weight vectors at every iteration in case record_weights = TRUE}
 #' @author Ze Vinicius and Daniel Palomar
 #' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
 #'             framework for structured graph learning via spectral constraints (2019).
@@ -155,8 +166,8 @@ learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive
   # compute the adjancency matrix
   Aw <- A(w)
   results <- list(Laplacian = Lw, Adjacency = Aw, w = w, lambda = lambda, U = U,
-                  Laplacian_eigvals = eigval_sym(Lw), elapsed_time = time_seq,
-                  convergence = !(i == maxiter), beta_seq = beta_seq)
+                  elapsed_time = time_seq, convergence = has_w_converged,
+                  beta_seq = beta_seq)
   if (record_objective) {
     results$obj_fun <- fun_seq
     results$loglike <- ll_seq
@@ -185,7 +196,7 @@ learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive
 #' @param m in case is_data_matrix = TRUE, then we build an affinity matrix based
 #'        on Nie et. al. 2017, where m is the maximum number of possible connections
 #'        for a given node
-#' @param nu regularization hyperparameter for the term ||A(w) - V Lambda V'||^2_F
+#' @param nu regularization hyperparameter for the term ||A(w) - V Psi V'||^2_F
 #' @param maxiter the maximum number of iterations
 #' @param abstol absolute tolerance on the weight vector w
 #' @param reltol relative tolerance on the weight vector w
@@ -194,7 +205,17 @@ learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive
 #' @param record_weights whether to record the edge values at each iteration
 #' @param verbose whether to output a progress bar showing the evolution of the
 #'        iterations
-#'
+#' @return A list containing possibly the following elements:
+#' \item{\code{Laplacian}}{the estimated Laplacian Matrix}
+#' \item{\code{Adjacency}}{the estimated Adjacency Matrix}
+#' \item{\code{w}}{the estimated weight vector}
+#' \item{\code{psi}}{optimization variable accounting for the eigenvalues of the Adjacency matrix}
+#' \item{\code{V}}{eigenvectors of the estimated Adjacency matrix}
+#' \item{\code{elapsed_time}}{elapsed time recorded at every iteration}
+#' \item{\code{convergence}}{boolean flag to indicate whether or not the optimization converged}
+#' \item{\code{obj_fun}}{values of the objective function at every iteration in case record_objective = TRUE}
+#' \item{\code{loglike}}{values of the negative loglikelihood at every iteration in case record_objective = TRUE}
+#' \item{\code{w_seq}}{sequence of weight vectors at every iteration in case record_weights = TRUE}
 #' @author Ze Vinicius and Daniel Palomar
 #' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
 #'             framework for structured graph learning via spectral constraints (2019).
@@ -350,33 +371,36 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
 }
 
 
-#' @title Learn the Laplacian matrix of a k-component graph
+#' @title Jointly learns the Laplacian and Adjacency matrices of a graph
 #'
-#' Learns the topology of a k-component graph on the basis of an observed data matrix
+#' Jointly learns the Laplacian and Adjacency matrices of a graph on the basis
+#' of an observed data matrix
 #'
 #' @param S either a pxp sample covariance/correlation matrix, or a pxn data
 #'        matrix, where p is the number of nodes and n is the number of
 #'        features (or data points per node)
 #' @param is_data_matrix whether the matrix S should be treated as data matrix
 #'        or sample covariance matrix
-#' @param m in case is_data_matrix = TRUE, then we build an affinity matrix based
-#'        on Nie et. al. 2017, where m is the maximum number of possible connections
-#'        for a given node
+#' @param z the number of zero eigenvalues for the Adjancecy matrix
 #' @param k the number of components of the graph
 #' @param w0 initial estimate for the weight vector the graph or a string
 #'        selecting an appropriate method. Available methods are: "qp": finds w0 that minimizes
 #'        ||ginv(S) - L(w0)||_F, w0 >= 0; "naive": takes w0 as the negative of the
 #'        off-diagonal elements of the pseudo inverse, setting to 0 any elements s.t.
 #'        w0 < 0
-#' @param lb lower bound for the eigenvalues of the Laplacian matrix
-#' @param ub upper bound for the eigenvalues of the Laplacian matrix
+#' @param m in case is_data_matrix = TRUE, then we build an affinity matrix based
+#'        on Nie et. al. 2017, where m is the maximum number of possible connections
+#'        for a given node
 #' @param alpha L1 regularization hyperparameter
 #' @param beta regularization hyperparameter for the term ||L(w) - U Lambda U'||^2_F
-#' @param beta_max maximum allowed value for beta
+#' @param rho how much to increase (decrease) beta in case fix_beta = FALSE
 #' @param fix_beta whether or not to fix the value of beta. In case this parameter
 #'        is set to false, then beta will increase (decrease) depending whether the number of
 #'        zero eigenvalues is lesser (greater) than k
-#' @param rho how much to increase (decrease) beta in case fix_beta = FALSE
+#' @param beta_max maximum allowed value for beta
+#' @param nu regularization hyperparameter for the term ||A(w) - V Psi V'||^2_F
+#' @param lb lower bound for the eigenvalues of the Laplacian matrix
+#' @param ub upper bound for the eigenvalues of the Laplacian matrix
 #' @param maxiter the maximum number of iterations
 #' @param abstol absolute tolerance on the weight vector w
 #' @param reltol relative tolerance on the weight vector w
@@ -387,36 +411,62 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
 #' @param verbose whether to output a progress bar showing the evolution of the
 #'        iterations
 #'
+#' @return A list containing possibly the following elements:
+#' \item{\code{Laplacian}}{the estimated Laplacian Matrix}
+#' \item{\code{Adjacency}}{the estimated Adjacency Matrix}
+#' \item{\code{w}}{the estimated weight vector}
+#' \item{\code{psi}}{optimization variable accounting for the eigenvalues of the Adjacency matrix}
+#' \item{\code{lambda}}{optimization variable accounting for the eigenvalues of the Laplacian matrix}
+#' \item{\code{V}}{eigenvectors of the estimated Adjacency matrix}
+#' \item{\code{U}}{eigenvectors of the estimated Laplacian matrix}
+#' \item{\code{elapsed_time}}{elapsed time recorded at every iteration}
+#' \item{\code{beta_seq}}{sequence of values taken by beta in case fix_beta = FALSE}
+#' \item{\code{convergence}}{boolean flag to indicate whether or not the optimization converged}
+#' \item{\code{obj_fun}}{values of the objective function at every iteration in case record_objective = TRUE}
+#' \item{\code{loglike}}{values of the negative loglikelihood at every iteration in case record_objective = TRUE}
+#' \item{\code{w_seq}}{sequence of weight vectors at every iteration in case record_weights = TRUE}
 #' @author Ze Vinicius and Daniel Palomar
 #' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
 #'             framework for structured graph learning via spectral constraints (2019).
 #'             https://arxiv.org/pdf/1904.09792.pdf
 #' @examples
 #' library(spectralGraphTopology)
-#' library(clusterSim)
 #' library(igraph)
+#' library(viridis)
+#' library(corrplot)
 #' set.seed(42)
-#' # number of nodes per cluster
-#' n <- 50
-#' # generate datapoints
-#' twomoon <- shapes.two.moon(n)
-#' # number of components
-#' k <- 2
-#' # compute sample correlation matrix
-#' S <- crossprod(t(twomoon$data))
-#' # estimate underlying graph
-#' graph <- learn_laplacian_matrix(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
-#' # build network
-#' net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
-#' # colorify nodes and edges
-#' colors <- c("#706FD3", "#FF5252")
-#' V(net)$cluster <- twomoon$clusters
-#' E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
-#'                       function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
-#'                                         colors[V(net)$cluster[x[1]]], '#000000'))
-#' V(net)$color <- colors[twomoon$clusters]
-#' # plot nodes
-#' plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
+#' w <- c(1, 0, 0, 1, 0, 1) * runif(6)
+#' Laplacian <- block_diag(L(w), L(w))
+#' Atrue <- diag(diag(Laplacian)) - Laplacian
+#' bipartite <- graph_from_adjacency_matrix(Atrue, mode = "undirected", weighted = TRUE)
+#' n <- ncol(Laplacian)
+#' Y <- MASS::mvrnorm(40 * n, rep(0, n), MASS::ginv(Laplacian))
+#' graph <- learn_adjacency_and_laplacian(cov(Y), k = 2, beta = 1e2, nu = 1e2, verbose = FALSE)
+#' graph$Adjacency[graph$Adjacency < 1e-2] <- 0
+#' # Plot Adjacency matrices: true, noisy, and estimated
+#' corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+#' corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+#' # Plot networks
+#' estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+#' V(bipartite)$type <- rep(c(TRUE, FALSE), 4)
+#' V(estimated_bipartite)$type <- rep(c(TRUE, FALSE), 4)
+#' la = layout_as_bipartite(estimated_bipartite)
+#' colors <- viridis(20, begin = 0, end = 1, direction = -1)
+#' c_scale <- colorRamp(colors)
+#' E(estimated_bipartite)$color = apply(c_scale(E(estimated_bipartite)$weight / max(E(estimated_bipartite)$weight)), 1,
+#'                                      function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+#' E(bipartite)$color = apply(c_scale(E(bipartite)$weight / max(E(bipartite)$weight)), 1,
+#'                            function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+#' la = la[, c(2, 1)]
+#' # Plot networks: true and estimated
+#' plot(bipartite, layout = la,
+#'      vertex.color = c("red","black")[V(bipartite)$type + 1],
+#'      vertex.shape = c("square", "circle")[V(bipartite)$type + 1],
+#'      vertex.label = NA, vertex.size = 5)
+#' plot(estimated_bipartite, layout = la,
+#'      vertex.color = c("red","black")[V(estimated_bipartite)$type + 1],
+#'      vertex.shape = c("square", "circle")[V(estimated_bipartite)$type + 1],
+#'      vertex.label = NA, vertex.size = 5)
 #' @export
 learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 1,
                                           w0 = "naive", m = 7, alpha = 0., beta = 1e4,
@@ -510,7 +560,7 @@ learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 
   }
   results <- list(Laplacian = Lw, Adjacency = Aw, w = w, psi = psi,
                   lambda = lambda, V = V, U = U, elapsed_time = time_seq,
-                  beta_seq = beta_seq, nu = nu, convergence = (i < maxiter))
+                  beta_seq = beta_seq, convergence = has_converged)
   if (record_objective) {
     results$obj_fun <- fun_seq
     results$loglike <- ll_seq
