@@ -60,7 +60,7 @@ If any of the tests fail, please open a ticket [here](https://github.com/dppalom
 
 # Usage: clustering
 We illustrate the usage of the package with simulated data, as follows:
-```{r}
+```{r, message=FALSE}
 library(spectralGraphTopology)
 library(clusterSim)
 library(igraph)

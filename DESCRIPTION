@@ -9,8 +9,8 @@ Description: This package provides estimators of Laplacian and adjacency matrice
     which play key roles in unsupervised machine learning tasks such as community detection
     and clustering.
 Authors@R: c(
-  person("Ze", "Vinicius", role = "aut", email = "jvmirca@gmail.com"),
-  person(c("Daniel", "P."), "Palomar", role = c("cre", "aut"), email = "daniel.p.palomar@gmail.com")
+  person("Ze", "Vinicius", role = c("cre", "aut"), email = "jvmirca@gmail.com"),
+  person(c("Daniel", "P."), "Palomar", role = "aut", email = "daniel.p.palomar@gmail.com")
   )
 Maintainer: Ze Vinicius <jvmirca@gmail.com>
 URL: https://github.com/dppalomar/spectralGraphTopology
@@ -33,12 +33,10 @@ Remotes:
 RoxygenNote: 6.1.1
 Suggests:
     testthat,
-    knitr,
-    rmarkdown,
-    bookdown,
-    prettydoc,
     patrick
 VignetteBuilder:
-    knitr,
     bookdown,
-    prettydoc
+    knitr,
+    prettydoc,
+    rmarkdown,
+    R.rsp

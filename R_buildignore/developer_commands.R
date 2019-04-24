@@ -25,3 +25,7 @@ devtools::install()
 # Documentation
 devtools::document()  #to generate all documentation via roxygen
 ?learnGraphTopology
+
+# Code tests
+devtools::test()
+#covr::package_coverage()  #coverage of tests

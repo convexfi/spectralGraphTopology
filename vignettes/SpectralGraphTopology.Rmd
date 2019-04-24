@@ -41,10 +41,10 @@ opts_chunk$set(
 )
 knit_hooks$set(pngquant = hook_pngquant)
 #Help on bookdown: https://bookdown.org/yihui/bookdown/
-#rmarkdown::render("vignettes/SpectralGraphTopology-vignette.Rmd", "all")
-#rmarkdown::render("vignettes/SpectralGraphTopology-vignette.Rmd", "bookdown::html_document2")
-#rmarkdown::render("vignettes/SpectralGraphTopology-vignette.Rmd", "bookdown::pdf_document2")
-#tools::compactPDF("vignettes/SpectralGraphTopology-vignette.pdf", gs_quality = "ebook")
+#rmarkdown::render("vignettes/SpectralGraphTopology.Rmd", "all")
+#rmarkdown::render("vignettes/SpectralGraphTopology.Rmd", "bookdown::html_document2")
+#rmarkdown::render("vignettes/SpectralGraphTopology.Rmd", "bookdown::pdf_document2")
+#tools::compactPDF("vignettes/SpectralGraphTopology.pdf", gs_quality = "ebook")
 ```
 
 -----------
