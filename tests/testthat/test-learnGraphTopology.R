@@ -142,23 +142,9 @@ with_parameters_test_that("learn_normalized_laplacian works on toy data", {
   expect_that(res$convergence, is_true())
   expect_that(relative_error(Laplacian, res$NormalizedLaplacian) < 1e-1, is_true())
   expect_that(metrics(Laplacian, res$NormalizedLaplacian, 1e-1)[1] > .9, is_true())
-  print(res$NormalizedLaplacian)
 }, cases(list(Laplacian = rbind(c( 1, -1,  0,  0),
                                 c(-1,  1,  0,  0),
                                 c( 0,  0,  1, -1),
                                 c( 0,  0, -1,  1)))
         )
 )
-
-test_that("learn_normalized_laplacian works on non-normalized data", {
-  Laplacian1 <- L(runif(3))
-  Laplacian2 <- L(runif(6))
-  n1 <- ncol(Laplacian1)
-  n2 <- ncol(Laplacian2)
-
-  Laplacian <- block_diag(Laplacian1, Laplacian2)
-  Y <- MASS::mvrnorm(5 * (n1 + n2), rep(0, n1 + n2), MASS::ginv(Laplacian))
-  res <- learn_normalized_laplacian(cov(Y), k = 2)
-  expect_that(res$convergence, is_true())
-  expect_that(metrics(Laplacian, res$NormalizedLaplacian, 1e-1)[1] > .9, is_true())
-})

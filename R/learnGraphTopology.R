@@ -1,6 +1,6 @@
 #' @title Learn the Laplacian matrix of a k-component graph
 #'
-#' Learns the topology of a k-component graph on the basis of an observed data matrix
+#' Learns a k-component graph on the basis of an observed data matrix
 #'
 #' @param S either a pxp sample covariance/correlation matrix, or a pxn data
 #'        matrix, where p is the number of nodes and n is the number of
@@ -37,7 +37,8 @@
 #'
 #' @author Ze Vinicius and Daniel Palomar
 #' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
-#'             framework for structured graph learning via spectral constraints
+#'             framework for structured graph learning via spectral constraints (2019).
+#'             https://arxiv.org/pdf/1904.09792.pdf
 #' @examples
 #' library(spectralGraphTopology)
 #' library(clusterSim)
@@ -165,38 +166,29 @@ learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive
   return(results)
 }
 
-
-#' @title Learn the Laplacian matrix of a k-component graph
+#' @title Learn a bipartite graph
 #'
-#' Learns the topology of a k-component graph on the basis of an observed data matrix
+#' Learns a bipartite graph on the basis of an observed data matrix
 #'
 #' @param S either a pxp sample covariance/correlation matrix, or a pxn data
 #'        matrix, where p is the number of nodes and n is the number of
 #'        features (or data points per node)
 #' @param is_data_matrix whether the matrix S should be treated as data matrix
 #'        or sample covariance matrix
-#' @param m in case is_data_matrix = TRUE, then we build an affinity matrix based
-#'        on Nie et. al. 2017, where m is the maximum number of possible connections
-#'        for a given node
-#' @param k the number of components of the graph
+#' @param z the number of zero eigenvalues for the Adjancecy matrix
 #' @param w0 initial estimate for the weight vector the graph or a string
 #'        selecting an appropriate method. Available methods are: "qp": finds w0 that minimizes
 #'        ||ginv(S) - L(w0)||_F, w0 >= 0; "naive": takes w0 as the negative of the
 #'        off-diagonal elements of the pseudo inverse, setting to 0 any elements s.t.
 #'        w0 < 0
-#' @param lb lower bound for the eigenvalues of the Laplacian matrix
-#' @param ub upper bound for the eigenvalues of the Laplacian matrix
 #' @param alpha L1 regularization hyperparameter
-#' @param beta regularization hyperparameter for the term ||L(w) - U Lambda U'||^2_F
-#' @param beta_max maximum allowed value for beta
-#' @param fix_beta whether or not to fix the value of beta. In case this parameter
-#'        is set to false, then beta will increase (decrease) depending whether the number of
-#'        zero eigenvalues is lesser (greater) than k
-#' @param rho how much to increase (decrease) beta in case fix_beta = FALSE
+#' @param m in case is_data_matrix = TRUE, then we build an affinity matrix based
+#'        on Nie et. al. 2017, where m is the maximum number of possible connections
+#'        for a given node
+#' @param nu regularization hyperparameter for the term ||A(w) - V Lambda V'||^2_F
 #' @param maxiter the maximum number of iterations
 #' @param abstol absolute tolerance on the weight vector w
 #' @param reltol relative tolerance on the weight vector w
-#' @param eigtol value below which eigenvalues are considered to be zero
 #' @param record_objective whether to record the objective function values at
 #'        each iteration
 #' @param record_weights whether to record the edge values at each iteration
@@ -205,36 +197,55 @@ learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive
 #'
 #' @author Ze Vinicius and Daniel Palomar
 #' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
-#'             framework for structured graph learning via spectral constraints
+#'             framework for structured graph learning via spectral constraints (2019).
+#'             https://arxiv.org/pdf/1904.09792.pdf
 #' @examples
 #' library(spectralGraphTopology)
-#' library(clusterSim)
 #' library(igraph)
+#' library(viridis)
+#' library(corrplot)
 #' set.seed(42)
-#' # number of nodes per cluster
-#' n <- 50
-#' # generate datapoints
-#' twomoon <- shapes.two.moon(n)
-#' # number of components
-#' k <- 2
-#' # compute sample correlation matrix
-#' S <- crossprod(t(twomoon$data))
-#' # estimate underlying graph
-#' graph <- learn_laplacian_matrix(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
-#' # build network
-#' net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
-#' # colorify nodes and edges
-#' colors <- c("#706FD3", "#FF5252")
-#' V(net)$cluster <- twomoon$clusters
-#' E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
-#'                       function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
-#'                                         colors[V(net)$cluster[x[1]]], '#000000'))
-#' V(net)$color <- colors[twomoon$clusters]
-#' # plot nodes
-#' plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
+#' n1 <- 10
+#' n2 <- 6
+#' n <- n1 + n2
+#' pc <- .9
+#' bipartite <- sample_bipartite(n1, n2, type="Gnp", p = pc, directed=FALSE)
+#' # randomly assign edge weights to connected nodes
+#' E(bipartite)$weight <- runif(gsize(bipartite), min = 0, max = 1)
+#' # get true Laplacian and Adjacency
+#' Ltrue <- as.matrix(laplacian_matrix(bipartite))
+#' Atrue <- diag(diag(Ltrue)) - Ltrue
+#' # get samples
+#' Y <- MASS::mvrnorm(100 * n, rep(0, n), Sigma = MASS::ginv(Ltrue))
+#' # compute sample covariance matrix
+#' S <- cov(Y)
+#' # estimate Adjacency matrix
+#' graph <- learn_bipartite_graph(S, z = 4, verbose = FALSE)
+#' graph$Adjacency[graph$Adjacency < 1e-3] <- 0
+#' # Plot Adjacency matrices: true, noisy, and estimated
+#' corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+#' corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+#' # build networks
+#' estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+#' V(estimated_bipartite)$type <- c(rep(0, 10), rep(1, 6))
+#' la = layout_as_bipartite(estimated_bipartite)
+#' colors <- viridis(20, begin = 0, end = 1, direction = -1)
+#' c_scale <- colorRamp(colors)
+#' E(estimated_bipartite)$color = apply(c_scale(E(estimated_bipartite)$weight / max(E(estimated_bipartite)$weight)), 1,
+#'                           function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+#' E(bipartite)$color = apply(c_scale(E(bipartite)$weight / max(E(bipartite)$weight)), 1,
+#'                       function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+#' la = la[, c(2, 1)]
+#' # Plot networks: true and estimated
+#' plot(bipartite, layout = la, vertex.color=c("red","black")[V(bipartite)$type + 1],
+#'      vertex.shape = c("square", "circle")[V(bipartite)$type + 1],
+#'      vertex.label = NA, vertex.size = 5)
+#' plot(estimated_bipartite, layout = la, vertex.color=c("red","black")[V(estimated_bipartite)$type + 1],
+#'      vertex.shape = c("square", "circle")[V(estimated_bipartite)$type + 1],
+#'      vertex.label = NA, vertex.size = 5)
 #' @export
-learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive", alpha = 0., nu = 1e4,
-                                  Lips = NULL, m = 7, rho = 1, maxiter = 1e4, abstol = 1e-6, reltol = 1e-4,
+learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, alpha = 0.,
+                                  w0 = "naive", m = 7, maxiter = 1e4, abstol = 1e-6, reltol = 1e-4,
                                   record_weights = FALSE, verbose = TRUE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
     A <- build_initial_graph(S, m = m)
@@ -257,8 +268,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
     Sinv <- MASS::ginv(S)
   # if w0 is either "naive" or "qp", compute it, else return w0
   w0 <- w_init(w0, Sinv)
-  if (is.null(Lips))
-    Lips <- 1 / min(eigval_sym(L(w0) + J))
+  Lips <- 1 / min(eigval_sym(L(w0) + J))
   # compute quantities on the initial guess
   Aw0 <- A(w0)
   V0 <- bipartite.V_update(Aw0, z)
@@ -293,10 +303,10 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
       Lips_seq <- c(Lips_seq, Lips)
       if (fun0 < fun_t)
         # in case it is in fact larger, then increase Lips and recompute w
-        Lips <- (1 + rho) * Lips
+        Lips <- 2 * Lips
       else {
         # otherwise decrease Lips and get outta here!
-        Lips <- Lips / (1 + rho)
+        Lips <- .5 * Lips
         if (Lips < 1e-12)
           Lips <- 1e-12
         break
@@ -379,7 +389,8 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, w0 = "naive"
 #'
 #' @author Ze Vinicius and Daniel Palomar
 #' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
-#'             framework for structured graph learning via spectral constraints
+#'             framework for structured graph learning via spectral constraints (2019).
+#'             https://arxiv.org/pdf/1904.09792.pdf
 #' @examples
 #' library(spectralGraphTopology)
 #' library(clusterSim)
@@ -412,7 +423,7 @@ learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 
                                           rho = 1e-2, fix_beta = TRUE, beta_max = 1e6, nu = 1e4,
                                           lb = 0, ub = 1e4, maxiter = 1e4, abstol = 1e-6,
                                           reltol = 1e-4, eig_tol = 1e-9,
-                                          record_weights = FALSE, record_objective = FALSE) {
+                                          record_weights = FALSE, record_objective = FALSE, verbose = TRUE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
     A <- build_initial_graph(S, m = m)
     D <- diag(.5 * colSums(A + t(A)))
@@ -450,8 +461,9 @@ learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 
   start_time <- proc.time()[3]
   if (record_weights)
     w_seq <- list(Matrix::Matrix(w0, sparse = TRUE))
-  pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  beta: :beta  kth_eigval: :kth_eigval  relerr: :relerr",
-                                   total = maxiter, clear = FALSE, width = 120)
+  if (verbose)
+    pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  beta: :beta  kth_eigval: :kth_eigval  relerr: :relerr",
+                                     total = maxiter, clear = FALSE, width = 120)
   for (i in c(1:maxiter)) {
     w <- joint.w_update(w0, Lw0, Aw0, U0, V0, lambda0, psi0, beta, nu, K)
     Lw <- L(w)
@@ -473,7 +485,8 @@ learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 
     has_w_converged <- (all(werr <= .5 * reltol * (w + w0)) || all(werr <= abstol))
     time_seq <- c(time_seq, proc.time()[3] - start_time)
     eigvals <- eigval_sym(Lw)
-    pb$tick(token = list(beta = beta, kth_eigval = eigvals[k], relerr = 2*max(werr/(w + w0), na.rm = 'ignore')))
+    if (verbose)
+      pb$tick(token = list(beta = beta, kth_eigval = eigvals[k], relerr = 2*max(werr/(w + w0), na.rm = 'ignore')))
     if (!fix_beta) {
       n_zero_eigenvalues <- sum(abs(eigvals) < eig_tol)
       if (k < n_zero_eigenvalues)

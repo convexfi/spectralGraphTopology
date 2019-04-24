@@ -2,14 +2,14 @@
 % Please edit documentation in R/learnGraphTopology.R
 \name{learn_bipartite_graph}
 \alias{learn_bipartite_graph}
-\title{Learn the Laplacian matrix of a k-component graph
+\title{Learn a bipartite graph
 
-Learns the topology of a k-component graph on the basis of an observed data matrix}
+Learns a bipartite graph on the basis of an observed data matrix}
 \usage{
-learn_bipartite_graph(S, is_data_matrix = FALSE, z = 0, w0 = "naive",
-  alpha = 0, nu = 10000, Lips = NULL, m = 7, rho = 1,
-  maxiter = 10000, abstol = 1e-06, reltol = 1e-04,
-  record_weights = FALSE, verbose = TRUE)
+learn_bipartite_graph(S, is_data_matrix = FALSE, z = 0, nu = 10000,
+  alpha = 0, w0 = "naive", m = 7, maxiter = 10000,
+  abstol = 1e-06, reltol = 1e-04, record_weights = FALSE,
+  verbose = TRUE)
 }
 \arguments{
 \item{S}{either a pxp sample covariance/correlation matrix, or a pxn data
@@ -19,19 +19,21 @@ features (or data points per node)}
 \item{is_data_matrix}{whether the matrix S should be treated as data matrix
 or sample covariance matrix}
 
+\item{z}{the number of zero eigenvalues for the Adjancecy matrix}
+
+\item{nu}{regularization hyperparameter for the term ||A(w) - V Lambda V'||^2_F}
+
+\item{alpha}{L1 regularization hyperparameter}
+
 \item{w0}{initial estimate for the weight vector the graph or a string
 selecting an appropriate method. Available methods are: "qp": finds w0 that minimizes
 ||ginv(S) - L(w0)||_F, w0 >= 0; "naive": takes w0 as the negative of the
 off-diagonal elements of the pseudo inverse, setting to 0 any elements s.t.
 w0 < 0}
 
-\item{alpha}{L1 regularization hyperparameter}
-
 \item{m}{in case is_data_matrix = TRUE, then we build an affinity matrix based
 on Nie et. al. 2017, where m is the maximum number of possible connections
 for a given node}
-
-\item{rho}{how much to increase (decrease) beta in case fix_beta = FALSE}
 
 \item{maxiter}{the maximum number of iterations}
 
@@ -44,60 +46,63 @@ for a given node}
 \item{verbose}{whether to output a progress bar showing the evolution of the
 iterations}
 
-\item{k}{the number of components of the graph}
-
-\item{lb}{lower bound for the eigenvalues of the Laplacian matrix}
-
-\item{ub}{upper bound for the eigenvalues of the Laplacian matrix}
-
-\item{beta}{regularization hyperparameter for the term ||L(w) - U Lambda U'||^2_F}
-
-\item{beta_max}{maximum allowed value for beta}
-
-\item{fix_beta}{whether or not to fix the value of beta. In case this parameter
-is set to false, then beta will increase (decrease) depending whether the number of
-zero eigenvalues is lesser (greater) than k}
-
-\item{eigtol}{value below which eigenvalues are considered to be zero}
-
 \item{record_objective}{whether to record the objective function values at
 each iteration}
 }
 \description{
-Learn the Laplacian matrix of a k-component graph
+Learn a bipartite graph
 
-Learns the topology of a k-component graph on the basis of an observed data matrix
+Learns a bipartite graph on the basis of an observed data matrix
 }
 \examples{
 library(spectralGraphTopology)
-library(clusterSim)
 library(igraph)
+library(viridis)
+library(corrplot)
 set.seed(42)
-# number of nodes per cluster
-n <- 50
-# generate datapoints
-twomoon <- shapes.two.moon(n)
-# number of components
-k <- 2
-# compute sample correlation matrix
-S <- crossprod(t(twomoon$data))
-# estimate underlying graph
-graph <- learn_laplacian_matrix(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
-# build network
-net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
-# colorify nodes and edges
-colors <- c("#706FD3", "#FF5252")
-V(net)$cluster <- twomoon$clusters
-E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
-                      function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
-                                        colors[V(net)$cluster[x[1]]], '#000000'))
-V(net)$color <- colors[twomoon$clusters]
-# plot nodes
-plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
+n1 <- 10
+n2 <- 6
+n <- n1 + n2
+pc <- .9
+bipartite <- sample_bipartite(n1, n2, type="Gnp", p = pc, directed=FALSE)
+# randomly assign edge weights to connected nodes
+E(bipartite)$weight <- runif(gsize(bipartite), min = 0, max = 1)
+# get true Laplacian and Adjacency
+Ltrue <- as.matrix(laplacian_matrix(bipartite))
+Atrue <- diag(diag(Ltrue)) - Ltrue
+# get samples
+Y <- MASS::mvrnorm(100 * n, rep(0, n), Sigma = MASS::ginv(Ltrue))
+# compute sample covariance matrix
+S <- cov(Y)
+# estimate Adjacency matrix
+graph <- learn_bipartite_graph(S, z = 4, verbose = FALSE)
+graph$Adjacency[graph$Adjacency < 1e-3] <- 0
+# Plot Adjacency matrices: true, noisy, and estimated
+corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+# build networks
+estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+V(estimated_bipartite)$type <- c(rep(0, 10), rep(1, 6))
+la = layout_as_bipartite(estimated_bipartite)
+colors <- viridis(20, begin = 0, end = 1, direction = -1)
+c_scale <- colorRamp(colors)
+E(estimated_bipartite)$color = apply(c_scale(E(estimated_bipartite)$weight / max(E(estimated_bipartite)$weight)), 1,
+                          function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+E(bipartite)$color = apply(c_scale(E(bipartite)$weight / max(E(bipartite)$weight)), 1,
+                      function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+la = la[, c(2, 1)]
+# Plot networks: true and estimated
+plot(bipartite, layout = la, vertex.color=c("red","black")[V(bipartite)$type + 1],
+     vertex.shape = c("square", "circle")[V(bipartite)$type + 1],
+     vertex.label = NA, vertex.size = 5)
+plot(estimated_bipartite, layout = la, vertex.color=c("red","black")[V(estimated_bipartite)$type + 1],
+     vertex.shape = c("square", "circle")[V(estimated_bipartite)$type + 1],
+     vertex.label = NA, vertex.size = 5)
 }
 \references{
 S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
-            framework for structured graph learning via spectral constraints
+            framework for structured graph learning via spectral constraints (2019).
+            https://arxiv.org/pdf/1904.09792.pdf
 }
 \author{
 Ze Vinicius and Daniel Palomar

@@ -4,7 +4,7 @@
 \alias{learn_laplacian_matrix}
 \title{Learn the Laplacian matrix of a k-component graph
 
-Learns the topology of a k-component graph on the basis of an observed data matrix}
+Learns a k-component graph on the basis of an observed data matrix}
 \usage{
 learn_laplacian_matrix(S, is_data_matrix = FALSE, k = 1,
   w0 = "naive", lb = 0, ub = 10000, alpha = 0, beta = 10000,
@@ -67,7 +67,7 @@ iterations}
 \description{
 Learn the Laplacian matrix of a k-component graph
 
-Learns the topology of a k-component graph on the basis of an observed data matrix
+Learns a k-component graph on the basis of an observed data matrix
 }
 \examples{
 library(spectralGraphTopology)
@@ -98,7 +98,8 @@ plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
 }
 \references{
 S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
-            framework for structured graph learning via spectral constraints
+            framework for structured graph learning via spectral constraints (2019).
+            https://arxiv.org/pdf/1904.09792.pdf
 }
 \author{
 Ze Vinicius and Daniel Palomar

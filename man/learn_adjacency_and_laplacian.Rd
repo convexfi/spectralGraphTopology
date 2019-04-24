@@ -11,7 +11,7 @@ learn_adjacency_and_laplacian(S, is_data_matrix = FALSE, z = 0,
   rho = 0.01, fix_beta = TRUE, beta_max = 1e+06, nu = 10000,
   lb = 0, ub = 10000, maxiter = 10000, abstol = 1e-06,
   reltol = 1e-04, eig_tol = 1e-09, record_weights = FALSE,
-  record_objective = FALSE)
+  record_objective = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{S}{either a pxp sample covariance/correlation matrix, or a pxn data
@@ -60,10 +60,10 @@ zero eigenvalues is lesser (greater) than k}
 \item{record_objective}{whether to record the objective function values at
 each iteration}
 
-\item{eigtol}{value below which eigenvalues are considered to be zero}
-
 \item{verbose}{whether to output a progress bar showing the evolution of the
 iterations}
+
+\item{eigtol}{value below which eigenvalues are considered to be zero}
 }
 \description{
 Learn the Laplacian matrix of a k-component graph
@@ -99,7 +99,8 @@ plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
 }
 \references{
 S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
-            framework for structured graph learning via spectral constraints
+            framework for structured graph learning via spectral constraints (2019).
+            https://arxiv.org/pdf/1904.09792.pdf
 }
 \author{
 Ze Vinicius and Daniel Palomar
