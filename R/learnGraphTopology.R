@@ -560,7 +560,7 @@ learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 
   }
   results <- list(Laplacian = Lw, Adjacency = Aw, w = w, psi = psi,
                   lambda = lambda, V = V, U = U, elapsed_time = time_seq,
-                  beta_seq = beta_seq, convergence = has_converged)
+                  beta_seq = beta_seq, convergence = has_w_converged)
   if (record_objective) {
     results$obj_fun <- fun_seq
     results$loglike <- ll_seq

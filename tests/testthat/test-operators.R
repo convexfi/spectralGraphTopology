@@ -22,6 +22,56 @@ L_constraints <- function(Lw) {
 }
 
 
+LOp <- function(w) {
+  k <- length(w)
+  n <- as.integer(.5 * (1 + sqrt(1 + 8 * k)))
+  Lw <- matrix(0, n, n)
+  for (i in ((n-1):1)) {
+    j <- n - i
+    Lw[i, (i+1):n] <- -tail(w[1:k], j)
+    k <- k - j
+  }
+
+  Lw <- Lw + t(Lw)
+  Lw <- Lw - diag(colSums(Lw))
+
+  return(Lw)
+}
+
+LStarOp <- function(Y) {
+  N <- ncol(Y)
+  k <- as.integer(N * (N - 1) / 2)
+  LStarY <- array(0., k)
+  j <- 1
+  l <- 2
+  for (i in 1:k) {
+    LStarY[i] <- Y[j, j] + Y[l, l] - Y[l, j] - Y[j, l]
+    if (l == N) {
+      j <- j + 1
+      l <- j + 1
+    } else {
+      l <- l + 1
+    }
+  }
+  return(LStarY)
+}
+
+
+LStarOpImpl <- function(Y) {
+  n <- ncol(Y)
+  k <- as.integer(n * (n - 1) / 2)
+  LStarY <- array(0., k)
+  for (i in 1:k) {
+    w <- array(0., k)
+    w[i] <- 1.
+    Lw <- LOp(w)
+    LStarY[i] <- sum(diag(t(Y) %*% Lw))
+  }
+
+  return(LStarY)
+}
+
+
 test_that("inverse of the L operator works", {
   w <- runif(10)
   expect_that(all(w == Linv(L(w))), is_true())
@@ -83,7 +133,7 @@ with_parameters_test_that("L and A are linear operators", {
 )
 
 
-test_that("verify in L star operator in basic case", {
+test_that("verify the Lstar operator in basic case", {
    Y <- diag(4)
    expect_that(all(LStarOp(Y) == array(2, 6)), is_true())
    expect_that(all(Lstar(Y) == array(2, 6)), is_true())

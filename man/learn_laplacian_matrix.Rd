@@ -64,6 +64,20 @@ iterations}
 
 \item{eigtol}{value below which eigenvalues are considered to be zero}
 }
+\value{
+A list containing possibly the following elements:
+\item{\code{Laplacian}}{the estimated Laplacian Matrix}
+\item{\code{Adjacency}}{the estimated Adjacency Matrix}
+\item{\code{w}}{the estimated weight vector}
+\item{\code{lambda}}{optimization variable accounting for the eigenvalues of the Laplacian matrix}
+\item{\code{U}}{eigenvectors of the estimated Laplacian matrix}
+\item{\code{elapsed_time}}{elapsed time recorded at every iteration}
+\item{\code{beta_seq}}{sequence of values taken by beta in case fix_beta = FALSE}
+\item{\code{convergence}}{boolean flag to indicate whether or not the optimization converged}
+\item{\code{obj_fun}}{values of the objective function at every iteration in case record_objective = TRUE}
+\item{\code{loglike}}{values of the negative loglikelihood at every iteration in case record_objective = TRUE}
+\item{\code{w_seq}}{sequence of weight vectors at every iteration in case record_weights = TRUE}
+}
 \description{
 Learn the Laplacian matrix of a k-component graph
 

@@ -21,7 +21,7 @@ or sample covariance matrix}
 
 \item{z}{the number of zero eigenvalues for the Adjancecy matrix}
 
-\item{nu}{regularization hyperparameter for the term ||A(w) - V Lambda V'||^2_F}
+\item{nu}{regularization hyperparameter for the term ||A(w) - V Psi V'||^2_F}
 
 \item{alpha}{L1 regularization hyperparameter}
 
@@ -48,6 +48,19 @@ iterations}
 
 \item{record_objective}{whether to record the objective function values at
 each iteration}
+}
+\value{
+A list containing possibly the following elements:
+\item{\code{Laplacian}}{the estimated Laplacian Matrix}
+\item{\code{Adjacency}}{the estimated Adjacency Matrix}
+\item{\code{w}}{the estimated weight vector}
+\item{\code{psi}}{optimization variable accounting for the eigenvalues of the Adjacency matrix}
+\item{\code{V}}{eigenvectors of the estimated Adjacency matrix}
+\item{\code{elapsed_time}}{elapsed time recorded at every iteration}
+\item{\code{convergence}}{boolean flag to indicate whether or not the optimization converged}
+\item{\code{obj_fun}}{values of the objective function at every iteration in case record_objective = TRUE}
+\item{\code{loglike}}{values of the negative loglikelihood at every iteration in case record_objective = TRUE}
+\item{\code{w_seq}}{sequence of weight vectors at every iteration in case record_weights = TRUE}
 }
 \description{
 Learn a bipartite graph

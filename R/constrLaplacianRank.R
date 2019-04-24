@@ -12,10 +12,7 @@ constr_laplacian_rank <- function(Y, k = 1, m = 5, S0 = NULL, lmd = 1, eig_tol =
   LS <-  DS - .5 * (S + t(S))
   DA <- diag(.5 * colSums(A + t(A)))
   LA <- DA - .5 * (A + t(A))
-  #if (k == 1)
   F <- matrix(eigvec_sym(LA)[, 1:k])
-  #else
-  #  F <- eigvec_sym(LA)[, 1:k]
   # bounds for variables in the QP solver
   bvec <- c(1, rep(0, n))
   Amat <- cbind(rep(1, n), diag(n))
