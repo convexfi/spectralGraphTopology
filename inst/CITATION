@@ -1,35 +1,22 @@
-citHeader("To cite 'riskParityPortfolio' in publications, please use:")
-
-citEntry(entry = "Manual",
-         title        = "{riskParityPortfolio: Design of Risk Parity Portfolios}",
-         author       = personList(as.person("J. V. de M. Cardoso"),
-                                   as.person("D. P. Palomar")),
-         note         = "R package version 0.1.1",
-         year         = "2019",
-         url          = "https://CRAN.R-project.org/package=riskParityPortfolio",
-         textVersion  =
-           paste("J. V. de M. Cardoso and D. P. Palomar (2019).",
-                 "riskParityPortfolio: Design of Risk Parity Portfolios.",
-                 "R package version 0.1.1.",
-                 "https://CRAN.R-project.org/package=riskParityPortfolio")
-)
+citHeader("To cite 'spectralGraphTopology' in publications, please use:")
 
 citEntry(entry = "Article",
-         title        = "SCRIP: Successive Convex Optimization Methods
-    for Risk Parity Portfolio Design",
-         author       = personList(as.person("Y. Feng"),
+         title        = "A Unified Framework for Structured Graph Learning
+                         via Spectral Constraints",
+         author       = personList(as.person("S. Kumar"),
+                                   as.person("J. Ying"),
+                                   as.person("J. V. de Miranda Cardoso"),
                                    as.person("D. P. Palomar")),
-         journal      = "IEEE Transactions on Signal Processing",
-         volume       = "63",
-         number       = "19",
-         pages        = "5285--5300",
-         year         = "2018",
-         url          = "https://doi.org/10.1109/TSP.2015.2452219",
+         journal      = "ArXiv: 1904.09792",
+         volume       = "",
+         number       = "",
+         pages        = "1-58",
+         year         = "2019",
+         url          = "https://arxiv.org/pdf/1904.09792.pdf",
          textVersion  =
-           paste("Y. Feng and D. P. Palomar (2015).",
-                 "SCRIP: Successive Convex Optimization Methods
-    for Risk Parity Portfolio Design.",
-                 "IEEE Transactions on Signal Processing,",
-                 "vol. 63, no. 19, pp. 5285-5300.",
-                 "https://doi.org/10.1109/TSP.2015.2452219")
+           paste("S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar (2019).",
+                 "A Unified Framework for Structured Graph Learnig via Spectral Constraints",
+                 "ArXiv: 1904.09792,",
+                 "pp. 1-58.",
+                 "https://arxiv.org/pdf/1904.09792.pdf")
 )
