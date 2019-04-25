@@ -196,7 +196,7 @@ E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
                                         colors[V(net)$cluster[x[1]]], '#000000'))
 V(net)$color <- colors[circles3$clusters]
 plot(net, layout = circles3$data, vertex.label = NA, vertex.size = 3)
-title("Estimated graph from the twomoon dataset")
+title("Estimated graph on the three circles dataset")
 ```
 
 ## Learning a bipartite graph
@@ -227,10 +227,10 @@ graph <- learn_bipartite_graph(S, z = 4, verbose = FALSE)
 graph$Adjacency[graph$Adjacency < 1e-3] <- 0
 # Plot Adjacency matrices: true, noisy, and estimated
 corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA,
-         tl.pos = "n", cl.cex = 1.25)
+         tl.pos = "n", cl.cex = 1.25, mar=c(0, 0, 3, 0))
 title("True Adjacency")
 corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA,
-         tl.pos = "n", cl.cex = 1.25)
+         tl.pos = "n", cl.cex = 1.25, mar=c(0, 0, 3, 0))
 title("Estimated Adjacency")
 # build networks
 estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
@@ -272,10 +272,10 @@ graph <- learn_bipartite_k_component_graph(cov(Y), k = 2, beta = 1e2, nu = 1e2, 
 graph$Adjacency[graph$Adjacency < 1e-2] <- 0
 # Plot Adjacency matrices: true and estimated
 corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA,
-         tl.pos = "n", cl.cex = 1.25)
+         tl.pos = "n", cl.cex = 1.25, mar=c(0, 0, 3, 0))
 title("True Adjacency")
 corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA,
-         tl.pos = "n", cl.cex = 1.25)
+         tl.pos = "n", cl.cex = 1.25, mar=c(0, 0, 3, 0))
 title("Estimated Adjacency")
 # Plot networks
 estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
@@ -305,14 +305,39 @@ title("Estimated block bipartite graph")
 # Performance comparison
 
 We use the following baseline algorithms for performance comparison:
-the generalized inverse of the sample covariance matrix (naive);
-a quadratic program estimator given by
-$\textsf{minimize}_\underset{\mathbf{w} > \mathbf{0}}\Vert\mathbf{S}^{\dagger} - \mathcal{L}\mathbf{w}\Vert_{F}$,
-where $\mathbf{S}^{\dagger}$ is the generalized inverse of the sample covariance matrix;
-the Combinatorial Graph Laplacian (CGL) proposed by [@Egilmez2017].
 
-![](fscore_grid.png)
-![](relative_error_grid.png)
+1. the generalized inverse of the sample covariance matrix, denoted as Naive;
+2. a quadratic program estimator given by $\textsf{minimize}\Vert\mathbf{S}^{\dagger} - \mathcal{L}\mathbf{w}\Vert_{F}$, where $\mathbf{S}^{\dagger}$ is the generalized inverse of the sample covariance matrix, denoted as QP;
+3. the Combinatorial Graph Laplacian proposed by [@Egilmez2017] denoted as CGL.
+
+The plots below show the performance in terms of F-score and relative error among the proposed algorithm, denoted as SGL,
+and the baseline ones when learning a grid graph with 64 nodes and edges uniformly drawn from [.1, 3].  For each algorithm,
+the shaded area and the solid curve represent the standard deviation and the mean of several Monte Carlo realizations.
+It can be noticed that SGL outperforms all the baseline algorithms in all sample size regimes.  Such superior
+performance maybe be attributed to the highly structured nature of grid graphs.
+
+<center>
+![](fscore_grid.png){ width=60% }
+![](relative_error_grid.png){ width=60% }
+</center>
+
+In a similar fashion, the plots below shows algorithmic performance for modular graphs with 64 nodes and 4 modules,
+such that the probability of connection within module was set to 50%, whereas the probability of connection accross
+modules was set to 1%. In this scenario, SGL outperforms the baselines algorithms QP and Naive, while having a similar
+performance to that of CGL.  This may be explained by the fact that the edges connecting nodes do not quite have a
+deterministic structure like those of the grid graphs.
+
+<center>
+![](fscore_modular.png){ width=60% }
+![](relative_error_modular.png){ width=60% }
+</center>
+
+# Clustering
+
+One of the most direct applications of learning k-component graphs is on the
+classical unsupervised machine learning problem: data clustering.
+
+We make use of two datasets here: the animals dataset published by and the cancer-RNA dataset available at
 
 
 # References {-}
