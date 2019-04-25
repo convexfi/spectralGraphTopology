@@ -29,8 +29,8 @@ Wnaive <- abs(diag(diag(Sinv)) - Sinv)
 R <- vecLmat(ncol(Sinv))
 qp <- quadprog::solve.QP(crossprod(R), t(R) %*% vec(Sinv), diag(ncol(R)))
 w0 <- qp$solution
-graph <- learnGraphTopology(S, K = 2, w0 = w0, beta = 1e-1,
-                            alpha = 1e-2, ftol = 1e-4, Lwtol = 1e-4)
+graph <- learn_k_component_graph(S, K = 2, w0 = w0, beta = 1e-1,
+                                 alpha = 1e-2, ftol = 1e-4, Lwtol = 1e-4)
 cat("\nSpectral Graph Topology results\n")
 cat("relative error", relativeError(Ltrue, graph$Lw), "\n")
 cat("fscore", Fscore(Ltrue, graph$Lw, 1e-2), "\n")

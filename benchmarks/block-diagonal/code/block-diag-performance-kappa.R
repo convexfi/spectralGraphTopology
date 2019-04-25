@@ -31,7 +31,7 @@ for (k in c(1:length(kappa_seq))) {
     Lnoisy <- Ltrue + Lerdo
     Y <- MASS::mvrnorm(T, mu = rep(0, N), Sigma = MASS::ginv(Lnoisy))
     S <- cov(Y)
-    graph <- learn_laplacian_matrix(S, w0 = "qp", k = 4, beta = 400, fix_beta = TRUE,
+    graph <- learn_k_component_graph(S, w0 = "qp", k = 4, beta = 400, fix_beta = TRUE,
                                     maxiter = 100000, abstol = 0)
     print(graph$convergence)
     fs <- metrics(Ltrue, graph$Laplacian, 1e-3)[1]

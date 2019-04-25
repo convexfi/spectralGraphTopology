@@ -14,7 +14,7 @@ labels <- c(as.character(spam[nodes, (n_features+1)]))
 unique_labels <- c(as.character(unique(spam[nodes, (n_features+1)])))
 print(unique_labels)
 S <- crossprod(Y) / n_features
-graph <- learn_laplacian_matrix(S, k = 2, w0 = "qp", beta = 1e5, maxiter = 1e5)
+graph <- learn_k_component_graph(S, k = 2, w0 = "qp", beta = 1e5, maxiter = 1e5)
 print(graph$convergence)
 print(graph$lambda)
 net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)

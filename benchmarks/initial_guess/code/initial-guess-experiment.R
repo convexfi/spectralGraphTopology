@@ -36,11 +36,11 @@ for (j in n_ratios) {
     Lqp <- L(w0_qp)
     # run spectralGraphTopology
     if (ratios[j] <= 5) {
-      graph <- learnLaplacianGraphTopology(S, w0 = "naive", beta = 1e-2, beta_max = 4, nbeta = 20)
-      graph_qp <- learnLaplacianGraphTopology(S, w0 = w0_qp, beta = 1e-2, beta_max = 4, nbeta = 20)
+      graph <- learn_k_component_graph(S, w0 = "naive", beta = 4)
+      graph_qp <- learn_k_component_graph(S, w0 = w0_qp, beta = 4)
     } else {
-      graph <- learnLaplacianGraphTopology(S, w0 = "naive", beta = 10)
-      graph_qp <- learnLaplacianGraphTopology(S, w0 = w0_qp, beta = 10)
+      graph <- learn_k_component_graph(S, w0 = "naive", beta = 10)
+      graph_qp <- learn_k_component_graph(S, w0 = w0_qp, beta = 10)
     }
     rel_spec_naive <- relativeError(Ltrue, graph$Lw)
     fs_spec_naive <- Fscore(Ltrue, graph$Lw, 1e-1)

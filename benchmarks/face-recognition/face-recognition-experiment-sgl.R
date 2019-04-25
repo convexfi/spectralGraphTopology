@@ -4,7 +4,7 @@ library(igraph)
 library(pals)
 
 Y <- readRDS("data-matrix.rds")
-graph <- learn_laplacian_matrix(Y, k = 40, beta = 10, fix_beta = TRUE, edge_tol = 0)
+graph <- learn_k_component_graph(Y, k = 40, beta = 10, fix_beta = TRUE, edge_tol = 0)
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 colors <- rainbow(40)
 clusters <- c()

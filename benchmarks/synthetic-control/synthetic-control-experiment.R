@@ -11,7 +11,7 @@ unique_labels <- c(1:6)
 for (i in unique_labels)
   labels <- c(labels, rep(i, 100))
 S <- cov(t(Y))
-graph <- learn_laplacian_matrix(S, k = length(unique_labels), beta = 10, maxiter = 1e4)
+graph <- learn_k_component_graph(S, k = length(unique_labels), beta = 10, maxiter = 1e4)
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected",
                                    weighted = TRUE)
 V(net)$cluster <- labels

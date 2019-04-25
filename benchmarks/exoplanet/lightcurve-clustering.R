@@ -35,7 +35,7 @@ for (i in c(1:n_curves)) {
 }
 
 print(meta_data)
-graph <- learn_laplacian_matrix(Y, k = 2, w0 = "qp", beta = 1e2)
+graph <- learn_k_component_graph(Y, k = 2, w0 = "qp", beta = 1e2)
 print(graph$convergence)
 graph_clr <- constr_laplacian_rank(Y, k = 2)
 gr = .5 * (1 + sqrt(5))

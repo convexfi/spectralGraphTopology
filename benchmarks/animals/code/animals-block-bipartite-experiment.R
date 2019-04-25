@@ -10,7 +10,7 @@ df <- read.csv("animals.txt", header = FALSE)
 names <- matrix(unlist(read.csv("animals_names.txt", header = FALSE)))
 Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
 n <- ncol(Y)
-graph <- learn_adjacency_and_laplacian(t(Y), k = 5, w0 = "qp", nu = 1e5, beta = 1e6, fix_beta = TRUE,
+graph <- learn_bipartite_k_component_graph(t(Y), k = 5, w0 = "qp", nu = 1e5, beta = 1e6, fix_beta = TRUE,
                                        maxiter = 5e4, z = 3, edge_tol = 0, abstol = 0)
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 colors <- brewer.reds(100)

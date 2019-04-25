@@ -5,7 +5,7 @@ library(pals)
 
 S <- readRDS("correlation-matrix.rds")
 S <- S[1:40, 1:40]
-graph <- learn_adjacency_and_laplacian(S, k = 4, z = 0, beta = 1e3, fix_beta = TRUE)
+graph <- learn_bipartite_k_component_graph(S, k = 4, z = 0, beta = 1e3, fix_beta = TRUE)
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 colors <- rainbow(4)
 clusters <- c()

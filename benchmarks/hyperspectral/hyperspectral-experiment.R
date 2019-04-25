@@ -18,10 +18,9 @@ df_names <- read.csv("Hymaplabel.txt", header = FALSE)
 names <- t(matrix(unlist(df_names), nrow = nrow(df_names)))
 names <- names[, ns]
 k <- length(unique(names))
-print(k)
 # estimate graph
 S <- cov(Y)
-graph <- learn_laplacian_matrix(S/max(S), w0 = "naive", k = k, beta = 1.5, alpha = 1.5, maxiter = 1e5)
+graph <- learn_k_component_graph(S, w0 = "naive", k = k, beta = 1.5, alpha = 1.5, maxiter = 1e5)
 print(graph$convergence)
 print(graph$lambda)
 net <- graph_from_adjacency_matrix(graph$Aw, mode = "undirected", weighted = TRUE)

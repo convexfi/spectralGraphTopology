@@ -44,7 +44,7 @@ for (j in n_ratios) {
     Ltrue <- as.matrix(laplacian_matrix(mgraph))
     Y <- MASS::mvrnorm(T, mu = rep(0, n), Sigma = MASS::ginv(Ltrue))
     S <- cov(Y)
-    graph <- learn_laplacian_matrix(S, w0 = "qp", k = k, beta = 4, fix_beta = TRUE,
+    graph <- learn_k_component_graph(S, w0 = "qp", k = k, beta = 4, fix_beta = TRUE,
                                     alpha = 1e-2, maxiter = 100000, abstol = 0)
     Sinv <- MASS::ginv(S)
     w_qp <- spectralGraphTopology:::w_init("qp", Sinv)

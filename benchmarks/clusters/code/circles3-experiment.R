@@ -10,7 +10,7 @@ N <- 100
 # generate datapoints
 circles3 <- shapes.circles3(N)
 # learn underlying graph
-graph <- learn_laplacian_matrix(crossprod(t(circles3$data)), k = 3, beta = 1, tol = 1e-2)
+graph <- learn_k_component_graph(crossprod(t(circles3$data)), k = 3, beta = 1, tol = 1e-2)
 # construct the network
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 # pretty colors

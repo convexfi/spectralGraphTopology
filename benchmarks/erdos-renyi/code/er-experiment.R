@@ -73,8 +73,8 @@ for (j in n_ratios) {
       }
     }
     print(alpha_tmp)
-    graph <- learn_laplacian_matrix(S, w0 = w_qp, beta = 1, ub = 32, fix_beta = TRUE,
-                                    alpha = 0, maxiter = 5e5, abstol = 0)
+    graph <- learn_k_component_graph(S, w0 = w_qp, beta = 1, ub = 32, fix_beta = TRUE,
+                                     alpha = 0, maxiter = 5e5, abstol = 0)
     metrics_sgl <- metrics(Ltrue, graph$Laplacian, eps)
     metrics_qp <- metrics(Ltrue, Lqp, eps)
     metrics_naive <- metrics(Ltrue, Lnaive, eps)

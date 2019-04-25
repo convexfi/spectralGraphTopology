@@ -59,8 +59,8 @@ for (j in n_ratios) {
     Lnaive <- MASS::ginv(S)
     w_qp <- spectralGraphTopology:::w_init("qp", Lnaive)
     Lqp <- L(w_qp)
-    graph <- learn_laplacian_matrix(S, w0 = w_qp, ub = 32, beta = 1e2,
-                                    maxiter = 1e6, abstol = 0)
+    graph <- learn_k_component_graph(S, w0 = w_qp, ub = 32, beta = 1e2,
+                                     maxiter = 1e6, abstol = 0)
     print(graph$convergence)
     rel_cgl <- Inf
     for (alpha in alphas) {

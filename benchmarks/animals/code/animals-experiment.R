@@ -12,7 +12,7 @@ run_animals <- function(k) {
   Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
   N <- ncol(Y)
   if (k == 1)
-    graph <- learn_laplacian_matrix(cov(Y) + diag(1/3, N, N), w0 = "qp", k = k,
+    graph <- learn_k_component_graph(cov(Y) + diag(1/3, N, N), w0 = "qp", k = k,
                                     beta = .5, alpha = 5e-2)
   else
     graph <- learn_laplacian_matrix(cov(Y) + diag(1/3, N, N), w0 = "qp", beta = 1, k = k)

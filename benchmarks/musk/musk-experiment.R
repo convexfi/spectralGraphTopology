@@ -9,7 +9,7 @@ n_features <- ncol(musk) - 1
 Y <- t(matrix(as.numeric(unlist(musk[, 1:n_features])), nrow = nrow(musk)))
 labels <- c(as.numeric(musk[, n_features+1]))
 unique_labels <- c(as.numeric(unique(musk[, n_features+1])))
-graph <- learn_laplacian_matrix(t(Y), k = 2, w0 = "naive", beta = 1e2, m = 3, alpha = 1e-1, tol = 1e-6)
+graph <- learn_k_component_graph(t(Y), k = 2, w0 = "naive", beta = 1e2, m = 3, alpha = 1e-1, tol = 1e-6)
 print(graph$convergence)
 print(graph$beta_seq)
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)

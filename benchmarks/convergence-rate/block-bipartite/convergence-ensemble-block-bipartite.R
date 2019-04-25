@@ -40,9 +40,9 @@ for (j in 1:length(ratios)) {
     #Y <- MASS::mvrnorm(t, mu = rep(0, n), Sigma = MASS::ginv(Ltrue + Lerdo))
     Y <- MASS::mvrnorm(t, mu = rep(0, n), Sigma = MASS::ginv(Ltrue))
     S <- cov(Y)
-    graph <- learn_adjacency_and_laplacian(S, z = 0, w0 = "naive", k = 3, nu = 1e4, beta = 1e2,
-                                           fix_beta = TRUE, maxiter = 1e3, reltol = 1e-3,
-                                           record_weights = TRUE, record_objective = TRUE)
+    graph <- learn_bipartite_k_component_graph(S, z = 0, w0 = "naive", k = 3, nu = 1e4, beta = 1e2,
+                                               fix_beta = TRUE, maxiter = 1e3, reltol = 1e-3,
+                                               record_weights = TRUE, record_objective = TRUE)
     niter <- length(graph$loglike)
     relative_error <- array(0, niter)
     fscore <- array(0, niter)

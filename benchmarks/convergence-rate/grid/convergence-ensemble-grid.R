@@ -27,9 +27,9 @@ for (j in 1:length(ratios)) {
     # the pseudo inverse of the true Laplacian
     Y <- MASS::mvrnorm(t, mu = rep(0, n), Sigma = MASS::ginv(Ltrue))
     S <- cov(Y)
-    graph <- learn_laplacian_matrix(S, w0 = "naive", k = 1, beta = 10, fix_beta = TRUE,
-                                    maxiter = maxiter, abstol = 1e-4, record_weights = TRUE,
-                                    record_objective = TRUE)
+    graph <- learn_k_component_graph(S, w0 = "naive", k = 1, beta = 10, fix_beta = TRUE,
+                                     maxiter = maxiter, abstol = 1e-4, record_weights = TRUE,
+                                     record_objective = TRUE)
     niter <- length(graph$loglike)
     relative_error <- array(0, niter)
     fscore <- array(0, niter)

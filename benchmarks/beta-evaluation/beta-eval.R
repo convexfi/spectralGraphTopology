@@ -27,7 +27,7 @@ for (j in n_ratios) {
     S <- cov(Y)
     for (i in beta_size) {
       print(beta_set[i])
-      graph <- learn_laplacian_matrix(S, w0 = "qp", k = 4, ub = 32, beta = beta_set[i],
+      graph <- learn_k_component_graph(S, w0 = "qp", k = 4, ub = 32, beta = beta_set[i],
                                       fix_beta = TRUE, maxiter = 100000)
       beta_rel_err[i, j] <- beta_rel_err[i, j] + relativeError(Ltrue, graph$Laplacian)
       beta_fscore[i, j] <- beta_fscore[i, j] + metrics(Ltrue, graph$Laplacian, 5e-2)[1]

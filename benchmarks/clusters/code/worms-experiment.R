@@ -10,7 +10,7 @@ N <- 100
 # get datapoints
 worms <- shapes.worms(N)
 # learn underlying graph
-graph <- learn_laplacian_matrix(crossprod(t(worms$data)) + diag(rep(1/3, 2 * N)),
+graph <- learn_k_component_graph(crossprod(t(worms$data)) + diag(rep(1/3, 2 * N)),
                                 w0 = "naive", k = 2, beta = 1, reltol = 1e-2)
 # build the network
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
