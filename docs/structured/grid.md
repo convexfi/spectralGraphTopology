@@ -30,7 +30,7 @@ Ltrue <- as.matrix(laplacian_matrix(grid))
 Wtrue <- diag(diag(Ltrue)) - Ltrue
 Y <- MASS::mvrnorm(n, mu = rep(0, p), Sigma = MASS::ginv(Ltrue))
 S <- cov(Y)
-graph <- learn_laplacian_matrix(S, w0 = "qp", beta = 20, alpha = 5e-3, abstol = 1e-5, verbose = FALSE)
+graph <- learn_k_component_graph(S, w0 = "qp", beta = 20, alpha = 5e-3, abstol = 1e-5, verbose = FALSE)
 graph$Adjacency[graph$Adjacency < 5e-2] <- 0
 estimated_grid <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 colors <- viridis(20, begin = 0, end = 1, direction = -1)
