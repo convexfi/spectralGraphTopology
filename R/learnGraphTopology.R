@@ -468,12 +468,12 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
 #'      vertex.shape = c("square", "circle")[V(estimated_bipartite)$type + 1],
 #'      vertex.label = NA, vertex.size = 5)
 #' @export
-learn_k_component_bipartite <- function(S, is_data_matrix = FALSE, z = 0, k = 1,
-                                        w0 = "naive", m = 7, alpha = 0., beta = 1e4,
-                                        rho = 1e-2, fix_beta = TRUE, beta_max = 1e6, nu = 1e4,
-                                        lb = 0, ub = 1e4, maxiter = 1e4, abstol = 1e-6,
-                                        reltol = 1e-4, eig_tol = 1e-9,
-                                        record_weights = FALSE, record_objective = FALSE, verbose = TRUE) {
+learn_bipartite_k_component_graph <- function(S, is_data_matrix = FALSE, z = 0, k = 1,
+                                              w0 = "naive", m = 7, alpha = 0., beta = 1e4,
+                                              rho = 1e-2, fix_beta = TRUE, beta_max = 1e6, nu = 1e4,
+                                              lb = 0, ub = 1e4, maxiter = 1e4, abstol = 1e-6,
+                                              reltol = 1e-4, eig_tol = 1e-9,
+                                              record_weights = FALSE, record_objective = FALSE, verbose = TRUE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
     A <- build_initial_graph(S, m = m)
     D <- diag(.5 * colSums(A + t(A)))
@@ -625,7 +625,7 @@ learn_k_component_bipartite <- function(S, is_data_matrix = FALSE, z = 0, k = 1,
 #' # compute sample correlation matrix
 #' S <- crossprod(t(twomoon$data))
 #' # estimate underlying graph
-#' graph <- learn_laplacian_matrix(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
+#' graph <- learn_k_component_graph(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
 #' # build network
 #' net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 #' # colorify nodes and edges
