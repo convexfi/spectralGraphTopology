@@ -1,11 +1,13 @@
 ---
-title: "Learning the topology of graphs"
-author: "Convex Group-HKUST"
+title: "Learning graphs from data by via spectral constraints"
+author: |
+  | Ze Vinicius, Daniel Palomar, Jiaxi Ying, and Sandeep Kumar
+  | Hong Kong University of Science and Technology (HKUST)
 date: "`r Sys.Date()`"
 output:
   bookdown::html_document2:
     base_format: prettydoc::html_pretty
-    theme: tactile
+    theme: cayman
     highlight: vignette
     fig_caption: yes
     number_sections: no
@@ -37,7 +39,8 @@ opts_chunk$set(
   fig.align = "center",
   fig.retina = 2,
   out.width = "75%",
-  dpi = 96
+  dpi = 96,
+  pngquant = "--speed=1"
 )
 knit_hooks$set(pngquant = hook_pngquant)
 #Help on bookdown: https://bookdown.org/yihui/bookdown/
@@ -51,247 +54,265 @@ knit_hooks$set(pngquant = hook_pngquant)
 
 # Installation
 
-Please visit [https://github.com/dppalomar/spectralGraphTopology](https://github.com/dppalomar/spectralGraphTopology)
+Check out [https://mirca.github.io/spectralGraphTopology](https://mirca.github.io/spectralGraphTopology)
 for installation instructions.
 
 # Problem Statement
+
+Graphs are arguably one of the most popular mathematical structures
+that find applications in a myriad of scientific and engineering fields.
+
+In the era of big data, graphs can be used to model a vast diversity of
+phenomenas, including customer preferences, brain activity, genetic structures,
+just to name a few. Therefore, it is of utmost importance to be able to
+reliably estimate such structures from noisy, often sparse and low-rank, datasets.
+
 The Laplacian matrix $\boldsymbol{\Theta}$ of a graph contains the information
-of its topology. By definition a Laplacian matrix is positive semi-definite,
-symmetric, and with sum of rows equal to zero. The Laplacian linear operator
-$\mathcal{L}\mathbf{w}$ maps a vector of weights $\mathbf{w}$ into a valid
-Laplacian matrix so that the conditions are satisfied by construction.
+about its topology, i.e., how nodes are connected among themselves. By definition
+a Laplacian matrix is positive semi-definite, symmetric, and with sum of rows
+equal to zero. The Laplacian linear operator $\mathcal{L}\mathbf{w}$ maps a
+vector of edge weights $\mathbf{w}$ into a valid Laplacian matrix so that the conditions
+listed above are satisfied by construction.
 
-One common approach to estimate the Laplacian matrix would be via the generalized
-inverse of the covariance matrix, which is an assymptotically unbiased and efficient
-estimator. In this document, we call this approach the \textit{naive} one.
-In R, this estimator can be computed as ``MASS::ginv(cov(Y))``,
-where``Y`` is the data matrix.
+One common approach to estimate the Laplacian matrix of a graph would be via the generalized
+inverse of the sample covariance matrix, which is an assymptotically unbiased and efficient
+estimator. In this document, we call this approach the naive one. In R, this estimator can be
+computed as simple as ``MASS::ginv(cov(Y))``, where``Y`` is the data matrix. However, this estimator
+performs very poorly when the sample size is small when compared with the number of nodes, which
+makes its use questionable for practical purposes.
 
-Another classical approach was proposed in [@Friedman2008] which incorporates a
-$\ell_1$-norm penalty term in order to induce sparsity on the solution. The R package
-``glasso`` provides an implementation of this estimator.
+Another classical approach, the well-known graph lasso algorithm, was proposed in
+[@Friedman2008] where a $\ell_1$-norm penalty term was incorporated in order to induce
+sparsity on the solution. The R package ``glasso`` provides an implementation of this estimator.
 
-The underlying optimization problem of learning a K-component graph, solved by
-``spectralGraphTopology``, may be expressed as follows:
+We, however, impose constraints on the eigenvalues and eigenvectors of the Laplacian matrix
+in such a way that the underlying optimization problem may be expressed as follows:
 $$\begin{array}{ll}
 \underset{\mathbf{w}, \boldsymbol{\Lambda}, \mathbf{U}}{\textsf{minimize}} & - \log \det(\boldsymbol{\Lambda})
-+ \mathrm{tr}\left(\mathbf{K}\mathcal{L}\mathbf{w}\right)
++ \mathrm{tr}\left(\mathbf{S}\mathcal{L}\mathbf{w}\right) + \alpha h(\mathcal{L}\mathbf{w})
 + \frac{\beta}{2}\big\|\mathcal{L}\mathbf{w} - \mathbf{U}\boldsymbol{\Lambda}\mathbf{U}^{T}\big\|^{2}_{F}\\
 \textsf{subject to} & \mathbf{w} \geq 0, \boldsymbol{\Lambda} \in \mathcal{S}_{\boldsymbol{\Lambda}},~\text{and}~
 \mathbf{U}^{T}\mathbf{U} = \mathbf{I}
 \end{array}$$
-where $\mathcal{S}_{\boldsymbol{\Lambda}}$ further constrains the eigenvalues of Laplacian matrices
-$\boldsymbol{\Theta}=\mathcal{L}\mathbf{w}$ according to some topology (e.g., a $K$-component graph has $K$ zero eigenvalues).
+where $h$ is a regularization function (e.g. to induce sparsity), $\mathbf{S}$ is the sample covariance matrix,
+$\mathcal{S}_{\boldsymbol{\Lambda}}$ further constrains the eigenvalues of the Laplacian matrix.
+For example, for a $k$-component graph with $p$ nodes,
+$\mathcal{S}_{\boldsymbol{\Lambda}} = \left\{{\lambda_i}_{i=1}^{p} | \lambda_1 = \lambda_2 = ... = \lambda_k = 0,
+0 < \lambda_{k+1} \leq \lambda_{k+2} \leq ... \leq \lambda_{p} \right\}$.
 
-In order to solve this problem, we use a block coordinate descent algorithm to
-iteratively optimize each variable while helding the others fixed. For
-details check the paper or the algorithm description at the end of this document.
+To solve this optimization problem, we employ a block majorization-minimization framework that updates each
+of the variables ($\mathbf{w}, \mathbf{\Lambda}, \mathbf{U}$) at once while fixing the remaning ones.
+For the mathematical details of the solution, including a convergence proof, please refer to our paper at: 
+https://arxiv.org/pdf/1904.09792.pdf.
 
-# Usage of the package
-We illustrate the usage of the package with simulated data, as follows:
+In order to learn bipartite graphs, we take advantage from the fact that the eigenvalues of the adjacency matrix
+of graph are symmetric around 0, and we formulate the following optimization problem:
+$$
+\begin{align}
+\begin{array}{ll}
+\underset{{\mathbf{w}},{\boldsymbol{\Psi}},{\mathbf{V}}}{\textsf{minimize}} &
+\begin{array}{c}
+- \log \det (\mathcal{L} \mathbf{w}+\frac{1}{p}\mathbf{11}^{T})+\text{tr}({\mathbf{S}\mathcal{L} \mathbf{w}})+
+  \alpha h(\mathcal{L}\mathbf{w})+
+  \frac{\nu}{2}\Vert \mathcal{A} \mathbf{w}-\mathbf{V} \boldsymbol{\Psi} \mathbf{V}^T \Vert_F^2,
+\end{array}\\
+\text{subject to} & \begin{array}[t]{l}
+\mathbf{w} \geq 0, \ \boldsymbol{\Psi} \in \mathcal{S}_{\boldsymbol{\Psi}}, \ \text{and} \ \mathbf{V}^T\mathbf{V}=\mathbf{I},
+\end{array}
+\end{array}
+\end{align}
+$$
+
+To estimate k-component bipartite graphs, we formulate the optimization problem by combining the constraints
+related to the Laplacian and adjacency matrices.
+
+
+# Package usage
+
+The `spectralGraphTopology` package provides three main functions to estimate k-component, bipartite, and
+k-component bipartite graphs, respectively: `learn_laplacian_matrix`, `learn_bipartite_graph`, and
+`learn_adjacency_and_laplacian`.  In the next subsections, we will check out how to apply those functions
+in synthetic datasets.
+
+## Learning a grid graph
 ```{r}
 library(spectralGraphTopology)
-set.seed(123)
+library(igraph)
+library(viridis)
+set.seed(0)
 
-# Number of samples
-n <- 10
-# Vector to generate the Laplacian matrix of the graph
-w <- runif(10)
-# Laplacian matrix
-Lw <- L(w)
-# Sample data from a Multivariate Gaussian
-p <- ncol(Lw)
-Y <- MASS::mvrnorm(n, rep(0, p), MASS::ginv(Lw))
-# Number of components of the graph
-k <- 1
-# Learn the Laplacian matrix
-res <- learn_laplacian_matrix(cov(Y), k, beta = 10)
-mean((Lw - res$Lw) ^ 2)
-max((Lw - res$Lw) ^ 2 / Lw)
+p <- 64
+grid <- make_lattice(length = sqrt(p), dim = 2)
+n <- as.integer(100 * p)
+E(grid)$weight <- runif(gsize(grid), min = 1e-1, max = 3)
+Ltrue <- as.matrix(laplacian_matrix(grid))
+Wtrue <- diag(diag(Ltrue)) - Ltrue
+Y <- MASS::mvrnorm(n, mu = rep(0, p), Sigma = MASS::ginv(Ltrue))
+S <- cov(Y)
+graph <- learn_laplacian_matrix(S, w0 = "qp", beta = 20, alpha = 5e-3,
+                                abstol = 1e-5, verbose = FALSE)
+graph$Adjacency[graph$Adjacency < 5e-2] <- 0
+estimated_grid <- graph_from_adjacency_matrix(graph$Adjacency,
+                                              mode = "undirected", weighted = TRUE)
+colors <- viridis(20, begin = 0, end = 1, direction = -1)
+c_scale <- colorRamp(colors)
+E(estimated_grid)$color = apply(c_scale(E(estimated_grid)$weight / max(E(estimated_grid)$weight)), 1,
+                          function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+E(grid)$color = apply(c_scale(E(grid)$weight / max(E(grid)$weight)), 1,
+                      function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+V(estimated_grid)$color = "grey"
+V(grid)$color = "grey"
+la <- layout_on_grid(grid)
+plot(grid, layout = la, vertex.label = NA, vertex.size = 3)
+title("True grid graph")
+plot(estimated_grid, layout = la, vertex.label = NA, vertex.size = 3)
+title("Estimated grid graph")
 ```
 
-Let's visually inspect the true Laplacian and the estimated one:
+## Learning a 2-component graph
 ```{r}
-Lw
-res$Lw
+library(spectralGraphTopology)
+library(clusterSim)
+library(igraph)
+
+set.seed(42)
+# number of nodes per cluster
+n <- 50
+# generate datapoints
+twomoon <- shapes.two.moon(n)
+# number of components
+k <- 2
+# estimate underlying graph
+S <- crossprod(t(twomoon$data))
+graph <- learn_laplacian_matrix(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
+# build network
+net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+# colorify nodes and edges
+colors <- c("#706FD3", "#FF5252")
+V(net)$cluster <- twomoon$clusters
+E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
+                      function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
+                                        colors[V(net)$cluster[x[1]]], '#000000'))
+V(net)$color <- colors[twomoon$clusters]
+plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
+title("Estimated graph from the twomoon dataset")
 ```
 
-Another visual tool is the correlation matrix:
-
+## Learning a bipartite graph
 ```{r}
+library(spectralGraphTopology)
+library(igraph)
+library(viridis)
 library(corrplot)
-par(mfrow = c(1, 2))
-corrplot(cov2cor(Lw), mar = c(0, 0, 1, 0))
-title("True Laplacian matrix", line = 2.5)
-corrplot(cov2cor(res$Lw), mar = c(0, 0, 1, 0))
-title("Estimated Laplacian matrix", line = 2.5)
+set.seed(42)
+
+n1 <- 10
+n2 <- 6
+n <- n1 + n2
+pc <- .9
+
+bipartite <- sample_bipartite(n1, n2, type="Gnp", p = pc, directed=FALSE)
+# randomly assign edge weights to connected nodes
+E(bipartite)$weight <- runif(gsize(bipartite), min = 0, max = 1)
+# get true Laplacian and Adjacency
+Ltrue <- as.matrix(laplacian_matrix(bipartite))
+Atrue <- diag(diag(Ltrue)) - Ltrue
+# get samples
+Y <- MASS::mvrnorm(100 * n, rep(0, n), Sigma = MASS::ginv(Ltrue))
+# compute sample covariance matrix
+S <- cov(Y)
+# estimate Adjacency matrix
+graph <- learn_bipartite_graph(S, z = 4, verbose = FALSE)
+graph$Adjacency[graph$Adjacency < 1e-3] <- 0
+# Plot Adjacency matrices: true, noisy, and estimated
+corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA,
+         tl.pos = "n", cl.cex = 1.25)
+title("True Adjacency")
+corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA,
+         tl.pos = "n", cl.cex = 1.25)
+title("Estimated Adjacency")
+# build networks
+estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+V(estimated_bipartite)$type <- c(rep(0, 10), rep(1, 6))
+la = layout_as_bipartite(estimated_bipartite)
+colors <- viridis(20, begin = 0, end = 1, direction = -1)
+c_scale <- colorRamp(colors)
+E(estimated_bipartite)$color = apply(c_scale(E(estimated_bipartite)$weight / max(E(estimated_bipartite)$weight)), 1,
+                          function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+E(bipartite)$color = apply(c_scale(E(bipartite)$weight / max(E(bipartite)$weight)), 1,
+                      function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+la = la[, c(2, 1)]
+# Plot networks: true and estimated
+plot(bipartite, layout = la, vertex.color=c("red","black")[V(bipartite)$type + 1],
+     vertex.shape = c("square", "circle")[V(bipartite)$type + 1],
+     vertex.label = NA, vertex.size = 5)
+title("True bipartite graph")
+plot(estimated_bipartite, layout = la, vertex.color=c("red","black")[V(estimated_bipartite)$type + 1],
+     vertex.shape = c("square", "circle")[V(estimated_bipartite)$type + 1],
+     vertex.label = NA, vertex.size = 5)
+title("Estimated Bipartite Graph")
 ```
 
-Finally, we can also plot the graph structure:
-```{r}
-# True adjancency matrix
-W <- Lw - diag(diag(Lw))
-library(qgraph)
-par(mfrow = c(1, 2))
-qgraph(W, esize = 5, edge.color = "black")
-title("True diamond graph", line = 2.5)
-qgraph(res$W, esize = 5, edge.color = "black")
-title("Estimated diamond graph", line = 2.5)
-```
-
-We evaluate the performance of the learning process in a more objective
-manner by computing two criterions:
-
-1. relative error
-2. percentage improvement in average loss (PRIAL)
-
-
-```{r}
-Lw_naive <- MASS::ginv(cov(Y))
-rel_err <- c(proposed = spectralGraphTopology::relativeError(Lw, res$Lw),
-             naive = spectralGraphTopology::relativeError(Lw, Lw_naive))
-rel_err
-```
-
-In this case, the naive estimation of the Laplacian matrix (i.e., generalized
-inverse of the sample covariance matrix) performs already quite well since
-the ratio $T/N$ is large enough `r T/N` for the sample covariance matrix to be
-accurately estimated.
-
-Let's also look at the convergence of the objective function versus elapsed time:
-```{r}
-plot(res$elapsed_time, res$obj_fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
-     xlab = "CPU time [seconds]", ylab = "Objective function")
-```
-
-## Illustrative example for K = 2
-
-For K = 2 and $\beta = 100$, we can generate the Laplacian as a block diagonal matrix, as follows
+## Learning a 2-component bipartite graph
 ```{r}
 library(spectralGraphTopology)
-T <- 500
-w1 <- runif(3)
-w2 <- runif(6)
-Lw1 <- L(w1)
-Lw2 <- L(w2)
-N1 <- ncol(Lw1)
-N2 <- ncol(Lw2)
-Lw <- blockDiag(Lw1, Lw2)
-Y <- MASS::mvrnorm(T, rep(0, N1 + N2), MASS::ginv(Lw))
-K <- 2
-res <- learnGraphTopology(cov(Y), K, beta = 100)
+library(igraph)
+library(viridis)
+library(corrplot)
+set.seed(42)
 
-plot(res$elapsed_time, res$obj_fun, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
-     xlab = "CPU time [seconds]", ylab = "Objective function")
-plot(res$elapsed_time, res$loglike, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
-     xlab = "CPU time [seconds]", ylab = "Negative Log Likelihood")
-
-rel_err_seq <- c()
-w_seq <- res$w_seq
-N_iter <- length(res$obj_fun)
-for (i in 1:N_iter) {
-  rel_err <- relativeError(Lw, L(w_seq[[i]]))
-  rel_err_seq <- c(rel_err_seq, rel_err)
-}
-plot(res$elapsed_time, rel_err_seq, type = "b", pch=19, cex=.6, col = scales::alpha("black", .5),
-     xlab = "CPU time [seconds]", ylab = "Relative Error")
-
-W <- Lw - diag(diag(Lw))
-Lw_naive <- MASS::ginv(cov(Y))
-W_naive <- -(Lw_naive - diag(diag(Lw_naive)))
-
-library(qgraph)
-par(mfrow = c(1, 3))
-qgraph(W, esize = 5, edge.color = "black")
-title("True graph (K = 2)", line = 2.5)
-qgraph(res$W, esize = 5, edge.color = "black")
-title("Estimated graph", line = 2.5)
-qgraph(W_naive, esize = 5, edge.color = "black")
-title("Naive Estimated graph", line = 2.5)
+w <- c(1, 0, 0, 1, 0, 1) * runif(6)
+Laplacian <- block_diag(L(w), L(w))
+Atrue <- diag(diag(Laplacian)) - Laplacian
+bipartite <- graph_from_adjacency_matrix(Atrue, mode = "undirected", weighted = TRUE)
+n <- ncol(Laplacian)
+Y <- MASS::mvrnorm(40 * n, rep(0, n), MASS::ginv(Laplacian))
+graph <- learn_adjacency_and_laplacian(cov(Y), k = 2, beta = 1e2, nu = 1e2, verbose = FALSE)
+graph$Adjacency[graph$Adjacency < 1e-2] <- 0
+# Plot Adjacency matrices: true and estimated
+corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA,
+         tl.pos = "n", cl.cex = 1.25)
+title("True Adjacency")
+corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA,
+         tl.pos = "n", cl.cex = 1.25)
+title("Estimated Adjacency")
+# Plot networks
+estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+V(bipartite)$type <- rep(c(TRUE, FALSE), 4)
+V(estimated_bipartite)$type <- rep(c(TRUE, FALSE), 4)
+la = layout_as_bipartite(estimated_bipartite)
+colors <- viridis(20, begin = 0, end = 1, direction = -1)
+c_scale <- colorRamp(colors)
+E(estimated_bipartite)$color = apply(c_scale(E(estimated_bipartite)$weight / max(E(estimated_bipartite)$weight)), 1,
+                                     function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+E(bipartite)$color = apply(c_scale(E(bipartite)$weight / max(E(bipartite)$weight)), 1,
+                           function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+la = la[, c(2, 1)]
+# Plot networks: true and estimated
+plot(bipartite, layout = la,
+     vertex.color = c("red","black")[V(bipartite)$type + 1],
+     vertex.shape = c("square", "circle")[V(bipartite)$type + 1],
+     vertex.label = NA, vertex.size = 5)
+title("True block bipartite graph")
+plot(estimated_bipartite, layout = la,
+     vertex.color = c("red","black")[V(estimated_bipartite)$type + 1],
+     vertex.shape = c("square", "circle")[V(estimated_bipartite)$type + 1],
+     vertex.label = NA, vertex.size = 5)
+title("Estimated block bipartite graph")
 ```
-# Explanation of the algorithms
 
-In this section we present the algorithms designed to solve the
-graph topology learning problem.
+# Performance comparison
 
-## `learnGraphTopology`: Learning the topology of graph
+We use the following baseline algorithms for performance comparison:
+the generalized inverse of the sample covariance matrix (naive);
+a quadratic program estimator given by
+$\textsf{minimize}_\underset{\mathbf{w} > \mathbf{0}}\Vert\mathbf{S}^{\dagger} - \mathcal{L}\mathbf{w}\Vert_{F}$,
+where $\mathbf{S}^{\dagger}$ is the generalized inverse of the sample covariance matrix;
+the Combinatorial Graph Laplacian (CGL) proposed by [@Egilmez2017].
 
-The goal of `learnGraphTopology` is to estimate the Laplacian matrix generated
-by the weight vector of a graph, $\mathbf{w}$. The algorithm for the function `learnGraphTopology`
-is stated as follows:
+![](fscore_grid.png)
+![](relative_error_grid.png)
 
-\begin{algorithm}[H]
- \DontPrintSemicolon
- \KwData{$\mathbf{Y}$ (data matrix), $K$ (\#\{components\}), $\beta$ (regularization term),
- $\mathbf{w}^{(0)}$, $\boldsymbol{\lambda}^{(0)}$, $\mathbf{U}^{(0)}$ (initial parameter estimates),
- $\alpha_1$, $\alpha_2$ (lower and upper bound on the eigenvalues of the Laplacian matrix),
- $\rho$ (how much to increase beta per iteration).}
- \KwResult{$\boldsymbol{\Theta}$ (Laplacian matrix)}
- $N \gets \texttt{ncol}(\mathbf{Y})$\;
- \While{objective function do not converged \textbf{or} max \#\{iterations\} not reached}{
-   $k \gets 0$\;
-   \While{parameters do not converged \textbf{or} max \#\{iterations\} not reached}{
-  $\mathbf{w}^{(k+1)} \gets \texttt{w\_update}(\mathbf{w}^{(k)}, \mathbf{U}^{(k)}, \boldsymbol{\lambda}^{(k)}, \beta, N, \mathbf{K})$\;
-  $\mathbf{U}^{(k+1)} \gets \texttt{U\_update}(\mathbf{w}^{(k+1)}, N)$\;
-  $\boldsymbol{\lambda}^{(k+1)} \gets \texttt{lambda\_update}(\mathbf{w}^{(k+1)},
-  \mathbf{U}^{(k+1)}, \alpha_1, \alpha_2, \beta,N, K)$\;
-  $k \gets k + 1$\;
-  }
-  $\beta \gets \beta (\rho + 1)$\;
- }
- \Return $\mathcal{L}(\mathbf{w}^{(k+1)})$\;
-\end{algorithm}
-
-\begin{algorithm}[H]
-  \DontPrintSemicolon
-  \SetKwFunction{Fwupdate}{\texttt{w\_update}}
-  \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\Fwupdate{$\mathbf{w}, \mathbf{U}, \boldsymbol{\lambda}, \beta, N, \mathbf{K}$}}{
-        $\nabla_{\mathbf{w}}f \gets \mathcal{L}^{\star}\left(\mathcal{L}\left(\mathbf{w}\right)
-                        - \mathbf{U}  \texttt{diag}(\boldsymbol{\lambda}) {\mathbf{U}^{T}}
-                        + \dfrac{\mathbf{K}}{\beta}\right)$\;
-        \KwRet $\texttt{max}\left(0, \mathbf{w} - \dfrac{\nabla_{\mathbf{w}}f}{2N}\right)$\;
-  }
-  \;
-\end{algorithm}
-
-\begin{algorithm}[H]
-  \DontPrintSemicolon
-  \SetKwFunction{FwUupdate}{\texttt{U\_update}}
-  \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\FwUupdate{$\mathbf{w}, N, K$}}{
-        \KwRet \texttt{eigenvectors}$(\mathcal{L}(\mathbf{w}))$[K+1:N] \# \textit{increasing order w.r.t. eigenvalues}\;
-  }
-  \;
-\end{algorithm}
-
-\begin{algorithm}[H]
-  \DontPrintSemicolon
-  \SetKwFunction{Fwlambdaupdate}{\texttt{lambda\_update}}
-  \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\Fwlambdaupdate{$\mathbf{w}, \mathbf{U}, \alpha_1, \alpha_2, \beta, N, K$}}{
-        $\mathbf{d} \gets \texttt{diag}\left(\mathbf{U}^{T} \mathcal{L}(\mathbf{w})\mathbf{U}\right)$\;
-        $\boldsymbol{\lambda} \gets \frac{1}{2}\left(\mathbf{d} +
-                \sqrt{\mathbf{d} \odot \mathbf{d} + \frac{4}{\beta}}\right)$
-                \# $\odot$ \textit{means element-wise multiplication} \;
-        \eIf{$\boldsymbol{\lambda}$ has its elements in nondecreasing order
-             \textbf{and} $\min(\boldsymbol{\lambda}) \geq \alpha_1$
-             \textbf{and} $\max(\boldsymbol{\lambda}) \leq \alpha_2$} {
-            \KwRet $\boldsymbol{\lambda}$\;
-        } {
-            set to $\alpha_1$ the elements of $\boldsymbol{\lambda}$
-            whose values are less than $\alpha_1$ \;
-            set to $\alpha_2$ the elements of $\boldsymbol{\lambda}$
-            whose values are greater than $\alpha_2$\;
-        }
-        \eIf{$\boldsymbol{\lambda}$ has its elements in nondecreasing order} {
-            \KwRet $\boldsymbol{\lambda}$\;
-        } {
-            $\mathbf{raise}$ \texttt{Exception}(\textit{"eigenvalues are not in increasing order"})\;
-        }
-  }
-  \;
-\end{algorithm}
 
 # References {-}
 \setlength{\parindent}{-0.2in}
