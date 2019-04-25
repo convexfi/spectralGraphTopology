@@ -37,9 +37,6 @@ for (j in n_ratios) {
   T <- as.integer(ratios[j] * n)
   cat("\nRunning simulation for", T, "samples per node, n/p = ", ratios[j], "\n")
   for (i in 1:N_realizations) {
-    #graph <- learn_laplacian_matrix(S, w0 = w_qp, k = 4, ub = 32, beta = 20, fix_beta = TRUE,
-    #                                abstol = 0, edge_tol = 0, maxiter = 5e5)
-
     E(mgraph)$weight <- runif(gsize(mgraph), min = 0, max = 1)
     Ltrue <- as.matrix(laplacian_matrix(mgraph))
     Y <- MASS::mvrnorm(T, mu = rep(0, n), Sigma = MASS::ginv(Ltrue))

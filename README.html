@@ -389,42 +389,25 @@ $ make build &amp;&amp; make install</code></pre>
 <h4>Microsoft Windows</h4>
 <p>On MS Windows environments, make sure to install the most recent version of <code>Rtools</code>.</p>
 </div>
-<div id="tests" class="section level3">
-<h3>Tests</h3>
-<p>To run unit tests, type on your favourite terminal:</p>
-<pre><code>$ cd spectralGraphTopology
-$ Rscript -e &quot;devtools::test()&quot;</code></pre>
-<p>If any of the tests fail, please open a ticket <a href="https://github.com/dppalomar/spectralGraphTopology/issues">here</a>.</p>
-</div>
 </div>
 <div id="usage-clustering" class="section level1">
 <h1>Usage: clustering</h1>
 <p>We illustrate the usage of the package with simulated data, as follows:</p>
 <pre class="r"><code>library(spectralGraphTopology)
 library(clusterSim)
-#&gt; Loading required package: cluster
-#&gt; Loading required package: MASS
 library(igraph)
-#&gt; 
-#&gt; Attaching package: 'igraph'
-#&gt; The following objects are masked from 'package:stats':
-#&gt; 
-#&gt;     decompose, spectrum
-#&gt; The following object is masked from 'package:base':
-#&gt; 
-#&gt;     union
 set.seed(42)
 # number of nodes per cluster
 n &lt;- 50
 # generate datapoints
-twomoon &lt;- shapes.two.moon(n)
+twomoon &lt;- clusterSim::shapes.two.moon(n)
 # number of components
 k &lt;- 2
 # estimate underlying graph
 S &lt;- crossprod(t(twomoon$data))
-graph &lt;- learn_laplacian_matrix(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
+graph &lt;- learn_k_component_graph(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
 # build network
-net &lt;- graph_from_adjacency_matrix(graph$Adjacency, mode = &quot;undirected&quot;, weighted = TRUE)
+net &lt;- igraph::graph_from_adjacency_matrix(graph$Adjacency, mode = &quot;undirected&quot;, weighted = TRUE)
 # colorify nodes and edges
 colors &lt;- c(&quot;#706FD3&quot;, &quot;#FF5252&quot;)
 V(net)$cluster &lt;- twomoon$clusters

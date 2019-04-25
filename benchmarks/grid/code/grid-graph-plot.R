@@ -27,7 +27,7 @@ alpha = 5e-3
 setVariable(matlab, alpha = alpha)
 evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-6, 1e-6, 40, 1)")
 Lcgl <- getVariable(matlab, "Lcgl")
-graph <- learn_laplacian_matrix(S, w0 = "qp", beta = 20, alpha = alpha, abstol = 1e-5, fix_beta = TRUE)
+graph <- learn_k_component_graph(S, w0 = "qp", beta = 20, alpha = alpha, abstol = 1e-5, fix_beta = TRUE)
 
 eps <- 5e-2
 # compute adjacency matrices

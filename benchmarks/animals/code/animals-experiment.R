@@ -15,7 +15,7 @@ run_animals <- function(k) {
     graph <- learn_k_component_graph(cov(Y) + diag(1/3, N, N), w0 = "qp", k = k,
                                     beta = .5, alpha = 5e-2)
   else
-    graph <- learn_laplacian_matrix(cov(Y) + diag(1/3, N, N), w0 = "qp", beta = 1, k = k)
+    graph <- learn_k_component_graph(cov(Y) + diag(1/3, N, N), w0 = "qp", beta = 1, k = k)
   print(graph$elapsed_time)
   net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
   colors <- brewer.reds(100)
