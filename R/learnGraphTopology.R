@@ -64,7 +64,7 @@
 #' # compute sample correlation matrix
 #' S <- crossprod(t(twomoon$data))
 #' # estimate underlying graph
-#' graph <- learn_laplacian_matrix(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
+#' graph <- learn_k_component_graph(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
 #' # build network
 #' net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 #' # colorify nodes and edges
@@ -77,10 +77,10 @@
 #' # plot nodes
 #' plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
 #' @export
-learn_laplacian_matrix <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0,
-                                   beta = 1e4, beta_max = 1e6, fix_beta = TRUE, rho = 1e-2, m = 7,
-                                   maxiter = 1e4, abstol = 1e-6, reltol = 1e-4, eig_tol = 1e-9,
-                                   record_objective = FALSE, record_weights = FALSE, verbose = TRUE) {
+learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0,
+                                    beta = 1e4, beta_max = 1e6, fix_beta = TRUE, rho = 1e-2, m = 7,
+                                    maxiter = 1e4, abstol = 1e-6, reltol = 1e-4, eig_tol = 1e-9,
+                                    record_objective = FALSE, record_weights = FALSE, verbose = TRUE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
     A <- build_initial_graph(S, m = m)
     D <- diag(.5 * colSums(A + t(A)))
@@ -441,7 +441,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
 #' bipartite <- graph_from_adjacency_matrix(Atrue, mode = "undirected", weighted = TRUE)
 #' n <- ncol(Laplacian)
 #' Y <- MASS::mvrnorm(40 * n, rep(0, n), MASS::ginv(Laplacian))
-#' graph <- learn_adjacency_and_laplacian(cov(Y), k = 2, beta = 1e2, nu = 1e2, verbose = FALSE)
+#' graph <- learn_k_component_bipartite(cov(Y), k = 2, beta = 1e2, nu = 1e2, verbose = FALSE)
 #' graph$Adjacency[graph$Adjacency < 1e-2] <- 0
 #' # Plot Adjacency matrices: true, noisy, and estimated
 #' corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
@@ -468,12 +468,12 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
 #'      vertex.shape = c("square", "circle")[V(estimated_bipartite)$type + 1],
 #'      vertex.label = NA, vertex.size = 5)
 #' @export
-learn_adjacency_and_laplacian <- function(S, is_data_matrix = FALSE, z = 0, k = 1,
-                                          w0 = "naive", m = 7, alpha = 0., beta = 1e4,
-                                          rho = 1e-2, fix_beta = TRUE, beta_max = 1e6, nu = 1e4,
-                                          lb = 0, ub = 1e4, maxiter = 1e4, abstol = 1e-6,
-                                          reltol = 1e-4, eig_tol = 1e-9,
-                                          record_weights = FALSE, record_objective = FALSE, verbose = TRUE) {
+learn_k_component_bipartite <- function(S, is_data_matrix = FALSE, z = 0, k = 1,
+                                        w0 = "naive", m = 7, alpha = 0., beta = 1e4,
+                                        rho = 1e-2, fix_beta = TRUE, beta_max = 1e6, nu = 1e4,
+                                        lb = 0, ub = 1e4, maxiter = 1e4, abstol = 1e-6,
+                                        reltol = 1e-4, eig_tol = 1e-9,
+                                        record_weights = FALSE, record_objective = FALSE, verbose = TRUE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
     A <- build_initial_graph(S, m = m)
     D <- diag(.5 * colSums(A + t(A)))
