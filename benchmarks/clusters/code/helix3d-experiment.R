@@ -28,7 +28,7 @@ h2_sample_z <- rnorm(n_nodes, mean = h2$z, sd = 5e-2)
 # learn underlying graph
 Y <- rbind(cbind(h1_sample_x, h1_sample_y, h1_sample_z),
            cbind(h2_sample_x, h2_sample_y, h2_sample_z))
-graph <- learn_k_component_graph(crossprod(t(Y)), k = 2, beta = 1, tol = 1e-2)
+graph <- learn_k_component_graph(crossprod(t(Y)), k = 2, beta = 1, fix_beta = FALSE, abstol = 1e-3)
 # construct network
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 # use pretty colors for the nodes and edges

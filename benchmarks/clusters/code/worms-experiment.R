@@ -10,8 +10,8 @@ N <- 100
 # get datapoints
 worms <- shapes.worms(N)
 # learn underlying graph
-graph <- learn_k_component_graph(crossprod(t(worms$data)) + diag(rep(1/3, 2 * N)),
-                                w0 = "naive", k = 2, beta = 1, reltol = 1e-2)
+graph <- learn_k_component_graph(crossprod(t(worms$data)),
+                                 k = 2, beta = 1, reltol = 1e-2)
 # build the network
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 # colorify edges and nodes
@@ -19,7 +19,7 @@ colors <- c("#706FD3", "#FF5252", "#33D9B2")
 V(net)$cluster <- worms$clusters
 E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
                      function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
-                                        colors[V(net)$cluster[x[1]]], '#00000'))
+                                        colors[V(net)$cluster[x[1]]], '#000000'))
 V(net)$color <- c(colors[1], colors[2])[worms$clusters]
 # plot network
 gr = .5 * (1 + sqrt(5))

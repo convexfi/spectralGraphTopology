@@ -11,9 +11,7 @@ N <- 100
 twomoon <- shapes.two.moon(N)
 # estimate underlying graph
 S <- crossprod(t(twomoon$data))
-graph <- learn_k_component_graph(S, k = 2, beta = 1, tol = 1e-2)
-c(graph$eigenvalues)
-graph$beta_seq
+graph <- learn_k_component_graph(S, k = 2, beta = 1, abs = 1e-3, fix_beta = FALSE)
 # build network
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 # colorify nodes and edges

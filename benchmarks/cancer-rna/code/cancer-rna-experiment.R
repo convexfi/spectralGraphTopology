@@ -13,7 +13,6 @@ names <- names[2, 1:Nnodes]
 
 N <- ncol(Y)
 graph <- learn_k_component_graph(t(Y), k = 5, beta = 1e2)
-print(graph)
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 colors <- c("#34495E", "#706FD3", "#FF5252", "#33D9B2", "#34ACE0")
 clusters <- array(0, length(names))
