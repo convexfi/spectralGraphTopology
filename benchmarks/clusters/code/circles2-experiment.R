@@ -11,9 +11,7 @@ N <- 100
 circles2 <- shapes.circles2(N)
 # learn underlying graph
 S <- crossprod(t(circles2$data))
-graph <- learn_k_component_graph(S, k = 2, beta = 1, fix_beta = TRUE, abstol = 1e-3, record_objective = TRUE)
-print(graph$obj_fun)
-print(graph$elapsed_time)
+graph <- learn_k_component_graph(S, k = 2, beta = 1, fix_beta = FALSE, abstol = 1e-3)
 # construct network
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 # use pretty colors for the nodes and edges

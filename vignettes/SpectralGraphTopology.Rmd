@@ -170,6 +170,10 @@ title("Estimated grid graph")
 ```
 
 ## Learning a 3-component graph
+
+The next snippet of code shows how to learn the clusters of a set of points
+distributed on the plane.
+
 ```{r}
 library(spectralGraphTopology)
 library(clusterSim)
@@ -198,6 +202,14 @@ V(net)$color <- colors[circles3$clusters]
 plot(net, layout = circles3$data, vertex.label = NA, vertex.size = 3)
 title("Estimated graph on the three circles dataset")
 ```
+
+Similar structures may be inferred as well. The plots below depict the results of applying
+`learn_k_component_graph` on a variaety of spatially distributed points.
+
+<center>
+![](circles2.png){ width=60% }
+</center>
+
 
 ## Learning a bipartite graph
 ```{r}
