@@ -65,21 +65,22 @@ that find applications in a myriad of scientific and engineering fields.
 In the era of big data, graphs can be used to model a vast diversity of
 phenomena, including customer preferences, brain activity, genetic structures,
 just to name a few. Therefore, it is of utmost importance to be able to
-reliably estimate such structures from noisy, often sparse, low-rank, datasets.
+reliably estimate such structures from noisy, often sparse, low-rank datasets.
 
 The Laplacian matrix of a graph contains the information
 about its topology, i.e., how nodes are connected among themselves. By definition
-a Laplacian matrix is positive semi-definite, symmetric, and with sum of rows
+a (combinatorial) Laplacian matrix is positive semi-definite, symmetric, and with sum of rows
 equal to zero.
 
-One common approach to estimate the Laplacian matrix of a graph would be via the generalized
+One common approach to estimate the Laplacian matrix of a graph (without satisfying the zero row-sum property) 
+would be via the generalized
 inverse of the sample covariance matrix, which is an assymptotically unbiased and efficient
 estimator. In this document, we call this approach the naive one. In R, this estimator can be
-computed as simple as ``MASS::ginv(cov(Y))``, where``Y`` is the data matrix. However, this estimator
+computed simply as ``MASS::ginv(cov(Y))``, where``Y`` is the data matrix. However, this estimator
 performs very poorly when the sample size is small when compared with the number of nodes, which
 makes its use questionable for practical purposes.
 
-Another classical approach, the well-known graph lasso algorithm, was proposed in
+Another classical approach, the well-known graphical lasso algorithm, was proposed in
 [@Friedman2008] where a $\ell_1$-norm penalty term was incorporated in order to induce
 sparsity on the solution. The R package ``glasso`` provides an implementation of this estimator.
 
@@ -88,42 +89,42 @@ vector of edge weights $\mathbf{w}$ into a valid Laplacian matrix. Additionally,
 constraints on the eigenvalues and eigenvectors of the Laplacian matrix in such a way that the
 underlying optimization problem may be expressed as follows:
 $$\begin{array}{ll}
-\underset{\mathbf{w}, \boldsymbol{\Lambda}, \mathbf{U}}{\textsf{minimize}} & - \log \det(\boldsymbol{\Lambda})
+\underset{\mathbf{w}, \boldsymbol{\lambda}, \mathbf{U}}{\textsf{minimize}} & - \log \det\left({\sf Diag}(\boldsymbol{\lambda})\right)
 + \mathrm{tr}\left(\mathbf{S}\mathcal{L}\mathbf{w}\right) + \alpha h(\mathcal{L}\mathbf{w})
-+ \frac{\beta}{2}\big\|\mathcal{L}\mathbf{w} - \mathbf{U}\boldsymbol{\Lambda}\mathbf{U}^{T}\big\|^{2}_{F}\\
-\textsf{subject to} & \mathbf{w} \geq 0, \boldsymbol{\Lambda} \in \mathcal{S}_{\boldsymbol{\Lambda}},~\text{and}~
++ \frac{\beta}{2}\big\|\mathcal{L}\mathbf{w} - \mathbf{U}{\sf Diag}(\boldsymbol{\lambda})\mathbf{U}^{T}\big\|^{2}_{F}\\
+\textsf{subject to} & \mathbf{w} \geq 0, \boldsymbol{\lambda} \in \mathcal{S}_{\boldsymbol{\Lambda}},~\text{and}~
 \mathbf{U}^{T}\mathbf{U} = \mathbf{I}
 \end{array}$$
-where $h$ is a regularization function (e.g. to induce sparsity), $\mathbf{S}$ is the sample covariance matrix,
+where $h()$ is a regularization function (e.g. to induce sparsity), $\mathbf{S}$ is the sample covariance matrix,
 $\mathcal{S}_{\boldsymbol{\Lambda}}$ further constrains the eigenvalues of the Laplacian matrix.
 For example, for a $k$-component graph with $p$ nodes,
-$\mathcal{S}_{\boldsymbol{\Lambda}} = \left\{{\lambda_i}_{i=1}^{p} | \lambda_1 = \lambda_2 = ... = \lambda_k = 0,
-0 < \lambda_{k+1} \leq \lambda_{k+2} \leq ... \leq \lambda_{p} \right\}$.
+$\mathcal{S}_{\boldsymbol{\Lambda}} = \left\{\{\lambda_i\}_{i=1}^{p} | \lambda_1 = \lambda_2 = \cdots = \lambda_k = 0,\;
+0 < \lambda_{k+1} \leq \lambda_{k+2} \leq \cdots \leq \lambda_{p} \right\}$.
 
 To solve this optimization problem, we employ a block majorization-minimization framework that updates each
-of the variables ($\mathbf{w}, \mathbf{\Lambda}, \mathbf{U}$) at once while fixing the remaning ones.
+of the variables ($\mathbf{w}, \mathbf{\lambda}, \mathbf{U}$) at once while fixing the remaning ones.
 For the mathematical details of the solution, including a convergence proof, please refer to our paper at: 
 https://arxiv.org/pdf/1904.09792.pdf.
 
-In order to learn bipartite graphs, we take advantage from the fact that the eigenvalues of the adjacency matrix
+In order to learn bipartite graphs, we take advantage of the fact that the eigenvalues of the adjacency matrix
 of graph are symmetric around 0, and we formulate the following optimization problem:
 $$
 \begin{align}
 \begin{array}{ll}
-\underset{{\mathbf{w}},{\boldsymbol{\Psi}},{\mathbf{V}}}{\textsf{minimize}} &
+\underset{{\mathbf{w}},{\boldsymbol{\psi}},{\mathbf{V}}}{\textsf{minimize}} &
 \begin{array}{c}
 - \log \det (\mathcal{L} \mathbf{w}+\frac{1}{p}\mathbf{11}^{T})+\text{tr}({\mathbf{S}\mathcal{L} \mathbf{w}})+
   \alpha h(\mathcal{L}\mathbf{w})+
-  \frac{\nu}{2}\Vert \mathcal{A} \mathbf{w}-\mathbf{V} \boldsymbol{\Psi} \mathbf{V}^T \Vert_F^2,
+  \frac{\nu}{2}\Vert \mathcal{A} \mathbf{w}-\mathbf{V} {\sf Diag}(\boldsymbol{\psi}) \mathbf{V}^T \Vert_F^2,
 \end{array}\\
 \text{subject to} & \begin{array}[t]{l}
-\mathbf{w} \geq 0, \ \boldsymbol{\Psi} \in \mathcal{S}_{\boldsymbol{\Psi}}, \ \text{and} \ \mathbf{V}^T\mathbf{V}=\mathbf{I},
+\mathbf{w} \geq 0, \ \boldsymbol{\psi} \in \mathcal{S}_{\boldsymbol{\psi}}, \ \text{and} \ \mathbf{V}^T\mathbf{V}=\mathbf{I},
 \end{array}
 \end{array}
 \end{align}
 $$
 
-In a similar fashion, we construct the optimization problem to estimate a k-component bipartite graphs,
+In a similar fashion, we construct the optimization problem to estimate a $k$-component bipartite graph
 by combining the constraints related to the Laplacian and adjacency matrices.
 
 # Package usage
@@ -134,25 +135,30 @@ k-component bipartite graphs, respectively: `learn_k_component_graph`, `learn_bi
 in synthetic datasets.
 
 ## Learning a grid graph
-```{r}
+```{r, message=FALSE}
 library(spectralGraphTopology)
 library(igraph)
 library(viridis)
 set.seed(0)
 
+# generate the graph and the data from the graph
 p <- 64
 grid <- make_lattice(length = sqrt(p), dim = 2)
 n <- as.integer(100 * p)
 E(grid)$weight <- runif(gsize(grid), min = 1e-1, max = 3)
-Ltrue <- as.matrix(laplacian_matrix(grid))
-Wtrue <- diag(diag(Ltrue)) - Ltrue
-Y <- MASS::mvrnorm(n, mu = rep(0, p), Sigma = MASS::ginv(Ltrue))
+L_true <- as.matrix(laplacian_matrix(grid))  # true Laplacian matrix
+#W_true <- diag(diag(L_true)) - L_true        # true Adjacency matrix
+Y <- MASS::mvrnorm(n, mu = rep(0, p), Sigma = MASS::ginv(L_true))
+
+# estimate the graph
 S <- cov(Y)
 graph <- learn_k_component_graph(S, w0 = "qp", beta = 20, alpha = 5e-3,
                                  abstol = 1e-5, verbose = FALSE)
 graph$Adjacency[graph$Adjacency < 5e-2] <- 0
 estimated_grid <- graph_from_adjacency_matrix(graph$Adjacency,
                                               mode = "undirected", weighted = TRUE)
+
+# plots
 colors <- viridis(20, begin = 0, end = 1, direction = -1)
 c_scale <- colorRamp(colors)
 E(estimated_grid)$color = apply(c_scale(E(estimated_grid)$weight / max(E(estimated_grid)$weight)), 1,
@@ -162,6 +168,7 @@ E(grid)$color = apply(c_scale(E(grid)$weight / max(E(grid)$weight)), 1,
 V(estimated_grid)$color = "grey"
 V(grid)$color = "grey"
 la <- layout_on_grid(grid)
+par(mfrow = c(1, 2))
 plot(grid, layout = la, vertex.label = NA, vertex.size = 3)
 title("True grid graph")
 plot(estimated_grid, layout = la, vertex.label = NA, vertex.size = 3)
@@ -173,22 +180,22 @@ title("Estimated grid graph")
 The next snippet of code shows how to learn the clusters of a set of points
 distributed on the plane.
 
-```{r}
+```{r, message=FALSE}
 library(spectralGraphTopology)
 library(clusterSim)
 library(igraph)
-
 set.seed(42)
-# number of nodes per cluster
-n <- 100
-# generate datapoints
-circles3 <- shapes.circles3(n)
-# number of components
-k <- 3
-# compute sample correlation matrix
-S <- crossprod(t(circles3$data))
-# estimate underlying graph
+
+# generate the graph and the data from the graph
+n <- 100  # number of nodes per cluster
+circles3 <- shapes.circles3(n)  # generate datapoints
+k <- 3  # number of components
+S <- crossprod(t(circles3$data))  # compute sample correlation matrix
+
+# estimate the graph
 graph <- learn_k_component_graph(S, k = k, beta = 1, verbose = FALSE, fix_beta = FALSE, abstol = 1e-3)
+
+# plots
 # build network
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 # colorify nodes and edges
@@ -203,7 +210,7 @@ title("Estimated graph on the three circles dataset")
 ```
 
 Similar structures may be inferred as well. The plots below depict the results of applying
-`learn_k_component_graph` on a variaety of spatially distributed points.
+`learn_k_component_graph()` on a variaety of spatially distributed points.
 
 <center>
 ![](figures/circles2.png){ width=25% }
@@ -215,18 +222,18 @@ Similar structures may be inferred as well. The plots below depict the results o
 
 
 ## Learning a bipartite graph
-```{r}
+```{r, message=FALSE}
 library(spectralGraphTopology)
 library(igraph)
 library(viridis)
 library(corrplot)
 set.seed(42)
 
+# generate the graph and the data from the graph
 n1 <- 10
 n2 <- 6
 n <- n1 + n2
 pc <- .9
-
 bipartite <- sample_bipartite(n1, n2, type="Gnp", p = pc, directed=FALSE)
 # randomly assign edge weights to connected nodes
 E(bipartite)$weight <- runif(gsize(bipartite), min = 0, max = 1)
@@ -235,18 +242,21 @@ Ltrue <- as.matrix(laplacian_matrix(bipartite))
 Atrue <- diag(diag(Ltrue)) - Ltrue
 # get samples
 Y <- MASS::mvrnorm(100 * n, rep(0, n), Sigma = MASS::ginv(Ltrue))
-# compute sample covariance matrix
-S <- cov(Y)
-# estimate Adjacency matrix
+
+# estimate graph
+S <- cov(Y)  # compute sample covariance matrix
 graph <- learn_bipartite_graph(S, z = 4, verbose = FALSE)
 graph$Adjacency[graph$Adjacency < 1e-3] <- 0
-# Plot Adjacency matrices: true, noisy, and estimated
+
+# plots
+par(mfrow = c(1, 2))
 corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA,
          tl.pos = "n", cl.cex = 1.25, mar=c(0, 0, 3, 0))
 title("True Adjacency")
 corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA,
          tl.pos = "n", cl.cex = 1.25, mar=c(0, 0, 3, 0))
 title("Estimated Adjacency")
+
 # build networks
 estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 V(estimated_bipartite)$type <- c(rep(0, 10), rep(1, 6))
@@ -259,6 +269,7 @@ E(bipartite)$color = apply(c_scale(E(bipartite)$weight / max(E(bipartite)$weight
                       function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
 la = la[, c(2, 1)]
 # Plot networks: true and estimated
+par(mfrow = c(1, 2))
 plot(bipartite, layout = la, vertex.color=c("red","black")[V(bipartite)$type + 1],
      vertex.shape = c("square", "circle")[V(bipartite)$type + 1],
      vertex.label = NA, vertex.size = 5)
@@ -270,22 +281,28 @@ title("Estimated Bipartite Graph")
 ```
 
 ## Learning a 2-component bipartite graph
-```{r}
+```{r, message=FALSE}
 library(spectralGraphTopology)
 library(igraph)
 library(viridis)
 library(corrplot)
 set.seed(42)
 
+# generate the graph and the data from the graph
 w <- c(1, 0, 0, 1, 0, 1) * runif(6)
 Laplacian <- block_diag(L(w), L(w))
 Atrue <- diag(diag(Laplacian)) - Laplacian
 bipartite <- graph_from_adjacency_matrix(Atrue, mode = "undirected", weighted = TRUE)
 n <- ncol(Laplacian)
+
+# estimate graph
 Y <- MASS::mvrnorm(40 * n, rep(0, n), MASS::ginv(Laplacian))
 graph <- learn_bipartite_k_component_graph(cov(Y), k = 2, beta = 1e2, nu = 1e2, verbose = FALSE)
 graph$Adjacency[graph$Adjacency < 1e-2] <- 0
+
+# plots
 # Plot Adjacency matrices: true and estimated
+par(mfrow = c(1, 2))
 corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA,
          tl.pos = "n", cl.cex = 1.25, mar=c(0, 0, 3, 0))
 title("True Adjacency")
@@ -305,6 +322,7 @@ E(bipartite)$color = apply(c_scale(E(bipartite)$weight / max(E(bipartite)$weight
                            function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
 la = la[, c(2, 1)]
 # Plot networks: true and estimated
+par(mfrow = c(1, 2))
 plot(bipartite, layout = la,
      vertex.color = c("red","black")[V(bipartite)$type + 1],
      vertex.shape = c("square", "circle")[V(bipartite)$type + 1],
@@ -322,11 +340,11 @@ title("Estimated block bipartite graph")
 We use the following baseline algorithms for performance comparison:
 
 1. the generalized inverse of the sample covariance matrix, denoted as Naive;
-2. a quadratic program estimator given by $\textsf{minimize}\Vert\mathbf{S}^{\dagger} - \mathcal{L}\mathbf{w}\Vert_{F}$, where $\mathbf{S}^{\dagger}$ is the generalized inverse of the sample covariance matrix, denoted as QP;
+2. a quadratic program estimator given by $\textsf{minimize}_\mathbf{w}\quad\Vert\mathbf{S}^{\dagger} - \mathcal{L}\mathbf{w}\Vert_{F}$, where $\mathbf{S}^{\dagger}$ is the generalized inverse of the sample covariance matrix, denoted as QP;
 3. the Combinatorial Graph Laplacian proposed by [@Egilmez2017] denoted as CGL.
 
 The plots below show the performance in terms of F-score and relative error among the proposed algorithm, denoted as SGL,
-and the baseline ones when learning a grid graph with 64 nodes and edges uniformly drawn from [.1, 3].  For each algorithm,
+and the baseline ones when learning a grid graph with 64 nodes and edges uniformly drawn from the interval [.1, 3].  For each algorithm,
 the shaded area and the solid curve represent the standard deviation and the mean of several Monte Carlo realizations.
 It can be noticed that SGL outperforms all the baseline algorithms in all sample size regimes.  Such superior
 performance maybe be attributed to the highly structured nature of grid graphs.
@@ -363,13 +381,19 @@ adenocarcinoma (PRAD). This dataset consists of 801 labeled samples, in which ev
 The clustering results for these datasets are shown below. The code used for the cancer-rna dataset
 can be found at our GitHub repo: https://github.com/dppalomar/spectralGraphTopology/tree/master/benchmarks/cancer-rna
 
-```{r}
+```{r, message=FALSE}
 library(pals)
+
+# load data
 df <- read.csv("animals-dataset/features.txt", header = FALSE)
 names <- matrix(unlist(read.csv("animals-dataset/names.txt", header = FALSE)))
 Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
 p <- ncol(Y)
+
+# estimate graph
 graph <- learn_k_component_graph(cov(Y) + diag(1/3, p, p), w0 = "qp", beta = 1, k = 10, verbose = FALSE)
+
+# plots
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 colors <- brewer.reds(100)
 c_scale <- colorRamp(colors)
