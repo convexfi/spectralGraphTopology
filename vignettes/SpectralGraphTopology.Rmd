@@ -102,14 +102,13 @@ $\mathcal{S}_{\boldsymbol{\Lambda}} = \left\{\{\lambda_i\}_{i=1}^{p} | \lambda_1
 0 < \lambda_{k+1} \leq \lambda_{k+2} \leq \cdots \leq \lambda_{p} \right\}$.
 
 To solve this optimization problem, we employ a block majorization-minimization framework that updates each
-of the variables ($\mathbf{w}, \mathbf{\lambda}, \mathbf{U}$) at once while fixing the remaning ones.
+of the variables ($\mathbf{w}, \boldsymbol{\lambda}, \mathbf{U}$) at once while fixing the remaning ones.
 For the mathematical details of the solution, including a convergence proof, please refer to our paper at: 
 https://arxiv.org/pdf/1904.09792.pdf.
 
 In order to learn bipartite graphs, we take advantage of the fact that the eigenvalues of the adjacency matrix
 of graph are symmetric around 0, and we formulate the following optimization problem:
 $$
-\begin{align}
 \begin{array}{ll}
 \underset{{\mathbf{w}},{\boldsymbol{\psi}},{\mathbf{V}}}{\textsf{minimize}} &
 \begin{array}{c}
@@ -121,7 +120,6 @@ $$
 \mathbf{w} \geq 0, \ \boldsymbol{\psi} \in \mathcal{S}_{\boldsymbol{\psi}}, \ \text{and} \ \mathbf{V}^T\mathbf{V}=\mathbf{I},
 \end{array}
 \end{array}
-\end{align}
 $$
 
 In a similar fashion, we construct the optimization problem to estimate a $k$-component bipartite graph
@@ -147,7 +145,6 @@ grid <- make_lattice(length = sqrt(p), dim = 2)
 n <- as.integer(100 * p)
 E(grid)$weight <- runif(gsize(grid), min = 1e-1, max = 3)
 L_true <- as.matrix(laplacian_matrix(grid))  # true Laplacian matrix
-#W_true <- diag(diag(L_true)) - L_true        # true Adjacency matrix
 Y <- MASS::mvrnorm(n, mu = rep(0, p), Sigma = MASS::ginv(L_true))
 
 # estimate the graph
@@ -212,14 +209,10 @@ title("Estimated graph on the three circles dataset")
 Similar structures may be inferred as well. The plots below depict the results of applying
 `learn_k_component_graph()` on a variaety of spatially distributed points.
 
-<center>
-![](figures/circles2.png){ width=25% }
-![](figures/helix3d.png){ width=25% }
-![](figures/spirals.png){ width=25% }
-![](figures/worms.png){ width=25% }
-![](figures/twomoon.png){ width=25% }
-</center>
-
+```{r, out.width = "25%", fig.show = "hold", fig.align = "default"}
+knitr::include_graphics(c("figures/circles2.png", "figures/helix3d.png",
+                          "figures/twomoon.png", "figures/worms.png"))
+```
 
 ## Learning a bipartite graph
 ```{r, message=FALSE}
@@ -251,10 +244,10 @@ graph$Adjacency[graph$Adjacency < 1e-3] <- 0
 # plots
 par(mfrow = c(1, 2))
 corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA,
-         tl.pos = "n", cl.cex = 1.25, mar=c(0, 0, 3, 0))
+         tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 0))
 title("True Adjacency")
 corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA,
-         tl.pos = "n", cl.cex = 1.25, mar=c(0, 0, 3, 0))
+         tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 0))
 title("Estimated Adjacency")
 
 # build networks
@@ -304,10 +297,10 @@ graph$Adjacency[graph$Adjacency < 1e-2] <- 0
 # Plot Adjacency matrices: true and estimated
 par(mfrow = c(1, 2))
 corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA,
-         tl.pos = "n", cl.cex = 1.25, mar=c(0, 0, 3, 0))
+         tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 0))
 title("True Adjacency")
 corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA,
-         tl.pos = "n", cl.cex = 1.25, mar=c(0, 0, 3, 0))
+         tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 0))
 title("Estimated Adjacency")
 # Plot networks
 estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
@@ -349,10 +342,10 @@ the shaded area and the solid curve represent the standard deviation and the mea
 It can be noticed that SGL outperforms all the baseline algorithms in all sample size regimes.  Such superior
 performance maybe be attributed to the highly structured nature of grid graphs.
 
-<center>
-![](figures/fscore_grid.png){ width=60% }
-![](figures/relative_error_grid.png){ width=60% }
-</center>
+```{r, out.width = "60%"}
+knitr::include_graphics("figures/fscore_grid.png")
+knitr::include_graphics("figures/relative_error_grid.png")
+```
 
 In a similar fashion, the plots below shows algorithmic performance for modular graphs with 64 nodes and 4 modules,
 such that the probability of connection within module was set to 50%, whereas the probability of connection accross
@@ -360,10 +353,10 @@ modules was set to 1%. In this scenario, SGL outperforms the baselines algorithm
 performance to that of CGL.  This may be explained by the fact that the edges connecting nodes do not quite have a
 deterministic structure like those of the grid graphs.
 
-<center>
-![](figures/fscore_modular.png){ width=60% }
-![](figures/relative_error_modular.png){ width=60% }
-</center>
+```{r, out.width = "60%"}
+knitr::include_graphics("figures/fscore_modular.png")
+knitr::include_graphics("figures/relative_error_modular.png")
+```
 
 # Clustering
 
@@ -408,10 +401,9 @@ plot(net, vertex.label = names,
      vertex.label.color = "black")
 ```
 
-<center>
-![](figures/cancer-rna-graph.png){ width=60% }
-</center>
-
+```{r, out.width = "40%"}
+knitr::include_graphics("figures/cancer-rna-graph.png")
+```
 
 # References {-}
 \setlength{\parindent}{-0.2in}
