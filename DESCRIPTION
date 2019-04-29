@@ -27,11 +27,16 @@ Imports:
     Rcpp,
     RcppArmadillo,
     RcppEigen,
-    osqp
+    osqp,
+    MASS
 Remotes:
     google/patrick
 RoxygenNote: 6.1.1
 Suggests:
+    bookdown,
+    knitr,
+    prettydoc,
+    rmarkdown,
     R.rsp,
     testthat,
     patrick

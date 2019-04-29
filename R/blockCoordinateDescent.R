@@ -75,16 +75,6 @@ bipartite.w_update <- function(w, Aw, V, nu, psi, K, J, Lips) {
 }
 
 
-dregular.w_update <- function(w, Lw, Aw, U, beta, eta, lambda, d, K) {
-  n <- ncol(Aw)
-  ULmdUT <- crossprod(sqrt(lambda) * t(U))
-  grad_f <- Lstar(beta * (Lw - ULmdUT) + K + eta * diag(diag(Lw) - rep(d, n)))
-  w_update <- w - .5 * grad_f / ((beta + eta) * n + eta)
-  w_update[w_update < 0] <- 0
-  return(w_update)
-}
-
-
 laplacian.U_update <- function(Lw, k) {
   return(eigvec_sym(Lw)[, (k+1):ncol(Lw)])
 }
@@ -94,11 +84,6 @@ bipartite.V_update <- function(Aw, z) {
   n <- ncol(Aw)
   V <- eigvec_sym(Aw)
   return(cbind(V[, 1:(.5*(n - z))], V[, (1 + .5*(n + z)):n]))
-}
-
-
-dregular.U_update <- function(...) {
-  return(laplacian.U_update(...))
 }
 
 
@@ -162,11 +147,6 @@ bipartite.psi_update <- function(V, Aw, lb = -Inf, ub = Inf) {
   x[x < lb] = lb
   x[x > ub] = ub
   return(x)
-}
-
-
-dregular.lambda_update <- function(...) {
-  return(laplacian.lambda_update(...))
 }
 
 

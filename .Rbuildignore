@@ -9,12 +9,13 @@
 ^papers$
 ^.compileAttributes\.R$
 ^.roxygenize\.R$
+^.travis\.yml$
+^.circleci$
+^appveyor\.yml$
+^Dockerfile$
 ^Makefile$
 ^docs$
-^vignettes/SpectralGraphTopology_cache$
-^vignettes/SpectralGraphTopology_files$
-^vignettes/figures$
-^vignettes/animals-dataset$
 ^vignettes/SpectralGraphTopology\.Rmd$
 ^vignettes/ieee\.csl$
 ^vignettes/refs\.bib$
+^benchmarks$
