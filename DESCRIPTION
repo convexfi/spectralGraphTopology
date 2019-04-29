@@ -1,7 +1,7 @@
 Package: spectralGraphTopology
 Type: Package
 Title: Learning Laplacian and adjacency matrices of graphs via spectral constraints.
-Version: 0.1.0.9000
+Version: 0.1.0
 Description: This package provides estimators of Laplacian and adjacency matrices of Gaussian graphical models.
     Those estimators take advantage of the
     spectral properties from the graphical models as a prior information.  This allows
