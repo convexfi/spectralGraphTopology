@@ -46,28 +46,3 @@ joint.prior <- function(beta, nu, Lw, Aw, U, V, lambda, psi) {
   return(laplacian.prior(beta = beta, Lw = Lw, lambda = lambda, U = U) +
          bipartite.prior(nu = nu, Aw = Aw, psi = psi, V = V))
 }
-
-
-dregular.obj_fun <- function(Lw, Aw, U, lambda, beta, eta, K, d) {
-  return(dregular.likelihood(Lw, lambda, K) +
-         dregular.prior(beta1, beta2, Lw, Aw, U, lambda, d))
-}
-
-
-dregular.likelihood <- function(...) {
-  return(laplacian.likelihood(...))
-}
-
-
-dregular.prior <- function(beta, eta, Lw, Aw, U, lambda, d) {
-  return(laplacian.prior(beta, Lw, lambda, U) +
-         .5 * eta * norm(Aw + Lw - diag(d, ncol(Lw)), type="F")^2)
-}
-
-
-normalized_laplacian.lagragian <- function(lambda, Theta, K, M, U, beta) {
-  ULmdUT <- crossprod(sqrt(lambda) * t(U))
-  return(- sum(log(lambda)) + sum(diag(Theta %*% K))
-         + sum(diag(t(M) %*% (Theta - crossprod(sqrt(lambda) * t(U)))))
-         + .5 * beta * norm(Theta - ULmdUT, type="F")^2)
-}
