@@ -27,9 +27,12 @@ knit_hooks$set(pngquant = hook_pngquant)
   <img width = "200" src="./benchmarks/clusters/code/animation/circles3_reduced.gif"/>
 </p>
 
-*spectralGraphTopology*: learning the topology of graphs by leveraging spectral constraints.
-Based on: S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar (2019). A unified framework
-for structured graph learning via spectral constraints.
+**spectralGraphTopology** provides estimators to learn k-component, bipartite,
+and k-component bipartite graphs from data by imposing spectral constraints
+on the eigenvalues and eigenvectors of the Laplacian and adjacency matrices.
+Those estimators leverages spectral properties of the graphical models as a
+prior information, which turn out to play key roles in unsupervised machine
+learning tasks such as community detection.
 
 ## Installation
 
@@ -82,6 +85,16 @@ For more examples, check out our [gallery](https://mirca.github.io/spectralGraph
 ## Contributing
 We welcome all sorts of contributions. Please feel free to open an issue
 to report a bug or discuss a feature request.
+
+## Citation
+If you made use of this software please consider citing:
+* S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar (2019). A unified framework
+  for structured graph learning via spectral constraints. https://arxiv.org/abs/1904.09792
+
+In case you made use of the function `cluster_k_component_graph`, consider citing:
+* Nie, Feiping and Wang, Xiaoqian and Jordan, Michael I. and Huang, Heng.
+  The Constrained Laplacian Rank Algorithm for Graph-based Clustering, 2016,
+  AAAI'16. http://dl.acm.org/citation.cfm?id=3016100.3016174
 
 ## Links
 Package: [GitHub](https://github.com/dppalomar/spectralGraphTopology)
