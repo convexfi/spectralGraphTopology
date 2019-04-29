@@ -32,6 +32,7 @@ Remotes:
     google/patrick
 RoxygenNote: 6.1.1
 Suggests:
+    R.rsp,
     testthat,
     patrick
 VignetteBuilder:

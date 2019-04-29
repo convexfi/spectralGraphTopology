@@ -92,8 +92,8 @@ If you made use of this software please consider citing:
   for structured graph learning via spectral constraints. https://arxiv.org/abs/1904.09792
 
 In case you made use of the function `cluster_k_component_graph`, consider citing:
-* Nie, Feiping and Wang, Xiaoqian and Jordan, Michael I. and Huang, Heng.
-  The Constrained Laplacian Rank Algorithm for Graph-based Clustering, 2016,
+* N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016).
+  The Constrained Laplacian Rank Algorithm for Graph-based Clustering,
   AAAI'16. http://dl.acm.org/citation.cfm?id=3016100.3016174
 
 ## Links

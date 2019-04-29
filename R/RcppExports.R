@@ -45,7 +45,6 @@ A <- function(w) {
 #' @param n number of columns/rows
 #' @return M the composition of Lstar and L
 #'
-#' @export
 Mmat <- function(n) {
     .Call('_spectralGraphTopology_Mmat', PACKAGE = 'spectralGraphTopology', n)
 }
@@ -56,7 +55,6 @@ Mmat <- function(n) {
 #' @param n number of columns/rows
 #' @return M the composition of Astar and A
 #'
-#' @export
 Pmat <- function(n) {
     .Call('_spectralGraphTopology_Pmat', PACKAGE = 'spectralGraphTopology', n)
 }
@@ -67,7 +65,6 @@ Pmat <- function(n) {
 #' @param n the dimension of L
 #' @return R matrix such that vec(L(w)) = Rw
 #'
-#' @export
 vecLmat <- function(n) {
     .Call('_spectralGraphTopology_vecLmat', PACKAGE = 'spectralGraphTopology', n)
 }
@@ -79,7 +76,6 @@ vecLmat <- function(n) {
 #' @param M input matrix
 #' @return w vector such that w = vec(M)
 #'
-#' @export
 vec <- function(M) {
     .Call('_spectralGraphTopology_vec', PACKAGE = 'spectralGraphTopology', M)
 }
@@ -89,7 +85,6 @@ vec <- function(M) {
 #' @param M matrix
 #' @return w vector
 #'
-#' @export
 Lstar <- function(M) {
     .Call('_spectralGraphTopology_Lstar', PACKAGE = 'spectralGraphTopology', M)
 }
@@ -99,7 +94,6 @@ Lstar <- function(M) {
 #' @param M matrix
 #' @return w vector
 #'
-#' @export
 Astar <- function(M) {
     .Call('_spectralGraphTopology_Astar', PACKAGE = 'spectralGraphTopology', M)
 }
@@ -109,7 +103,6 @@ Astar <- function(M) {
 #' @param M Laplacian matrix
 #' @return w the weight vector of the graph
 #'
-#' @export
 Linv <- function(M) {
     .Call('_spectralGraphTopology_Linv', PACKAGE = 'spectralGraphTopology', M)
 }
@@ -119,7 +112,6 @@ Linv <- function(M) {
 #' @param M Laplacian matrix
 #' @return w the weight vector of the graph
 #'
-#' @export
 Ainv <- function(M) {
     .Call('_spectralGraphTopology_Ainv', PACKAGE = 'spectralGraphTopology', M)
 }

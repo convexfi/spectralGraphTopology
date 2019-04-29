@@ -38,7 +38,7 @@ rcmdcheck::rcmdcheck()
 devtools::build()
 #devtools::build_win()  #to check under windows
 #R CMD build .  # this is to generate tarball
-#R CMD build . --compact-vignettes=gs+qpdf  
+#R CMD build . --compact-vignettes=gs+qpdf
 #R CMD check spectralGraphTopology_0.1.0.tar.gz --as-cran  # this is before submission to CRAN
 #R CMD install spectralGraphTopology_0.1.0.tar.gz
 #submit the tarball directly via the webform: https://cran.r-project.org/submit.html

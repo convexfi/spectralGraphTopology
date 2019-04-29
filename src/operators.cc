@@ -57,7 +57,6 @@ Eigen::MatrixXd A(const Eigen::VectorXd& w) {
 //' @param n number of columns/rows
 //' @return M the composition of Lstar and L
 //'
-//' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd Mmat(const int n) {
   Eigen::VectorXd e = Eigen::VectorXd::Zero(n);
@@ -79,7 +78,6 @@ Eigen::MatrixXd Mmat(const int n) {
 //' @param n number of columns/rows
 //' @return M the composition of Astar and A
 //'
-//' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd Pmat(const int n) {
   Eigen::VectorXd e = Eigen::VectorXd::Zero(n);
@@ -101,7 +99,6 @@ Eigen::MatrixXd Pmat(const int n) {
 //' @param n the dimension of L
 //' @return R matrix such that vec(L(w)) = Rw
 //'
-//' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd vecLmat(const int n) {
   const int ncols = .5 * n * (n - 1);
@@ -127,7 +124,6 @@ Eigen::MatrixXd vecLmat(const int n) {
 //' @param M input matrix
 //' @return w vector such that w = vec(M)
 //'
-//' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd vec(const Eigen::MatrixXd& M) {
   Eigen::MatrixXd w(M.size(), 1);
@@ -147,7 +143,6 @@ Eigen::MatrixXd vec(const Eigen::MatrixXd& M) {
 //' @param M matrix
 //' @return w vector
 //'
-//' @export
 // [[Rcpp::export]]
 Eigen::VectorXd Lstar(const Eigen::MatrixXd& M) {
   int N = M.cols();
@@ -173,7 +168,6 @@ Eigen::VectorXd Lstar(const Eigen::MatrixXd& M) {
 //' @param M matrix
 //' @return w vector
 //'
-//' @export
 // [[Rcpp::export]]
 Eigen::VectorXd Astar(const Eigen::MatrixXd& M) {
   int N = M.cols();
@@ -199,7 +193,6 @@ Eigen::VectorXd Astar(const Eigen::MatrixXd& M) {
 //' @param M Laplacian matrix
 //' @return w the weight vector of the graph
 //'
-//' @export
 // [[Rcpp::export]]
 Eigen::VectorXd Linv(const Eigen::MatrixXd& M) {
   int N = M.cols();
@@ -222,7 +215,6 @@ Eigen::VectorXd Linv(const Eigen::MatrixXd& M) {
 //' @param M Laplacian matrix
 //' @return w the weight vector of the graph
 //'
-//' @export
 // [[Rcpp::export]]
 Eigen::VectorXd Ainv(const Eigen::MatrixXd& M) {
   int N = M.cols();
