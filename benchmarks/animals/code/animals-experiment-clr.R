@@ -11,7 +11,7 @@ run_animals <- function(k) {
   names <- matrix(unlist(read.csv("animals_names.txt", header = FALSE)))
   Y <- t(matrix(as.numeric(unlist(df)), nrow = nrow(df)))
   N <- ncol(Y)
-  graph <- constr_laplacian_rank(t(Y), k = k, m = 5)
+  graph <- cluster_k_component_graph(t(Y), k = k, m = 5)
   print(graph$elapsed_time)
   net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
   colors <- brewer.reds(100)

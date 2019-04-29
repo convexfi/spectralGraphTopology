@@ -8,7 +8,7 @@ unique_labels <- c(unique(labels))
 # estimate graph
 Y <- matrix(unlist(wine_df[, 2:ncol(wine_df)]), nrow = nrow(wine_df))
 k <- length(unique(labels))
-graph <- constr_laplacian_rank(Y, k = k)
+graph <- cluster_k_component_graph(Y, k = k)
 # plots
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 results <- components(net)$membership

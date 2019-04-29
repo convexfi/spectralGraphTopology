@@ -9,7 +9,6 @@ unique_labels <- unique(labels)
 k <- length(unique_labels)
 print(k)
 graph <- learn_k_component_graph(t(Y), k = 5, m = 10, beta = 10, fix_beta = TRUE, maxiter = 5000)
-#graph <- constr_laplacian_rank(t(Y), k = k)
 clusters <- numeric(k)
 for (i in 1:k) {
   clusters[labels == unique_labels[i]] <- i

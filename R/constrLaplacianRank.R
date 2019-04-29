@@ -1,5 +1,55 @@
-constr_laplacian_rank <- function(Y, k = 1, m = 5, S0 = NULL, lmd = 1, eig_tol = 1e-9,
-                                  edge_tol = 1e-6, maxiter = 1000, regularization_type = 2) {
+#' @title Cluster a k-component graph from data using the Constrained Laplacian Rank algorithm
+#'
+#' Cluster a k-component graph on the basis of an observed data matrix
+#'
+#' @param Y a pxn data matrix, where p is the number of nodes and n is the number of
+#'        features (or data points per node)
+#' @param k the number of components of the graph
+#' @param m the maximum number of possible connections for a given node used
+#'        to build an affinity matrix
+#' @param lmd L2-norm regularization hyperparameter
+#' @param eig_tol value below which eigenvalues are considered to be zero
+#' @param edge_tol value below which edge weights are considered to be zero
+#' @param maxiter the maximum number of iterations
+#' @return A list containing the following elements:
+#' \item{\code{Laplacian}}{the estimated Laplacian Matrix}
+#' \item{\code{Adjacency}}{the estimated Adjacency Matrix}
+#' \item{\code{eigvals}}{the eigenvalues of the Laplacian Matrix}
+#' \item{\code{lmd_seq}}{sequence of lmd values at every iteration}
+#' \item{\code{elapsed_time}}{elapsed time at every iteration}
+#' @author Ze Vinicius and Daniel Palomar
+#' @references Nie, Feiping and Wang, Xiaoqian and Jordan, Michael I. and Huang, Heng.
+#'             The Constrained Laplacian Rank Algorithm for Graph-based Clustering, 2016,
+#'             AAAI'16. http://dl.acm.org/citation.cfm?id=3016100.3016174
+#' @examples
+#' library(spectralGraphTopology)
+#' library(igraph)
+#' library(pals)
+#' library(kernlab)
+#' data(iris)
+#' n <- nrow(iris)
+#' Y <- t(matrix(as.numeric(unlist(iris[, 1:4])), nrow = nrow(iris)))
+#' names <- c(as.character(iris[, 5]))
+#' unique_names <- c(as.character(unique(iris[, 5])))
+#' graph <- cluster_k_component_graph(t(Y), k = 3, m = 5)
+#' net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+#' clusters <- array(0, length(names))
+#' for (i in c(1:length(unique_names)))
+#'   clusters[unique_names[i] == names] <- i
+#' V(net)$cluster <- clusters
+#' colors <- c("#34495E", "#706FD3", "#FF5252")
+#' E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
+#'                      function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
+#'                                         colors[V(net)$cluster[x[1]]], brewer.greys(5)[2]))
+#' V(net)$color <- colors[clusters]
+#' gr = .5 * (1 + sqrt(5))
+#' setEPS()
+#' postscript("iris-clr.ps", family = "Times", height = 5, width = gr * 3.5)
+#' plot(net, vertex.label = NA, vertex.size = 3)
+#' dev.off()
+#' @export
+cluster_k_component_graph <- function(Y, k = 1, m = 5, lmd = 1, eig_tol = 1e-9,
+                                      edge_tol = 1e-6, maxiter = 1000) {
   time_seq <- c(0)
   start_time <- proc.time()[3]
   A <- build_initial_graph(Y, m)
@@ -21,19 +71,10 @@ constr_laplacian_rank <- function(Y, k = 1, m = 5, S0 = NULL, lmd = 1, eig_tol =
                                    total = maxiter, clear = FALSE, width = 100)
   for (ii in c(1:maxiter)) {
     V <- pairwise_matrix_rownorm(F)
-    if (regularization_type == 1) {
-      for (i in c(1:n)) {
-        u <- .5 / abs(S[i, ] - A[i, ])
-        p <- u * A[i, ] - .5 * lmd * V[i, ]
-        qp <- quadprog::solve.QP(Dmat = diag(u), dvec = p, Amat = Amat, bvec = bvec, meq = 1)
-        S[i, ] <- qp$solution
-      }
-    } else if (regularization_type == 2) {
-      for (i in c(1:n)) {
-        p <- A[i, ] - .5 * lmd * V[i, ]
-        qp <- quadprog::solve.QP(Dmat = diag(n), dvec = p, Amat = Amat, bvec = bvec, meq = 1)
-        S[i, ] <- qp$solution
-      }
+    for (i in c(1:n)) {
+      p <- A[i, ] - .5 * lmd * V[i, ]
+      qp <- quadprog::solve.QP(Dmat = diag(n), dvec = p, Amat = Amat, bvec = bvec, meq = 1)
+      S[i, ] <- qp$solution
     }
     DS <- diag(.5 * colSums(S + t(S)))
     LS <- DS - .5 * (S + t(S))
@@ -52,7 +93,7 @@ constr_laplacian_rank <- function(Y, k = 1, m = 5, S0 = NULL, lmd = 1, eig_tol =
   }
   LS[abs(LS) < edge_tol] <- 0
   AS <- diag(diag(LS)) - LS
-  return(list(Laplacian = LS, Adjacency = AS, eigenvalues = eig_vals,
+  return(list(Laplacian = LS, Adjacency = AS, eigenvalues = eigval_sym(LS),
               lmd_seq = lmd_seq, elapsed_time = time_seq))
 }
 
@@ -71,9 +112,4 @@ build_initial_graph <- function(Y, m) {
     }
   }
   return(A)
-}
-
-
-objective_function <- function(A, S, LS, F, lmd) {
-  return(sum(abs(A - S)) + 2 * lmd * sum(diag(t(F) %*% LS %*% F)))
 }

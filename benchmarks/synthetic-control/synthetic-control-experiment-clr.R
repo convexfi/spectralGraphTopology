@@ -11,7 +11,7 @@ unique_labels <- c(1:6)
 print(length(unique_labels))
 for (i in unique_labels)
   labels <- c(labels, rep(i, 100))
-graph <- constr_laplacian_rank(Y, k = length(unique_labels))
+graph <- cluster_k_component_graph(Y, k = length(unique_labels))
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected",
                                    weighted = TRUE)
 V(net)$cluster <- labels

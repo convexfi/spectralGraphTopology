@@ -37,7 +37,7 @@ for (i in c(1:n_curves)) {
 print(meta_data)
 graph <- learn_k_component_graph(Y, k = 2, w0 = "qp", beta = 1e2)
 print(graph$convergence)
-graph_clr <- constr_laplacian_rank(Y, k = 2)
+graph_clr <- cluster_k_component_graph(Y, k = 2)
 gr = .5 * (1 + sqrt(5))
 est_net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 lasso_net <- graph_from_adjacency_matrix(graph_clr$Adjacency, mode = "undirected", weighted = TRUE)
