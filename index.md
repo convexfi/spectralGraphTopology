@@ -23,7 +23,7 @@ graphs by leveraing prior information in their structural form.
 ### Dependencies
 
 The R version of **spectralGraphTopology** is build on top of awesome R packages including **Rcpp**,
-**RcppEigen**, and **osqp**. All these packages can be installed via CRAN.
+**RcppEigen**, and **igraph**. All these packages can be installed via CRAN.
 
 ### Installation
 
