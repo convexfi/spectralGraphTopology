@@ -209,7 +209,7 @@ title("Estimated graph on the three circles dataset")
 Similar structures may be inferred as well. The plots below depict the results of applying
 `learn_k_component_graph()` on a variaety of spatially distributed points.
 
-```{r, out.width = "25%", fig.show = "hold", fig.align = "default"}
+```{r, echo=FALSE, out.width = "25%", fig.show = "hold", fig.align = "default"}
 knitr::include_graphics(c("figures/circles2.png", "figures/helix3d.png",
                           "figures/twomoon.png", "figures/worms.png"))
 ```
@@ -249,7 +249,6 @@ title("True Adjacency")
 corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA,
          tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 0))
 title("Estimated Adjacency")
-
 # build networks
 estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 V(estimated_bipartite)$type <- c(rep(0, 10), rep(1, 6))
@@ -333,7 +332,7 @@ title("Estimated block bipartite graph")
 We use the following baseline algorithms for performance comparison:
 
 1. the generalized inverse of the sample covariance matrix, denoted as Naive;
-2. a quadratic program estimator given by $\textsf{minimize}_\mathbf{w}\quad\Vert\mathbf{S}^{\dagger} - \mathcal{L}\mathbf{w}\Vert_{F}$, where $\mathbf{S}^{\dagger}$ is the generalized inverse of the sample covariance matrix, denoted as QP;
+2. a quadratic program estimator given by $\textsf{min}_\mathbf{w}\;\Vert\mathbf{S}^{\dagger} - \mathcal{L}\mathbf{w}\Vert_{F}$, where $\mathbf{S}^{\dagger}$ is the generalized inverse of the sample covariance matrix, denoted as QP;
 3. the Combinatorial Graph Laplacian proposed by [@Egilmez2017] denoted as CGL.
 
 The plots below show the performance in terms of F-score and relative error among the proposed algorithm, denoted as SGL,
@@ -342,7 +341,7 @@ the shaded area and the solid curve represent the standard deviation and the mea
 It can be noticed that SGL outperforms all the baseline algorithms in all sample size regimes.  Such superior
 performance maybe be attributed to the highly structured nature of grid graphs.
 
-```{r, out.width = "60%"}
+```{r, echo=FALSE, out.width = "60%"}
 knitr::include_graphics("figures/fscore_grid.png")
 knitr::include_graphics("figures/relative_error_grid.png")
 ```
@@ -353,7 +352,7 @@ modules was set to 1%. In this scenario, SGL outperforms the baselines algorithm
 performance to that of CGL.  This may be explained by the fact that the edges connecting nodes do not quite have a
 deterministic structure like those of the grid graphs.
 
-```{r, out.width = "60%"}
+```{r, echo=FALSE, out.width = "60%"}
 knitr::include_graphics("figures/fscore_modular.png")
 knitr::include_graphics("figures/relative_error_modular.png")
 ```
@@ -401,7 +400,7 @@ plot(net, vertex.label = names,
      vertex.label.color = "black")
 ```
 
-```{r, out.width = "40%"}
+```{r, echo=FALSE, out.width = "40%"}
 knitr::include_graphics("figures/cancer-rna-graph.png")
 ```
 
