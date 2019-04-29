@@ -246,10 +246,10 @@ graph$Adjacency[graph$Adjacency < 1e-3] <- 0
 # plots
 par(mfrow = c(1, 2))
 corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA,
-         tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 0))
+         tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 2))
 title("True Adjacency")
 corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square",
-         addgrid.col = NA, tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 0))
+         addgrid.col = NA, tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 2))
 title("Estimated Adjacency")
 # build networks
 estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected",
@@ -302,10 +302,10 @@ graph$Adjacency[graph$Adjacency < 1e-2] <- 0
 # Plot Adjacency matrices: true and estimated
 par(mfrow = c(1, 2))
 corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA,
-         tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 0))
+         tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 2))
 title("True Adjacency")
 corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square",
-         addgrid.col = NA, tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 0))
+         addgrid.col = NA, tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 2))
 title("Estimated Adjacency")
 # Plot networks
 estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected",
