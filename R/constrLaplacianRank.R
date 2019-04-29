@@ -8,8 +8,8 @@
 #' @param m the maximum number of possible connections for a given node used
 #'        to build an affinity matrix
 #' @param lmd L2-norm regularization hyperparameter
-#' @param eig_tol value below which eigenvalues are considered to be zero
-#' @param edge_tol value below which edge weights are considered to be zero
+#' @param eigtol value below which eigenvalues are considered to be zero
+#' @param edgetol value below which edge weights are considered to be zero
 #' @param maxiter the maximum number of iterations
 #' @return A list containing the following elements:
 #' \item{\code{Laplacian}}{the estimated Laplacian Matrix}
@@ -48,21 +48,21 @@
 #' plot(net, vertex.label = NA, vertex.size = 3)
 #' dev.off()
 #' @export
-cluster_k_component_graph <- function(Y, k = 1, m = 5, lmd = 1, eig_tol = 1e-9,
-                                      edge_tol = 1e-6, maxiter = 1000) {
+cluster_k_component_graph <- function(Y, k = 1, m = 5, lmd = 1, eigtol = 1e-9,
+                                      edgetol = 1e-6, maxiter = 1000) {
   time_seq <- c(0)
   start_time <- proc.time()[3]
   A <- build_initial_graph(Y, m)
   n <- ncol(A)
-  if (is.null(S0))
-    S <- matrix(1/n, n, n)
-  else
-    S <- S0
+  S <- matrix(1/n, n, n)
   DS <- diag(.5 * colSums(S + t(S)))
   LS <-  DS - .5 * (S + t(S))
   DA <- diag(.5 * colSums(A + t(A)))
   LA <- DA - .5 * (A + t(A))
-  F <- matrix(eigvec_sym(LA)[, 1:k])
+  if (k == 1)
+    F <- matrix(eigvec_sym(LA)[, 1:k])
+  else
+    F <- eigvec_sym(LA)[, 1:k]
   # bounds for variables in the QP solver
   bvec <- c(1, rep(0, n))
   Amat <- cbind(rep(1, n), diag(n))
@@ -80,7 +80,7 @@ cluster_k_component_graph <- function(Y, k = 1, m = 5, lmd = 1, eig_tol = 1e-9,
     LS <- DS - .5 * (S + t(S))
     F <- eigvec_sym(LS)[, 1:k]
     eig_vals <- eigval_sym(LS)
-    n_zero_eigenvalues <- sum(abs(eig_vals) < eig_tol)
+    n_zero_eigenvalues <- sum(abs(eig_vals) < eigtol)
     time_seq <- c(time_seq, proc.time()[3] - start_time)
     pb$tick(token = list(lmd = lmd, null_eigvals = n_zero_eigenvalues))
     if (k < n_zero_eigenvalues)
@@ -91,12 +91,11 @@ cluster_k_component_graph <- function(Y, k = 1, m = 5, lmd = 1, eig_tol = 1e-9,
       break
     lmd_seq <- c(lmd_seq, lmd)
   }
-  LS[abs(LS) < edge_tol] <- 0
+  LS[abs(LS) < edgetol] <- 0
   AS <- diag(diag(LS)) - LS
-  return(list(Laplacian = LS, Adjacency = AS, eigenvalues = eigval_sym(LS),
+  return(list(Laplacian = LS, Adjacency = AS, eigenvalues = eig_vals,
               lmd_seq = lmd_seq, elapsed_time = time_seq))
 }
-
 
 build_initial_graph <- function(Y, m) {
   n <- nrow(Y)

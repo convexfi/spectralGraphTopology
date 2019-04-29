@@ -28,7 +28,11 @@ Imports:
     RcppArmadillo,
     RcppEigen,
     osqp,
-    MASS
+    MASS,
+    Matrix,
+    progress,
+    quadprog,
+    rlist
 Remotes:
     google/patrick
 RoxygenNote: 6.1.1
@@ -39,7 +43,13 @@ Suggests:
     rmarkdown,
     R.rsp,
     testthat,
-    patrick
+    patrick,
+    clusterSim,
+    corrplot,
+    igraph,
+    kernlab,
+    pals,
+    viridis
 VignetteBuilder:
     bookdown,
     knitr,

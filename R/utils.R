@@ -22,7 +22,6 @@ relative_error <- function(Ltrue, Lest) {
 #' @param Lest estimated Laplacian matrix
 #' @param Lscm estimated Laplacian matrix via the generalized inverse of the
 #'        of the sample covariance matrix
-#' @export
 prial <- function(Ltrue, Lest, Lscm) {
   return(100 * (1 - (norm(Lest - Ltrue, type = "F") /
                      norm(Lnaive - Ltrue, type = "F"))^2))

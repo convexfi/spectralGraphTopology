@@ -79,7 +79,7 @@
 #' @export
 learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0,
                                     beta = 1e4, beta_max = 1e6, fix_beta = TRUE, rho = 1e-2, m = 7,
-                                    maxiter = 1e4, abstol = 1e-6, reltol = 1e-4, eig_tol = 1e-9,
+                                    maxiter = 1e4, abstol = 1e-6, reltol = 1e-4, eigtol = 1e-9,
                                     record_objective = FALSE, record_weights = FALSE, verbose = TRUE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
     A <- build_initial_graph(S, m = m)
@@ -146,7 +146,7 @@ learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naiv
                            relerr = 2 * max(werr / (w + w0), na.rm = 'ignore')))
     }
     if (!fix_beta) {
-      n_zero_eigenvalues <- sum(abs(eigvals) < eig_tol)
+      n_zero_eigenvalues <- sum(abs(eigvals) < eigtol)
       if (k <= n_zero_eigenvalues)
         beta <- (1 + rho) * beta
       else if (k > n_zero_eigenvalues)
@@ -200,8 +200,6 @@ learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naiv
 #' @param maxiter the maximum number of iterations
 #' @param abstol absolute tolerance on the weight vector w
 #' @param reltol relative tolerance on the weight vector w
-#' @param record_objective whether to record the objective function values at
-#'        each iteration
 #' @param record_weights whether to record the edge values at each iteration
 #' @param verbose whether to output a progress bar showing the evolution of the
 #'        iterations
@@ -441,7 +439,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
 #' bipartite <- graph_from_adjacency_matrix(Atrue, mode = "undirected", weighted = TRUE)
 #' n <- ncol(Laplacian)
 #' Y <- MASS::mvrnorm(40 * n, rep(0, n), MASS::ginv(Laplacian))
-#' graph <- learn_k_component_bipartite(cov(Y), k = 2, beta = 1e2, nu = 1e2, verbose = FALSE)
+#' graph <- learn_bipartite_k_component_graph(cov(Y), k = 2, beta = 1e2, nu = 1e2, verbose = FALSE)
 #' graph$Adjacency[graph$Adjacency < 1e-2] <- 0
 #' # Plot Adjacency matrices: true, noisy, and estimated
 #' corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
@@ -472,7 +470,7 @@ learn_bipartite_k_component_graph <- function(S, is_data_matrix = FALSE, z = 0, 
                                               w0 = "naive", m = 7, alpha = 0., beta = 1e4,
                                               rho = 1e-2, fix_beta = TRUE, beta_max = 1e6, nu = 1e4,
                                               lb = 0, ub = 1e4, maxiter = 1e4, abstol = 1e-6,
-                                              reltol = 1e-4, eig_tol = 1e-9,
+                                              reltol = 1e-4, eigtol = 1e-9,
                                               record_weights = FALSE, record_objective = FALSE, verbose = TRUE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
     A <- build_initial_graph(S, m = m)
@@ -538,7 +536,7 @@ learn_bipartite_k_component_graph <- function(S, is_data_matrix = FALSE, z = 0, 
     if (verbose)
       pb$tick(token = list(beta = beta, kth_eigval = eigvals[k], relerr = 2*max(werr/(w + w0), na.rm = 'ignore')))
     if (!fix_beta) {
-      n_zero_eigenvalues <- sum(abs(eigvals) < eig_tol)
+      n_zero_eigenvalues <- sum(abs(eigvals) < eigtol)
       if (k < n_zero_eigenvalues)
         beta <- (1 + rho) * beta
       else if (k > n_zero_eigenvalues)

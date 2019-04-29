@@ -7,21 +7,6 @@
 
 using namespace Rcpp;
 
-// Theta_update
-Eigen::MatrixXd Theta_update(const Eigen::MatrixXd& U, const Eigen::VectorXd& lambda, const Eigen::MatrixXd& K, const Eigen::MatrixXd& M, const double beta);
-RcppExport SEXP _spectralGraphTopology_Theta_update(SEXP USEXP, SEXP lambdaSEXP, SEXP KSEXP, SEXP MSEXP, SEXP betaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type U(USEXP);
-    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type K(KSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type M(MSEXP);
-    Rcpp::traits::input_parameter< const double >::type beta(betaSEXP);
-    rcpp_result_gen = Rcpp::wrap(Theta_update(U, lambda, K, M, beta));
-    return rcpp_result_gen;
-END_RCPP
-}
 // eigval_sym
 arma::vec eigval_sym(arma::mat M);
 RcppExport SEXP _spectralGraphTopology_eigval_sym(SEXP MSEXP) {
@@ -235,7 +220,6 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_spectralGraphTopology_Theta_update", (DL_FUNC) &_spectralGraphTopology_Theta_update, 5},
     {"_spectralGraphTopology_eigval_sym", (DL_FUNC) &_spectralGraphTopology_eigval_sym, 1},
     {"_spectralGraphTopology_eigvec_sym", (DL_FUNC) &_spectralGraphTopology_eigvec_sym, 1},
     {"_spectralGraphTopology_inv_sympd", (DL_FUNC) &_spectralGraphTopology_inv_sympd, 1},
