@@ -4,7 +4,6 @@ matrix:
       warnings_are_errors: false
       r:
         - release
-        - devel
       cache: packages
       r_packages:
         - covr
