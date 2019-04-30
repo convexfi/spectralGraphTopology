@@ -1,5 +1,4 @@
 Package: spectralGraphTopology
-Type: Package
 Title: Learning graphs from data via spectral constraints
 Version: 0.1.0
 Description: This package provides estimators to learn k-component, bipartite,
