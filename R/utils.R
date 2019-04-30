@@ -24,5 +24,5 @@ relative_error <- function(Ltrue, Lest) {
 #'        of the sample covariance matrix
 prial <- function(Ltrue, Lest, Lscm) {
   return(100 * (1 - (norm(Lest - Ltrue, type = "F") /
-                     norm(Lnaive - Ltrue, type = "F"))^2))
+                     norm(Lscm - Ltrue, type = "F"))^2))
 }

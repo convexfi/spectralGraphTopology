@@ -142,7 +142,7 @@ bipartite.psi_update <- function(V, Aw, lb = -Inf, ub = Inf) {
   c <- diag(t(V) %*% Aw %*% V)
   n <- length(c)
   c_tilde <- .5 * (rev(c[(n/2 + 1):n]) - c[1:(n/2)])
-  x <- isoreg(rev(c_tilde))$yf
+  x <- stats::isoreg(rev(c_tilde))$yf
   x <- c(-rev(x), x)
   x[x < lb] = lb
   x[x > ub] = ub
