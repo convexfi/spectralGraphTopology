@@ -32,7 +32,7 @@ test_that("learn_bipartite_graph converges with simple bipartite graph", {
   Adjacency <- A(w)
   n <- ncol(Adjacency)
   Y <- MASS::mvrnorm(n * 500, rep(0, n), MASS::ginv(L(w)))
-  res <- learn_bipartite_graph(cov(Y))
+  res <- learn_bipartite_graph(cov(Y), w0 = "qp")
   expect_that(res$convergence, is_true())
   expect_that(relative_error(Adjacency, res$Adjacency) < 1e-1, is_true())
   expect_that(metrics(Adjacency, res$Adjacency, 1e-1)[1] > .9, is_true())
