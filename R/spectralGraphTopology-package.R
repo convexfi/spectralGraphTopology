@@ -17,12 +17,9 @@
 #'
 #' @section Help:
 #' For a quick help see the README file:
-#' \href{https://cran.r-project.org/package=spectralGraphTopology/readme/README.html}{CRAN-README} and
 #' \href{https://raw.githack.com/dppalomar/spectralGraphTopology/master/README.html}{GitHub-README}.
 #'
 #' For more details see the vignette:
-#' \href{https://cran.r-project.org/package=spectralGraphTopology/vignettes/SpectralGraphTopology.html}{CRAN-html-vignette},
-#' \href{https://cran.r-project.org/package=spectralGraphTopology/vignettes/SpectralGraphTopology-pdf.pdf}{CRAN-pdf-vignette},
 #' \href{https://raw.githack.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology.html}{GitHub-html-vignette}, and
 #' \href{https://docs.google.com/viewer?url=https://github.com/dppalomar/spectralGraphTopology/raw/master/vignettes/SpectralGraphTopology-pdf.pdf}{GitHub-pdf-vignette}.
 #'
