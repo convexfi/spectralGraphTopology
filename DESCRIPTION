@@ -30,7 +30,6 @@ Imports:
     MASS,
     Matrix,
     progress,
-    quadprog,
     rlist
 Remotes:
     google/patrick
@@ -43,7 +42,6 @@ Suggests:
     R.rsp,
     testthat,
     patrick,
-    clusterSim,
     corrplot,
     igraph,
     kernlab,
