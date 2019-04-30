@@ -11,7 +11,7 @@ learn_bipartite_k_component_graph(S, is_data_matrix = FALSE, z = 0,
   k = 1, w0 = "naive", m = 7, alpha = 0, beta = 10000,
   rho = 0.01, fix_beta = TRUE, beta_max = 1e+06, nu = 10000,
   lb = 0, ub = 10000, maxiter = 10000, abstol = 1e-06,
-  reltol = 1e-04, eig_tol = 1e-09, record_weights = FALSE,
+  reltol = 1e-04, eigtol = 1e-09, record_weights = FALSE,
   record_objective = FALSE, verbose = TRUE)
 }
 \arguments{
@@ -60,6 +60,8 @@ zero eigenvalues is lesser (greater) than k}
 
 \item{reltol}{relative tolerance on the weight vector w}
 
+\item{eigtol}{value below which eigenvalues are considered to be zero}
+
 \item{record_weights}{whether to record the edge values at each iteration}
 
 \item{record_objective}{whether to record the objective function values at
@@ -67,8 +69,6 @@ each iteration}
 
 \item{verbose}{whether to output a progress bar showing the evolution of the
 iterations}
-
-\item{eigtol}{value below which eigenvalues are considered to be zero}
 }
 \value{
 A list containing possibly the following elements:

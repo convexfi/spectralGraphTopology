@@ -45,9 +45,6 @@ for a given node}
 
 \item{verbose}{whether to output a progress bar showing the evolution of the
 iterations}
-
-\item{record_objective}{whether to record the objective function values at
-each iteration}
 }
 \value{
 A list containing possibly the following elements:
