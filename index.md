@@ -6,11 +6,11 @@ description: "*spectralGraphTopology* is a software tool to estimate "
 permalink: /
 ---
 
-# Learning similarities in graph data
+# Learning graphs from data via spectral constraints
 {: .fs-9 }
 
 **spectralGraphTopology** provides estimators of the Laplacian and adjacency matrices of
-graphs by leveraing prior information in their structural form.
+graphs by leveraging prior information in their structural form.
 
 {: .fs-6 .fw-300 }
 
