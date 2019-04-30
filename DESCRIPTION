@@ -1,7 +1,7 @@
 Package: spectralGraphTopology
-Title: Learning graphs from data via spectral constraints
+Title: Learning Graphs from Data via Spectral Constraints
 Version: 0.1.0
-Description: This package provides estimators to learn k-component, bipartite,
+Description: Block coordinate descent estimators to learn k-component, bipartite,
     and k-component bipartite graphs from data by imposing spectral constraints
     on the eigenvalues and eigenvectors of the Laplacian and adjacency matrices.
     Those estimators leverages spectral properties of the graphical models as a
@@ -46,6 +46,7 @@ Suggests:
     igraph,
     kernlab,
     pals,
+    clusterSim,
     viridis
 VignetteBuilder:
     bookdown,
