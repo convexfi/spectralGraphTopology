@@ -35,15 +35,17 @@ library(spectralGraphTopology)
 library(clusterSim)
 library(igraph)
 set.seed(42)
-# number of nodes per cluster
-n <- 50
-# generate datapoints
-twomoon <- clusterSim::shapes.two.moon(n)
-# number of components
-k <- 2
+
+# generate graph and data
+n <- 50  # number of nodes per cluster
+twomoon <- clusterSim::shapes.two.moon(n)  # generate datapoints
+k <- 2  # number of components
+
 # estimate underlying graph
 S <- crossprod(t(twomoon$data))
 graph <- learn_k_component_graph(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
+
+# plot
 # build network
 net <- igraph::graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 # colorify nodes and edges
@@ -57,7 +59,7 @@ V(net)$color <- colors[twomoon$clusters]
 plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
 ```
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="75%" style="display: block; margin: auto;" />
+<img src="man/figures/README-README-plot-1.png" width="75%" style="display: block; margin: auto;" />
 
 For more examples, check out our [gallery](https://mirca.github.io/spectralGraphTopology).
 
@@ -71,8 +73,8 @@ If you made use of this software please consider citing:
   for structured graph learning via spectral constraints. https://arxiv.org/abs/1904.09792
 
 In case you made use of the function `cluster_k_component_graph`, consider citing:
-* Nie, Feiping and Wang, Xiaoqian and Jordan, Michael I. and Huang, Heng.
-  The Constrained Laplacian Rank Algorithm for Graph-based Clustering, 2016,
+* N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016).
+  The Constrained Laplacian Rank Algorithm for Graph-based Clustering,
   AAAI'16. http://dl.acm.org/citation.cfm?id=3016100.3016174
 
 ## Links

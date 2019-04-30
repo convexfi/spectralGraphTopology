@@ -397,15 +397,17 @@ $ make build &amp;&amp; make install</code></pre>
 library(clusterSim)
 library(igraph)
 set.seed(42)
-# number of nodes per cluster
-n &lt;- 50
-# generate datapoints
-twomoon &lt;- clusterSim::shapes.two.moon(n)
-# number of components
-k &lt;- 2
+
+# generate graph and data
+n &lt;- 50  # number of nodes per cluster
+twomoon &lt;- clusterSim::shapes.two.moon(n)  # generate datapoints
+k &lt;- 2  # number of components
+
 # estimate underlying graph
 S &lt;- crossprod(t(twomoon$data))
 graph &lt;- learn_k_component_graph(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
+
+# plot
 # build network
 net &lt;- igraph::graph_from_adjacency_matrix(graph$Adjacency, mode = &quot;undirected&quot;, weighted = TRUE)
 # colorify nodes and edges
@@ -426,7 +428,7 @@ plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)</code></pre
 <div id="citation" class="section level2">
 <h2>Citation</h2>
 <p>If you made use of this software please consider citing: * S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar (2019). A unified framework for structured graph learning via spectral constraints. <a href="https://arxiv.org/abs/1904.09792" class="uri">https://arxiv.org/abs/1904.09792</a></p>
-<p>In case you made use of the function <code>cluster_k_component_graph</code>, consider citing: * Nie, Feiping and Wang, Xiaoqian and Jordan, Michael I. and Huang, Heng. The Constrained Laplacian Rank Algorithm for Graph-based Clustering, 2016, AAAI’16. <a href="http://dl.acm.org/citation.cfm?id=3016100.3016174" class="uri">http://dl.acm.org/citation.cfm?id=3016100.3016174</a></p>
+<p>In case you made use of the function <code>cluster_k_component_graph</code>, consider citing: * N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016). The Constrained Laplacian Rank Algorithm for Graph-based Clustering, AAAI’16. <a href="http://dl.acm.org/citation.cfm?id=3016100.3016174" class="uri">http://dl.acm.org/citation.cfm?id=3016100.3016174</a></p>
 </div>
 <div id="links" class="section level2">
 <h2>Links</h2>
