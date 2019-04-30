@@ -1,4 +1,4 @@
-#include "utils.hh"
+#include "utils.h"
 
 // [[Rcpp::depends(RcppEigen)]]
 using namespace Eigen;

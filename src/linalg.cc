@@ -1,5 +1,5 @@
 #include <RcppArmadillo.h>
-#include "linalg.hh"
+#include "linalg.h"
 
 // [[Rcpp::depends(RcppArmadillo)]]
 using namespace arma;

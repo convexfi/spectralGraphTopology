@@ -1,15 +1,3 @@
-## Changes in riskParityPortfolio version 0.1.1.9000 (2019-01-07 - present)
-
-* Refactored stopping criteria. [commit 350f622]
-
-## Changes in riskParityPortfolio version 0.1.1 (2019-01-07)
-
-* Revised vignette (fix name issue and include new section on algorithm description).
-* Revise the error control of riskParityPortfolio().
-* Check feasibility in riskParityPortfolio().
-* Improved tests.
-
-
-## Changes in riskParityPortfolio version 0.1.0 (2018-12-15)
+## Changes in spectralGraphTopology version 0.1.0 (2019-05-xx)
 
 * Initial release is on CRAN.

@@ -1,4 +1,4 @@
-#include "operators.hh"
+#include "operators.h"
 // [[Rcpp::depends(RcppEigen)]]
 using namespace Eigen;
 
