@@ -59,7 +59,7 @@ On MS Windows environments, make sure to install the most recent version of ``Rt
 
 # Usage: clustering
 We illustrate the usage of the package with simulated data, as follows:
-```{r README-plot, message=FALSE}
+```{r plot_k_component, message=FALSE}
 library(spectralGraphTopology)
 library(clusterSim)
 library(igraph)

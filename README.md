@@ -1,3 +1,15 @@
+---
+output:
+  html_document:
+    variant: markdown_github
+    keep_md: true
+  md_document:
+    variant: markdown_github
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+
 [![codecov](https://codecov.io/gh/mirca/spectralGraphTopology/branch/master/graph/badge.svg)](https://codecov.io/gh/mirca/spectralGraphTopology)
 [![Travis-CI-Badge](https://travis-ci.org/mirca/spectralGraphTopology.svg?branch=master)](https://travis-ci.org/mirca/spectralGraphTopology)
 [![Build status](https://ci.appveyor.com/api/projects/status/u2kjm37vvr0ji5v6/branch/master?svg=true)](https://ci.appveyor.com/project/mirca/spectralgraphtopology/branch/master)
@@ -66,7 +78,7 @@ V(net)$color <- colors[twomoon$clusters]
 plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
 ```
 
-<img src="man/figures/README-README-plot-1.png" width="75%" style="display: block; margin: auto;" />
+<img src="man/figures/README-plot_k_component-1.png" width="75%" style="display: block; margin: auto;" />
 
 For more examples, check out our [gallery](https://mirca.github.io/spectralGraphTopology).
 
