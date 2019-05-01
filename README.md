@@ -1,4 +1,5 @@
 ---
+title: "spectralGraphTopology"
 output:
   html_document:
     variant: markdown_github
@@ -18,7 +19,7 @@ output:
 [![Build Status](https://dev.azure.com/jvmirca/spectralGraphTopology/_apis/build/status/mirca.spectralGraphTopology?branchName=master)](https://dev.azure.com/jvmirca/spectralGraphTopology/_build/latest?definitionId=1&branchName=master)
 
 <p align="center">
-  <img width = "200" src="./benchmarks/clusters/code/animation/circles3_reduced.gif"/>
+  <img width = "200" src="./man/figures//circles3_reduced.gif"/>
 </p>
 
 **spectralGraphTopology** provides estimators to learn k-component, bipartite,
@@ -99,4 +100,4 @@ In case you made use of the function `cluster_k_component_graph`, consider citin
 ## Links
 Package: [GitHub](https://github.com/dppalomar/spectralGraphTopology)
 
-README file: [GitHub-readme](https://rawgit.com/dppalomar/spectralGraphTopology/master/README.html)
+README file: [GitHub-readme](https://raw.githack.com/dppalomar/spectralGraphTopology/master/README.html)

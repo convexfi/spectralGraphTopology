@@ -6,13 +6,15 @@ Description: Block coordinate descent estimators to learn k-component, bipartite
     on the eigenvalues and eigenvectors of the Laplacian and adjacency matrices.
     Those estimators leverages spectral properties of the graphical models as a
     prior information, which turn out to play key roles in unsupervised machine
-    learning tasks such as community detection.
+    learning tasks such as clustering and community detection.
 Authors@R: c(
   person("Ze", "Vinicius", role = c("cre", "aut"), email = "jvmirca@gmail.com"),
   person(c("Daniel", "P."), "Palomar", role = "aut", email = "daniel.p.palomar@gmail.com")
   )
 Maintainer: Ze Vinicius <jvmirca@gmail.com>
-URL: https://github.com/dppalomar/spectralGraphTopology
+URL: https://github.com/dppalomar/spectralGraphTopology,
+     https://mirca.github.io/spectralGraphTopology,
+     https://www.danielppalomar.com
 BugReports: https://github.com/dppalomar/spectralGraphTopology/issues
 Depends:
 License: GPL-3 | file LICENSE
@@ -24,15 +26,11 @@ LinkingTo:
     RcppEigen
 Imports:
     Rcpp,
-    RcppArmadillo,
-    RcppEigen,
     osqp,
     MASS,
     Matrix,
     progress,
     rlist
-Remotes:
-    google/patrick
 RoxygenNote: 6.1.1
 Suggests:
     bookdown,
@@ -47,7 +45,8 @@ Suggests:
     kernlab,
     pals,
     clusterSim,
-    viridis
+    viridis,
+    quadprog
 VignetteBuilder:
     bookdown,
     knitr,
