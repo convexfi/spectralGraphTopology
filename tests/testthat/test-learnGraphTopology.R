@@ -43,7 +43,7 @@ test_that("learn_bipartite_k_component_graph can learn k-component bipartite gra
   w <- c(1, 0, 0, 1, 0, 1)
   Laplacian <- block_diag(L(w), L(w))
   n <- ncol(Laplacian)
-  Y <- MASS::mvrnorm(2 * n * 200, rep(0, n), MASS::ginv(Laplacian))
+  Y <- MASS::mvrnorm(2 * n * 500, rep(0, n), MASS::ginv(Laplacian))
   graph <- learn_bipartite_k_component_graph(cov(Y), k = 2)
   expect_that(graph$convergence, is_true())
   expect_that(relative_error(Laplacian, graph$Laplacian) < 1e-1, is_true())

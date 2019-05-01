@@ -46,7 +46,9 @@ Suggests:
     pals,
     clusterSim,
     viridis,
-    quadprog
+    quadprog,
+    matrixcalc,
+    CVXR
 VignetteBuilder:
     bookdown,
     knitr,
