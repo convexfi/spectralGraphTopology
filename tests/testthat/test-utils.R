@@ -17,5 +17,5 @@ test_that("blockDiag throws an exception when shape is not square", {
   N2 <- N1 + 1
   L2 <- matrix(2, N1, N2)
   expect_error(block_diag(matrix(-1, N1, N1),
-                          matrix(-1, N1, N2)), "matrix 2 is not square")
+                          matrix(-1, N1, N2)), "matrix is not square")
 })

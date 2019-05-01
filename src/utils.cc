@@ -10,15 +10,15 @@ Eigen::MatrixXd blockDiagCpp(const std::vector<Eigen::MatrixXd>& matrices) {
   const int n = matrices.size();
   Eigen::VectorXd sizes(n);
 
-  int N = 0;
-  int cols, rows;
+  unsigned int N = 0;
+  unsigned int cols, rows;
   for (int k = 0; k < n; ++k) {
     cols = matrices[k].cols();
     rows = matrices[k].rows();
 
     if(cols != rows) {
       std::stringstream err_msg;
-      err_msg << "matrix " << std::to_string(k + 1) << " is not square";
+      err_msg << "matrix is not square";
       throw std::invalid_argument(err_msg.str().c_str());
     } else {
       sizes(k) = cols;
@@ -27,8 +27,8 @@ Eigen::MatrixXd blockDiagCpp(const std::vector<Eigen::MatrixXd>& matrices) {
   }
 
   Eigen::MatrixXd blockDiag = Eigen::MatrixXd::Zero(N, N);
-  int i = 0;
-  for (int k = 0; k < n; ++k) {
+  unsigned int i = 0;
+  for (unsigned int k = 0; k < n; ++k) {
     blockDiag.block(i, i, sizes(k), sizes(k)) = matrices[k];
     i += sizes(k);
   }
@@ -43,9 +43,9 @@ std::vector<double> metrics(const Eigen::MatrixXd& Wtrue, const Eigen::MatrixXd&
   double fscore, recall, specificity, accuracy;
   bool isthere_edge, isthere_est_edge;
   double tp = 0, fp = 0, fn = 0, tn = 0;
-  const int n = Wtrue.cols();
-  for (int i = 0; i < (n-1); ++i)
-    for (int j = i+1; j < n; ++j) {
+  const unsigned int n = Wtrue.cols();
+  for (unsigned int i = 0; i < (n-1); ++i)
+    for (unsigned int j = i+1; j < n; ++j) {
       isthere_edge = std::abs(Wtrue(i, j)) > eps;
       isthere_est_edge = std::abs(West(i, j)) > eps;
       if (isthere_edge && isthere_est_edge)
@@ -73,8 +73,8 @@ std::vector<double> metrics(const Eigen::MatrixXd& Wtrue, const Eigen::MatrixXd&
 Eigen::MatrixXd pairwise_matrix_rownorm(const Eigen::MatrixXd& M) {
   const unsigned int n = M.rows();
   Eigen::MatrixXd V = Eigen::MatrixXd::Zero(n, n);
-  for (int i = 0; i < n-1; ++i)
-    for (int j = i+1; j < n; ++j)
+  for (unsigned int i = 0; i < n-1; ++i)
+    for (unsigned int j = i+1; j < n; ++j)
       V(i, j) = (M.row(i) - M.row(j)).squaredNorm();
   return V.selfadjointView<Upper>();
 }
@@ -83,10 +83,10 @@ Eigen::MatrixXd pairwise_matrix_rownorm(const Eigen::MatrixXd& M) {
 // [[Rcpp::export]]
 Eigen::VectorXd upper_view_vec(const Eigen::MatrixXd& M) {
   const int p = M.cols();
-  int t = 0;
+  unsigned int t = 0;
   Eigen::VectorXd v(int(.5 * p * (p - 1)));
-  for (int i = 0; i < p-1; ++i)
-    for (int j = i+1; j < p; ++j) {
+  for (unsigned int i = 0; i < p-1; ++i)
+    for (unsigned int j = i+1; j < p; ++j) {
       v(t) = M(i, j);
       ++t;
     }
