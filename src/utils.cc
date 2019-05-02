@@ -7,7 +7,7 @@ using namespace std;
 
 // [[Rcpp::export]]
 Eigen::MatrixXd blockDiagCpp(const std::vector<Eigen::MatrixXd>& matrices) {
-  const int n = matrices.size();
+  const unsigned int n = matrices.size();
   Eigen::VectorXd sizes(n);
 
   unsigned int N = 0;
