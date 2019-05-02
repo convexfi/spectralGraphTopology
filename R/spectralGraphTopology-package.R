@@ -20,8 +20,7 @@
 #' \href{https://raw.githack.com/dppalomar/spectralGraphTopology/master/README.html}{GitHub-README}.
 #'
 #' For more details see the vignette:
-#' \href{https://raw.githack.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology.html}{GitHub-html-vignette}, and
-#' \href{https://docs.google.com/viewer?url=https://github.com/dppalomar/spectralGraphTopology/raw/master/vignettes/SpectralGraphTopology-pdf.pdf}{GitHub-pdf-vignette}.
+#' \href{https://raw.githack.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology.html}{GitHub-html-vignette}
 #'
 #' @author Ze Vinicius and Daniel P. Palomar
 #'

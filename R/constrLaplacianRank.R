@@ -1,6 +1,7 @@
 #' @title Cluster a k-component graph from data using the Constrained Laplacian Rank algorithm
 #'
-#' Cluster a k-component graph on the basis of an observed data matrix
+#' Cluster a k-component graph on the basis of an observed data matrix.
+#' Check out https://mirca.github.io/spectralGraphTopology for code examples.
 #'
 #' @param Y a pxn data matrix, where p is the number of nodes and n is the number of
 #'        features (or data points per node)
@@ -21,32 +22,6 @@
 #' @references Nie, Feiping and Wang, Xiaoqian and Jordan, Michael I. and Huang, Heng.
 #'             The Constrained Laplacian Rank Algorithm for Graph-based Clustering, 2016,
 #'             AAAI'16. http://dl.acm.org/citation.cfm?id=3016100.3016174
-#' @examples
-#' library(spectralGraphTopology)
-#' library(igraph)
-#' library(pals)
-#' library(kernlab)
-#' data(iris)
-#' n <- nrow(iris)
-#' Y <- t(matrix(as.numeric(unlist(iris[, 1:4])), nrow = nrow(iris)))
-#' names <- c(as.character(iris[, 5]))
-#' unique_names <- c(as.character(unique(iris[, 5])))
-#' graph <- cluster_k_component_graph(t(Y), k = 3, m = 5)
-#' net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
-#' clusters <- array(0, length(names))
-#' for (i in c(1:length(unique_names)))
-#'   clusters[unique_names[i] == names] <- i
-#' V(net)$cluster <- clusters
-#' colors <- c("#34495E", "#706FD3", "#FF5252")
-#' E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
-#'                      function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
-#'                                         colors[V(net)$cluster[x[1]]], brewer.greys(5)[2]))
-#' V(net)$color <- colors[clusters]
-#' gr = .5 * (1 + sqrt(5))
-#' setEPS()
-#' postscript("iris-clr.ps", family = "Times", height = 5, width = gr * 3.5)
-#' plot(net, vertex.label = NA, vertex.size = 3)
-#' dev.off()
 #' @export
 cluster_k_component_graph <- function(Y, k = 1, m = 5, lmd = 1, eigtol = 1e-9,
                                       edgetol = 1e-6, maxiter = 1000) {

@@ -1,6 +1,7 @@
 #' @title Learn the Laplacian matrix of a k-component graph
 #'
-#' Learns a k-component graph on the basis of an observed data matrix
+#' Learns a k-component graph on the basis of an observed data matrix.
+#' Check out https://mirca.github.io/spectralGraphTopology for code examples.
 #'
 #' @param S either a pxp sample covariance/correlation matrix, or a pxn data
 #'        matrix, where p is the number of nodes and n is the number of
@@ -50,32 +51,6 @@
 #' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
 #'             framework for structured graph learning via spectral constraints (2019).
 #'             https://arxiv.org/pdf/1904.09792.pdf
-#' @examples
-#' library(spectralGraphTopology)
-#' library(clusterSim)
-#' library(igraph)
-#' set.seed(42)
-#' # number of nodes per cluster
-#' n <- 50
-#' # generate datapoints
-#' twomoon <- shapes.two.moon(n)
-#' # number of components
-#' k <- 2
-#' # compute sample correlation matrix
-#' S <- crossprod(t(twomoon$data))
-#' # estimate underlying graph
-#' graph <- learn_k_component_graph(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
-#' # build network
-#' net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
-#' # colorify nodes and edges
-#' colors <- c("#706FD3", "#FF5252")
-#' V(net)$cluster <- twomoon$clusters
-#' E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
-#'                       function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
-#'                                         colors[V(net)$cluster[x[1]]], '#000000'))
-#' V(net)$color <- colors[twomoon$clusters]
-#' # plot nodes
-#' plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
 #' @export
 learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0,
                                     beta = 1e4, beta_max = 1e6, fix_beta = TRUE, rho = 1e-2, m = 7,

@@ -12,7 +12,7 @@ Eigen::MatrixXd blockDiagCpp(const std::vector<Eigen::MatrixXd>& matrices) {
 
   unsigned int N = 0;
   unsigned int cols, rows;
-  for (int k = 0; k < n; ++k) {
+  for (unsigned int k = 0; k < n; ++k) {
     cols = matrices[k].cols();
     rows = matrices[k].rows();
 
@@ -82,7 +82,7 @@ Eigen::MatrixXd pairwise_matrix_rownorm(const Eigen::MatrixXd& M) {
 
 // [[Rcpp::export]]
 Eigen::VectorXd upper_view_vec(const Eigen::MatrixXd& M) {
-  const int p = M.cols();
+  const unsigned int p = M.cols();
   unsigned int t = 0;
   Eigen::VectorXd v(int(.5 * p * (p - 1)));
   for (unsigned int i = 0; i < p-1; ++i)
