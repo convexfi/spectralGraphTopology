@@ -1,4 +1,5 @@
 ^.*\.Rproj$
+^.*\.gz$
 ^\.Rproj\.user$
 ^cran-comments\.md$
 ^README\.Rmd$
