@@ -7,7 +7,8 @@ Description: Block coordinate descent estimators to learn k-component, bipartite
     Those estimators leverages spectral properties of the graphical models as a
     prior information, which turn out to play key roles in unsupervised machine
     learning tasks such as clustering and community detection.  This package is
-    based on the paper <arXiv:1904.09792>.
+    based on the paper "A Unified Framework for Structured Graph Learning via
+    Spectral Constraints" by S. Kumar et al (2019) <arXiv:1904.09792>.
 Authors@R: c(
   person("Ze", "Vinicius", role = c("cre", "aut"), email = "jvmirca@gmail.com"),
   person(c("Daniel", "P."), "Palomar", role = "aut", email = "daniel.p.palomar@gmail.com")
