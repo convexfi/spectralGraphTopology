@@ -24,11 +24,14 @@ library(viridis)
 library(corrplot)
 set.seed(42)
 
+# define number of nodes on each set
 n1 <- 10
 n2 <- 6
 n <- n1 + n2
+# define the probability of connection among nodes of different sets
 pc <- .9
 
+# sample a bipartite graph
 bipartite <- sample_bipartite(n1, n2, type="Gnp", p = pc, directed=FALSE)
 # randomly assign edge weights to connected nodes
 E(bipartite)$weight <- runif(gsize(bipartite), min = 0, max = 1)
@@ -42,7 +45,7 @@ S <- cov(Y)
 # estimate Adjacency matrix
 graph <- learn_bipartite_graph(S, z = 4, verbose = FALSE)
 graph$Adjacency[graph$Adjacency < 1e-3] <- 0
-# Plot Adjacency matrices: true, noisy, and estimated
+# Plot Adjacency matrices: true and estimated
 corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 # build networks

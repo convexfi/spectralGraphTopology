@@ -30,8 +30,9 @@ n <- 50
 twomoon <- shapes.two.moon(n)
 # number of components
 k <- 2
-# estimate underlying graph
+# compute sample correlation matrix
 S <- crossprod(t(twomoon$data))
+# estimate underlying graph
 graph <- learn_k_component_graph(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
 # build network
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)

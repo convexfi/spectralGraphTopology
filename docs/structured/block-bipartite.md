@@ -23,18 +23,22 @@ library(viridis)
 library(corrplot)
 set.seed(42)
 
+# design sythetic graph
 w <- c(1, 0, 0, 1, 0, 1) * runif(6)
 Laplacian <- block_diag(L(w), L(w))
 Atrue <- diag(diag(Laplacian)) - Laplacian
+# create graph from Adjacency matrix
 bipartite <- graph_from_adjacency_matrix(Atrue, mode = "undirected", weighted = TRUE)
 n <- ncol(Laplacian)
+# sample data from GMRF
 Y <- MASS::mvrnorm(40 * n, rep(0, n), MASS::ginv(Laplacian))
+# learn graph on the basis of sampled data
 graph <- learn_bipartite_k_component_graph(cov(Y), k = 2, beta = 1e2, nu = 1e2, verbose = FALSE)
 graph$Adjacency[graph$Adjacency < 1e-2] <- 0
-# Plot Adjacency matrices: true, noisy, and estimated
+# Plot Adjacency matrices: true and estimated
 corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
-# Plot networks
+# Build networks
 estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 V(bipartite)$type <- rep(c(TRUE, FALSE), 4)
 V(estimated_bipartite)$type <- rep(c(TRUE, FALSE), 4)

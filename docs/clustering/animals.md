@@ -28,18 +28,23 @@ library(viridis)
 library(spectralGraphTopology)
 library(igraph)
 
+# read data
 df <- read.csv("animals.txt", header = FALSE)
 names <- matrix(unlist(read.csv("animals_names.txt", header = FALSE)))
 Y <- matrix(as.numeric(unlist(df)), nrow = nrow(df))
 n <- nrow(Y)
+# estimate graph
 graph <- learn_k_component_graph(cov(t(Y)) + diag(1/3, n, n), w0 = "qp",
                                  beta = 1, k = 10, verbose = FALSE)
+# build network
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+# colorify edges
 colors <- viridis(50, begin = 0, end = 1, direction = -1)
 c_scale <- colorRamp(colors)
 E(net)$color = apply(c_scale(abs(E(net)$weight) / max(abs(E(net)$weight))), 1,
                      function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
 V(net)$color = "pink"
+# plot network
 plot(net, vertex.label = names,
      vertex.size = 4,
      vertex.label.dist = 1,
