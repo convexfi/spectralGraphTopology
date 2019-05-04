@@ -19,6 +19,10 @@ inv_sympd <- function(M) {
 #' @param w weight vector of the graph
 #' @return Lw the Laplacian matrix
 #'
+#' @examples
+#' library(spectralGraphTopology)
+#' Lw <- L(c(1, 0, 1))
+#' Lw
 #' @export
 L <- function(w) {
     .Call('_spectralGraphTopology_L', PACKAGE = 'spectralGraphTopology', w)
@@ -30,6 +34,10 @@ L <- function(w) {
 #' @param w weight vector of the graph
 #' @return Aw the Adjacency matrix
 #'
+#' @examples
+#' library(spectralGraphTopology)
+#' Aw <- A(c(1, 0, 1))
+#' Aw
 #' @export
 A <- function(w) {
     .Call('_spectralGraphTopology_A', PACKAGE = 'spectralGraphTopology', w)
