@@ -4,7 +4,6 @@ library(pals)
 library(kernlab)
 library(corrplot)
 library(huge)
-library(R.matlab)
 data(iris)
 
 n <- nrow(iris)

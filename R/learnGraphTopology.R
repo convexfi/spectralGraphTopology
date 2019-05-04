@@ -51,6 +51,18 @@
 #' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
 #'             framework for structured graph learning via spectral constraints (2019).
 #'             https://arxiv.org/pdf/1904.09792.pdf
+#' @examples
+#' # design true Laplacian
+#' Laplacian <- rbind(c(1, -1, 0, 0),
+#'                    c(-1, 1, 0, 0),
+#'                    c(0, 0, 1, -1),
+#'                    c(0, 0, -1, 1))
+#' n <- ncol(Laplacian)
+#' # sample data from multivariate Gaussian
+#' Y <- MASS::mvrnorm(n * 500, rep(0, n), MASS::ginv(Laplacian))
+#' # estimate graph on the basis of sampled data
+#' graph <- learn_k_component_graph(cov(Y), k = 2, beta = 10)
+#' graph$Laplacian
 #' @export
 learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0,
                                     beta = 1e4, beta_max = 1e6, fix_beta = TRUE, rho = 1e-2, m = 7,
@@ -350,7 +362,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
 }
 
 
-#' @title Jointly learns the Laplacian and Adjacency matrices of a graph
+#' @title Learns a bipartite k-component graph
 #'
 #' Jointly learns the Laplacian and Adjacency matrices of a graph on the basis
 #' of an observed data matrix
