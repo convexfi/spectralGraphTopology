@@ -11,6 +11,9 @@ install:
 cache:
   - C:\RLibrary
 
+before_build:
+  - Rscript.exe -e "install.packages('BiocManager', repo='http://cran.rstudio.com/'); BiocManager::install('genefilter')"
+
 build_script:
   - travis-tool.sh install_deps
 
