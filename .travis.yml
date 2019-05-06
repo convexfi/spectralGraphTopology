@@ -7,5 +7,8 @@ matrix:
       cache: packages
       r_packages:
         - covr
+      before_install:
+        - sudo apt-get install libmpfr-dev
+        - Rscript -e "install.packages('BiocManager'); BiocManager::install('genefilter')"
       after_success:
         - Rscript -e 'library(covr); codecov()'
