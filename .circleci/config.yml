@@ -17,6 +17,7 @@ defaults: &steps
     - run:
         name: Install devtools and dependencies
         command: |
+          sudo apt-get install --yes r-cran-rgl
           sudo apt-get install --yes libmpfr-dev
           Rscript -e "install.packages('BiocManager'); BiocManager::install('genefilter')"
           Rscript \
