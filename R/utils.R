@@ -2,18 +2,29 @@
 #'
 #' @param ... list of matrices or individual matrices
 #' @return block diagonal matrix
+#' @examples
+#' library(spectralGraphTopology)
+#' X <- L(c(1, 0, 1))
+#' Y <- L(c(1, 0, 1, 0, 0, 1))
+#' B <- block_diag(X, Y)
+#' B
 #' @export
 block_diag <- function(...) {
   return(blockDiagCpp(list(...)))
 }
 
 
-#' Compute the relative error between two matrices
-#' @param Ltrue true Laplacian matrix
-#' @param Lest estimated Laplacian matrix
+#' Computes the relative error between two matrices
+#'
+#' @param A first matrix
+#' @param B second matrix
+#' @examples
+#' library(spectralGraphTopology)
+#' X <- L(c(1, 0, 1))
+#' relative_error(X, X)
 #' @export
-relative_error <- function(Ltrue, Lest) {
-  return(norm(Ltrue - Lest, type = "F") / norm(Ltrue, type = "F"))
+relative_error <- function(A, B) {
+  return(norm(A - B, type = "F") / norm(B, type = "F"))
 }
 
 

@@ -7,5 +7,7 @@ matrix:
       cache: packages
       r_packages:
         - covr
+      before_install:
+        - Rscript -e "install.packages('BiocManager'); BiocManager::install('genefilter')"
       after_success:
         - Rscript -e 'library(covr); codecov()'

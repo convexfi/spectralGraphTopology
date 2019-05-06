@@ -9,6 +9,10 @@ using namespace Eigen;
 //' @param w weight vector of the graph
 //' @return Lw the Laplacian matrix
 //'
+//' @examples
+//' library(spectralGraphTopology)
+//' Lw <- L(c(1, 0, 1))
+//' Lw
 //' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd L(const Eigen::VectorXd& w) {
@@ -34,6 +38,10 @@ Eigen::MatrixXd L(const Eigen::VectorXd& w) {
 //' @param w weight vector of the graph
 //' @return Aw the Adjacency matrix
 //'
+//' @examples
+//' library(spectralGraphTopology)
+//' Aw <- A(c(1, 0, 1))
+//' Aw
 //' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd A(const Eigen::VectorXd& w) {
