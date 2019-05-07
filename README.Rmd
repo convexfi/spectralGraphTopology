@@ -58,6 +58,9 @@ $ make build && make install
 #### Microsoft Windows
 On MS Windows environments, make sure to install the most recent version of ``Rtools``.
 
+#### macOS
+**spectralGraphTopology** depends on [`RcppArmadillo`](https://github.com/RcppCore/RcppArmadillo) which requires [`gfortran`](https://cloud.r-project.org/bin/macosx/tools/).
+
 # Usage: clustering
 We illustrate the usage of the package with simulated data, as follows:
 ```{r plot_k_component, message=FALSE}
