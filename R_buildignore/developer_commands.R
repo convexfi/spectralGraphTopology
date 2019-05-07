@@ -20,7 +20,7 @@ package?spectralGraphTopology
 library(devtools)
 devtools::load_all()  #or Ctrl-Shift-L
 devtools::install()
-#devtools::build()  # to generate the installation file
+#devtools::build()  # to generate tarball
 
 # Documentation
 devtools::document()  #to generate all documentation via roxygen
