@@ -8,6 +8,7 @@
 ^README_files$
 ^R_buildignore$
 ^papers$
+^LICENSE$
 ^.compileAttributes\.R$
 ^.roxygenize\.R$
 ^.travis\.yml$
