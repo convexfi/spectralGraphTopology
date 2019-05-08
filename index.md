@@ -36,8 +36,7 @@ devtools::install_github("dppalomar/spectralGraphTopology")
 
 ### Tutorials
 
-- [See the package vignette](http://mirca.github.io/spectralGraphTopology/_static/getting_started.html) for a
-detailed description of the mathematical methods that are available in **spectralGraphTopology**.
+- [See the package vignette](https://cran.r-project.org/web/packages/spectralGraphTopology/vignettes/SpectralGraphTopology.html) for a detailed description of the mathematical methods that are available in **spectralGraphTopology**.
 
 ---
 
