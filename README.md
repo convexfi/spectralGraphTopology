@@ -25,14 +25,13 @@ learning tasks such as community detection.
 From inside an R session, type:
 
 ```r
-> devtools::install_github("dppalomar/spectralGraphTopology")
+> install.packages("spectralGraphTopology")
 ```
 
 Alternatively, you can install the development version from GitHub:
-```
-$ git clone https://github.com/dppalomar/spectralGraphTopology.git
-$ cd spectralGraphTopology
-$ make build && make install
+
+```r
+> devtools::install_github("dppalomar/spectralGraphTopology")
 ```
 
 #### Microsoft Windows
