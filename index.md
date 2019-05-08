@@ -27,6 +27,11 @@ The R version of **spectralGraphTopology** is build on top of awesome R packages
 
 ### Installation
 
+1. The **stable** version can be installed via CRAN as
+```r
+> install.packages("spectralGraphTopology")
+```
+
 2. The **development** version can be installed via GitHub as
 ```bash
 devtools::install_github("dppalomar/spectralGraphTopology")
