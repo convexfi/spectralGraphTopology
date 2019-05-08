@@ -59,12 +59,12 @@ Eigen::MatrixXd A(const Eigen::VectorXd& w) {
 }
 
 
-//' Computes the matrix form of the composition of the operators Lstar and
-//' L, i.e., Lstar o L.
-//'
-//' @param n number of columns/rows
-//' @return M the composition of Lstar and L
-//'
+// Computes the matrix form of the composition of the operators Lstar and
+// L, i.e., Lstar o L.
+//
+// @param n number of columns/rows
+// @return M the composition of Lstar and L
+//
 // [[Rcpp::export]]
 Eigen::MatrixXd Mmat(const int n) {
   Eigen::VectorXd e = Eigen::VectorXd::Zero(n);
@@ -80,12 +80,12 @@ Eigen::MatrixXd Mmat(const int n) {
 }
 
 
-//' Computes the matrix form of the composition of the operators Astar and
-//' A, i.e., Astar o A.
-//'
-//' @param n number of columns/rows
-//' @return M the composition of Astar and A
-//'
+// Computes the matrix form of the composition of the operators Astar and
+// A, i.e., Astar o A.
+//
+// @param n number of columns/rows
+// @return M the composition of Astar and A
+//
 // [[Rcpp::export]]
 Eigen::MatrixXd Pmat(const int n) {
   Eigen::VectorXd e = Eigen::VectorXd::Zero(n);
@@ -101,12 +101,12 @@ Eigen::MatrixXd Pmat(const int n) {
 }
 
 
-//' Computes the matrix that represents the composition of
-//' the vec and the L operators.
-//'
-//' @param n the dimension of L
-//' @return R matrix such that vec(L(w)) = Rw
-//'
+// Computes the matrix that represents the composition of
+// the vec and the L operators.
+//
+// @param n the dimension of L
+// @return R matrix such that vec(L(w)) = Rw
+//
 // [[Rcpp::export]]
 Eigen::MatrixXd vecLmat(const int n) {
   const int ncols = .5 * n * (n - 1);
@@ -125,13 +125,13 @@ Eigen::MatrixXd vecLmat(const int n) {
 }
 
 
-//' Computes the canonical vec operator, i.e., converts a given n x m matrix M,
-//' into a  nm x 1 column vector vec(M) by stacking the columns of M on top of
-//' one another.
-//'
-//' @param M input matrix
-//' @return w vector such that w = vec(M)
-//'
+// Computes the canonical vec operator, i.e., converts a given n x m matrix M,
+// into a  nm x 1 column vector vec(M) by stacking the columns of M on top of
+// one another.
+//
+// @param M input matrix
+// @return w vector such that w = vec(M)
+//
 // [[Rcpp::export]]
 Eigen::MatrixXd vec(const Eigen::MatrixXd& M) {
   Eigen::MatrixXd w(M.size(), 1);
@@ -146,11 +146,11 @@ Eigen::MatrixXd vec(const Eigen::MatrixXd& M) {
 }
 
 
-//' Computes the Lstar operator.
-//'
-//' @param M matrix
-//' @return w vector
-//'
+// Computes the Lstar operator.
+//
+// @param M matrix
+// @return w vector
+//
 // [[Rcpp::export]]
 Eigen::VectorXd Lstar(const Eigen::MatrixXd& M) {
   int N = M.cols();
@@ -171,11 +171,11 @@ Eigen::VectorXd Lstar(const Eigen::MatrixXd& M) {
 }
 
 
-//' Computes the Astar operator.
-//'
-//' @param M matrix
-//' @return w vector
-//'
+// Computes the Astar operator.
+//
+// @param M matrix
+// @return w vector
+//
 // [[Rcpp::export]]
 Eigen::VectorXd Astar(const Eigen::MatrixXd& M) {
   int N = M.cols();
@@ -196,11 +196,11 @@ Eigen::VectorXd Astar(const Eigen::MatrixXd& M) {
 }
 
 
-//' Computes the inverse of the L operator.
-//'
-//' @param M Laplacian matrix
-//' @return w the weight vector of the graph
-//'
+// Computes the inverse of the L operator.
+//
+// @param M Laplacian matrix
+// @return w the weight vector of the graph
+//
 // [[Rcpp::export]]
 Eigen::VectorXd Linv(const Eigen::MatrixXd& M) {
   int N = M.cols();
@@ -218,11 +218,11 @@ Eigen::VectorXd Linv(const Eigen::MatrixXd& M) {
 }
 
 
-//' Computes the inverse of the L operator.
-//'
-//' @param M Laplacian matrix
-//' @return w the weight vector of the graph
-//'
+// Computes the inverse of the L operator.
+//
+// @param M Laplacian matrix
+// @return w the weight vector of the graph
+//
 // [[Rcpp::export]]
 Eigen::VectorXd Ainv(const Eigen::MatrixXd& M) {
   int N = M.cols();
@@ -240,13 +240,13 @@ Eigen::VectorXd Ainv(const Eigen::MatrixXd& M) {
 }
 
 
-//' Alternative implementation for the Lstar operator.
-//' This is only used for unit testing. Use Lstar for
-//' a better performance.
-//'
-//' @param M matrix
-//' @return w vector
-//'
+// Alternative implementation for the Lstar operator.
+// This is only used for unit testing. Use Lstar for
+// a better performance.
+//
+// @param M matrix
+// @return w vector
+//
 // [[Rcpp::export]]
 Eigen::VectorXd altLstar(const Eigen::MatrixXd& M) {
   int N = M.cols();
@@ -265,13 +265,13 @@ Eigen::VectorXd altLstar(const Eigen::MatrixXd& M) {
   return w;
 }
 
-//' Alternative implementation for the Astar operator.
-//' This is only used for unit testing. Use Astar for
-//' a better performance.
-//'
-//' @param M matrix
-//' @return w vector
-//'
+// Alternative implementation for the Astar operator.
+// This is only used for unit testing. Use Astar for
+// a better performance.
+//
+// @param M matrix
+// @return w vector
+//
 // [[Rcpp::export]]
 Eigen::VectorXd altAstar(const Eigen::MatrixXd& M) {
   int N = M.cols();

@@ -16,14 +16,6 @@ w_init <- function(w0, Sinv, edge_tol = 0) {
 }
 
 
-#laplacian.w_update <- function(w, Lw, U, beta, lambda, K) {
-#  grad_f <- Lstar(Lw - crossprod(sqrt(lambda) * t(U)) + K / beta)
-#  w_update <- w - .5 * grad_f / nrow(Lw)
-#  w_update[w_update < 0] <- 0
-#  return(w_update)
-#}
-
-
 laplacian.w_update <- function(w, Lw, U, beta, lambda, K) {
   c <- Lstar(crossprod(sqrt(lambda) * t(U)) - K / beta)
   grad_f <- Lstar(Lw) - c
@@ -37,16 +29,6 @@ laplacian.w_update <- function(w, Lw, U, beta, lambda, K) {
   return(w_update)
 }
 
-
-#joint.w_update <- function(w, Lw, Aw, U, V, lambda, psi, beta, nu, K) {
-#  ULmdUT <- crossprod(sqrt(lambda) * t(U))
-#  VPsiVT <- V %*% diag(psi) %*% t(V)
-#  grad_f1 <- Lstar(beta * (Lw - ULmdUT) + K)
-#  grad_f2 <- nu * Astar(Aw - VPsiVT)
-#  w_update <- w - .5 * (grad_f1 + grad_f2) / (nrow(Lw) * beta + nu)
-#  w_update[w_update < 0] <- 0
-#  return(w_update)
-#}
 
 joint.w_update <- function(w, Lw, Aw, U, V, lambda, psi, beta, nu, K) {
   ULmdUT <- crossprod(sqrt(lambda) * t(U))

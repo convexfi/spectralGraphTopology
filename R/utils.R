@@ -28,11 +28,11 @@ relative_error <- function(A, B) {
 }
 
 
-#' Compute the prial value between two matrices
-#' @param Ltrue true Laplacian matrix
-#' @param Lest estimated Laplacian matrix
-#' @param Lscm estimated Laplacian matrix via the generalized inverse of the
-#'        of the sample covariance matrix
+# Compute the prial value between two matrices
+# @param Ltrue true Laplacian matrix
+# @param Lest estimated Laplacian matrix
+# @param Lscm estimated Laplacian matrix via the generalized inverse of the
+#        of the sample covariance matrix
 prial <- function(Ltrue, Lest, Lscm) {
   return(100 * (1 - (norm(Lest - Ltrue, type = "F") /
                      norm(Lscm - Ltrue, type = "F"))^2))
