@@ -67,7 +67,7 @@ On MS Windows environments, make sure to install the most recent version of ``Rt
 #### macOS
 **spectralGraphTopology** depends on [`RcppArmadillo`](https://github.com/RcppCore/RcppArmadillo) which requires [`gfortran`](https://cloud.r-project.org/bin/macosx/tools/).
 
-# Usage: clustering
+## Usage: clustering
 We illustrate the usage of the package with simulated data, as follows:
 ```{r plot_k_component, message=FALSE}
 library(spectralGraphTopology)
@@ -118,7 +118,7 @@ In case you made use of the function `cluster_k_component_graph`, consider citin
   AAAI'16. <https://dl.acm.org/citation.cfm?id=3016100.3016174>
 
 ## Links
-Package: [CRAN](https://CRAN.R-project.org/package=spectralGraphTopology) and [GitHub](https://github.com/dppalomar/risk    ParityPortfolio).
+Package: [CRAN](https://CRAN.R-project.org/package=spectralGraphTopology) and [GitHub](https://github.com/dppalomar/spectralGraphTopology).
 
 README file: [CRAN-readme](https://cran.r-project.org/package=spectralGraphTopology/readme/README.html)
 and [GitHub-readme](https://raw.githack.com/dppalomar/spectralGraphTopology/master/README.html).
