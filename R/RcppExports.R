@@ -43,101 +43,42 @@ A <- function(w) {
     .Call('_spectralGraphTopology_A', PACKAGE = 'spectralGraphTopology', w)
 }
 
-#' Computes the matrix form of the composition of the operators Lstar and
-#' L, i.e., Lstar o L.
-#'
-#' @param n number of columns/rows
-#' @return M the composition of Lstar and L
-#'
 Mmat <- function(n) {
     .Call('_spectralGraphTopology_Mmat', PACKAGE = 'spectralGraphTopology', n)
 }
 
-#' Computes the matrix form of the composition of the operators Astar and
-#' A, i.e., Astar o A.
-#'
-#' @param n number of columns/rows
-#' @return M the composition of Astar and A
-#'
 Pmat <- function(n) {
     .Call('_spectralGraphTopology_Pmat', PACKAGE = 'spectralGraphTopology', n)
 }
 
-#' Computes the matrix that represents the composition of
-#' the vec and the L operators.
-#'
-#' @param n the dimension of L
-#' @return R matrix such that vec(L(w)) = Rw
-#'
 vecLmat <- function(n) {
     .Call('_spectralGraphTopology_vecLmat', PACKAGE = 'spectralGraphTopology', n)
 }
 
-#' Computes the canonical vec operator, i.e., converts a given n x m matrix M,
-#' into a  nm x 1 column vector vec(M) by stacking the columns of M on top of
-#' one another.
-#'
-#' @param M input matrix
-#' @return w vector such that w = vec(M)
-#'
 vec <- function(M) {
     .Call('_spectralGraphTopology_vec', PACKAGE = 'spectralGraphTopology', M)
 }
 
-#' Computes the Lstar operator.
-#'
-#' @param M matrix
-#' @return w vector
-#'
 Lstar <- function(M) {
     .Call('_spectralGraphTopology_Lstar', PACKAGE = 'spectralGraphTopology', M)
 }
 
-#' Computes the Astar operator.
-#'
-#' @param M matrix
-#' @return w vector
-#'
 Astar <- function(M) {
     .Call('_spectralGraphTopology_Astar', PACKAGE = 'spectralGraphTopology', M)
 }
 
-#' Computes the inverse of the L operator.
-#'
-#' @param M Laplacian matrix
-#' @return w the weight vector of the graph
-#'
 Linv <- function(M) {
     .Call('_spectralGraphTopology_Linv', PACKAGE = 'spectralGraphTopology', M)
 }
 
-#' Computes the inverse of the L operator.
-#'
-#' @param M Laplacian matrix
-#' @return w the weight vector of the graph
-#'
 Ainv <- function(M) {
     .Call('_spectralGraphTopology_Ainv', PACKAGE = 'spectralGraphTopology', M)
 }
 
-#' Alternative implementation for the Lstar operator.
-#' This is only used for unit testing. Use Lstar for
-#' a better performance.
-#'
-#' @param M matrix
-#' @return w vector
-#'
 altLstar <- function(M) {
     .Call('_spectralGraphTopology_altLstar', PACKAGE = 'spectralGraphTopology', M)
 }
 
-#' Alternative implementation for the Astar operator.
-#' This is only used for unit testing. Use Astar for
-#' a better performance.
-#'
-#' @param M matrix
-#' @return w vector
-#'
 altAstar <- function(M) {
     .Call('_spectralGraphTopology_altAstar', PACKAGE = 'spectralGraphTopology', M)
 }
