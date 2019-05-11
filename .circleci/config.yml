@@ -21,6 +21,7 @@ defaults: &steps
           sudo apt-get install --yes libmpfr-dev
           sudo Rscript -e "update.packages(ask = FALSE);"
           Rscript -e "install.packages('survival');"
+          Rscript -e "install.packages('Matrix');"
           Rscript -e "install.packages('BiocManager'); BiocManager::install('genefilter')"
           Rscript \
             -e 'if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")' \
