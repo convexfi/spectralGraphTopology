@@ -2,7 +2,6 @@
 // Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #include <RcppArmadillo.h>
-#define NDEBUG 1
 #include <RcppEigen.h>
 #include <Rcpp.h>
 
@@ -151,28 +150,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// altLstar
-Eigen::VectorXd altLstar(const Eigen::MatrixXd& M);
-RcppExport SEXP _spectralGraphTopology_altLstar(SEXP MSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(altLstar(M));
-    return rcpp_result_gen;
-END_RCPP
-}
-// altAstar
-Eigen::VectorXd altAstar(const Eigen::MatrixXd& M);
-RcppExport SEXP _spectralGraphTopology_altAstar(SEXP MSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(altAstar(M));
-    return rcpp_result_gen;
-END_RCPP
-}
 // blockDiagCpp
 Eigen::MatrixXd blockDiagCpp(const std::vector<Eigen::MatrixXd>& matrices);
 RcppExport SEXP _spectralGraphTopology_blockDiagCpp(SEXP matricesSEXP) {
@@ -234,8 +211,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spectralGraphTopology_Astar", (DL_FUNC) &_spectralGraphTopology_Astar, 1},
     {"_spectralGraphTopology_Linv", (DL_FUNC) &_spectralGraphTopology_Linv, 1},
     {"_spectralGraphTopology_Ainv", (DL_FUNC) &_spectralGraphTopology_Ainv, 1},
-    {"_spectralGraphTopology_altLstar", (DL_FUNC) &_spectralGraphTopology_altLstar, 1},
-    {"_spectralGraphTopology_altAstar", (DL_FUNC) &_spectralGraphTopology_altAstar, 1},
     {"_spectralGraphTopology_blockDiagCpp", (DL_FUNC) &_spectralGraphTopology_blockDiagCpp, 1},
     {"_spectralGraphTopology_metrics", (DL_FUNC) &_spectralGraphTopology_metrics, 3},
     {"_spectralGraphTopology_pairwise_matrix_rownorm", (DL_FUNC) &_spectralGraphTopology_pairwise_matrix_rownorm, 1},

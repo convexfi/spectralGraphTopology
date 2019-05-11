@@ -140,6 +140,22 @@ test_that("verify the Lstar operator in basic case", {
 })
 
 
+test_that("the composition of the Lstar and L works", {
+  p <- 10
+  l <- .5 * p * (p - 1)
+  w <- runif(l)
+  expect_that(all(Lstar(L(w)) == c(Mmat(l) %*% w)), is_true())
+})
+
+
+test_that("the composition of the Astar and A works", {
+  p <- 10
+  l <- .5 * p * (p - 1)
+  w <- runif(l)
+  expect_that(all(Astar(A(w)) == c(Pmat(l) %*% w)), is_true())
+})
+
+
 test_that("test the agreement of different implementations of the Lstar operator", {
    Y <- matrix(rnorm(16), 4, 4)
    w1 <- LStarOp(Y)

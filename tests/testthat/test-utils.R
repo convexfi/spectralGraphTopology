@@ -2,6 +2,7 @@ context("utility functions")
 library(testthat)
 library(spectralGraphTopology)
 
+
 test_that("consistency of blockDiag function", {
   N1 <- sample(1:10, 1)
   N2 <- sample(1:10, 1)
@@ -12,10 +13,22 @@ test_that("consistency of blockDiag function", {
   expect_that(all(L == block_diag(L1, L2)), is_true())
 })
 
+
 test_that("blockDiag throws an exception when shape is not square", {
   N1 <- sample(1:10, 1)
   N2 <- N1 + 1
   L2 <- matrix(2, N1, N2)
   expect_error(block_diag(matrix(-1, N1, N1),
                           matrix(-1, N1, N2)), "matrix is not square")
+})
+
+
+test_that("upper_view_vec works", {
+  a <- runif(1)
+  M <- a * matrix(c(6, -1, -2, -3,
+                    -1, 10, -4, -5,
+                    -2, -4, 12, -6,
+                    -3, -5, -6, 14))
+  v <- upper_view_vec(M)
+  expect_that(all(v == - a * c(1:6)), is_true())
 })

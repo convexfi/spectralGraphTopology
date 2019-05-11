@@ -75,14 +75,6 @@ Ainv <- function(M) {
     .Call('_spectralGraphTopology_Ainv', PACKAGE = 'spectralGraphTopology', M)
 }
 
-altLstar <- function(M) {
-    .Call('_spectralGraphTopology_altLstar', PACKAGE = 'spectralGraphTopology', M)
-}
-
-altAstar <- function(M) {
-    .Call('_spectralGraphTopology_altAstar', PACKAGE = 'spectralGraphTopology', M)
-}
-
 blockDiagCpp <- function(matrices) {
     .Call('_spectralGraphTopology_blockDiagCpp', PACKAGE = 'spectralGraphTopology', matrices)
 }
