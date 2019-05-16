@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2019-04-29" />
+<meta name="date" content="2019-05-11" />
 
 <title>Learning graphs from data via spectral constraints</title>
 
@@ -111,7 +111,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore project-name">Learning graphs from data via spectral constraints</h1>
 <h4 class="author project-author"><div class="line-block">Ze Vinicius, Daniel P. Palomar, Jiaxi Ying, and Sandeep Kumar<br />
 Hong Kong University of Science and Technology (HKUST)</div></h4>
-<h4 class="date project-date">2019-04-29</h4>
+<h4 class="date project-date">2019-05-11</h4>
 </section>
 
 
@@ -151,9 +151,8 @@ about its topology, i.e., how nodes are connected among themselves. By definitio
 a (combinatorial) Laplacian matrix is positive semi-definite, symmetric, and with sum of rows
 equal to zero.</p>
 <p>One common approach to estimate the Laplacian matrix of a graph (without satisfying the zero row-sum property)
-would be via the generalized
-inverse of the sample covariance matrix, which is an assymptotically unbiased and efficient
-estimator. In this document, we call this approach the naive one. In R, this estimator can be
+would be via the generalized inverse of the sample covariance matrix, which is an assymptotically unbiased
+and efficient estimator. In this document, we call this approach the naive one. In R, this estimator can be
 computed simply as <code>MASS::ginv(cov(Y))</code>, where<code>Y</code> is the data matrix. However, this estimator
 performs very poorly when the sample size is small when compared with the number of nodes, which
 makes its use questionable for practical purposes.</p>
@@ -201,7 +200,7 @@ by combining the constraints related to the Laplacian and adjacency matrices.</p
 <h1>Package usage</h1>
 <p>The <code>spectralGraphTopology</code> package provides three main functions to estimate k-component, bipartite, and
 k-component bipartite graphs, respectively: <code>learn_k_component_graph</code>, <code>learn_bipartite_graph</code>, and
-<code>learn_bipartite_k_component</code>. In the next subsections, we will check out how to apply those functions
+<code>learn_bipartite_k_component_graph</code>. In the next subsections, we will check out how to apply those functions
 in synthetic datasets.</p>
 <div id="learning-a-grid-graph" class="section level2">
 <h2>Learning a grid graph</h2>

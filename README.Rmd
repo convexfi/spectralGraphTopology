@@ -36,9 +36,7 @@ knit_hooks$set(pngquant = hook_pngquant)
 [![Docker Build Status](https://img.shields.io/docker/cloud/build/mirca/spectralgraphtopology.svg)](https://hub.docker.com/r/mirca/spectralgraphtopology/)
 [![Build Status](https://dev.azure.com/jvmirca/spectralGraphTopology/_apis/build/status/mirca.spectralGraphTopology?branchName=master)](https://dev.azure.com/jvmirca/spectralGraphTopology/_build/latest?definitionId=1&branchName=master)
 
-<p align="center">
-  <img width = "200" src="./man/figures//circles3_reduced.gif"/>
-</p>
+<a href="https://mirca.github.io/spectralGraphTopology"><img style="float: right;" width="250" src="./man/figures//circles3_reduced.gif" align="right" /></a>
 
 **spectralGraphTopology** provides estimators to learn k-component, bipartite,
 and k-component bipartite graphs from data by imposing spectral constraints

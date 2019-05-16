@@ -72,10 +72,9 @@ about its topology, i.e., how nodes are connected among themselves. By definitio
 a (combinatorial) Laplacian matrix is positive semi-definite, symmetric, and with sum of rows
 equal to zero.
 
-One common approach to estimate the Laplacian matrix of a graph (without satisfying the zero row-sum property) 
-would be via the generalized
-inverse of the sample covariance matrix, which is an assymptotically unbiased and efficient
-estimator. In this document, we call this approach the naive one. In R, this estimator can be
+One common approach to estimate the Laplacian matrix of a graph (without satisfying the zero row-sum property)
+would be via the generalized inverse of the sample covariance matrix, which is an assymptotically unbiased
+and efficient estimator. In this document, we call this approach the naive one. In R, this estimator can be
 computed simply as ``MASS::ginv(cov(Y))``, where``Y`` is the data matrix. However, this estimator
 performs very poorly when the sample size is small when compared with the number of nodes, which
 makes its use questionable for practical purposes.
@@ -129,7 +128,7 @@ by combining the constraints related to the Laplacian and adjacency matrices.
 
 The `spectralGraphTopology` package provides three main functions to estimate k-component, bipartite, and
 k-component bipartite graphs, respectively: `learn_k_component_graph`, `learn_bipartite_graph`, and
-`learn_bipartite_k_component`.  In the next subsections, we will check out how to apply those functions
+`learn_bipartite_k_component_graph`.  In the next subsections, we will check out how to apply those functions
 in synthetic datasets.
 
 ## Learning a grid graph
