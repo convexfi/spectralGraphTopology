@@ -52,8 +52,6 @@ Suggests:
     matrixcalc,
     CVXR
 VignetteBuilder:
-    bookdown,
     knitr,
-    prettydoc,
     rmarkdown,
     R.rsp
