@@ -24,7 +24,7 @@ for (j in 1:length(n)) {
     # the pseudo inverse of the true Laplacian
     Y <- MASS::mvrnorm(t, mu = rep(0, n[j]), Sigma = MASS::ginv(Ltrue))
     S <- cov(Y)
-    graph <- learn_k_component_graph(S, w0 = "qp", k = 4, beta = 1e2, fix_beta = TRUE,
+    graph <- learn_k_component_graph(S, w0 = "naive", k = 4, beta = 1e2, fix_beta = FALSE,
                                      abstol = 0, maxiter = maxiter, verbose = TRUE)
     times[r, j] <- graph$elapsed_time[length(graph$elapsed_time)]
   }
