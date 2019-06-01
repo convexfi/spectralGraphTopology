@@ -17,10 +17,10 @@
 #'
 #' @section Help:
 #' For a quick help see the README file:
-#' \href{https://raw.githack.com/dppalomar/spectralGraphTopology/master/README.html}{GitHub-README}.
+#' \href{https://github.com/dppalomar/spectralGraphTopology/blob/master/README.md}{GitHub-README}.
 #'
 #' For more details see the
-#' \href{https://CRAN.r-project.org/web/packages/spectralGraphTopology/vignettes/SpectralGraphTopology.html}{vignette.}
+#' \href{https://CRAN.R-project.org/web/packages/spectralGraphTopology/vignettes/SpectralGraphTopology.html}{vignette.}
 #'
 #' @author Ze Vinicius and Daniel P. Palomar
 #'

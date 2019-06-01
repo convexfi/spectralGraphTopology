@@ -1,50 +1,66 @@
-[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/spectralGraphTopology)](https://cran.r-project.org/package=spectralGraphTopology)
-[![CRAN Downloads](https://cranlogs.r-pkg.org/badges/spectralGraphTopology)](https://cran.r-project.org/package=spectralGraphTopology)
-![CRAN Downloads Total](https://cranlogs.r-pkg.org/badges/grand-total/spectralGraphTopology?color=brightgreen)
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/spectralGraphTopology)](https://cran.r-project.org/package=spectralGraphTopology)
+[![CRAN
+Downloads](https://cranlogs.r-pkg.org/badges/spectralGraphTopology)](https://cran.r-project.org/package=spectralGraphTopology)
+![CRAN Downloads
+Total](https://cranlogs.r-pkg.org/badges/grand-total/spectralGraphTopology?color=brightgreen)
 [![Rcpp](https://img.shields.io/badge/powered%20by-Rcpp-orange.svg?style=flat)](https://www.rcpp.org/)
 
 [![codecov](https://codecov.io/gh/mirca/spectralGraphTopology/branch/master/graph/badge.svg)](https://codecov.io/gh/mirca/spectralGraphTopology)
 [![Travis-CI-Badge](https://travis-ci.org/mirca/spectralGraphTopology.svg?branch=master)](https://travis-ci.org/mirca/spectralGraphTopology)
-[![Build status](https://ci.appveyor.com/api/projects/status/vr62ddvc9xoabnwy?svg=true)](https://ci.appveyor.com/project/mirca/spectralgraphtopology-j05c9)
+[![Build
+status](https://ci.appveyor.com/api/projects/status/vr62ddvc9xoabnwy?svg=true)](https://ci.appveyor.com/project/mirca/spectralgraphtopology-j05c9)
 [![CircleCI](https://circleci.com/gh/mirca/spectralGraphTopology.svg?style=svg)](https://circleci.com/gh/mirca/spectralGraphTopology)
-[![Docker Build Status](https://img.shields.io/docker/cloud/build/mirca/spectralgraphtopology.svg)](https://hub.docker.com/r/mirca/spectralgraphtopology/)
-[![Build Status](https://dev.azure.com/jvmirca/spectralGraphTopology/_apis/build/status/mirca.spectralGraphTopology?branchName=master)](https://dev.azure.com/jvmirca/spectralGraphTopology/_build/latest?definitionId=1&branchName=master)
+[![Docker Build
+Status](https://img.shields.io/docker/cloud/build/mirca/spectralgraphtopology.svg)](https://hub.docker.com/r/mirca/spectralgraphtopology/)
+[![Build
+Status](https://dev.azure.com/jvmirca/spectralGraphTopology/_apis/build/status/mirca.spectralGraphTopology?branchName=master)](https://dev.azure.com/jvmirca/spectralGraphTopology/_build/latest?definitionId=1&branchName=master)
 
 <a href="https://mirca.github.io/spectralGraphTopology"><img style="float: right;" width="250" src="./man/figures//circles3_reduced.gif" align="right" /></a>
 
-**spectralGraphTopology** provides estimators to learn k-component, bipartite,
-and k-component bipartite graphs from data by imposing spectral constraints
-on the eigenvalues and eigenvectors of the Laplacian and adjacency matrices.
-Those estimators leverages spectral properties of the graphical models as a
-prior information, which turn out to play key roles in unsupervised machine
-learning tasks such as community detection.
+**spectralGraphTopology** provides estimators to learn k-component,
+bipartite, and k-component bipartite graphs from data by imposing
+spectral constraints on the eigenvalues and eigenvectors of the
+Laplacian and adjacency matrices. Those estimators leverages spectral
+properties of the graphical models as a prior information, which turn
+out to play key roles in unsupervised machine learning tasks such as
+community detection.
 
-**Documentation**: [**https://mirca.github.io/spectralGraphTopology**](https://mirca.github.io/spectralGraphTopology).
+**Documentation**:
+[**https://mirca.github.io/spectralGraphTopology**](https://mirca.github.io/spectralGraphTopology).
 
-## Installation
+Installation
+------------
 
 From inside an R session, type:
 
-```r
+``` r
 > install.packages("spectralGraphTopology")
 ```
 
 Alternatively, you can install the development version from GitHub:
 
-```r
+``` r
 > devtools::install_github("dppalomar/spectralGraphTopology")
 ```
 
 #### Microsoft Windows
-On MS Windows environments, make sure to install the most recent version of ``Rtools``.
+
+On MS Windows environments, make sure to install the most recent version
+of `Rtools`.
 
 #### macOS
-**spectralGraphTopology** depends on [`RcppArmadillo`](https://github.com/RcppCore/RcppArmadillo) which requires [`gfortran`](https://cloud.r-project.org/bin/macosx/tools/).
 
-## Usage: clustering
+**spectralGraphTopology** depends on
+[`RcppArmadillo`](https://github.com/RcppCore/RcppArmadillo) which
+requires [`gfortran`](https://cloud.r-project.org/bin/macosx/tools/).
+
+Usage: clustering
+-----------------
+
 We illustrate the usage of the package with simulated data, as follows:
 
-```r
+``` r
 library(spectralGraphTopology)
 library(clusterSim)
 library(igraph)
@@ -75,31 +91,46 @@ plot(net, layout = twomoon$data, vertex.label = NA, vertex.size = 3)
 
 <img src="man/figures/README-plot_k_component-1.png" width="75%" style="display: block; margin: auto;" />
 
-## Contributing
+Contributing
+------------
+
 We welcome all sorts of contributions. Please feel free to open an issue
 to report a bug or discuss a feature request.
 
-## Citation
+Citation
+--------
+
 If you made use of this software please consider citing:
 
-- J. V. de Miranda Cardoso, D. P. Palomar (2019). spectralGraphTopology: Learning Graphs from
-  Data via Spectral Constraints. R package version 0.1.0. <https://CRAN.R-project.org/package=spectralGraphTopology>
+-   J. V. de Miranda Cardoso, D. P. Palomar (2019).
+    spectralGraphTopology: Learning Graphs from Data via Spectral
+    Constraints. R package version 0.1.0.
+    <https://CRAN.R-project.org/package=spectralGraphTopology>
 
-- S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar (2019). A unified framework
-  for structured graph learning via spectral constraints. <https://arxiv.org/abs/1904.09792>
+-   S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar
+    (2019). A unified framework for structured graph learning via
+    spectral constraints. <https://arxiv.org/abs/1904.09792>
 
-In case you made use of the function `cluster_k_component_graph`, consider citing:
+In case you made use of the function `cluster_k_component_graph`,
+consider citing:
 
-- N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016).
-  The Constrained Laplacian Rank Algorithm for Graph-based Clustering,
-  AAAI'16. <https://dl.acm.org/citation.cfm?id=3016100.3016174>
+-   N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016). The
+    Constrained Laplacian Rank Algorithm for Graph-based Clustering,
+    AAAI’16. <https://dl.acm.org/citation.cfm?id=3016100.3016174>
 
-## Links
-Package: [CRAN](https://CRAN.R-project.org/package=spectralGraphTopology) and [GitHub](https://github.com/dppalomar/spectralGraphTopology).
+Links
+-----
 
-README file: [CRAN-readme](https://cran.r-project.org/package=spectralGraphTopology/readme/README.html)
-and [GitHub-readme](https://raw.githack.com/dppalomar/spectralGraphTopology/master/README.html).
+Package:
+[CRAN](https://CRAN.R-project.org/package=spectralGraphTopology) and
+[GitHub](https://github.com/dppalomar/spectralGraphTopology).
 
-Vignette: [CRAN-html-vignette](https://cran.r-project.org/package=spectralGraphTopology/vignettes/SpectralGraphTopology.html),
-[CRAN-pdf-vignette](https://cran.r-project.org/package=spectralGraphTopology/vignettes/SpectralGraphTopology-pdf.pdf),
-[GitHub-html-vignette](https://raw.githack.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology.html    )
+README file:
+[CRAN-readme](https://CRAN.R-project.org/package=spectralGraphTopology/readme/README.html)
+and
+[GitHub-readme](https://github.com/dppalomar/spectralGraphTopology/blob/master/README.md).
+
+Vignette:
+[CRAN-html-vignette](https://CRAN.R-project.org/package=spectralGraphTopology/vignettes/SpectralGraphTopology.html),
+[CRAN-pdf-vignette](https://CRAN.R-project.org/package=spectralGraphTopology/vignettes/SpectralGraphTopology-pdf.pdf),
+[GitHub-html-vignette](https://raw.githack.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology.html)
