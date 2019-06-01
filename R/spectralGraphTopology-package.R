@@ -19,8 +19,8 @@
 #' For a quick help see the README file:
 #' \href{https://raw.githack.com/dppalomar/spectralGraphTopology/master/README.html}{GitHub-README}.
 #'
-#' For more details see the vignette:
-#' \href{https://raw.githack.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology.html}{GitHub-html-vignette}
+#' For more details see the
+#' \href{https://CRAN.r-project.org/web/packages/spectralGraphTopology/vignettes/SpectralGraphTopology.html}{vignette.}
 #'
 #' @author Ze Vinicius and Daniel P. Palomar
 #'
@@ -31,7 +31,7 @@
 #'
 #' N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016).
 #' The Constrained Laplacian Rank Algorithm for Graph-based Clustering,
-#' AAAI'16. http://dl.acm.org/citation.cfm?id=3016100.3016174
+#' AAAI'16. <http://dl.acm.org/citation.cfm?id=3016100.3016174>
 #'
 #' @importFrom Rcpp sourceCpp
 #' @useDynLib spectralGraphTopology
