@@ -6,6 +6,7 @@
 .DS_Store
 inst/doc
 README_cache
+*.tar.gz
 *.aux
 *.log
 *-eps-converted-to.pdf
