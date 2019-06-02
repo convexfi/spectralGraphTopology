@@ -53,7 +53,7 @@ of `Rtools`.
 
 **spectralGraphTopology** depends on
 [`RcppArmadillo`](https://github.com/RcppCore/RcppArmadillo) which
-requires [`gfortran`](https://cloud.r-project.org/bin/macosx/tools/).
+requires [`gfortran`](https://CRAN.R-project.org/bin/macosx/tools/).
 
 Usage: clustering
 -----------------
