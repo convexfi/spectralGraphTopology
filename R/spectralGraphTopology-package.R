@@ -20,7 +20,7 @@
 #' \href{https://github.com/dppalomar/spectralGraphTopology/blob/master/README.md}{GitHub-README}.
 #'
 #' For more details see the
-#' \href{https://CRAN.R-project.org/web/packages/spectralGraphTopology/vignettes/SpectralGraphTopology.html}{vignette.}
+#' \href{https://CRAN.R-project.org/package=spectralGraphTopology/vignettes/SpectralGraphTopology.html}{vignette.}
 #'
 #' @author Ze Vinicius and Daniel P. Palomar
 #'
