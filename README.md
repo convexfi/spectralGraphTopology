@@ -4,7 +4,7 @@
 Downloads](https://cranlogs.r-pkg.org/badges/spectralGraphTopology)](https://cran.r-project.org/package=spectralGraphTopology)
 ![CRAN Downloads
 Total](https://cranlogs.r-pkg.org/badges/grand-total/spectralGraphTopology?color=brightgreen)
-[![Rcpp](https://img.shields.io/badge/powered%20by-Rcpp-orange.svg?style=flat)](https://www.rcpp.org/)
+[![Rcpp](https://img.shields.io/badge/powered%20by-Rcpp-orange.svg?style=flat)](http://www.rcpp.org/)
 
 [![codecov](https://codecov.io/gh/mirca/spectralGraphTopology/branch/master/graph/badge.svg)](https://codecov.io/gh/mirca/spectralGraphTopology)
 [![Travis-CI-Badge](https://travis-ci.org/mirca/spectralGraphTopology.svg?branch=master)](https://travis-ci.org/mirca/spectralGraphTopology)
