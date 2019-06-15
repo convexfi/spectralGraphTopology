@@ -10,7 +10,6 @@ Total](https://cranlogs.r-pkg.org/badges/grand-total/spectralGraphTopology?color
 [![Travis-CI-Badge](https://travis-ci.org/mirca/spectralGraphTopology.svg?branch=master)](https://travis-ci.org/mirca/spectralGraphTopology)
 [![Build
 status](https://ci.appveyor.com/api/projects/status/vr62ddvc9xoabnwy?svg=true)](https://ci.appveyor.com/project/mirca/spectralgraphtopology-j05c9)
-[![CircleCI](https://circleci.com/gh/mirca/spectralGraphTopology.svg?style=svg)](https://circleci.com/gh/mirca/spectralGraphTopology)
 [![Docker Build
 Status](https://img.shields.io/docker/cloud/build/mirca/spectralgraphtopology.svg)](https://hub.docker.com/r/mirca/spectralgraphtopology/)
 [![Build
