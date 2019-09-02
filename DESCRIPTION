@@ -29,7 +29,6 @@ LinkingTo:
     RcppEigen
 Imports:
     Rcpp,
-    osqp,
     MASS,
     Matrix,
     progress,
@@ -49,6 +48,7 @@ Suggests:
     pals,
     clusterSim,
     viridis,
+    osqp,
     quadprog,
     matrixcalc,
     CVXR
