@@ -165,7 +165,6 @@ learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naiv
 }
 
 
-#' @export
 learn_cospectral_graph <- function(S, lambda, k = 1, is_data_matrix = FALSE, w0 = "naive", alpha = 0,
                                    beta = 1e4, beta_max = 1e6, fix_beta = TRUE, rho = 1e-2, m = 7,
                                    maxiter = 1e4, abstol = 1e-6, reltol = 1e-4, eigtol = 1e-9,
