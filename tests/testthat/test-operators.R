@@ -7,18 +7,18 @@ library(spectralGraphTopology)
 # with non-positive off diagonal elements and nonnegative
 # diagonal elements
 L_constraints <- function(Lw) {
-  expect_that(isSymmetric.matrix(Lw), is_true())
-  expect_that(all(diag(Lw) > 0), is_true())
+  expect_true(isSymmetric.matrix(Lw))
+  expect_true(all(diag(Lw) > 0))
   Lw_off <- Lw - diag(diag(Lw))
-  expect_that(all(Lw_off <= 0), is_true())
-  expect_that(all(colSums(Lw) == 0), is_true())
-  expect_that(all(rowSums(Lw) == 0), is_true())
+  expect_true(all(Lw_off <= 0))
+  expect_true(all(colSums(Lw) == 0))
+  expect_true(all(rowSums(Lw) == 0))
   eigen_values <- eigen(Lw, symmetric = TRUE, only.values = TRUE)
   # set to zero eigen values that are no bigger than 1e-12 in magnitude
   mask <- abs(eigen_values$values) < 1e-12
   eigen_values$values[mask] <- 0
   # verify that eigen values are nonnegative
-  expect_that(all(eigen_values$values >= 0), is_true())
+  expect_true(all(eigen_values$values >= 0))
 }
 
 
@@ -74,20 +74,20 @@ LStarOpImpl <- function(Y) {
 
 test_that("inverse of the L operator works", {
   w <- runif(10)
-  expect_that(all(w == Linv(L(w))), is_true())
+  expect_true(all(w == Linv(L(w))))
 })
 
 
 test_that("inverse of the A operator works", {
   w <- runif(10)
-  expect_that(all(w == Ainv(A(w))), is_true())
+  expect_true(all(w == Ainv(A(w))))
 })
 
 
 with_parameters_test_that("L operator works in simple, manually verifiable cases", {
     Lw <- L(w)
     L_constraints(Lw)
-    expect_that(all(Lw == answer), is_true())
+    expect_true(all(Lw == answer))
   },
   cases(
         list(w = c(1, 2, 3, 4, 5, 6), answer = matrix(c(6, -1, -2, -3,
@@ -135,8 +135,8 @@ with_parameters_test_that("L and A are linear operators", {
 
 test_that("verify the Lstar operator in basic case", {
    Y <- diag(4)
-   expect_that(all(LStarOp(Y) == array(2, 6)), is_true())
-   expect_that(all(Lstar(Y) == array(2, 6)), is_true())
+   expect_true(all(LStarOp(Y) == array(2, 6)))
+   expect_true(all(Lstar(Y) == array(2, 6)))
 })
 
 
@@ -144,7 +144,7 @@ test_that("the composition of the Lstar and L works", {
   p <- 10
   l <- .5 * p * (p - 1)
   w <- runif(l)
-  expect_that(all(Lstar(L(w)) == c(Mmat(l) %*% w)), is_true())
+  expect_true(all(Lstar(L(w)) == c(Mmat(l) %*% w)))
 })
 
 
@@ -152,7 +152,7 @@ test_that("the composition of the Astar and A works", {
   p <- 10
   l <- .5 * p * (p - 1)
   w <- runif(l)
-  expect_that(all(Astar(A(w)) == c(Pmat(l) %*% w)), is_true())
+  expect_true(all(Astar(A(w)) == c(Pmat(l) %*% w)))
 })
 
 
@@ -161,8 +161,8 @@ test_that("test the agreement of different implementations of the Lstar operator
    w1 <- LStarOp(Y)
    w2 <- LStarOpImpl(Y)
    w3 <- Lstar(Y)
-   expect_that(all(abs(w1 - w2) < 1e-9), is_true())
-   expect_that(all(abs(w2 - w3) < 1e-9), is_true())
+   expect_true(all(abs(w1 - w2) < 1e-9))
+   expect_true(all(abs(w2 - w3) < 1e-9))
 })
 
 
@@ -174,10 +174,10 @@ test_that("test the inner product relation between the operators L and Lstar", {
   Y <- diag(n)
   Lw <- LOp(w)
   y <- LStarOp(Y)
-  expect_that(sum(diag(t(Y) %*% Lw)) == w %*% y, is_true())
+  expect_true(sum(diag(t(Y) %*% Lw)) == w %*% y)
   Lw <- L(w)
   y <- Lstar(Y)
-  expect_that(sum(diag(t(Y) %*% Lw)) == w %*% y, is_true())
+  expect_true(sum(diag(t(Y) %*% Lw)) == w %*% y)
 })
 
 
@@ -188,14 +188,14 @@ test_that("test our vec operator with matrixcalc::vec", {
   ncols <- sample(1:10, 1)
   nrows <- sample(1:10, 1)
   M <- matrix(runif(ncols * nrows), nrows, ncols)
-  expect_that(all(vec(M) == matrixcalc::vec(M)), is_true())
+  expect_true(all(vec(M) == matrixcalc::vec(M)))
 })
 
 
 test_that("test the composition of the operator vec and L in manually verifiable cases", {
   # n = 2
   R2 <- matrix(c(1, -1, -1, 1), 4, 1)
-  expect_that(all(R2 == vecLmat(2)), is_true())
+  expect_true(all(R2 == vecLmat(2)))
   # n = 3
   R3 <- matrix(c(1, 1, 0,
                 -1, 0, 0,
@@ -206,7 +206,7 @@ test_that("test the composition of the operator vec and L in manually verifiable
                  0,-1, 0,
                  0, 0,-1,
                  0, 1, 1), 9, 3, byrow = TRUE)
-  expect_that(all(R3 == vecLmat(3)), is_true())
+  expect_true(all(R3 == vecLmat(3)))
   # n = 4
   R4 <- matrix(c(1, 1, 1, 0, 0, 0,
                 -1, 0, 0, 0, 0, 0,
@@ -224,5 +224,5 @@ test_that("test the composition of the operator vec and L in manually verifiable
                  0, 0, 0, 0,-1, 0,
                  0, 0, 0, 0, 0,-1,
                  0, 0, 1, 0, 1, 1), 16, 6, byrow = TRUE)
-  expect_that(all(R4 == vecLmat(4)), is_true())
+  expect_true(all(R4 == vecLmat(4)))
 })

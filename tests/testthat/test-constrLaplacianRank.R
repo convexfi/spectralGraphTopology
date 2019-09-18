@@ -8,7 +8,7 @@ test_that("pairwise row norm", {
   M <- matrix(runif(n * m), n, m)
   V <- pairwise_matrix_rownorm(M)
   expect_equal(c(n, n), dim(V))
-  expect_that(isSymmetric(V), is_true())
+  expect_true(isSymmetric(V))
   expect_equal(diag(V), rep(0, n))
 
   M <- rbind(c(1, 2, 3),

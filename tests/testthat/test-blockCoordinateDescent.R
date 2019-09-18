@@ -42,10 +42,10 @@ test_that("test that U remains orthonormal after being updated", {
   k <- 1
   U <- laplacian.U_update(L(w), k)
   q <- n - k
-  expect_that(all.equal(crossprod(U), diag(array(1., q)),
-                        check.attributes = FALSE), is_true())
-  expect_that(ncol(U) == q, is_true())
-  expect_that(nrow(U) == n, is_true())
+  expect_true(all.equal(crossprod(U), diag(array(1., q)),
+                        check.attributes = FALSE))
+  expect_true(ncol(U) == q)
+  expect_true(nrow(U) == n)
 })
 
 
@@ -55,10 +55,10 @@ test_that("test that V remains orthonormal after being updated", {
   z <- 3
   V <- bipartite.V_update(A(w), z)
   q <- n - z
-  expect_that(all.equal(crossprod(V), diag(array(1., q)),
-                        check.attributes = FALSE), is_true())
-  expect_that(ncol(V) == q, is_true())
-  expect_that(nrow(V) == n, is_true())
+  expect_true(all.equal(crossprod(V), diag(array(1., q)),
+                        check.attributes = FALSE))
+  expect_true(ncol(V) == q)
+  expect_true(nrow(V) == n)
 })
 
 
@@ -84,14 +84,14 @@ with_parameters_test_that("test that the eigenvalues of the Laplacian matrix
     q <- n - k
 
     lambda <- laplacian.lambda_update(lb, ub, beta, U, Lw, k)
-    expect_that(length(lambda) == q, is_true())
-    expect_that(all(lambda[1] >= lb, lambda[q] <= ub,
-                    lambda[2:q] >= lambda[1:(q-1)]), is_true())
+    expect_true(length(lambda) == q)
+    expect_true(all(lambda[1] >= lb, lambda[q] <= ub,
+                    lambda[2:q] >= lambda[1:(q-1)]))
 
     # compare against results from CVXR
     lambda_cvx <- lambda_update_cvx(lb, ub, beta, U, Lw, k)
-    expect_that(length(lambda_cvx) == q, is_true())
-    expect_that(all(abs(lambda_cvx - lambda) < 1e-3), is_true())
+    expect_true(length(lambda_cvx) == q)
+    expect_true(all(abs(lambda_cvx - lambda) < 1e-3))
   },
   cases(
         list(lb = 1e-2, ub = 10,  w = runif(1000)),
