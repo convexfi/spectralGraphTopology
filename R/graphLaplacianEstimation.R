@@ -2,6 +2,23 @@
 # proposed in L. Zhao et. al. "Optimization Algorithms for
 # Graph Laplacian Estimation via ADMM and MM", IEEE Trans. Sign. Proc. 2019.
 
+get_incidence_from_adjacency <- function(A) {
+  p <- nrow(A)
+  non_zero_edges <- sum(Ainv(A) > 0)
+  E <- matrix(0, p, non_zero_edges)
+  k <- 1
+  for (i in c(1:(p-1))) {
+    for (j in c((i+1):p)) {
+      if (A[i, j] > 0) {
+        E[i, k] <- 1
+        E[j, k] <- 1
+        k <- k + 1
+      }
+    }
+  }
+  return(E)
+}
+
 #' @title Learn the weighted Laplacian matrix of a graph
 
 learn_laplacian_gle_mm <- function(S, A, w0 = "naive", alpha = 0, maxiter = 1000, reltol = 1e-4, abstol = 1e-5) {
