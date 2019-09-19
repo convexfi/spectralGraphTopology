@@ -63,6 +63,7 @@
 #' # estimate graph on the basis of sampled data
 #' graph <- learn_k_component_graph(cov(Y), k = 2, beta = 10)
 #' graph$Laplacian
+
 #' @export
 learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0,
                                     beta = 1e4, beta_max = 1e6, fix_beta = TRUE, rho = 1e-2, m = 7,
