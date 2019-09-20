@@ -416,40 +416,44 @@ Another example arises in the field of finance, where stocks in the same industr
 are naturally more likely to behave in a similar fashion.  For those cases, we can assume that the
 unweighted adjacency matrix of the graph is known a priori and we can use state-of-the-art algorithms
 that leverages this fact to estimate the edge weights of the graph. In this package,
-we implement the method named "GLE-MM", which was proposed in [@Licheng2019]. The graph estimation is carried
-as follows:
+we implement the method named "GLE-MM" which was proposed in [@Licheng2019]. The graph estimation is carried
+out as follows:
 
 ```{r}
 library(igraph)
 library(spectralGraphTopology)
+library(pals)
+set.seed(42)
 
 # number of nodes
 p <- 100
 # number of modules
 m <- 4
 # Prefix matrix
-Prefix <- diag(.49, 4) + .01
+Prefix <- diag(.2, 4) + 0.0025
 # Generate a modular graph
 mgraph <- sample_sbm(p, pref.matrix = Prefix, block.sizes = c(rep(p / m, m)))
 # Randomly assign weights to the edges
 E(mgraph)$weight <- runif(gsize(mgraph), min = 1e-1, max = 3)
-# Get the true Laplacian matrix
+# Get the true Laplacian and Adjacency matrices
 Ltrue <- as.matrix(laplacian_matrix(mgraph))
+Atrue <- diag(diag(Ltrue)) - Ltrue
 # Get the unweighted true Adjacency matrix (assumed to be known)
 A <- 1 * (Ltrue < 0)
 # Generate samples from the Laplacian matrix
-Y <- MASS::mvrnorm(50 * p, mu = rep(0, p), Sigma = MASS::ginv(Ltrue))
+Y <- MASS::mvrnorm(10 * p, mu = rep(0, p), Sigma = MASS::ginv(Ltrue))
 # Compute the sample covariance matrix
 S <- cov(Y)
 # Estimate a graph from the samples
-graph <- learn_laplacian_gle_mm(S = S, A = A, alpha = 1e-5, record_objective = TRUE)
+graph <- learn_laplacian_gle_mm(S = S, A = A,
+                                record_objective = TRUE, verbose = FALSE)
 # Check convergence status
 graph$convergence
 # Compute the relative error between true and estimated Laplacians
 relative_error(Ltrue, graph$Laplacian)
 # Plot objective function per iteration
 plot(c(1:length(graph$objective_function)), graph$objective_function, xlab = "Iteration number",
-     ylab = "Objective function value", type = "b", pch=15, lty=1, cex=.75, col = "#6ABA81", xaxt = "n")
+     ylab = "Objective function value", type = "b", pch=15, lty=1, cex=.75, col = "#6ABA81")
 # Compute estimated adjacency matrix
 Aest <- diag(diag(graph$Laplacian)) - graph$Laplacian
 # Plot estimated graph
@@ -459,7 +463,15 @@ c_scale <- colorRamp(colors)
 E(net)$color = apply(c_scale(abs(E(net)$weight) / max(abs(E(net)$weight))), 1,
                      function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
 V(net)$color = "pink"
-plot(net, vertex.size = 3)
+plot(net, vertex.size = 3, vertex.label = NA)
+# Plot true and estimated Adjacency matrices
+par(mfrow = c(1, 2))
+corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square",
+         addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+title("True Adjacency")
+corrplot(Aest / max(Aest), is.corr = FALSE, method = "square",
+         addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+title("Estimated Adjacency")
 ```
 
 # References {-}
