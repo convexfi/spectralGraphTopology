@@ -113,12 +113,35 @@ If you made use of this software please consider citing:
     (2019). A unified framework for structured graph learning via
     spectral constraints. <https://arxiv.org/abs/1904.09792>
 
-In case you made use of the function `cluster_k_component_graph`,
-consider citing:
+In addition, consider citing the following bibliography according to its
+implementation:
 
--   N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016). The
-    Constrained Laplacian Rank Algorithm for Graph-based Clustering,
-    AAAI’16. <https://dl.acm.org/citation.cfm?id=3016100.3016174>
+<table>
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 90%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>function</strong></th>
+<th><strong>reference</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>cluster_k_component_graph</code></td>
+<td>N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016). <a href="https://dl.acm.org/citation.cfm?id=3016100.3016174">The Constrained Laplacian Rank Algorithm for Graph-based Clustering</a>, AAAI’16.</td>
+</tr>
+<tr class="even">
+<td><code>learn_laplacian_gle_mm</code></td>
+<td>Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar,<a href="https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf">Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM</a> IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 Links
 -----
