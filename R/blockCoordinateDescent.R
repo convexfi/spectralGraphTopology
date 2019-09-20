@@ -6,6 +6,7 @@ w_init <- function(w0, Sinv) {
       w0 <- qp$solution
     } else if (w0 == "naive") {
       w0 <- Linv(Sinv)
+      w0[w0 < 0] <- 0
     }
   }
   return(w0)
