@@ -19,7 +19,7 @@ test_that("learn_k_component_graph with diamond graph", {
   w <- c(1, 1, 0, 1, 1, 1)
   Laplacian <- L(w)
   n <- ncol(Laplacian)
-  Y <- MASS::mvrnorm(n * 500, rep(0, n), MASS::ginv(Laplacian))
+  Y <- MASS::mvrnorm(n * 1000, rep(0, n), MASS::ginv(Laplacian))
   res <- learn_k_component_graph(cov(Y))
   expect_true(res$convergence)
   expect_true(relative_error(Laplacian, res$Laplacian) < 1e-1)

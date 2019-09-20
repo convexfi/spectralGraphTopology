@@ -48,7 +48,6 @@ Suggests:
     pals,
     clusterSim,
     viridis,
-    osqp,
     quadprog,
     matrixcalc,
     CVXR
