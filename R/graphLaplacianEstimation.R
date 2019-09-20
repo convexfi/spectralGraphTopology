@@ -78,5 +78,5 @@ obj_func <- function(E, K, w, J) {
   EWEt <- E %*% diag(w) %*% t(E)
   Gamma <- EWEt + J
   lambda <- eigval_sym(Gamma)[2:n]
-  return(sum(E %*% diag(w) %*% t(E)) - sum(log(lambda)))
+  return(sum(diag(E %*% diag(w) %*% t(E) %*% K)) - sum(log(lambda)))
 }
