@@ -15,6 +15,18 @@ test_that("learn_k_component_graph with single component random graph", {
 })
 
 
+test_that("we can recover a simple connected graph with the GLE-MM method", {
+  w <- sample(1:10, 6)
+  Laplacian <- L(w)
+  n <- ncol(Laplacian)
+  Y <- MASS::mvrnorm(n * 500, rep(0, n), MASS::ginv(Laplacian))
+  res <- learn_laplacian_gle_mm(cov(Y), A = A(rep(1, length(w))))
+  expect_true(res$convergence)
+  expect_true(relative_error(Laplacian, res$Laplacian) < 1e-1)
+  expect_true(metrics(Laplacian, res$Laplacian, 1e-1)[1] > .9)
+})
+
+
 test_that("learn_k_component_graph with diamond graph", {
   w <- c(1, 1, 0, 1, 1, 1)
   Laplacian <- L(w)

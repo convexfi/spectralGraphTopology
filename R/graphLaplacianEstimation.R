@@ -4,8 +4,8 @@
 
 get_incidence_from_adjacency <- function(A) {
   p <- nrow(A)
-  #non_zero_edges <- sum(Ainv(A) > 0)
-  E <- matrix(0, p, .5 * p * (p-1))
+  m <- .5 * sum(A > 0)
+  E <- matrix(0, p, m)
   k <- 1
   for (i in c(1:(p-1))) {
     for (j in c((i+1):p)) {
@@ -30,31 +30,37 @@ get_incidence_from_adjacency <- function(A) {
 #'        w0 < 0
 #' @param alpha L1 regularization hyperparameter
 #' @param maxiter the maximum number of iterations
-#' @param abstol absolute tolerance on the weight vector w
 #' @param reltol relative tolerance on the weight vector w
+#' @param abstol absolute tolerance on the weight vector w
+#' @param record_objective whether or not to record the objective function
 
+#' @export
 learn_laplacian_gle_mm <- function(S, A, w0 = "naive", alpha = 0, maxiter = 1000,
-                                   reltol = 1e-4, abstol = 1e-5, record_objective = FALSE) {
+                                   reltol = 1e-4, abstol = 1e-5, record_objective = FALSE,
+                                   verbose = TRUE) {
   Sinv <- MASS::ginv(S)
-  w <- w_init(w0, Sinv)
+  mask <- Ainv(A) > 0
+  w <- w_init(w0, Sinv)[mask]
   wk <- w
   # number of nodes
-  n <- nrow(S)
-  # number of edges
-  m <- .5 * n * (n - 1)
+  p <- nrow(S)
+  # number of nonzero edges
+  m <- .5 * sum(A > 0)
   # l1-norm penalty factor
-  J <- matrix(1, n, n) / n
-  H <- 2 * diag(n) - n * J
+  J <- matrix(1, p, p) / p
+  H <- 2 * diag(p) - p * J
   K <- S + alpha * H
   E <- get_incidence_from_adjacency(A)
   R <- t(E) %*% K %*% E
   r <- nrow(R)
-  G <- cbind(E, rep(1, n))
+  G <- cbind(E, rep(1, p))
   if (record_objective)
     fun <- obj_func(E, K, wk, J)
-  # MM-loop
+  if (verbose)
+    pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta",
+                                     total = maxiter, clear = FALSE, width = 80)
   for (k in c(1:maxiter)) {
-    w_aug <- c(wk, 1 / n)
+    w_aug <- c(wk, 1 / p)
     G_aug_t <- t(G) * w_aug
     G_aug <- t(G_aug_t)
     Q <- G_aug_t %*% solve(G_aug %*% t(G), G_aug)
@@ -62,21 +68,25 @@ learn_laplacian_gle_mm <- function(S, A, w0 = "naive", alpha = 0, maxiter = 1000
     wk <- sqrt(diag(Q) / diag(R))
     if (record_objective)
       fun <- c(fun, obj_func(E, K, wk, J))
+    if (verbose)
+       pb$tick()
     werr <- abs(w - wk)
     has_converged <- all(werr <= .5 * reltol * (w + wk)) || all(werr <= abstol)
     if (has_converged && k > 1) break
     w <- wk
   }
-  results <- list(Laplacian = E %*% diag(wk) %*% t(E), maxiter = k, converged = has_converged)
+  z <- rep(0, .5 * p * (p - 1))
+  z[mask] <- wk
+  results <- list(Laplacian = L(z), maxiter = k, convergence = has_converged)
   if (record_objective)
     results$objective_function <- fun
   return(results)
 }
 
 obj_func <- function(E, K, w, J) {
-  n <- ncol(J)
+  p <- ncol(J)
   EWEt <- E %*% diag(w) %*% t(E)
   Gamma <- EWEt + J
-  lambda <- eigval_sym(Gamma)[2:n]
+  lambda <- eigval_sym(Gamma)[2:p]
   return(sum(diag(E %*% diag(w) %*% t(E) %*% K)) - sum(log(lambda)))
 }
