@@ -90,3 +90,36 @@ obj_func <- function(E, K, w, J) {
   lambda <- eigval_sym(Gamma)[2:p]
   return(sum(diag(E %*% diag(w) %*% t(E) %*% K)) - sum(log(lambda)))
 }
+
+#' @export
+learn_laplacian_gle_admm <- function(S, A, rho = 1, alpha = 0, maxiter = 1000,
+                                     tol = 1e-4) {
+  p <- nrow(S)
+  Sinv <- MASS::ginv(S)
+  w <- w_init("naive", Sinv)
+  Yk <- L(w)
+  Theta <- Yk
+  P <- eigvec_sym(Yk)
+  P <- P[, 2:p]
+  Ck <- Yk
+  # l1-norm penalty factor
+  J <- matrix(1, p, p) / p
+  H <- 2 * diag(p) - p * J
+  K <- S + alpha * H
+  # ADMM loop
+  for (k in c(1:maxiter)) {
+    Gamma <- t(P) %*% (K + Yk - rho * Ck) %*% P
+    U <- eigvec_sym(Gamma)
+    lambda <- eigval_sym(Gamma)
+    d <- .5 * c(sqrt(lambda ^ 2 + 4 / rho) - lambda)
+    Xik <- crossprod(sqrt(d) * t(U))
+    Thetak <- P %*% Xik %*% t(P)
+    Ck <- (diag(pmax(0, diag(Yk / rho + Thetak))) +
+           A * pmin(0, Yk / rho + Thetak))
+    Yk <- Yk + rho * (Thetak - Ck)
+    has_converged <- norm(Theta - Thetak, "F") / norm(Thetak, "F") < tol
+    if (has_converged && k > 1) break
+    Theta <- Thetak
+  }
+  results <- list(Laplacian = Thetak, convergence = has_converged)
+}
