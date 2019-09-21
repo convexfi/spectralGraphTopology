@@ -19,7 +19,7 @@ get_incidence_from_adjacency <- function(A) {
   return(E)
 }
 
-#' @title Learn the weighted Laplacian matrix of a graph given the topological connections
+#' @title Learn the weighted Laplacian matrix of a graph using the MM method
 #'
 #' @param S a pxp sample covariance/correlation matrix
 #' @param A the binary adjacency matrix of the graph
@@ -33,14 +33,24 @@ get_incidence_from_adjacency <- function(A) {
 #' @param reltol relative tolerance on the weight vector w
 #' @param abstol absolute tolerance on the weight vector w
 #' @param record_objective whether or not to record the objective function
+#' @param verbose if TRUE, then a progress bar will be displayed in the console
+#' @return A list containing possibly the following elements:
+#' \item{\code{Laplacian}}{the estimated Laplacian Matrix}
+#' \item{\code{Adjacency}}{the estimated Adjacency Matrix}
+#' \item{\code{convergence}}{boolean flag to indicate whether or not the optimization converged}
+#' \item{\code{obj_fun}}{values of the objective function at every iteration in case record_objective = TRUE}
+#' @author Ze Vinicius, Jiaxi Ying, and Daniel Palomar
+#' @references Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar.
+#'             Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM.
+#'             IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019
 
 #' @export
-learn_laplacian_gle_mm <- function(S, A, w0 = "naive", alpha = 0, maxiter = 1000,
-                                   reltol = 1e-4, abstol = 1e-4, record_objective = FALSE,
+learn_laplacian_gle_mm <- function(S, A, alpha = 0, maxiter = 1000, reltol = 1e-4,
+                                   abstol = 1e-4, record_objective = FALSE,
                                    verbose = TRUE) {
   Sinv <- MASS::ginv(S)
   mask <- Ainv(A) > 0
-  w <- w_init(w0, Sinv)[mask]
+  w <- w_init("naive", Sinv)[mask]
   wk <- w
   # number of nodes
   p <- nrow(S)
@@ -77,7 +87,8 @@ learn_laplacian_gle_mm <- function(S, A, w0 = "naive", alpha = 0, maxiter = 1000
   }
   z <- rep(0, .5 * p * (p - 1))
   z[mask] <- wk
-  results <- list(Laplacian = L(z), maxiter = k, convergence = has_converged)
+  results <- list(Laplacian = L(z), Adjacency = A(z), maxiter = k,
+                  convergence = has_converged)
   if (record_objective)
     results$objective_function <- fun
   return(results)
@@ -91,9 +102,30 @@ obj_func <- function(E, K, w, J) {
   return(sum(diag(E %*% diag(w) %*% t(E) %*% K)) - sum(log(lambda)))
 }
 
+#' @title Learn the weighted Laplacian matrix of a graph using the ADMM method
+#'
+#' @param S a pxp sample covariance/correlation matrix
+#' @param A the binary adjacency matrix of the graph
+#' @param alpha L1 regularization hyperparameter
+#' @param rho ADMM convergence rate hyperparameter
+#' @param maxiter the maximum number of iterations
+#' @param reltol relative tolerance on the weight vector w
+#' @param abstol absolute tolerance on the weight vector w
+#' @param record_objective whether or not to record the objective function
+#' @param verbose if TRUE, then a progress bar will be displayed in the console
+#' @return A list containing possibly the following elements:
+#' \item{\code{Laplacian}}{the estimated Laplacian Matrix}
+#' \item{\code{Adjacency}}{the estimated Adjacency Matrix}
+#' \item{\code{convergence}}{boolean flag to indicate whether or not the optimization converged}
+#' \item{\code{obj_fun}}{values of the objective function at every iteration in case record_objective = TRUE}
+#' @author Ze Vinicius, Jiaxi Ying, and Daniel Palomar
+#' @references Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar.
+#'             Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM.
+#'             IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019
 #' @export
-learn_laplacian_gle_admm <- function(S, A, rho = 1, alpha = 0, maxiter = 1000,
-                                     tol = 1e-4) {
+learn_laplacian_gle_admm <- function(S, A, alpha = 0, rho = 1, maxiter = 1000,
+                                     tol = 1e-4, record_objective = FALSE,
+                                     verbose = TRUE) {
   p <- nrow(S)
   Sinv <- MASS::ginv(S)
   w <- w_init("naive", Sinv)
@@ -106,6 +138,9 @@ learn_laplacian_gle_admm <- function(S, A, rho = 1, alpha = 0, maxiter = 1000,
   J <- matrix(1, p, p) / p
   H <- 2 * diag(p) - p * J
   K <- S + alpha * H
+  if (verbose)
+    pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta",
+                                     total = maxiter, clear = FALSE, width = 80)
   # ADMM loop
   for (k in c(1:maxiter)) {
     Gamma <- t(P) %*% (K + Yk - rho * Ck) %*% P
@@ -120,6 +155,15 @@ learn_laplacian_gle_admm <- function(S, A, rho = 1, alpha = 0, maxiter = 1000,
     has_converged <- norm(Theta - Thetak, "F") / norm(Thetak, "F") < tol
     if (has_converged && k > 1) break
     Theta <- Thetak
+    if (verbose)
+      pb$tick()
   }
-  results <- list(Laplacian = Thetak, convergence = has_converged)
+  results <- list(Laplacian = Thetak, Adjacency = diag(diag(Thetak)) - Thetak,
+                  convergence = has_converged)
 }
+
+# compute the partial augmented Lagragian
+aug_lag <- function(K, P, Xi, Y, C, rho) {
+}
+
+
