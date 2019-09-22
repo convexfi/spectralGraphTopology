@@ -21,7 +21,7 @@ with_parameters_test_that("we can recover a simple connected graph with the GLE-
     Laplacian <- L(w)
     n <- ncol(Laplacian)
     Y <- MASS::mvrnorm(n * 500, rep(0, n), MASS::ginv(Laplacian))
-    res <- func(cov(Y), A = A(rep(1, length(w))))
+    res <- func(cov(Y), A = A(rep(1, length(w))), record_objective = TRUE)
     expect_true(res$convergence)
     expect_true(relative_error(Laplacian, res$Laplacian) < 1e-1)
     expect_true(metrics(Laplacian, res$Laplacian, 1e-1)[1] > .9)

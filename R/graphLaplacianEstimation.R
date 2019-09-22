@@ -32,8 +32,8 @@ get_incidence_from_adjacency <- function(A) {
 #' @param maxiter the maximum number of iterations
 #' @param reltol relative tolerance on the weight vector w
 #' @param abstol absolute tolerance on the weight vector w
-#' @param record_objective whether or not to record the objective function
-#' @param verbose if TRUE, then a progress bar will be displayed in the console
+#' @param record_objective whether or not to record the objective function. Default is FALSE
+#' @param verbose if TRUE, then a progress bar will be displayed in the console. Default is TRUE
 #' @return A list containing possibly the following elements:
 #' \item{\code{Laplacian}}{the estimated Laplacian Matrix}
 #' \item{\code{Adjacency}}{the estimated Adjacency Matrix}
@@ -90,7 +90,7 @@ learn_laplacian_gle_mm <- function(S, A, alpha = 0, maxiter = 1000, reltol = 1e-
   results <- list(Laplacian = L(z), Adjacency = A(z), maxiter = k,
                   convergence = has_converged)
   if (record_objective)
-    results$objective_function <- fun
+    results$obj_fun <- fun
   return(results)
 }
 
@@ -111,8 +111,8 @@ obj_func <- function(E, K, w, J) {
 #' @param maxiter the maximum number of iterations
 #' @param reltol relative tolerance on the weight vector w
 #' @param abstol absolute tolerance on the weight vector w
-#' @param record_objective whether or not to record the objective function
-#' @param verbose if TRUE, then a progress bar will be displayed in the console
+#' @param record_objective whether or not to record the objective function. Default is FALSE
+#' @param verbose if TRUE, then a progress bar will be displayed in the console. Default is TRUE
 #' @return A list containing possibly the following elements:
 #' \item{\code{Laplacian}}{the estimated Laplacian Matrix}
 #' \item{\code{Adjacency}}{the estimated Adjacency Matrix}
@@ -141,6 +141,8 @@ learn_laplacian_gle_admm <- function(S, A, alpha = 0, rho = 1, maxiter = 1000,
   if (verbose)
     pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta",
                                      total = maxiter, clear = FALSE, width = 80)
+  if (record_objective)
+    fun <- c()
   # ADMM loop
   for (k in c(1:maxiter)) {
     Gamma <- t(P) %*% (K + Yk - rho * Ck) %*% P
@@ -152,6 +154,8 @@ learn_laplacian_gle_admm <- function(S, A, alpha = 0, rho = 1, maxiter = 1000,
     Ck <- (diag(pmax(0, diag(Yk / rho + Thetak))) +
            A * pmin(0, Yk / rho + Thetak))
     Yk <- Yk + rho * (Thetak - Ck)
+    if (record_objective)
+      fun <- c(fun, aug_lag(K, P, Xik, Yk, Ck, d, rho))
     has_converged <- norm(Theta - Thetak, "F") / norm(Thetak, "F") < tol
     if (has_converged && k > 1) break
     Theta <- Thetak
@@ -160,10 +164,14 @@ learn_laplacian_gle_admm <- function(S, A, alpha = 0, rho = 1, maxiter = 1000,
   }
   results <- list(Laplacian = Thetak, Adjacency = diag(diag(Thetak)) - Thetak,
                   convergence = has_converged)
+  if (record_objective)
+    results$obj_fun <- fun
+  return(results)
 }
 
 # compute the partial augmented Lagragian
-aug_lag <- function(K, P, Xi, Y, C, rho) {
+aug_lag <- function(K, P, Xi, Y, C, d, rho) {
+  PXiPt <- P %*% Xi %*% t(P)
+  return(sum(diag(Xi %*% t(P) %*% K %*% P)) - sum(log(d)) +
+         sum(diag(t(Y) %*% (PXiPt - C))) + .5 * rho * norm(PXiPt - C, "F") ^ 2)
 }
-
-

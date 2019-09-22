@@ -452,7 +452,7 @@ graph$convergence
 # Compute the relative error between true and estimated Laplacians
 relative_error(Ltrue, graph$Laplacian)
 # Plot objective function per iteration
-plot(c(1:length(graph$objective_function)), graph$objective_function, xlab = "Iteration number",
+plot(c(1:length(graph$obj_fun)), graph$obj_fun, xlab = "Iteration number",
      ylab = "Objective function value", type = "b", pch=15, lty=1, cex=.75, col = "#6ABA81")
 # Compute estimated adjacency matrix
 Aest <- diag(diag(graph$Laplacian)) - graph$Laplacian
