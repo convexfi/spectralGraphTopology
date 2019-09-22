@@ -484,13 +484,13 @@ library(igraph)
 set.seed(42)
 
 # sample ratios
-ratios <- c(2, 5, 10, 100, 250, 500, 1000)
+ratios <- c(5, 10, 100, 250, 500, 1000)
 # number of nodes
 p <- 100
 # number of modules
 m <- 4
 # Prefix matrix
-Prefix <- diag(.2, 4) + 0.0025
+Prefix <- diag(.2, 4) + 0.025
 # relative errors between the true Laplacian and the estimated ones
 re_mm <- rep(0, length(ratios))
 re_admm <- rep(0, length(ratios))
