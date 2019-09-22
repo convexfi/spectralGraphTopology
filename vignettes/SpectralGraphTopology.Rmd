@@ -510,7 +510,8 @@ for (k in c(1:length(ratios))) {
   S <- cov(Y)
   # Estimate a graph from the samples using the MM method
   graph_mm <- learn_laplacian_gle_mm(S = S, A = A, verbose = FALSE)
-  graph_admm <- learn_laplacian_gle_mm(S = S, A = A, verbose = FALSE)
+  # Estimate a graph from the samples using the ADMM method
+  graph_admm <- learn_laplacian_gle_admm(S = S, A = A, verbose = FALSE)
   # record relative error between true and estimated Laplacians
   re_mm[k] <- relative_error(Ltrue, graph_mm$Laplacian)
   re_admm[k] <- relative_error(Ltrue, graph_admm$Laplacian)
