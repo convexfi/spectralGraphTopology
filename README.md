@@ -113,8 +113,8 @@ If you made use of this software please consider citing:
     (2019). A unified framework for structured graph learning via
     spectral constraints. <https://arxiv.org/abs/1904.09792>
 
-In addition, consider citing the following bibliography according to its
-implementation:
+In addition, consider citing the following bibliography according to
+their implementation:
 
 <table>
 <colgroup>
@@ -139,10 +139,6 @@ implementation:
 <tr class="odd">
 <td><code>learn_laplacian_gle_admm</code></td>
 <td>Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar,<a href="https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf">Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM</a> IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019</td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
 </tr>
 </tbody>
 </table>

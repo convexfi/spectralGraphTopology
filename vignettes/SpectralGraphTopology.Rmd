@@ -415,9 +415,9 @@ and who also follow A.
 Another example arises in the field of finance, where stocks in the same industry or sector
 are naturally more likely to behave in a similar fashion.  For those cases, we can assume that the
 unweighted adjacency matrix of the graph is known a priori and we can use state-of-the-art algorithms
-that leverages this fact to estimate the edge weights of the graph. In this package,
-we implement the method named "GLE-MM" which was proposed in [@Licheng2019]. The graph estimation is carried
-out as follows:
+that leverages this fact to estimate the weighted relationship between nodes (edges). In this package,
+we implement the methods named "GLE-MM" and "GLE-ADMM" that were proposed in [@Licheng2019].
+The graph estimation is carried out as follows:
 
 ```{r}
 library(igraph)
@@ -444,7 +444,7 @@ A <- 1 * (Ltrue < 0)
 Y <- MASS::mvrnorm(10 * p, mu = rep(0, p), Sigma = MASS::ginv(Ltrue))
 # Compute the sample covariance matrix
 S <- cov(Y)
-# Estimate a graph from the samples
+# Estimate a graph from the samples using the MM method
 graph <- learn_laplacian_gle_mm(S = S, A = A,
                                 record_objective = TRUE, verbose = FALSE)
 # Check convergence status
@@ -473,6 +473,62 @@ corrplot(Aest / max(Aest), is.corr = FALSE, method = "square",
          addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 title("Estimated Adjacency")
 ```
+
+As discussed in [@Licheng2019], the estimation performance of GLE-MM and GLE-ADMM are
+practically the same. The toy example below shows the relative error between the
+estimation given by the MM and ADMM methods and the true Laplacian as the number of
+samples increase.
+```{r, cache = TRUE}
+library(spectralGraphTopology)
+library(igraph)
+set.seed(42)
+
+# sample ratios
+ratios <- c(2, 5, 10, 100, 250, 500, 1000)
+# number of nodes
+p <- 100
+# number of modules
+m <- 4
+# Prefix matrix
+Prefix <- diag(.2, 4) + 0.0025
+# relative errors between the true Laplacian and the estimated ones
+re_mm <- rep(0, length(ratios))
+re_admm <- rep(0, length(ratios))
+for (k in c(1:length(ratios))) {
+  # Generate a modular graph
+  mgraph <- sample_sbm(p, pref.matrix = Prefix, block.sizes = c(rep(p / m, m)))
+  # Randomly assign weights to the edges
+  E(mgraph)$weight <- runif(gsize(mgraph), min = 1e-1, max = 3)
+  # Get the true Laplacian and Adjacency matrices
+  Ltrue <- as.matrix(laplacian_matrix(mgraph))
+  Atrue <- diag(diag(Ltrue)) - Ltrue
+  # Get the unweighted true Adjacency matrix (assumed to be known)
+  A <- 1 * (Ltrue < 0)
+  # Generate samples from the Laplacian matrix
+  Y <- MASS::mvrnorm(ratios[k] * p, mu = rep(0, p), Sigma = MASS::ginv(Ltrue))
+  # Compute the sample covariance matrix
+  S <- cov(Y)
+  # Estimate a graph from the samples using the MM method
+  graph_mm <- learn_laplacian_gle_mm(S = S, A = A, verbose = FALSE)
+  graph_admm <- learn_laplacian_gle_mm(S = S, A = A, verbose = FALSE)
+  # record relative error between true and estimated Laplacians
+  re_mm[k] <- relative_error(Ltrue, graph_mm$Laplacian)
+  re_admm[k] <- relative_error(Ltrue, graph_admm$Laplacian)
+}
+xlab <- latex2exp::TeX("$\\mathit{n} / \\mathit{p}$")
+colors <- c("#0B032D", "#843B62")
+pch <- c(11, 7)
+legend <- c("MM", "ADMM")
+plot(c(1:length(ratios)), re_mm, ylim=c(0, max(re_mm) + 0.01), xlab = xlab,
+     ylab = "Relative Error", type = "b", pch=pch[1], lty=1,
+     cex=.75, col = colors[1], xaxt = "n")
+lines(c(1:length(ratios)), re_admm, type = "b", lty=1, pch=pch[2],
+      cex=.75, col = colors[2], xaxt = "n")
+axis(side = 1, at = c(1:length(ratios)), labels = ratios)
+legend("topright", legend=legend, col=colors, pch=pch, lty=c(1, 1), bty="n")
+```
+
+The plot above confirms that the performance of both algorithms are in fact substantially similar.
 
 # References {-}
 \setlength{\parindent}{-0.2in}

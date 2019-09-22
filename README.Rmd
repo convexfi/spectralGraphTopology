@@ -107,14 +107,14 @@ If you made use of this software please consider citing:
 - S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar (2019). A unified framework
   for structured graph learning via spectral constraints. <https://arxiv.org/abs/1904.09792>
 
-In addition, consider citing the following bibliography according to its implementation:
+In addition, consider citing the following bibliography according to their
+implementation:
 
 | **function**                | **reference**                                                                                                                                                                                                                                                                                     |
 |-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `cluster_k_component_graph` | N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016). [The Constrained Laplacian Rank Algorithm for Graph-based Clustering](https://dl.acm.org/citation.cfm?id=3016100.3016174), AAAI'16.                                                                                              |
 | `learn_laplacian_gle_mm`    | Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar,[Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM](https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf) IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019 |
 | `learn_laplacian_gle_admm`    | Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar,[Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM](https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf) IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019 |
-|                             |                                                                                                                                                                                                                                                                                                   |
 
 ## Links
 Package: [CRAN](https://CRAN.R-project.org/package=spectralGraphTopology) and [GitHub](https://github.com/dppalomar/spectralGraphTopology).
