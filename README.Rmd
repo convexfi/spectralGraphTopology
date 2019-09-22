@@ -61,7 +61,8 @@ Alternatively, you can install the development version from GitHub:
 On MS Windows environments, make sure to install the most recent version of ``Rtools``.
 
 #### macOS
-**spectralGraphTopology** depends on [`RcppArmadillo`](https://github.com/RcppCore/RcppArmadillo) which requires [`gfortran`](https://CRAN.R-project.org/bin/macosx/tools/).
+**spectralGraphTopology** depends on [`RcppArmadillo`](https://github.com/RcppCore/RcppArmadillo)
+which requires [`gfortran`](https://CRAN.R-project.org/bin/macosx/tools/).
 
 ## Usage: clustering
 We illustrate the usage of the package with simulated data, as follows:
@@ -117,11 +118,9 @@ implementation:
 | `learn_laplacian_gle_admm`    | Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar,[Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM](https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf) IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019 |
 
 ## Links
-Package: [CRAN](https://CRAN.R-project.org/package=spectralGraphTopology) and [GitHub](https://github.com/dppalomar/spectralGraphTopology).
+Package: [CRAN](https://CRAN.R-project.org/package=spectralGraphTopology) and
+[GitHub](https://github.com/dppalomar/spectralGraphTopology)
 
-README file: [CRAN-readme](https://CRAN.R-project.org/package=spectralGraphTopology/readme/README.html)
-and [GitHub-readme](https://github.com/dppalomar/spectralGraphTopology/blob/master/README.md).
+README file: [GitHub-readme](https://github.com/dppalomar/spectralGraphTopology/blob/master/README.md)
 
-Vignette: [CRAN-html-vignette](https://CRAN.R-project.org/package=spectralGraphTopology/vignettes/SpectralGraphTopology.html),
-[CRAN-pdf-vignette](https://CRAN.R-project.org/package=spectralGraphTopology/vignettes/SpectralGraphTopology-pdf.pdf),
-[GitHub-html-vignette](https://raw.githack.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology.html)
+Vignette: [GitHub-html-vignette](https://raw.githack.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology.html)

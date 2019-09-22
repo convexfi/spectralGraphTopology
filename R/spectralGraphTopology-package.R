@@ -12,15 +12,14 @@
 #' \code{\link{learn_bipartite_graph}}
 #' \code{\link{learn_bipartite_k_component_graph}}
 #' \code{\link{cluster_k_component_graph}}
+#' \code{\link{learn_laplacian_gle_mm}}
+#' \code{\link{learn_laplacian_gle_admm}}
 #' \code{\link{L}}
 #' \code{\link{A}}
 #'
 #' @section Help:
 #' For a quick help see the README file:
 #' \href{https://github.com/dppalomar/spectralGraphTopology/blob/master/README.md}{GitHub-README}.
-#'
-#' For more details see the
-#' \href{https://CRAN.R-project.org/package=spectralGraphTopology/vignettes/SpectralGraphTopology.html}{vignette.}
 #'
 #' @author Ze Vinicius and Daniel P. Palomar
 #'
@@ -32,6 +31,10 @@
 #' N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016).
 #' The Constrained Laplacian Rank Algorithm for Graph-based Clustering,
 #' AAAI'16. <http://dl.acm.org/citation.cfm?id=3016100.3016174>
+#'
+#' Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar. Optimization
+#' Algorithms for Graph Laplacian Estimation via ADMM and MM IEEE Trans. on Signal
+#' Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019
 #'
 #' @importFrom Rcpp sourceCpp
 #' @useDynLib spectralGraphTopology

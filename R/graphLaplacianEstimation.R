@@ -23,11 +23,6 @@ get_incidence_from_adjacency <- function(A) {
 #'
 #' @param S a pxp sample covariance/correlation matrix
 #' @param A the binary adjacency matrix of the graph
-#' @param w0 initial estimate for the weight vector the graph or a string
-#'        selecting an appropriate method. Available methods are: "qp": finds w0 that minimizes
-#'        ||ginv(S) - L(w0)||_F, w0 >= 0; "naive": takes w0 as the negative of the
-#'        off-diagonal elements of the pseudo inverse, setting to 0 any elements s.t.
-#'        w0 < 0
 #' @param alpha L1 regularization hyperparameter
 #' @param maxiter the maximum number of iterations
 #' @param reltol relative tolerance on the weight vector w
@@ -109,8 +104,7 @@ obj_func <- function(E, K, w, J) {
 #' @param alpha L1 regularization hyperparameter
 #' @param rho ADMM convergence rate hyperparameter
 #' @param maxiter the maximum number of iterations
-#' @param reltol relative tolerance on the weight vector w
-#' @param abstol absolute tolerance on the weight vector w
+#' @param reltol relative tolerance on the Laplacian matrix estimation
 #' @param record_objective whether or not to record the objective function. Default is FALSE
 #' @param verbose if TRUE, then a progress bar will be displayed in the console. Default is TRUE
 #' @return A list containing possibly the following elements:
@@ -124,7 +118,7 @@ obj_func <- function(E, K, w, J) {
 #'             IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019
 #' @export
 learn_laplacian_gle_admm <- function(S, A, alpha = 0, rho = 1, maxiter = 5000,
-                                     tol = 1e-5, record_objective = FALSE,
+                                     reltol = 1e-5, record_objective = FALSE,
                                      verbose = TRUE) {
   p <- nrow(S)
   Sinv <- MASS::ginv(S)
@@ -156,7 +150,7 @@ learn_laplacian_gle_admm <- function(S, A, alpha = 0, rho = 1, maxiter = 5000,
     Yk <- Yk + rho * (Thetak - Ck)
     if (record_objective)
       fun <- c(fun, aug_lag(K, P, Xik, Yk, Ck, d, rho))
-    has_converged <- norm(Theta - Thetak, "F") / norm(Thetak, "F") < tol
+    has_converged <- norm(Theta - Thetak, "F") / norm(Thetak, "F") < reltol
     if (has_converged && k > 1) break
     Theta <- Thetak
     if (verbose)

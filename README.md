@@ -148,14 +148,10 @@ Links
 
 Package:
 [CRAN](https://CRAN.R-project.org/package=spectralGraphTopology) and
-[GitHub](https://github.com/dppalomar/spectralGraphTopology).
+[GitHub](https://github.com/dppalomar/spectralGraphTopology)
 
 README file:
-[CRAN-readme](https://CRAN.R-project.org/package=spectralGraphTopology/readme/README.html)
-and
-[GitHub-readme](https://github.com/dppalomar/spectralGraphTopology/blob/master/README.md).
+[GitHub-readme](https://github.com/dppalomar/spectralGraphTopology/blob/master/README.md)
 
 Vignette:
-[CRAN-html-vignette](https://CRAN.R-project.org/package=spectralGraphTopology/vignettes/SpectralGraphTopology.html),
-[CRAN-pdf-vignette](https://CRAN.R-project.org/package=spectralGraphTopology/vignettes/SpectralGraphTopology-pdf.pdf),
 [GitHub-html-vignette](https://raw.githack.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology.html)

@@ -14,14 +14,6 @@ test_that("consistency of blockDiag function", {
 })
 
 
-test_that("blockDiag throws an exception when shape is not square", {
-  N1 <- sample(1:10, 1)
-  N2 <- N1 + 1
-  L2 <- matrix(2, N1, N2)
-  expect_error(block_diag(matrix(-1, N1, N1), matrix(-1, N1, N2)))
-})
-
-
 test_that("upper_view_vec works", {
   a <- runif(1)
   M <- a * matrix(c(6, -1, -2, -3,
