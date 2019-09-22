@@ -9,6 +9,8 @@ matrix:
         - covr
       before_install:
         - sudo apt-get install libmpfr-dev
+        - sudo apt-get install libglu1-mesa-dev
+        - sudo apt install libfreetype6-dev
         - Rscript -e "install.packages('BiocManager'); BiocManager::install('genefilter')"
       after_success:
         - Rscript -e 'library(covr); codecov()'
