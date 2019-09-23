@@ -134,11 +134,11 @@ their implementation:
 </tr>
 <tr class="even">
 <td><code>learn_laplacian_gle_mm</code></td>
-<td>Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar,<a href="https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf">Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM</a> IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019</td>
+<td>Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, <a href="https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf">Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM</a>, IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019</td>
 </tr>
 <tr class="odd">
 <td><code>learn_laplacian_gle_admm</code></td>
-<td>Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar,<a href="https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf">Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM</a> IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019</td>
+<td>Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, <a href="https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf">Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM</a>, IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019</td>
 </tr>
 </tbody>
 </table>
