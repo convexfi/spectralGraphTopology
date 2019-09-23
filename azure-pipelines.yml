@@ -13,5 +13,7 @@ variables:
   imageName: 'your-container-image-name:$(build.buildId)'
 
 steps:
+- checkout: self
+  persistCredentials: true
 - script: docker build -f Dockerfile -t $(imageName) .
   displayName: 'docker build'
