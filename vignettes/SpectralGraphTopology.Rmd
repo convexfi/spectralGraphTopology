@@ -604,7 +604,7 @@ for (k in c(1:length(p))) {
   re_mm[k] <- relative_error(Ltrue, graph_mm$Laplacian)
   re_admm[k] <- relative_error(Ltrue, graph_admm$Laplacian)
 }
-xlab <- latex2exp::TeX("$\\mathit{n} / \\mathit{p}$")
+xlab <- latex2exp::TeX("$\\mathit{p}$")
 colors <- c("#0B032D", "#843B62", "#6c5ce7")
 pch <- c(11, 7, 8)
 legend <- c("MM", "ADMM", "Naive")
