@@ -52,14 +52,14 @@ knit_hooks$set(pngquant = hook_pngquant)
 Check out [https://mirca.github.io/spectralGraphTopology](https://mirca.github.io/spectralGraphTopology)
 for installation instructions.
 
-# Problem Statement
 
+# Vanilla case: no structural constraints
 Graphs are arguably one of the most popular mathematical structures
 that find applications in a myriad of scientific and engineering fields,
 such as finance, medical imaging, transportation, networks, and so on.
 
 In the era of big data, graphs can be used to model a vast diversity of
-phenomena, including customer preferences, brain activity, genetic structures,
+phenomena, including customer preferences, brain activity, genetic structures, the stock market,
 just to name a few. Therefore, it is of utmost importance to be able to
 reliably estimate graph structures from noisy, often sparse, low-rank datasets.
 
@@ -77,7 +77,7 @@ performs very poorly when the sample size ``n`` is small when compared with the 
 makes its use questionable for practical purposes.
 
 Another classical approach, the well-known graphical lasso algorithm, was proposed in
-[@Friedman2008] where a $\ell_1$-norm penalty term was incorporated in order to induce
+[@Friedman2008] where a maximum likelihood (ML) estimation was formulated under a Gaussian Markov random field (GMRF) model including an $\ell_1$-norm penalty in order to induce
 sparsity on the solution.  More precisely, the mathematical formulation for the graphical lasso problem
 can be expressed as follows:
 $$\begin{array}{ll}
@@ -85,19 +85,16 @@ $$\begin{array}{ll}
 - \mathrm{tr}(\mathbf{S}\boldsymbol{\Theta}) + \alpha \Vert \boldsymbol{\Theta}\Vert_{1},
 \end{array}
 $$
-where $\mathbf{S}$ is the sample covariance matrix and $\alpha$ is a hyperparameter
-that controls the amount of sparsity of the solution.  The problem above can
-be regarded as a regularized maximum likelihood estimation of the precision matrix of
-a multivariate Gaussian distribution.  This estimator has been efficiently implemented
-in the R package ``glasso``.
+where $\mathbf{S}$ is the sample covariance matrix (or feature inner product matrix) and $\alpha$ is a hyperparameter
+that controls the amount of sparsity of the solution. The solution is a sparse precision matrix (still not satisfying the zero row-sum property). This estimator has been efficiently implemented in the R package ``glasso``.
 
 In [@Licheng2019], the authors extended the graphical lasso framework so as to
-consider $\boldsymbol{\Theta}$ as a graph Laplacian. Mathematically, the set of Laplacian
+consider $\boldsymbol{\Theta}$ as a graph Laplacian. Mathematically, the set of (combinatorial) Laplacian
 matrices may be written as
 $$
 \begin{equation}
 \mathcal{S}_{\mathcal{L}} = \left\{\boldsymbol{\Theta} \in \mathbb{R}^{p \times p}: \boldsymbol{\Theta}\mathbf{1} = \mathbf{0},
-\boldsymbol{\Theta}_{ij} = \boldsymbol{\Theta}_{ji} < 0, \boldsymbol{\Theta} \succeq \mathbf{0}\right\}
+\boldsymbol{\Theta}_{ij} = \boldsymbol{\Theta}_{ji} \le 0, \boldsymbol{\Theta} \succeq \mathbf{0}\right\}
 \end{equation}
 $$
 
@@ -111,6 +108,14 @@ binary adjacency matrix of the graph is known a priori and we can use state-of-t
 that leverages this fact to estimate the weighted relationship between nodes (edges). In this package,
 we implement the methods named GLE-MM and GLE-ADMM that were proposed in [@Licheng2019].
 
+
+[Nice comparison plot of convergence: Ortega's method, Licheng's method, our method simplified to just one subproblem.]
+
+
+
+
+
+# Introducing structural constraints
 Although graphical lasso and its extensions have shown an extreme success across many scientific fields,
 they usually only allow for the estimation of connected graphs.  In many practical situations, however,
 graphs more complex structures need to be estimated, such as k-component graphs, which is
@@ -169,6 +174,11 @@ $$
 
 In a similar fashion, we construct the optimization problem to estimate a $k$-component bipartite graph
 by combining the constraints related to the Laplacian and adjacency matrices.
+
+
+
+
+
 
 # Package usage
 
