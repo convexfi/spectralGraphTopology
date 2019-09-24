@@ -55,12 +55,13 @@ for installation instructions.
 # Problem Statement
 
 Graphs are arguably one of the most popular mathematical structures
-that find applications in a myriad of scientific and engineering fields.
+that find applications in a myriad of scientific and engineering fields,
+such as finance, medical imaging, transportation, networks, and so on.
 
 In the era of big data, graphs can be used to model a vast diversity of
 phenomena, including customer preferences, brain activity, genetic structures,
 just to name a few. Therefore, it is of utmost importance to be able to
-reliably estimate such structures from noisy, often sparse, low-rank datasets.
+reliably estimate graph structures from noisy, often sparse, low-rank datasets.
 
 The Laplacian matrix of a graph contains the information
 about its topology, i.e., how nodes are connected among themselves. By definition
@@ -70,35 +71,85 @@ equal to zero.
 One common approach to estimate the Laplacian matrix of a graph (without satisfying the zero row-sum property)
 would be via the generalized inverse of the sample covariance matrix, which is an assymptotically unbiased
 and efficient estimator. In this document, we call this approach the naive one. In R, this estimator can be
-computed simply as ``MASS::ginv(cov(Y))``, where``Y`` is the data matrix. However, this estimator
-performs very poorly when the sample size is small when compared with the number of nodes, which
+computed simply as ``MASS::ginv(cov(Y))``, where ``Y`` is the ``n x p`` data matrix, where ``n`` is the
+number of samples (or features) and ``p`` is the number of nodes. However, this estimator
+performs very poorly when the sample size ``n`` is small when compared with the number of nodes ``p``, which
 makes its use questionable for practical purposes.
 
 Another classical approach, the well-known graphical lasso algorithm, was proposed in
 [@Friedman2008] where a $\ell_1$-norm penalty term was incorporated in order to induce
-sparsity on the solution. The R package ``glasso`` provides an implementation of this estimator.
-
-We, however, begin by defining a Laplacian linear operator $\mathcal{L}$ that maps a
-vector of edge weights $\mathbf{w}$ into a valid Laplacian matrix. Additionally, we impose
-constraints on the eigenvalues and eigenvectors of the Laplacian matrix in such a way that the
-underlying optimization problem may be expressed as follows:
+sparsity on the solution.  More precisely, the mathematical formulation for the graphical lasso problem
+can be expressed as follows:
 $$\begin{array}{ll}
-\underset{\mathbf{w}, \boldsymbol{\lambda}, \mathbf{U}}{\textsf{minimize}} & - \log \det\left({\sf Diag}(\boldsymbol{\lambda})\right)
-+ \mathrm{tr}\left(\mathbf{S}\mathcal{L}\mathbf{w}\right) + \alpha h(\mathcal{L}\mathbf{w})
+\underset{\boldsymbol{\Theta} \succ \mathbf{0}}{\textsf{maximize}} & \log \det \boldsymbol{\Theta}
+- \mathrm{tr}(\mathbf{S}\boldsymbol{\Theta}) + \alpha \Vert \boldsymbol{\Theta}\Vert_{1},
+\end{array}
+$$
+where $\mathbf{S}$ is the sample covariance matrix and $\alpha$ is a hyperparameter
+that controls the amount of sparsity of the solution.  The problem above can
+be regarded as a regularized maximum likelihood estimation of the precision matrix of
+a multivariate Gaussian distribution.  This estimator has been efficiently implemented
+in the R package ``glasso``.
+
+In [@Licheng2019], the authors extended the graphical lasso framework so as to
+consider $\boldsymbol{\Theta}$ as a graph Laplacian. Mathematically, the set of Laplacian
+matrices may be written as
+$$
+\begin{equation}
+\mathcal{S}_{\mathcal{L}} = \left\{\boldsymbol{\Theta} \in \mathbb{R}^{p \times p}: \boldsymbol{\Theta}\mathbf{1} = \mathbf{0},
+\boldsymbol{\Theta}_{ij} = \boldsymbol{\Theta}_{ji} < 0, \boldsymbol{\Theta} \succeq \mathbf{0}\right\}
+\end{equation}
+$$
+
+In addition, the authors in [@Licheng2019] assumed that the binary adjacency matrix is known
+a priori. Such assumption can be justified in many practical cases. For example,
+in social networks, the undirected graph of a public user A is determined by the set of users followed by A
+and who also follow A.
+Another example arises in the field of finance, where stocks in the same industry or sector
+are naturally more likely to behave in a similar fashion.  For those cases, we can assume that the
+binary adjacency matrix of the graph is known a priori and we can use state-of-the-art algorithms
+that leverages this fact to estimate the weighted relationship between nodes (edges). In this package,
+we implement the methods named GLE-MM and GLE-ADMM that were proposed in [@Licheng2019].
+
+Although graphical lasso and its extensions have shown an extreme success across many scientific fields,
+they usually only allow for the estimation of connected graphs.  In many practical situations, however,
+graphs more complex structures need to be estimated, such as k-component graphs, which is
+are widely used in clustering tasks.
+Additionally, the structure of the graph might be known a priori, i.e., whether the graph
+is k-component, bipartite, k-component bipartite, etc.
+
+In this sense, in [@Kumar2019], we included spectral constraints into the
+regularized maximum likelihood framework as follows:
+$$\begin{array}{ll}
+\underset{\boldsymbol{\Theta}}{\textsf{maximize}} & \log \mathrm{gdet} \boldsymbol{\Theta}
+- \mathrm{tr}(\mathbf{S}\boldsymbol{\Theta}) + \alpha \Vert \boldsymbol{\Theta}\Vert_{1}, \\
+\textsf{subject to} & \boldsymbol{\Theta} \in \mathcal{S}_{\mathcal{L}},
+\end{array}
+$$
+where $\textrm{gdet}$ denotes the generalized determinant (the product of positive eigenvalues)
+and $\mathcal{S}_{\mathcal{L}}$ represents the set of positive semi-definite graph
+Laplacian matrices, i.e.,
+
+Now, realizing that for any $\boldsymbol{\Theta} \in \mathcal{S}_{\mathcal{L}}$, $\boldsymbol{\Theta} = \mathcal{L}\mathbf{w}$,
+where $\mathcal{L} : \mathbb{R}^{p(p-1)/2} \rightarrow \boldsymbol{\Theta}$ is a linear operator
+that maps a non-negative vector of edge weights $\mathbf{w}$ into a Laplacian matrix $\boldsymbol{\Theta}$,
+and that $\boldsymbol{\Theta}$ can be factorized as $\boldsymbol{\Theta} = \mathbf{U}\boldsymbol{\Lambda}\mathbf{U}^\top$,
+the original optimization problem may be approximated as follows:
+$$\begin{array}{ll}
+\underset{\mathbf{w}, \boldsymbol{\lambda}, \mathbf{U}}{\textsf{minimize}} & - \log \textrm{gdet}\left({\sf Diag}(\boldsymbol{\lambda})\right)
++ \mathrm{tr}\left(\mathbf{S}\mathcal{L}\mathbf{w}\right) + \alpha \Vert\mathcal{L}\mathbf{w}\Vert_{1}
 + \frac{\beta}{2}\big\|\mathcal{L}\mathbf{w} - \mathbf{U}{\sf Diag}(\boldsymbol{\lambda})\mathbf{U}^{T}\big\|^{2}_{F}\\
 \textsf{subject to} & \mathbf{w} \geq 0, \boldsymbol{\lambda} \in \mathcal{S}_{\boldsymbol{\Lambda}},~\text{and}~
 \mathbf{U}^{T}\mathbf{U} = \mathbf{I}
 \end{array}$$
-where $h()$ is a regularization function (e.g. to induce sparsity), $\mathbf{S}$ is the sample covariance matrix,
-$\mathcal{S}_{\boldsymbol{\Lambda}}$ further constrains the eigenvalues of the Laplacian matrix.
-For example, for a $k$-component graph with $p$ nodes,
+where $\mathcal{S}_{\boldsymbol{\Lambda}}$ is the set of vectors that constrains the eigenvalues of
+the Laplacian matrix. For example, for a $k$-component graph with $p$ nodes,
 $\mathcal{S}_{\boldsymbol{\Lambda}} = \left\{\{\lambda_i\}_{i=1}^{p} | \lambda_1 = \lambda_2 = \cdots = \lambda_k = 0,\;
 0 < \lambda_{k+1} \leq \lambda_{k+2} \leq \cdots \leq \lambda_{p} \right\}$.
 
 To solve this optimization problem, we employ a block majorization-minimization framework that updates each
 of the variables ($\mathbf{w}, \boldsymbol{\lambda}, \mathbf{U}$) at once while fixing the remaning ones.
-For the mathematical details of the solution, including a convergence proof, please refer to our paper at: 
-https://arxiv.org/pdf/1904.09792.pdf.
+For the mathematical details of the solution, including a convergence proof, please refer to our paper [@Kumar2019].
 
 In order to learn bipartite graphs, we take advantage of the fact that the eigenvalues of the adjacency matrix
 of graph are symmetric around 0, and we formulate the following optimization problem:
@@ -107,8 +158,8 @@ $$
 \underset{{\mathbf{w}},{\boldsymbol{\psi}},{\mathbf{V}}}{\textsf{minimize}} &
 \begin{array}{c}
 - \log \det (\mathcal{L} \mathbf{w}+\frac{1}{p}\mathbf{11}^{T})+\text{tr}({\mathbf{S}\mathcal{L} \mathbf{w}})+
-  \alpha h(\mathcal{L}\mathbf{w})+
-  \frac{\nu}{2}\Vert \mathcal{A} \mathbf{w}-\mathbf{V} {\sf Diag}(\boldsymbol{\psi}) \mathbf{V}^T \Vert_F^2,
+  \alpha \Vert\mathcal{L}\mathbf{w}\Vert_{1}+
+  \frac{\gamma}{2}\Vert \mathcal{A} \mathbf{w}-\mathbf{V} {\sf Diag}(\boldsymbol{\psi}) \mathbf{V}^T \Vert_F^2,
 \end{array}\\
 \text{subject to} & \begin{array}[t]{l}
 \mathbf{w} \geq 0, \ \boldsymbol{\psi} \in \mathcal{S}_{\boldsymbol{\psi}}, \ \text{and} \ \mathbf{V}^T\mathbf{V}=\mathbf{I},
@@ -407,17 +458,10 @@ plot(net, vertex.label = names,
 knitr::include_graphics("figures/cancer-rna-graph.png")
 ```
 
-# Appendix I: exploiting prior knowledge of the nodes connections
+# Appendix I: Experiments with GLE-MM and GLE-ADMM
 
-In many practical cases, the connections between nodes is a known property. For example,
-in social networks, the undirected graph of a public user A is determined by the set of users followed by A
-and who also follow A.
-Another example arises in the field of finance, where stocks in the same industry or sector
-are naturally more likely to behave in a similar fashion.  For those cases, we can assume that the
-unweighted adjacency matrix of the graph is known a priori and we can use state-of-the-art algorithms
-that leverages this fact to estimate the weighted relationship between nodes (edges). In this package,
-we implement the methods named "GLE-MM" and "GLE-ADMM" that were proposed in [@Licheng2019].
-The graph estimation is carried out as follows:
+
+As a code example, graph estimation is carried out as follows:
 
 ```{r}
 library(igraph)
@@ -530,6 +574,50 @@ legend("topright", legend=legend, col=colors, pch=pch, lty=c(1, 1), bty="n")
 ```
 
 The plot above confirms that the performance of both algorithms are in fact substantially similar.
+
+Now, let's try to reproduce part of the Figure 3 in [@Licheng2019]:
+```{r}
+library(spectralGraphTopology)
+library(igraph)
+
+# number of nodes
+p <- seq(5, 50, 5)
+re_naive <- rep(0, length(p))
+re_gle_mm <- rep(0, length(p))
+re_gle_admm <- rep(0, length(p))
+
+for (k in c(1:length(p))) {
+  w <- runif(.5 * p[k] * (p[k] - 1))
+  Ltrue <- L(w)
+  A <- 1 * (Ltrue < 0)
+  # Generate samples from the Laplacian matrix
+  Y <- MASS::mvrnorm(100 * p[k], mu = rep(0, p[k]), Sigma = MASS::ginv(Ltrue))
+  # Compute the sample covariance matrix
+  S <- cov(Y)
+  Lnaive <- MASS::ginv(S)
+  # Estimate a graph from the samples using the MM method
+  graph_mm <- learn_laplacian_gle_mm(S = S, A = A, verbose = FALSE)
+  # Estimate a graph from the samples using the ADMM method
+  graph_admm <- learn_laplacian_gle_admm(S = S, A = A, verbose = FALSE)
+  # record relative error between true and estimated Laplacians
+  re_naive[k] <- relative_error(Ltrue, Lnaive)
+  re_mm[k] <- relative_error(Ltrue, graph_mm$Laplacian)
+  re_admm[k] <- relative_error(Ltrue, graph_admm$Laplacian)
+}
+xlab <- latex2exp::TeX("$\\mathit{n} / \\mathit{p}$")
+colors <- c("#0B032D", "#843B62", "#6c5ce7")
+pch <- c(11, 7, 8)
+legend <- c("MM", "ADMM", "Naive")
+plot(c(1:length(p)), re_mm, ylim=c(min(re_naive, re_mm, re_admm), max(re_naive, re_mm, re_admm)), xlab = xlab,
+     ylab = "Relative Error", type = "b", pch=pch[1], lty=1,
+     cex=.75, col = colors[1], xaxt = "n")
+lines(c(1:length(p)), re_admm, type = "b", lty=1, pch=pch[2],
+      cex=.75, col = colors[2], xaxt = "n")
+lines(c(1:length(p)), re_naive, type = "b", lty=1, pch=pch[3],
+      cex=.75, col = colors[3], xaxt = "n")
+axis(side = 1, at = c(1:length(p)), labels = p)
+legend("topright", legend=legend, col=colors, pch=pch, lty=c(1, 1, 1), bty="n")
+```
 
 # References {-}
 \setlength{\parindent}{-0.2in}

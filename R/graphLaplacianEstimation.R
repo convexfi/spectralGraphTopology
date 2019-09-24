@@ -40,8 +40,8 @@ get_incidence_from_adjacency <- function(A) {
 #'             IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019
 
 #' @export
-learn_laplacian_gle_mm <- function(S, A, alpha = 0, maxiter = 5000, reltol = 1e-4,
-                                   abstol = 1e-4, record_objective = FALSE,
+learn_laplacian_gle_mm <- function(S, A, alpha = 0, maxiter = 10000, reltol = 1e-5,
+                                   abstol = 1e-5, record_objective = FALSE,
                                    verbose = TRUE) {
   Sinv <- MASS::ginv(S)
   mask <- Ainv(A) > 0
@@ -117,7 +117,7 @@ obj_func <- function(E, K, w, J) {
 #'             Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM.
 #'             IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019
 #' @export
-learn_laplacian_gle_admm <- function(S, A, alpha = 0, rho = 1, maxiter = 5000,
+learn_laplacian_gle_admm <- function(S, A, alpha = 0, rho = 1, maxiter = 10000,
                                      reltol = 1e-5, record_objective = FALSE,
                                      verbose = TRUE) {
   p <- nrow(S)
