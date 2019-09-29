@@ -2,16 +2,17 @@
 # named Combinatorial Graph Laplacian
 
 learn_combinatorial_graph_laplacian <- function(S, A_mask, alpha, prob_tol = 1e-4,
-                                                inner_tol = 1e-4, maxiter = 1000, regtype = 1) {
+                                                inner_tol = 1e-4, maxiter = 1000,
+                                                regtype = 1) {
   n <- nrow(S)
   e_v <- rep(1, n) / sqrt(n)
   dc_var <- t(e_v) %*% S %*% e_v
   isshifting <- c(abs(dc_var) < prob_tol)
-    
+
   if (isshifting) {
       S <- S + 1 / n
   }
-  if (regtype == 1) { 
+  if (regtype == 1) {
       H <- alpha * (2 * diag(n) - matrix(1, n, n))
   } else if (regtype == 2) {
       H <- alpha * (diag(n) - matrix(1, n, n))
@@ -72,7 +73,7 @@ learn_combinatorial_graph_laplacian <- function(S, A_mask, alpha, prob_tol = 1e-
       C[minus_u, u] <- -cu
       C[minus_u, minus_u] <- (Ou_i + (cu %*% t(cu)) / cuu)
     }
-      
+
     if (i > 4) {
       d_shifts <- O %*% rep(1, n) - 1
       large_diag_idx <- c(1:n)[abs(d_shifts) > 1e-12]
@@ -83,7 +84,7 @@ learn_combinatorial_graph_laplacian <- function(S, A_mask, alpha, prob_tol = 1e-
         C <- smd$C
       }
     }
-      
+
     O_best <- O
     C_best <- C
 
