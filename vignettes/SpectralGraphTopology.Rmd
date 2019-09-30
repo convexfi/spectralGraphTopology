@@ -47,7 +47,21 @@ knit_hooks$set(pngquant = hook_pngquant)
 
 -----------
 
+# Package Snapshot
+
+**spectralGraphTopology** contains a collection of numerous implementations of
+state-of-the-art algorithms designed to estimate graph matrices
+(Laplacian and Adjacency) from data, including:
+
+* Structured Graph Laplacian (SGL): S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar (2019). A unified framework for structured graph learning via spectral constraints. https://arxiv.org/abs/1904.09792
+* Combinatorial Graph Laplacian (CGL): H. E. Egilmez, E. Pavez and A. Ortega, "Graph Learning From Data Under Laplacian and Structural Constraints", in IEEE Journal of Selected Topics in Signal Processing, vol. 11, no. 6, pp. 825-841, Sept. 2017.
+* Constrained Laplacian Rank (CLR): N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016). The Constrained Laplacian Rank Algorithm for Graph-based Clustering, AAAI’16.
+* Graph Laplacian Estimation (GLE-MM and GLE-ADMM): Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM, IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019
+
+
 # Installation
+
+**spectralGraphTopology** can 
 
 Check out [https://mirca.github.io/spectralGraphTopology](https://mirca.github.io/spectralGraphTopology)
 for installation instructions.

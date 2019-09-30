@@ -12,7 +12,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<meta name="date" content="2019-09-24" />
+<meta name="date" content="2019-09-30" />
 
 <title>Learning graphs from data via spectral constraints</title>
 
@@ -140,7 +140,7 @@ code span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">Learning graphs from data via spectral constraints</h1>
 <h3 class="author"><div class="line-block">Ze Vinicius, Daniel P. Palomar, Jiaxi Ying, and Sandeep Kumar<br />
 Hong Kong University of Science and Technology (HKUST)</div></h3>
-<h3 class="date">2019-09-24</h3>
+<h3 class="date">2019-09-30</h3>
 </header>
 
 <hr>
@@ -149,7 +149,8 @@ Hong Kong University of Science and Technology (HKUST)</div></h3>
 <div id="TOC" class="toc">
 <ul>
 <li><a href="#installation">Installation</a></li>
-<li><a href="#problem-statement">Problem Statement</a></li>
+<li><a href="#vanilla-case-no-structural-constraints">Vanilla case: no structural constraints</a></li>
+<li><a href="#introducing-structural-constraints">Introducing structural constraints</a></li>
 <li><a href="#package-usage">Package usage</a><ul>
 <li><a href="#learning-a-grid-graph">Learning a grid graph</a></li>
 <li><a href="#learning-a-3-component-graph">Learning a 3-component graph</a></li>
@@ -169,13 +170,13 @@ Hong Kong University of Science and Technology (HKUST)</div></h3>
 <p>Check out <a href="https://mirca.github.io/spectralGraphTopology" class="uri">https://mirca.github.io/spectralGraphTopology</a>
 for installation instructions.</p>
 </div>
-<div id="problem-statement" class="section level1">
-<h1>Problem Statement</h1>
+<div id="vanilla-case-no-structural-constraints" class="section level1">
+<h1>Vanilla case: no structural constraints</h1>
 <p>Graphs are arguably one of the most popular mathematical structures
 that find applications in a myriad of scientific and engineering fields,
 such as finance, medical imaging, transportation, networks, and so on.</p>
 <p>In the era of big data, graphs can be used to model a vast diversity of
-phenomena, including customer preferences, brain activity, genetic structures,
+phenomena, including customer preferences, brain activity, genetic structures, the stock market,
 just to name a few. Therefore, it is of utmost importance to be able to
 reliably estimate graph structures from noisy, often sparse, low-rank datasets.</p>
 <p>The Laplacian matrix of a graph contains the information
@@ -190,7 +191,7 @@ number of samples (or features) and <code>p</code> is the number of nodes. Howev
 performs very poorly when the sample size <code>n</code> is small when compared with the number of nodes <code>p</code>, which
 makes its use questionable for practical purposes.</p>
 <p>Another classical approach, the well-known graphical lasso algorithm, was proposed in
-<span class="citation">[1]</span> where a <span class="math inline">\(\ell_1\)</span>-norm penalty term was incorporated in order to induce
+<span class="citation">[1]</span> where a maximum likelihood (ML) estimation was formulated under a Gaussian Markov random field (GMRF) model including an <span class="math inline">\(\ell_1\)</span>-norm penalty in order to induce
 sparsity on the solution. More precisely, the mathematical formulation for the graphical lasso problem
 can be expressed as follows:
 <span class="math display">\[\begin{array}{ll}
@@ -198,18 +199,15 @@ can be expressed as follows:
 - \mathrm{tr}(\mathbf{S}\boldsymbol{\Theta}) + \alpha \Vert \boldsymbol{\Theta}\Vert_{1},
 \end{array}
 \]</span>
-where <span class="math inline">\(\mathbf{S}\)</span> is the sample covariance matrix and <span class="math inline">\(\alpha\)</span> is a hyperparameter
-that controls the amount of sparsity of the solution. The problem above can
-be regarded as a regularized maximum likelihood estimation of the precision matrix of
-a multivariate Gaussian distribution. This estimator has been efficiently implemented
-in the R package <code>glasso</code>.</p>
+where <span class="math inline">\(\mathbf{S}\)</span> is the sample covariance matrix (or feature inner product matrix) and <span class="math inline">\(\alpha\)</span> is a hyperparameter
+that controls the amount of sparsity of the solution. The solution is a sparse precision matrix (still not satisfying the zero row-sum property). This estimator has been efficiently implemented in the R package <code>glasso</code>.</p>
 <p>In <span class="citation">[2]</span>, the authors extended the graphical lasso framework so as to
-consider <span class="math inline">\(\boldsymbol{\Theta}\)</span> as a graph Laplacian. Mathematically, the set of Laplacian
+consider <span class="math inline">\(\boldsymbol{\Theta}\)</span> as a graph Laplacian. Mathematically, the set of (combinatorial) Laplacian
 matrices may be written as
 <span class="math display">\[
 \begin{equation}
 \mathcal{S}_{\mathcal{L}} = \left\{\boldsymbol{\Theta} \in \mathbb{R}^{p \times p}: \boldsymbol{\Theta}\mathbf{1} = \mathbf{0},
-\boldsymbol{\Theta}_{ij} = \boldsymbol{\Theta}_{ji} &lt; 0, \boldsymbol{\Theta} \succeq \mathbf{0}\right\}
+\boldsymbol{\Theta}_{ij} = \boldsymbol{\Theta}_{ji} \le 0, \boldsymbol{\Theta} \succeq \mathbf{0}\right\}
 \end{equation}
 \]</span></p>
 <p>In addition, the authors in <span class="citation">[2]</span> assumed that the binary adjacency matrix is known
@@ -221,6 +219,10 @@ are naturally more likely to behave in a similar fashion. For those cases, we ca
 binary adjacency matrix of the graph is known a priori and we can use state-of-the-art algorithms
 that leverages this fact to estimate the weighted relationship between nodes (edges). In this package,
 we implement the methods named GLE-MM and GLE-ADMM that were proposed in <span class="citation">[2]</span>.</p>
+<p>[Nice comparison plot of convergence: Ortega’s method, Licheng’s method, our method simplified to just one subproblem.]</p>
+</div>
+<div id="introducing-structural-constraints" class="section level1">
+<h1>Introducing structural constraints</h1>
 <p>Although graphical lasso and its extensions have shown an extreme success across many scientific fields,
 they usually only allow for the estimation of connected graphs. In many practical situations, however,
 graphs more complex structures need to be estimated, such as k-component graphs, which is
@@ -708,7 +710,7 @@ samples increase.</p>
 <p>[1] J. Friedman, T. Hastie, and R. Tibshirani, “Sparse inverse covariance estimation with the graphical lasso,” <em>Biostatistics</em>, vol. 9, no. 3, pp. 432–441, 2008.</p>
 </div>
 <div id="ref-Licheng2019">
-<p>[2] L. Zhao, Y. Wang, S. Kumar, and D. Palomar, “Optimization algorithms for graph laplacian estimation via admm and mm,” <em>IEEE Trans. on Signal Processing</em>, vol. 67, no. 16, pp. 4231–4244, 2019.</p>
+<p>[2] L. Zhao, Y. Wang, S. Kumar, and D. Palomar, “Optimization algorithms for graph laplacian estimation via ADMM and MM,” <em>IEEE Trans. on Signal Processing</em>, vol. 67, no. 16, pp. 4231–4244, 2019.</p>
 </div>
 <div id="ref-Kumar2019">
 <p>[3] S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. Palomar, “A unified framework for structured graph learning via spectral constraints,” 2019.</p>
