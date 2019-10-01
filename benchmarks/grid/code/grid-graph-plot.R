@@ -3,7 +3,6 @@ library(spectralGraphTopology)
 library(corrplot)
 library(scales)
 library(viridis)
-library(R.matlab)
 
 set.seed(0)
 
@@ -16,23 +15,15 @@ Wtrue <- diag(diag(Ltrue)) - Ltrue
 Y <- MASS::mvrnorm(T, mu = rep(0, N), Sigma = MASS::ginv(Ltrue))
 S <- cov(Y)
 
-print("Connecting to MATLAB...")
-matlab <- Matlab(port = 9998)
-open(matlab)
-print("success!")
 A_mask <- matrix(1, 64, 64) - diag(64)
-setVariable(matlab, A_mask = A_mask)
-setVariable(matlab, S = S)
 alpha = 5e-3
-setVariable(matlab, alpha = alpha)
-evaluate(matlab, "[Lcgl,~,~] = estimate_cgl(S, A_mask, alpha, 1e-6, 1e-6, 40, 1)")
-Lcgl <- getVariable(matlab, "Lcgl")
+Lcgl <- learn_combinatorial_graph_laplacian(S, A_mask, alpha = alpha, prob_tol = 1e-5)
 graph <- learn_k_component_graph(S, w0 = "qp", beta = 20, alpha = alpha, abstol = 1e-5, fix_beta = TRUE)
 
-eps <- 5e-2
+eps <- 1e-6
 # compute adjacency matrices
 graph$Adjacency[graph$Adjacency < eps] <- 0
-W_cgl <- diag(diag(Lcgl$Lcgl)) - Lcgl$Lcgl
+W_cgl <- diag(diag(Lcgl$Laplacian)) - Lcgl$Laplacian
 W_cgl[W_cgl < eps] <- 0
 # compute grids
 grid_spec <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
@@ -54,10 +45,10 @@ la_spec <- layout_on_grid(grid_spec)
 la_cgl <- layout_on_grid(grid_cgl)
 la_true <- layout_on_grid(grid)
 
-relativeError(Ltrue, graph$Laplacian)
-metrics(Ltrue, graph$Laplacian, eps)
-relativeError(Ltrue, Lcgl$Lcgl)
-metrics(Ltrue, Lcgl$Lcgl, eps)
+relative_error(Ltrue, graph$Laplacian)
+spectralGraphTopology:::metrics(Ltrue, graph$Laplacian, eps)
+relative_error(Ltrue, Lcgl$Laplacian)
+spectralGraphTopology:::metrics(Ltrue, Lcgl$Laplacian, eps)
 
 gr = .5 * (1 + sqrt(5))
 setEPS()
