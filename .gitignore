@@ -12,6 +12,7 @@ README_cache
 *-eps-converted-to.pdf
 *.ps
 *.dylib
+.ipynb_checkpoints/
 benchmarks/cancer-rna/code/data.csv
 benchmarks/cancer-rna/code/labels.csv
 benchmarks/financial-data/
