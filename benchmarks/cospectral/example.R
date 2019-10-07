@@ -8,7 +8,7 @@ set.seed(123)
 p <- 15
 f <- .05
 w <- runif(p * (p - 1) / 2)
-Laplacian <- L(w)
+Laplacian <- block_diag(L(w), L(w), L(w))
 lambda <- spectralGraphTopology:::eigval_sym(Laplacian)
 Adjacency <- diag(diag(Laplacian)) - Laplacian
 # construct the network

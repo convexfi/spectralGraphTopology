@@ -560,6 +560,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
 #'      vertex.color = c("red","black")[V(estimated_bipartite)$type + 1],
 #'      vertex.shape = c("square", "circle")[V(estimated_bipartite)$type + 1],
 #'      vertex.label = NA, vertex.size = 5)
+
 #' @export
 learn_bipartite_k_component_graph <- function(S, is_data_matrix = FALSE, z = 0, k = 1,
                                               w0 = "naive", m = 7, alpha = 0., beta = 1e4,

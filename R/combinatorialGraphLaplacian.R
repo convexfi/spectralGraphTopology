@@ -22,9 +22,12 @@
 #'             Selected Topics in Signal Processing, vol. 11, no. 6, pp. 825-841, Sept. 2017.
 #'             Original MATLAB source code is available at: https://github.com/STAC-USC/Graph_Learning
 #' @export
-learn_combinatorial_graph_laplacian <- function(S, A_mask, alpha, prob_tol = 1e-4,
-                                                max_cycle = 1000, regtype = 1, verbose = TRUE) {
+learn_combinatorial_graph_laplacian <- function(S, A_mask = NULL, alpha = 0, prob_tol = 1e-5,
+                                                max_cycle = 10000, regtype = 1,
+                                                record_objective = FALSE, verbose = TRUE) {
   n <- nrow(S)
+  if (is.null(A_mask))
+    A_mask <- matrix(1, n, n) - diag(n)
   e_v <- rep(1, n) / sqrt(n)
   dc_var <- t(e_v) %*% S %*% e_v
   isshifting <- c(abs(dc_var) < prob_tol)
@@ -48,6 +51,8 @@ learn_combinatorial_graph_laplacian <- function(S, A_mask, alpha, prob_tol = 1e-
     pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta",
                                      total = max_cycle, clear = FALSE, width = 80)
   time_seq <- c(0)
+  if (record_objective)
+    fun <- vanilla.objective(O_best - (1/n), K)
   start_time <- proc.time()[3]
   for (i in c(1:max_cycle)) {
     O_old <- O
@@ -99,6 +104,8 @@ learn_combinatorial_graph_laplacian <- function(S, A_mask, alpha, prob_tol = 1e-
     }
     O_best <- O
     C_best <- C
+    if (record_objective)
+      fun <- c(fun, vanilla.objective(O_best - (1/n), K))
     if (verbose)
       pb$tick()
     time_seq <- c(time_seq, proc.time()[3] - start_time)
@@ -113,7 +120,10 @@ learn_combinatorial_graph_laplacian <- function(S, A_mask, alpha, prob_tol = 1e-
   }
   O <- O_best - (1 / n)
   C <- C_best - (1 / n)
-  return(list(Laplacian = O, frob_norm = frob_norm, elapsed_time = time_seq))
+  results <- list(Laplacian = O, frob_norm = frob_norm, elapsed_time = time_seq)
+  if (record_objective)
+    results$obj_fun <- fun
+  return(results)
 }
 
 update_sherman_morrison_diag <- function(O, C, shift, idx) {

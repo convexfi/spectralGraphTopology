@@ -47,14 +47,14 @@ knit_hooks$set(pngquant = hook_pngquant)
 
 -----------
 
-# Package Snapshot
+# Package summary
 
 **spectralGraphTopology** contains a collection of numerous efficient implementations of
 state-of-the-art algorithms designed to estimate graph matrices
 (Laplacian and Adjacency) from data, including:
 
-* Structured Graph Laplacian (**SGL**): S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar (2019). A unified framework for structured graph learning via spectral constraints. https://arxiv.org/abs/1904.09792
-* Combinatorial Graph Laplacian (**CGL**): H. E. Egilmez, E. Pavez and A. Ortega, "Graph Learning From Data Under Laplacian and Structural Constraints", in IEEE Journal of Selected Topics in Signal Processing, vol. 11, no. 6, pp. 825-841, Sept. 2017.
+* Structured Graph Laplacian (**SGL**): (i) S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar (2019). A unified framework for structured graph learning via spectral constraints. https://arxiv.org/abs/1904.09792. (ii) S. Kumar, J., Ying, J. V. de Miranda Cardoso, and D. P. Palomar, "Structured Graph Learning Via Laplacian Spectral Constraints", Advances in Neural Information Processing Systems (NeurIPS), Dec. 2019.
+* Combinatorial Graph Laplacian (**CGL**): H. E. Egilmez, E. Pavez and A. Ortega, "Graph Learning From Data Under Laplacian and Structural Constraints", IEEE Journal of Selected Topics in Signal Processing, vol. 11, no. 6, pp. 825-841, Sept. 2017.
 * Constrained Laplacian Rank (**CLR**): N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016). The Constrained Laplacian Rank Algorithm for Graph-based Clustering, AAAI’16.
 * Graph Laplacian Estimation (**GLE-MM** and **GLE-ADMM**): Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM, IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019
 
@@ -98,7 +98,7 @@ By definition a (combinatorial) Laplacian matrix is positive semi-definite, symm
 equal to zero. Therefore, one possible way to estimate a graph structure is through the estimation of its Laplacian matrix.
 
 One common approach to estimate Laplacian matrices (without necessarily satisfying the zero row-sum property)
-would be via the inverse of the sample covariance matrix, which is an assymptotically unbiased
+would be via the inverse of the sample covariance matrix, which is an asymptotically unbiased
 and efficient estimator. In R, this estimator can be computed simply as `S <- cov(t(Y)); solve(S, diag(nrow(S)))`,
 where ``Y`` is the $p \times n$ data matrix, $n$ is the number of samples (or features) and $p$ is the number of nodes.
 This naive approach, although efficient when $n$ is orders of magnitude larger than $p$, poses way too many problems, e.g.,
@@ -116,7 +116,7 @@ to estimate graph matrices (Laplacian and Adjancency) from data.  We illustrate 
 some of these algorithms in clustering tasks.
 
 
-# Vanilla formulations
+# Connected graph formulation
 
 Laplacian matrix estimation can be cast as a precision matrix estimation problem.
 Hence, the well-known graphical lasso algorithm can be used in this task. Graphical lasso was proposed in
@@ -136,45 +136,160 @@ the zero row-sum property of Laplacian matrices.
 
 The authors in [@Egilmez2017] considered to directly extend the graphical lasso framework so as to
 impose $\boldsymbol{\Theta}$ as a combinatorial graph Laplacian. Mathematically, the optimization problem becomes
-$$\begin{array}{ll}
-&\underset{\boldsymbol{\Theta} \succ \mathbf{0}}{\textsf{maximize}} & \log \det \boldsymbol{\Theta}
+\begin{equation}
+\begin{array}{ll}
+&\underset{\boldsymbol{\Theta}}{\textsf{maximize}} & \log \mathrm{g}\det \boldsymbol{\Theta}
 - \mathrm{tr}(\mathbf{S}\boldsymbol{\Theta}) + \alpha \Vert \boldsymbol{\Theta}\Vert_{1, \text{off}},\\
-&\textsf{subject to} \boldsymbol{\Theta} \in \mathcal{S}_{\mathcal{L}},
-\end{array}$$ where $\mathcal{S}_{\mathcal{L}}$ is the set of (combinatorial) Laplacian matrices, which may
+&\textsf{subject to} & \boldsymbol{\Theta} \in \mathcal{S}_{\mathcal{L}},
+\end{array}
+\label{eq:cgl}
+\end{equation}
+where $\mathrm{g}\det \boldsymbol{\Theta}$ represents the generalized determinant, i.e., the product of the positive eigenvalues of $\boldsymbol{\Theta}$, and $\mathcal{S}_{\mathcal{L}}$ is the set of (combinatorial) Laplacian matrices, which may
 be written as
 $$ \begin{equation}
 \mathcal{S}_{\mathcal{L}} = \left\{\boldsymbol{\Theta} \in \mathbb{R}^{p \times p}: \boldsymbol{\Theta}\mathbf{1} = \mathbf{0},
 \boldsymbol{\Theta}_{ij} = \boldsymbol{\Theta}_{ji} \le 0, \boldsymbol{\Theta} \succeq \mathbf{0}\right\}.
 \end{equation}$$
 
-It is worth noting that, both graphical lasso and the combinatorial graph Laplacian (CGL) are convex
+It is worth noting that both graphical lasso and the combinatorial graph Laplacian (CGL) are convex
 problems that can be easily, albeit not efficiently, solved using disciplined convex programming
-frameworks such as CVX.
+frameworks such as CVX. An CVXR implementation of the above optimization problem can be coded as
+
+```{r}
+learn_laplacian_matrix_cvx <- function(S, alpha = 0) {
+  p <- nrow(S)
+  ones <- rep(1, p)
+  zeros <- rep(0, p)
+  zeros_mat <- matrix(0, p, p)
+  J <- matrix(1/p, p, p)
+  H <- alpha * (2 * diag(p) - p * J)
+  K <- S + alpha * H
+  Theta <- CVXR::Variable(p, p)
+  objective <- CVXR::matrix_trace(Theta %*% (K + J)) - CVXR::log_det(Theta + J)
+  constraints <- list(Theta == t(Theta),
+                      Theta %*% ones == zeros,
+                      Theta - CVXR::diag(CVXR::diag(Theta)) <= zeros_mat)
+  problem <- CVXR::Problem(CVXR::Minimize(objective), constraints)
+  result <- solve(problem)
+  return(list(Laplacian = result$getValue(Theta)))
+}
+```
 
 In [@Egilmez2017], the authors developed specialized optimization algorithms based on iterative
 block coordinate descent updates to solve the CGL problem. In a similar fashion,
 the authors in [@Licheng2019] proposed highly efficient algorithms to solve the CGL optimization problem
 using the frameworks Majorization-Minimization (MM) and Alternating Direction Method of Multipliers (ADMM).
 
-The assumed that the binary adjacency matrix is known
-a priori. Such assumption can be justified in many practical cases. For example,
-in social networks, the undirected graph of a public user A is determined by the set of users followed by A
-and who also follow A. Another example arises in the field of finance, where stocks in the same industry or sector
-are naturally more likely to behave in a similar fashion.  For those cases, we can assume that the
-binary adjacency matrix of the graph is known a priori and we can use state-of-the-art algorithms
-that leverages this fact to estimate the weighted relationship between nodes (edges). In this package,
-we implement the methods named GLE-MM and GLE-ADMM that were proposed in [@Licheng2019].
+We set up a simple experiments to compare the performance of the four approaches:
+(1) directly solving with **CVXR**, (2) **CGL**[@Egilmez2017], (3) **GLE-MM** [@Licheng2019], and (4) **GLE-ADMM** [@Licheng2019].
+We first build a grid graph with a total of 64 nodes using ``igraph::make_lattice`` and sample from it with increasing
+sample size ratios varying from 50 to 1000. We should expect to see a monotonically decreasing relative error curve as
+the sample size increases.  Additionally, we should observe similar performances among the algorithms
+because after all the problem is convex.
+The snippet of code for this experiment is as follows:
+
+```{r, message = FALSE}
+library(spectralGraphTopology)
+library(igraph)
+
+set.seed(42)
+
+# ratios between sample size and number of nodes
+ratios <- c(2, 5, 10, 50, 100, 250, 500, 1000)
+# number of nodes
+p <- 64
+# generate a grid graph
+grid <- make_lattice(length = sqrt(p), dim = 2)
+# relative errors between the true Laplacian and the estimated ones
+re_mm <- rep(0, length(ratios))
+re_admm <- rep(0, length(ratios))
+re_cgl <- rep(0, length(ratios))
+re_cvx <- rep(0, length(ratios))
+for (k in c(1:length(ratios))) {
+  # Randomly assign weights to the edges
+  E(grid)$weight <- runif(gsize(grid), min = 1e-1, max = 3)
+  # Get the true Laplacian matrices
+  Ltrue <- as.matrix(laplacian_matrix(grid))
+  # Generate samples from the Laplacian matrix
+  Y <- MASS::mvrnorm(ratios[k] * p, mu = rep(0, p), Sigma = MASS::ginv(Ltrue))
+  # Compute the sample covariance matrix
+  S <- cov(Y)
+  # Estimate a graph from the samples using the MM method
+  graph_mm <- learn_laplacian_gle_mm(S = S, verbose = FALSE)
+  # Estimate a graph from the samples using the ADMM method
+  graph_admm <- learn_laplacian_gle_admm(S = S, verbose = FALSE)
+  # Estimate a graph from the samples using the CGL method
+  graph_cgl <- learn_combinatorial_graph_laplacian(S = S, verbose = FALSE)
+  # Estimate a graph from the samples using CVX
+  graph_cvx <- learn_laplacian_matrix_cvx(S = S)
+  # record relative error between true and estimated Laplacians
+  re_mm[k] <- relative_error(Ltrue, graph_mm$Laplacian)
+  re_admm[k] <- relative_error(Ltrue, graph_admm$Laplacian)
+  re_cgl[k] <- relative_error(Ltrue, graph_cgl$Laplacian)
+  re_cvx[k] <- relative_error(Ltrue, graph_cvx$Laplacian)
+}
+colors <- c("#0B032D", "#843B62", "#E87118", "#40739E")
+pch <- c(11, 7, 5, 6)
+lty <- c(1:4)
+legend <- c("MM", "ADMM", "CGL", "CVX")
+xlab <- latex2exp::TeX("$\\mathit{n} / \\mathit{p}$")
+par(bg = NA)
+plot(c(1:length(ratios)), re_mm, ylim=c(min(re_admm) - 1e-3, max(re_cgl) + 1e-3), xlab = xlab,
+     ylab = "Relative Error", type = "b", lty=lty[1], pch=pch[1],
+     cex=.75, col = colors[1], xaxt = "n")
+lines(c(1:length(ratios)), re_admm, type = "b", lty=lty[2], pch=pch[2],
+      cex=.75, col = colors[2], xaxt = "n")
+lines(c(1:length(ratios)), re_cgl, type = "b", lty=lty[3], pch=pch[3],
+      cex=.75, col = colors[3], xaxt = "n")
+lines(c(1:length(ratios)), re_cvx, type = "b", lty=lty[4], pch=pch[4], cex=.75, col = colors[4], xaxt = "n")
+axis(side = 1, at = c(1:length(ratios)), labels = ratios)
+legend("topright", legend=legend, col=colors, pch=pch, lty=lty, bty="n")
+```
 
 
-[Nice comparison plot of convergence: Ortega's method, Licheng's method, our method simplified to just one subproblem.]
+Let's also checkout the trend of the objective function for each algorithm:
+```{r}
+graph_mm <- learn_laplacian_gle_mm(S = S, record_objective = TRUE, verbose = FALSE)
+graph_admm <- learn_laplacian_gle_admm(S = S, record_objective = TRUE, verbose = FALSE)
+graph_cgl <- learn_combinatorial_graph_laplacian(S = S, record_objective = TRUE, verbose = FALSE)
+plot(c(1:length(graph_mm$obj_fun)), graph_mm$obj_fun, xlab = "number of iterations",
+     ylab = "Objective function value", type = "b", lty=lty[1], pch=pch[1],
+     cex=.75, col = colors[1])
+lines(c(1:length(graph_admm$obj_fun)), graph_admm$obj_fun, type = "b", lty=lty[2], pch=pch[2],
+      cex=.75, col = colors[2])
+lines(c(1:length(graph_cgl$obj_fun)), graph_cgl$obj_fun, type = "b", lty=lty[3], pch=pch[3],
+      cex=.75, col = colors[3])
+legend("topright", legend=legend[1:3], col=colors[1:3], pch=pch[1:3], lty=lty[1:3], bty="n")
+```
+
+Now, let's compare the running time for each algorithm:
+
+```{r, message = FALSE}
+library(microbenchmark)
+library(ggplot2)
+
+op <- microbenchmark(
+  MM = learn_laplacian_gle_mm(S = S, verbose = FALSE),
+  ADMM = learn_laplacian_gle_admm(S = S, verbose = FALSE),
+  CGL = learn_combinatorial_graph_laplacian(S = S, verbose = FALSE),
+  CVX = learn_laplacian_matrix_cvx(S = S), times = 10L)
+autoplot(op)
+```
+
+In this toy example, as we can observe from the charts above, the methods **MM**, **ADMM**, and **CVX**
+are somewhat better than **CGL** when it comes to performance.  In running time,
+**CGL** and **ADMM** seem to have a clear edge, while **MM** looks slow.
+However, the authors in [@Licheng2019] point out that the **MM** method should be more suitable
+for very sparse graphs.  Therefore, we encourage users to try out different algorithms
+in their problems before drawing any conclusion.
 
 # Introducing structural prior information
-Although graphical lasso and its extensions have shown an extreme success across many scientific fields,
-they usually only allow for the estimation of connected graphs.  In many practical situations, however,
-graphs more complex structures need to be estimated, such as k-component graphs, which is
-are widely used in clustering tasks.
+Although estimating a graph Laplacian matrix by solving formulation (\ref{eq:cgl}) has shown an extreme potential for success,
+this particular formulation only allows for the estimation of connected graphs.  In many practical situations, however,
+graphs of more complex structures need to be estimated, such as k-component graphs, which are widely used in clustering tasks.
 Additionally, the structure of the graph might be known a priori, i.e., whether the graph
-is k-component, bipartite, k-component bipartite, etc.
+is k-component, bipartite, k-component bipartite; and there should be a natural way of incorporating this prior knowledge
+into the optimization framework.
 
 In this sense, in [@Kumar2019], we included spectral constraints into the
 regularized maximum likelihood framework as follows:
@@ -184,9 +299,6 @@ $$\begin{array}{ll}
 \textsf{subject to} & \boldsymbol{\Theta} \in \mathcal{S}_{\mathcal{L}},
 \end{array}
 $$
-where $\textrm{gdet}$ denotes the generalized determinant (the product of positive eigenvalues)
-and $\mathcal{S}_{\mathcal{L}}$ represents the set of positive semi-definite graph
-Laplacian matrices, i.e.,
 
 Now, realizing that for any $\boldsymbol{\Theta} \in \mathcal{S}_{\mathcal{L}}$, $\boldsymbol{\Theta} = \mathcal{L}\mathbf{w}$,
 where $\mathcal{L} : \mathbb{R}^{p(p-1)/2} \rightarrow \boldsymbol{\Theta}$ is a linear operator
@@ -228,63 +340,17 @@ $$
 In a similar fashion, we construct the optimization problem to estimate a $k$-component bipartite graph
 by combining the constraints related to the Laplacian and adjacency matrices.
 
-
-
-
-
-
-# Package usage
+# Learning k-component, bipartite, and k-component bipartite graphs
 
 The `spectralGraphTopology` package provides three main functions to estimate k-component, bipartite, and
 k-component bipartite graphs, respectively: `learn_k_component_graph`, `learn_bipartite_graph`, and
 `learn_bipartite_k_component_graph`.  In the next subsections, we will check out how to apply those functions
 in synthetic datasets.
 
-## Learning a grid graph
-```{r, message=FALSE}
-library(spectralGraphTopology)
-library(igraph)
-library(viridis)
-set.seed(0)
-
-# generate the graph and the data from the graph
-p <- 64
-grid <- make_lattice(length = sqrt(p), dim = 2)
-n <- as.integer(100 * p)
-E(grid)$weight <- runif(gsize(grid), min = 1e-1, max = 3)
-L_true <- as.matrix(laplacian_matrix(grid))  # true Laplacian matrix
-Y <- MASS::mvrnorm(n, mu = rep(0, p), Sigma = MASS::ginv(L_true))
-
-# estimate the graph
-S <- cov(Y)
-graph <- learn_k_component_graph(S, w0 = "qp", beta = 20, alpha = 5e-3,
-                                 abstol = 1e-5, verbose = FALSE)
-graph$Adjacency[graph$Adjacency < 5e-2] <- 0
-estimated_grid <- graph_from_adjacency_matrix(graph$Adjacency,
-                                              mode = "undirected", weighted = TRUE)
-
-# plots
-colors <- viridis(20, begin = 0, end = 1, direction = -1)
-c_scale <- colorRamp(colors)
-E(estimated_grid)$color = apply(
-  c_scale(E(estimated_grid)$weight / max(E(estimated_grid)$weight)), 1,
-                          function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
-E(grid)$color = apply(c_scale(E(grid)$weight / max(E(grid)$weight)), 1,
-                      function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
-V(estimated_grid)$color = "grey"
-V(grid)$color = "grey"
-la <- layout_on_grid(grid)
-par(mfrow = c(1, 2))
-plot(grid, layout = la, vertex.label = NA, vertex.size = 3)
-title("True grid graph")
-plot(estimated_grid, layout = la, vertex.label = NA, vertex.size = 3)
-title("Estimated grid graph")
-```
-
-## Learning a 3-component graph
+## Clustering via k-component graphs
 
 The next snippet of code shows how to learn the clusters of a set of points
-distributed on the plane.
+distributed on the two dimensional Euclidean space:
 
 ```{r, message=FALSE}
 library(spectralGraphTopology)
@@ -312,6 +378,7 @@ E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
                       function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
                                         colors[V(net)$cluster[x[1]]], '#000000'))
 V(net)$color <- colors[circles3$clusters]
+par(bg = NA)
 plot(net, layout = circles3$data, vertex.label = NA, vertex.size = 3)
 title("Estimated graph on the three circles dataset")
 ```
@@ -325,10 +392,12 @@ knitr::include_graphics(c("figures/circles2.png", "figures/helix3d.png",
 ```
 
 ## Learning a bipartite graph
+
+In this experiment, we demonstrate how to learn a simple bipartite graph:
 ```{r, message=FALSE}
 library(spectralGraphTopology)
 library(igraph)
-library(viridis)
+library(pals)
 library(corrplot)
 set.seed(42)
 
@@ -352,19 +421,19 @@ graph <- learn_bipartite_graph(S, z = 4, verbose = FALSE)
 graph$Adjacency[graph$Adjacency < 1e-3] <- 0
 
 # plots
-par(mfrow = c(1, 2))
+par(mfrow = c(1, 2), bg = NA)
 corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA,
-         tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 2))
+         tl.pos = "n", cl.cex = 1, mar=c(0, 0, 1, 0))
 title("True Adjacency")
 corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square",
-         addgrid.col = NA, tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 2))
+         addgrid.col = NA, tl.pos = "n", cl.cex = 1, mar=c(0, 0, 1, 0))
 title("Estimated Adjacency")
 # build networks
 estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected",
                                                    weighted = TRUE)
 V(estimated_bipartite)$type <- c(rep(0, 10), rep(1, 6))
 la = layout_as_bipartite(estimated_bipartite)
-colors <- viridis(20, begin = 0, end = 1, direction = -1)
+colors <- brewer.blues(20)
 c_scale <- colorRamp(colors)
 E(estimated_bipartite)$color = apply(
    c_scale(E(estimated_bipartite)$weight / max(E(estimated_bipartite)$weight)), 1,
@@ -373,7 +442,7 @@ E(bipartite)$color = apply(c_scale(E(bipartite)$weight / max(E(bipartite)$weight
                       function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
 la = la[, c(2, 1)]
 # Plot networks: true and estimated
-par(mfrow = c(1, 2))
+par(mfrow = c(1, 2), bg = NA)
 plot(bipartite, layout = la, vertex.color=c("red","black")[V(bipartite)$type + 1],
      vertex.shape = c("square", "circle")[V(bipartite)$type + 1],
      vertex.label = NA, vertex.size = 5)
@@ -408,12 +477,12 @@ graph$Adjacency[graph$Adjacency < 1e-2] <- 0
 
 # plots
 # Plot Adjacency matrices: true and estimated
-par(mfrow = c(1, 2))
+par(mfrow = c(1, 2), bg = NA)
 corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA,
-         tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 2))
+         tl.pos = "n", cl.cex = 1, mar=c(0, 0, 1, 0))
 title("True Adjacency")
 corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square",
-         addgrid.col = NA, tl.pos = "n", cl.cex = 1, mar=c(0, 0, 3, 2))
+         addgrid.col = NA, tl.pos = "n", cl.cex = 1, mar=c(0, 0, 1, 0))
 title("Estimated Adjacency")
 # Plot networks
 estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected",
@@ -421,7 +490,7 @@ estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undi
 V(bipartite)$type <- rep(c(TRUE, FALSE), 4)
 V(estimated_bipartite)$type <- rep(c(TRUE, FALSE), 4)
 la = layout_as_bipartite(estimated_bipartite)
-colors <- viridis(20, begin = 0, end = 1, direction = -1)
+colors <- brewer.blues(20)
 c_scale <- colorRamp(colors)
 E(estimated_bipartite)$color = apply(
    c_scale(E(estimated_bipartite)$weight / max(E(estimated_bipartite)$weight)), 1,
@@ -430,7 +499,7 @@ E(bipartite)$color = apply(c_scale(E(bipartite)$weight / max(E(bipartite)$weight
                            function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
 la = la[, c(2, 1)]
 # Plot networks: true and estimated
-par(mfrow = c(1, 2))
+par(mfrow = c(1, 2), bg = NA)
 plot(bipartite, layout = la,
      vertex.color = c("red","black")[V(bipartite)$type + 1],
      vertex.shape = c("square", "circle")[V(bipartite)$type + 1],
@@ -473,7 +542,7 @@ knitr::include_graphics("figures/fscore_modular.png")
 knitr::include_graphics("figures/relative_error_modular.png")
 ```
 
-# Clustering
+# Clustering with real-world datasets
 
 One of the most direct applications of learning k-component graphs is on the
 classical unsupervised machine learning problem: data clustering. For this task, we make use of two datasets:
@@ -504,11 +573,12 @@ graph <- learn_k_component_graph(cov(Y) + diag(1/3, p, p), w0 = "qp", beta = 1, 
 
 # plots
 net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
-colors <- brewer.reds(100)
+colors <- brewer.blues(100)
 c_scale <- colorRamp(colors)
 E(net)$color = apply(c_scale(abs(E(net)$weight) / max(abs(E(net)$weight))), 1,
                      function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
 V(net)$color = "pink"
+par(bg = NA)
 plot(net, vertex.label = names,
      vertex.size = 3,
      vertex.label.dist = 1,
@@ -521,166 +591,6 @@ plot(net, vertex.label = names,
 knitr::include_graphics("figures/cancer-rna-graph.png")
 ```
 
-# Appendix I: Experiments with GLE-MM and GLE-ADMM
-
-
-As a code example, graph estimation is carried out as follows:
-
-```{r}
-library(igraph)
-library(spectralGraphTopology)
-library(pals)
-set.seed(42)
-
-# number of nodes
-p <- 100
-# number of modules
-m <- 4
-# Prefix matrix
-Prefix <- diag(.2, 4) + 0.0025
-# Generate a modular graph
-mgraph <- sample_sbm(p, pref.matrix = Prefix, block.sizes = c(rep(p / m, m)))
-# Randomly assign weights to the edges
-E(mgraph)$weight <- runif(gsize(mgraph), min = 1e-1, max = 3)
-# Get the true Laplacian and Adjacency matrices
-Ltrue <- as.matrix(laplacian_matrix(mgraph))
-Atrue <- diag(diag(Ltrue)) - Ltrue
-# Get the unweighted true Adjacency matrix (assumed to be known)
-A <- 1 * (Ltrue < 0)
-# Generate samples from the Laplacian matrix
-Y <- MASS::mvrnorm(10 * p, mu = rep(0, p), Sigma = MASS::ginv(Ltrue))
-# Compute the sample covariance matrix
-S <- cov(Y)
-# Estimate a graph from the samples using the MM method
-graph <- learn_laplacian_gle_mm(S = S, A = A,
-                                record_objective = TRUE, verbose = FALSE)
-# Check convergence status
-graph$convergence
-# Compute the relative error between true and estimated Laplacians
-relative_error(Ltrue, graph$Laplacian)
-# Plot objective function per iteration
-plot(c(1:length(graph$obj_fun)), graph$obj_fun, xlab = "Iteration number",
-     ylab = "Objective function value", type = "b", pch=15, lty=1, cex=.75, col = "#6ABA81")
-# Compute estimated adjacency matrix
-Aest <- diag(diag(graph$Laplacian)) - graph$Laplacian
-# Plot estimated graph
-net <- graph_from_adjacency_matrix(Aest, mode = "undirected", weighted = TRUE)
-colors <- brewer.reds(100)
-c_scale <- colorRamp(colors)
-E(net)$color = apply(c_scale(abs(E(net)$weight) / max(abs(E(net)$weight))), 1,
-                     function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
-V(net)$color = "pink"
-plot(net, vertex.size = 3, vertex.label = NA)
-# Plot true and estimated Adjacency matrices
-par(mfrow = c(1, 2))
-corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square",
-         addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
-title("True Adjacency")
-corrplot(Aest / max(Aest), is.corr = FALSE, method = "square",
-         addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
-title("Estimated Adjacency")
-```
-
-As discussed in [@Licheng2019], the estimation performance of GLE-MM and GLE-ADMM are
-practically the same. The toy example below shows the relative error between the
-estimation given by the MM and ADMM methods and the true Laplacian as the number of
-samples increase.
-```{r, cache = TRUE}
-library(spectralGraphTopology)
-library(igraph)
-set.seed(42)
-
-# sample ratios
-ratios <- c(5, 10, 100, 250, 500, 1000)
-# number of nodes
-p <- 100
-# number of modules
-m <- 4
-# Prefix matrix
-Prefix <- diag(.2, 4) + 0.025
-# relative errors between the true Laplacian and the estimated ones
-re_mm <- rep(0, length(ratios))
-re_admm <- rep(0, length(ratios))
-for (k in c(1:length(ratios))) {
-  # Generate a modular graph
-  mgraph <- sample_sbm(p, pref.matrix = Prefix, block.sizes = c(rep(p / m, m)))
-  # Randomly assign weights to the edges
-  E(mgraph)$weight <- runif(gsize(mgraph), min = 1e-1, max = 3)
-  # Get the true Laplacian and Adjacency matrices
-  Ltrue <- as.matrix(laplacian_matrix(mgraph))
-  Atrue <- diag(diag(Ltrue)) - Ltrue
-  # Get the unweighted true Adjacency matrix (assumed to be known)
-  A <- 1 * (Ltrue < 0)
-  # Generate samples from the Laplacian matrix
-  Y <- MASS::mvrnorm(ratios[k] * p, mu = rep(0, p), Sigma = MASS::ginv(Ltrue))
-  # Compute the sample covariance matrix
-  S <- cov(Y)
-  # Estimate a graph from the samples using the MM method
-  graph_mm <- learn_laplacian_gle_mm(S = S, A = A, verbose = FALSE)
-  # Estimate a graph from the samples using the ADMM method
-  graph_admm <- learn_laplacian_gle_admm(S = S, A = A, verbose = FALSE)
-  # record relative error between true and estimated Laplacians
-  re_mm[k] <- relative_error(Ltrue, graph_mm$Laplacian)
-  re_admm[k] <- relative_error(Ltrue, graph_admm$Laplacian)
-}
-xlab <- latex2exp::TeX("$\\mathit{n} / \\mathit{p}$")
-colors <- c("#0B032D", "#843B62")
-pch <- c(11, 7)
-legend <- c("MM", "ADMM")
-plot(c(1:length(ratios)), re_mm, ylim=c(0, max(re_mm) + 0.01), xlab = xlab,
-     ylab = "Relative Error", type = "b", pch=pch[1], lty=1,
-     cex=.75, col = colors[1], xaxt = "n")
-lines(c(1:length(ratios)), re_admm, type = "b", lty=1, pch=pch[2],
-      cex=.75, col = colors[2], xaxt = "n")
-axis(side = 1, at = c(1:length(ratios)), labels = ratios)
-legend("topright", legend=legend, col=colors, pch=pch, lty=c(1, 1), bty="n")
-```
-
-The plot above confirms that the performance of both algorithms are in fact substantially similar.
-
-Now, let's try to reproduce part of the Figure 3 in [@Licheng2019]:
-```{r}
-library(spectralGraphTopology)
-library(igraph)
-
-# number of nodes
-p <- seq(5, 50, 5)
-re_naive <- rep(0, length(p))
-re_gle_mm <- rep(0, length(p))
-re_gle_admm <- rep(0, length(p))
-
-for (k in c(1:length(p))) {
-  w <- runif(.5 * p[k] * (p[k] - 1))
-  Ltrue <- L(w)
-  A <- 1 * (Ltrue < 0)
-  # Generate samples from the Laplacian matrix
-  Y <- MASS::mvrnorm(100 * p[k], mu = rep(0, p[k]), Sigma = MASS::ginv(Ltrue))
-  # Compute the sample covariance matrix
-  S <- cov(Y)
-  Lnaive <- MASS::ginv(S)
-  # Estimate a graph from the samples using the MM method
-  graph_mm <- learn_laplacian_gle_mm(S = S, A = A, verbose = FALSE)
-  # Estimate a graph from the samples using the ADMM method
-  graph_admm <- learn_laplacian_gle_admm(S = S, A = A, verbose = FALSE)
-  # record relative error between true and estimated Laplacians
-  re_naive[k] <- relative_error(Ltrue, Lnaive)
-  re_mm[k] <- relative_error(Ltrue, graph_mm$Laplacian)
-  re_admm[k] <- relative_error(Ltrue, graph_admm$Laplacian)
-}
-xlab <- latex2exp::TeX("$\\mathit{p}$")
-colors <- c("#0B032D", "#843B62", "#6c5ce7")
-pch <- c(11, 7, 8)
-legend <- c("MM", "ADMM", "Naive")
-plot(c(1:length(p)), re_mm, ylim=c(min(re_naive, re_mm, re_admm), max(re_naive, re_mm, re_admm)), xlab = xlab,
-     ylab = "Relative Error", type = "b", pch=pch[1], lty=1,
-     cex=.75, col = colors[1], xaxt = "n")
-lines(c(1:length(p)), re_admm, type = "b", lty=1, pch=pch[2],
-      cex=.75, col = colors[2], xaxt = "n")
-lines(c(1:length(p)), re_naive, type = "b", lty=1, pch=pch[3],
-      cex=.75, col = colors[3], xaxt = "n")
-axis(side = 1, at = c(1:length(p)), labels = p)
-legend("topright", legend=legend, col=colors, pch=pch, lty=c(1, 1, 1), bty="n")
-```
 
 # References {-}
 \setlength{\parindent}{-0.2in}

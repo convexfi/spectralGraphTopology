@@ -28,6 +28,22 @@ relative_error <- function(A, B) {
 }
 
 
+#' Computes the fscore between two matrices
+#'
+#' @param A first matrix
+#' @param B second matrix
+#' @param eps real number such that edges whose values are smaller than eps are
+#'            not considered in the computation of the fscore
+#' @examples
+#' library(spectralGraphTopology)
+#' X <- L(c(1, 0, 1))
+#' fscore(X, X)
+#' @export
+fscore <- function(A, B, eps = 1e-4) {
+  return(metrics(A, B, eps)[1])
+}
+
+
 # Compute the prial value between two matrices
 # @param Ltrue true Laplacian matrix
 # @param Lest estimated Laplacian matrix

@@ -46,3 +46,8 @@ joint.prior <- function(beta, nu, Lw, Aw, U, V, lambda, psi) {
   return(laplacian.prior(beta = beta, Lw = Lw, lambda = lambda, U = U) +
          bipartite.prior(nu = nu, Aw = Aw, psi = psi, V = V))
 }
+
+vanilla.objective <- function(Theta, K) {
+  p <- nrow(Theta)
+  return(sum(diag(Theta %*% K)) - sum(log(eigval_sym(Theta)[2:p])))
+}
