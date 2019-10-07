@@ -53,10 +53,15 @@ knit_hooks$set(pngquant = hook_pngquant)
 state-of-the-art algorithms designed to estimate graph matrices
 (Laplacian and Adjacency) from data, including:
 
-* Structured Graph Laplacian (**SGL**): (i) S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar (2019). A unified framework for structured graph learning via spectral constraints. https://arxiv.org/abs/1904.09792. (ii) S. Kumar, J., Ying, J. V. de Miranda Cardoso, and D. P. Palomar, "Structured Graph Learning Via Laplacian Spectral Constraints", Advances in Neural Information Processing Systems (NeurIPS), Dec. 2019.
-* Combinatorial Graph Laplacian (**CGL**): H. E. Egilmez, E. Pavez and A. Ortega, "Graph Learning From Data Under Laplacian and Structural Constraints", IEEE Journal of Selected Topics in Signal Processing, vol. 11, no. 6, pp. 825-841, Sept. 2017.
-* Constrained Laplacian Rank (**CLR**): N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016). The Constrained Laplacian Rank Algorithm for Graph-based Clustering, AAAI’16.
-* Graph Laplacian Estimation (**GLE-MM** and **GLE-ADMM**): Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM, IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019
+* Structured Graph Laplacian (**SGL**)
+  *  S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar (2019). [A unified framework for structured graph learning via spectral constraints](https://arxiv.org/abs/1904.09792), ArXiv 2019.
+  *  S. Kumar, J., Ying, J. V. de Miranda Cardoso, and D. P. Palomar, [Structured graph learning via Laplacian spectral constraints"](https://arxiv.org/pdf/1909.11594.pdf), Advances in Neural Information Processing Systems (NeurIPS), Dec. 2019.
+* Combinatorial Graph Laplacian (**CGL**)
+  *  H. E. Egilmez, E. Pavez and A. Ortega, [Graph learning from data under Laplacian and structural constraints"](https://ieeexplore.ieee.org/document/7979524), IEEE Journal of Selected Topics in Signal Processing, vol. 11, no. 6, pp. 825-841, Sept. 2017.
+* Constrained Laplacian Rank (**CLR**)
+  *  N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016). [The constrained Laplacian rank algorithm for graph-based clustering](https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/download/12416/11830), The Thirtieth AAAI Conference on Artificial Intelligence AAAI'16.
+* Graph Laplacian Estimation (**GLE-MM** and **GLE-ADMM**)
+  *  Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, [Optimization algorithms for graph Laplacian estimation via ADMM and MM](https://ieeexplore.ieee.org/document/8747497), IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019
 
 
 # Installation
@@ -247,15 +252,16 @@ legend("topright", legend=legend, col=colors, pch=pch, lty=lty, bty="n")
 ```
 
 
-Let's also checkout the trend of the objective function for each algorithm:
+Let's also checkout the convergence curve of the objective function for each algorithm:
 ```{r}
 graph_mm <- learn_laplacian_gle_mm(S = S, record_objective = TRUE, verbose = FALSE)
 graph_admm <- learn_laplacian_gle_admm(S = S, record_objective = TRUE, verbose = FALSE)
 graph_cgl <- learn_combinatorial_graph_laplacian(S = S, record_objective = TRUE, verbose = FALSE)
-plot(c(1:length(graph_mm$obj_fun)), graph_mm$obj_fun, xlab = "number of iterations",
+iter <- c(1:100)
+plot(iter, graph_mm$obj_fun[iter], xlab = "number of iterations",
      ylab = "Objective function value", type = "b", lty=lty[1], pch=pch[1],
      cex=.75, col = colors[1])
-lines(c(1:length(graph_admm$obj_fun)), graph_admm$obj_fun, type = "b", lty=lty[2], pch=pch[2],
+lines(iter, graph_admm$obj_fun[iter], type = "b", lty=lty[2], pch=pch[2],
       cex=.75, col = colors[2])
 lines(c(1:length(graph_cgl$obj_fun)), graph_cgl$obj_fun, type = "b", lty=lty[3], pch=pch[3],
       cex=.75, col = colors[3])
@@ -393,7 +399,7 @@ knitr::include_graphics(c("figures/circles2.png", "figures/helix3d.png",
 
 ## Learning a bipartite graph
 
-In this experiment, we demonstrate how to learn a simple bipartite graph:
+In the experiments that follow, we demonstrate how to learn simple bipartite and block-bipartite graphs.
 ```{r, message=FALSE}
 library(spectralGraphTopology)
 library(igraph)
