@@ -49,8 +49,7 @@ Suggests:
     clusterSim,
     viridis,
     quadprog,
-    matrixcalc,
-    CVXR
+    matrixcalc
 VignetteBuilder:
     knitr,
     rmarkdown,

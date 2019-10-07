@@ -63,6 +63,7 @@ test_that("test that V remains orthonormal after being updated", {
 
 
 test_that("test that the eigenvalues of the adjacency matrix meet the criterion", {
+  skip_if_not_installed("CVXR")
   w <- runif(4*9)
   n <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
   z <- 3
@@ -76,6 +77,7 @@ test_that("test that the eigenvalues of the adjacency matrix meet the criterion"
 
 with_parameters_test_that("test that the eigenvalues of the Laplacian matrix
                           meet the criterion after being updated", {
+    skip_if_not_installed("CVXR")
     n <- as.integer(.5 * (1 + sqrt(1 + 8 * length(w))))
     k <- 1
     Lw <- L(w)
