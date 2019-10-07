@@ -18,7 +18,7 @@ using namespace Eigen;
 Eigen::MatrixXd L(const Eigen::VectorXd& w) {
   int j;
   int k = w.size();
-  const int n = .5 * (1 + sqrt(1 + 8 * k));
+  const int n = .5 * (1 + sqrt(1. + 8. * k));
   Eigen::MatrixXd Lw = Eigen::MatrixXd::Zero(n, n);
 
   for (int i = n-2; i > -1; --i) {
@@ -47,11 +47,11 @@ Eigen::MatrixXd L(const Eigen::VectorXd& w) {
 Eigen::MatrixXd A(const Eigen::VectorXd& w) {
   int j;
   int k = w.size();
-  const int N = .5 * (1 + sqrt(1 + 8 * k));
-  Eigen::MatrixXd Aw = Eigen::MatrixXd::Zero(N, N);
+  const int n = .5 * (1 + sqrt(1. + 8. * k));
+  Eigen::MatrixXd Aw = Eigen::MatrixXd::Zero(n, n);
 
-  for (int i = N-2; i > -1; --i) {
-    j = N - i - 1;
+  for (int i = n-2; i > -1; --i) {
+    j = n - i - 1;
     Aw.row(i).tail(j) = w.head(k).tail(j);
     k -= j;
   }
