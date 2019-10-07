@@ -60,8 +60,11 @@ learn_laplacian_gle_mm <- function(S, A_mask = NULL, alpha = 0, maxiter = 10000,
   R <- t(E) %*% K %*% E
   r <- nrow(R)
   G <- cbind(E, rep(1, p))
-  if (record_objective)
-    fun <- vanilla.objective(L(wk), K)
+  if (record_objective) {
+    z <- rep(0, .5 * p * (p - 1))
+    z[mask] <- wk
+    fun <- vanilla.objective(L(z), K)
+  }
   if (verbose)
     pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta",
                                      total = maxiter, clear = FALSE, width = 80)
@@ -72,8 +75,11 @@ learn_laplacian_gle_mm <- function(S, A_mask = NULL, alpha = 0, maxiter = 10000,
     Q <- G_aug_t %*% solve(G_aug %*% t(G), G_aug)
     Q <- Q[1:m, 1:m]
     wk <- sqrt(diag(Q) / diag(R))
-    if (record_objective)
-      fun <- c(fun, vanilla.objective(L(wk), K))
+    if (record_objective) {
+      z <- rep(0, .5 * p * (p - 1))
+      z[mask] <- wk
+      fun <- c(fun, vanilla.objective(L(z), K))
+    }
     if (verbose)
        pb$tick()
     has_converged <- norm(w - wk, "2") / norm(w, "2") < reltol
