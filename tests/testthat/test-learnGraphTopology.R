@@ -24,11 +24,12 @@ with_parameters_test_that("we can recover a simple connected graph with the GLE-
     Y <- MASS::mvrnorm(n * 250, rep(0, n), MASS::ginv(Laplacian))
     res <- func(cov(Y), A_mask = A_mask, record_objective = TRUE, reltol = 1e-7)
     expect_true(res$convergence)
-    expect_true(relative_error(Laplacian, res$Laplacian) < 1e-1)
-    expect_true(metrics(Laplacian, res$Laplacian, 1e-1)[1] > .9)
+    expect_true(relative_error(Laplacian, res$Laplacian) < 2e-1)
+    expect_true(fscore(Laplacian, res$Laplacian, 1e-1) > .8)
   },
   cases(list(func = learn_laplacian_gle_mm),
-        list(func = learn_laplacian_gle_admm))
+        list(func = learn_laplacian_gle_admm),
+        list(func = learn_combinatorial_graph_laplacian))
 )
 
 test_that("learn_k_component_graph with diamond graph", {

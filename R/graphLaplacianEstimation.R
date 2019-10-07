@@ -22,11 +22,10 @@ get_incidence_from_adjacency <- function(A) {
 #' @title Learn the weighted Laplacian matrix of a graph using the MM method
 #'
 #' @param S a pxp sample covariance/correlation matrix
-#' @param A the binary adjacency matrix of the graph
+#' @param A_mask the binary adjacency matrix of the graph
 #' @param alpha L1 regularization hyperparameter
 #' @param maxiter the maximum number of iterations
 #' @param reltol relative tolerance on the weight vector w
-#' @param abstol absolute tolerance on the weight vector w
 #' @param record_objective whether or not to record the objective function. Default is FALSE
 #' @param verbose if TRUE, then a progress bar will be displayed in the console. Default is TRUE
 #' @return A list containing possibly the following elements:
@@ -107,7 +106,7 @@ obj_func <- function(E, K, w, J) {
 #' @title Learn the weighted Laplacian matrix of a graph using the ADMM method
 #'
 #' @param S a pxp sample covariance/correlation matrix
-#' @param A the binary adjacency matrix of the graph
+#' @param A_mask the binary adjacency matrix of the graph
 #' @param alpha L1 regularization hyperparameter
 #' @param rho ADMM convergence rate hyperparameter
 #' @param maxiter the maximum number of iterations

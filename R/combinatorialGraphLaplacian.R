@@ -9,20 +9,26 @@
 #' @param S sample covariance matrix
 #' @param A_mask binary adjacency matrix of the graph
 #' @param alpha L1-norm regularization hyperparameter
-#' @param prob_tol minimum relative error considered for the stopping criteri
+#' @param reltol minimum relative error considered for the stopping criteri
 #' @param max_cycle maximum number of cycles
-#' @param reg_type type of L1-norm regularization. If reg_type == 1, then all
+#' @param regtype type of L1-norm regularization. If reg_type == 1, then all
 #'        elements of the Laplacian matrix will be regularized. If reg_type == 2,
-#'        only the off-diagonal elements will be regularized.
+#'        only the off-diagonal elements will be regularized
+#' @param record_objective whether or not to record the objective function value
+#'        at every iteration. Default is FALSE
+#' @param verbose if TRUE, then a progress bar will be displayed in the console. Default is TRUE
 #' @return A list containing possibly the following elements
-#' \item{\code{Laplacian}}{the estimated Laplacian Matrix}
+#' \item{\code{Laplacian}}{estimated Laplacian Matrix}
 #' \item{\code{elapsed_time}}{elapsed time recorded at every iteration}
+#' \item{\code{frod_norm}}{relative Frobenius norm between consecutive estimates of the Laplacian matrix}
+#' \item{\code{convergence}}{whether or not the algorithm has converged within the tolerance and max number of iterations}
+#' \item{\code{obj_fun}}{objective function value at every iteration, in case record_objective = TRUE}
 #' @references H. E. Egilmez, E. Pavez and A. Ortega, "Graph Learning From Data
 #'             Under Laplacian and Structural Constraints", in IEEE Journal of
 #'             Selected Topics in Signal Processing, vol. 11, no. 6, pp. 825-841, Sept. 2017.
 #'             Original MATLAB source code is available at: https://github.com/STAC-USC/Graph_Learning
 #' @export
-learn_combinatorial_graph_laplacian <- function(S, A_mask = NULL, alpha = 0, prob_tol = 1e-5,
+learn_combinatorial_graph_laplacian <- function(S, A_mask = NULL, alpha = 0, reltol = 1e-5,
                                                 max_cycle = 10000, regtype = 1,
                                                 record_objective = FALSE, verbose = TRUE) {
   n <- nrow(S)
@@ -30,7 +36,7 @@ learn_combinatorial_graph_laplacian <- function(S, A_mask = NULL, alpha = 0, pro
     A_mask <- matrix(1, n, n) - diag(n)
   e_v <- rep(1, n) / sqrt(n)
   dc_var <- t(e_v) %*% S %*% e_v
-  isshifting <- c(abs(dc_var) < prob_tol)
+  isshifting <- c(abs(dc_var) < reltol)
   if (isshifting) {
       S <- S + 1 / n
   }
@@ -111,16 +117,19 @@ learn_combinatorial_graph_laplacian <- function(S, A_mask = NULL, alpha = 0, pro
     time_seq <- c(time_seq, proc.time()[3] - start_time)
     frob_norm <- c(frob_norm, norm(O_old - O, 'F') / norm(O_old, "F"))
     if (i > 6) {
-      if (frob_norm[i] < prob_tol) {
+      if (frob_norm[i] < reltol) {
         O_best <- O
         C_best <- C
         break
       }
     }
   }
+  if (i < max_cycle) has_converged = TRUE
+  else has_converged = FALSE
   O <- O_best - (1 / n)
   C <- C_best - (1 / n)
-  results <- list(Laplacian = O, frob_norm = frob_norm, elapsed_time = time_seq)
+  results <- list(Laplacian = O, frob_norm = frob_norm,
+                  elapsed_time = time_seq, convergence = has_converged)
   if (record_objective)
     results$obj_fun <- fun
   return(results)
