@@ -125,10 +125,10 @@ learn_laplacian_gle_admm <- function(S, A_mask = NULL, alpha = 0, rho = 1, maxit
     A_mask <- matrix(1, p, p) - diag(p)
   Sinv <- MASS::ginv(S)
   w <- w_init("naive", Sinv)
-  Yk <- L(w)
-  Theta <- Yk
-  Ck <- Yk
-  C <- Ck
+  Theta <- L(w)
+  Yk <- Theta
+  Ck <- Theta
+  C <- Theta
   # ADMM constants
   mu <- 2
   tau <- 2
@@ -142,11 +142,9 @@ learn_laplacian_gle_admm <- function(S, A_mask = NULL, alpha = 0, rho = 1, maxit
   if (record_objective)
     fun <- c(vanilla.objective(Theta, K))
   # ADMM loop
-  # P <- qr.Q(qr(rep(1, p)), complete=TRUE)[, 2:p]
-  P <- eigvec_sym(Yk)
-  P <- P[, 2:p]
+  P <- qr.Q(qr(rep(1, p)), complete=TRUE)[, 2:p]
   for (k in c(1:maxiter)) {
-    Gamma <- t(P) %*% (K + Yk - rho * Ck) %*% P
+    Gamma <- t(P) %*% ((K + Yk) / rho - Ck) %*% P
     U <- eigvec_sym(Gamma)
     lambda <- eigval_sym(Gamma)
     d <- .5 * c(sqrt(lambda ^ 2 + 4 / rho) - lambda)
@@ -159,14 +157,14 @@ learn_laplacian_gle_admm <- function(S, A_mask = NULL, alpha = 0, rho = 1, maxit
     Yk <- Yk + rho * Rk
     if (record_objective)
       fun <- c(fun, vanilla.objective(Thetak, K))
-    normF_Rk <- norm(Rk, "F")
     has_converged <-  norm(Theta - Thetak) / norm(Theta, "F") < reltol
     if (has_converged && k > 1) break
-    #s <- rho * norm(C - Ck, "F")
-    #if (normF_Rk > mu * s)
-    #  rho <- rho * tau
-    #else if (s > mu * normF_Rk)
-    #  rho <- rho / tau
+    s <- rho * norm(C - Ck, "F")
+    r <- norm(Rk, "F")
+    if (r > mu * s)
+      rho <- rho * tau
+    else if (s > mu * r)
+      rho <- rho / tau
     Theta <- Thetak
     C <- Ck
     if (verbose)
