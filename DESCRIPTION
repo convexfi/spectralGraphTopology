@@ -1,15 +1,19 @@
 Package: spectralGraphTopology
 Title: Learning Graphs from Data via Spectral Constraints
-Version: 0.1.4
-Date: 2019-10-07
-Description: Block coordinate descent estimators to learn k-component, bipartite,
-    and k-component bipartite graphs from data by imposing spectral constraints
-    on the eigenvalues and eigenvectors of the Laplacian and adjacency matrices.
-    Those estimators leverages spectral properties of the graphical models as a
-    prior information, which turn out to play key roles in unsupervised machine
-    learning tasks such as clustering and community detection.  This package is
-    based on the paper "A Unified Framework for Structured Graph Learning via
-    Spectral Constraints" by S. Kumar et al (2019) <arXiv:1904.09792>.
+Version: 0.2.0
+Date: 2019-10-08
+Description: In the era of big data and hyperconnectivity, learning
+    high-dimensional structures such as graphs from data has become a prominent
+    task in machine learning and has found applications in many fields such as
+    finance, health care, and networks. 'spectralGraphTopology' is an open source,
+    documented, and well-tested R package for learning graphs from data. It
+    provides implementations of state of the art algorithms such as Combinatorial
+    Graph Laplacian Learning (CGL), Spectral Graph Learning (SGL), Graph Estimation
+    based on Majorization-Minimization (GLE-MM), and Graph Estimation based on
+    Alternating Direction Method of Multipliers (GLE-ADMM). In addition, graph
+    learning has been widely employed for clustering, where specific algorithms
+    are available in the literature. To this end, we provide an implementation of
+    the Constrained Laplacian Rank (CLR) algorithm.
 Authors@R: c(
   person("Ze", "Vinicius", role = c("cre", "aut"), email = "jvmirca@gmail.com"),
   person(c("Daniel", "P."), "Palomar", role = "aut", email = "daniel.p.palomar@gmail.com")
