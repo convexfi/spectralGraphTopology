@@ -116,6 +116,7 @@ implementation:
 | `cluster_k_component_graph` | N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016). [The Constrained Laplacian Rank Algorithm for Graph-based Clustering](https://dl.acm.org/citation.cfm?id=3016100.3016174), AAAI'16.                                                                                              |
 | `learn_laplacian_gle_mm`    | Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, [Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM](https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf), IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019 |
 | `learn_laplacian_gle_admm`    | Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, [Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM](https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf), IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019 |
+| `learn_combinatorial_graph_laplacian`    | H. E. Egilmez, E. Pavez and A. Ortega, [Graph learning from data under Laplacian and structural constraints](https://ieeexplore.ieee.org/document/7979524), Journal of Selected Topics in Signal Processing, vol. 11, no. 6, pp. 825-841, Sept. 2017 |
 
 ## Links
 Package: [CRAN](https://CRAN.R-project.org/package=spectralGraphTopology) and
@@ -124,3 +125,4 @@ Package: [CRAN](https://CRAN.R-project.org/package=spectralGraphTopology) and
 README file: [GitHub-readme](https://github.com/dppalomar/spectralGraphTopology/blob/master/README.md)
 
 Vignette: [GitHub-html-vignette](https://raw.githack.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology.html)
+[CRAN-html-vignette](https://cran.r-project.org/web/packages/spectralGraphTopology/vignettes/SpectralGraphTopology.html)

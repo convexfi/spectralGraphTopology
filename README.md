@@ -140,6 +140,10 @@ their implementation:
 <td><code>learn_laplacian_gle_admm</code></td>
 <td>Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, <a href="https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf">Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM</a>, IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019</td>
 </tr>
+<tr class="even">
+<td><code>learn_combinatorial_graph_laplacian</code></td>
+<td>H. E. Egilmez, E. Pavez and A. Ortega, <a href="https://ieeexplore.ieee.org/document/7979524">Graph learning from data under Laplacian and structural constraints</a>, Journal of Selected Topics in Signal Processing, vol. 11, no. 6, pp. 825-841, Sept. 2017</td>
+</tr>
 </tbody>
 </table>
 
@@ -155,3 +159,4 @@ README file:
 
 Vignette:
 [GitHub-html-vignette](https://raw.githack.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology.html)
+[CRAN-html-vignette](https://cran.r-project.org/web/packages/spectralGraphTopology/vignettes/SpectralGraphTopology.html)
