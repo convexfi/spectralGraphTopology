@@ -38,12 +38,12 @@ learn_combinatorial_graph_laplacian <- function(S, A_mask = NULL, alpha = 0, rel
   dc_var <- t(e_v) %*% S %*% e_v
   isshifting <- c(abs(dc_var) < reltol)
   if (isshifting) {
-      S <- S + 1 / n
+    S <- S + 1 / n
   }
   if (regtype == 1) {
-      H <- alpha * (2 * diag(n) - matrix(1, n, n))
+    H <- alpha * (2 * diag(n) - matrix(1, n, n))
   } else if (regtype == 2) {
-      H <- alpha * (diag(n) - matrix(1, n, n))
+    H <- alpha * (diag(n) - matrix(1, n, n))
   }
   K <- S + H
   O_init <- diag(1 / diag(K))
