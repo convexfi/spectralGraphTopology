@@ -23,10 +23,10 @@ Status](https://dev.azure.com/jvmirca/spectralGraphTopology/_apis/build/status/m
 **spectralGraphTopology** provides estimators to learn k-component,
 bipartite, and k-component bipartite graphs from data by imposing
 spectral constraints on the eigenvalues and eigenvectors of the
-Laplacian and adjacency matrices. Those estimators leverages spectral
-properties of the graphical models as a prior information, which turn
-out to play key roles in unsupervised machine learning tasks such as
-community detection.
+Laplacian and adjacency matrices. Those estimators leverage spectral
+properties of the graphical models as a prior information which turn out
+to play key roles in unsupervised machine learning tasks such as
+clustering.
 
 **Documentation**:
 [**https://mirca.github.io/spectralGraphTopology**](https://mirca.github.io/spectralGraphTopology).
