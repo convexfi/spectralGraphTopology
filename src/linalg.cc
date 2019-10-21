@@ -21,3 +21,9 @@ arma::mat eigvec_sym(arma::mat M) {
 arma::mat inv_sympd(arma::mat M) {
   return arma::inv_sympd(M);
 }
+
+
+// [[Rcpp::export]]
+arma::mat pinv(arma::mat M) {
+  return arma::pinv(M);
+}

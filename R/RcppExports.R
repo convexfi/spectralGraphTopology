@@ -13,6 +13,10 @@ inv_sympd <- function(M) {
     .Call('_spectralGraphTopology_inv_sympd', PACKAGE = 'spectralGraphTopology', M)
 }
 
+pinv <- function(M) {
+    .Call('_spectralGraphTopology_pinv', PACKAGE = 'spectralGraphTopology', M)
+}
+
 #' Computes the Laplacian linear operator which maps a vector of weights into
 #' a valid Laplacian matrix.
 #'

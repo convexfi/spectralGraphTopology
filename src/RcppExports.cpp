@@ -41,6 +41,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// pinv
+arma::mat pinv(arma::mat M);
+RcppExport SEXP _spectralGraphTopology_pinv(SEXP MSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type M(MSEXP);
+    rcpp_result_gen = Rcpp::wrap(pinv(M));
+    return rcpp_result_gen;
+END_RCPP
+}
 // L
 Eigen::MatrixXd L(const Eigen::VectorXd& w);
 RcppExport SEXP _spectralGraphTopology_L(SEXP wSEXP) {
@@ -202,6 +213,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spectralGraphTopology_eigval_sym", (DL_FUNC) &_spectralGraphTopology_eigval_sym, 1},
     {"_spectralGraphTopology_eigvec_sym", (DL_FUNC) &_spectralGraphTopology_eigvec_sym, 1},
     {"_spectralGraphTopology_inv_sympd", (DL_FUNC) &_spectralGraphTopology_inv_sympd, 1},
+    {"_spectralGraphTopology_pinv", (DL_FUNC) &_spectralGraphTopology_pinv, 1},
     {"_spectralGraphTopology_L", (DL_FUNC) &_spectralGraphTopology_L, 1},
     {"_spectralGraphTopology_A", (DL_FUNC) &_spectralGraphTopology_A, 1},
     {"_spectralGraphTopology_Mmat", (DL_FUNC) &_spectralGraphTopology_Mmat, 1},
