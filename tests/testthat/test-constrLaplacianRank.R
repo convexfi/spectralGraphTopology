@@ -29,5 +29,6 @@ test_that("Jordan's initial graph", {
   expect_equal(c(n, n), dim(A))
   expect_equal(diag(A), rep(0, n))
   expect_equal(rowSums(A), rep(1, n))
+  expect_equal(rowSums(A > 0), rep(2, n))
 })
 
