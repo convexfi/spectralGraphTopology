@@ -131,7 +131,7 @@ More precisely, the mathematical formulation for the graphical lasso problem
 can be expressed as follows:
 $$\begin{array}{ll}
 \underset{\boldsymbol{\Theta} \succ \mathbf{0}}{\textsf{maximize}} & \log \det \boldsymbol{\Theta}
-- \mathrm{tr}(\mathbf{S}\boldsymbol{\Theta}) + \alpha \Vert \boldsymbol{\Theta}\Vert_{1, \text{off}},
+- \mathrm{tr}(\mathbf{S}\boldsymbol{\Theta}) - \alpha \Vert \boldsymbol{\Theta}\Vert_{1, \text{off}},
 \end{array} $$
 where $\mathbf{S}$ is the sample covariance matrix (or feature inner product matrix) and $\alpha$ is a hyperparameter
 that controls the amount of sparsity of the solution. This estimator has been efficiently implemented in the R package ``glasso``.
@@ -144,7 +144,7 @@ impose $\boldsymbol{\Theta}$ as a combinatorial graph Laplacian. Mathematically,
 \begin{equation}
 \begin{array}{ll}
 &\underset{\boldsymbol{\Theta}}{\textsf{maximize}} & \log \mathrm{g}\det \boldsymbol{\Theta}
-- \mathrm{tr}(\mathbf{S}\boldsymbol{\Theta}) + \alpha \Vert \boldsymbol{\Theta}\Vert_{1, \text{off}},\\
+- \mathrm{tr}(\mathbf{S}\boldsymbol{\Theta}) - \alpha \Vert \boldsymbol{\Theta}\Vert_{1, \text{off}},\\
 &\textsf{subject to} & \boldsymbol{\Theta} \in \mathcal{S}_{\mathcal{L}},
 \end{array}
 \label{eq:cgl}
@@ -301,10 +301,14 @@ In this sense, in [@Kumar2019], we included spectral constraints into the
 regularized maximum likelihood framework as follows:
 $$\begin{array}{ll}
 \underset{\boldsymbol{\Theta}}{\textsf{maximize}} & \log \mathrm{gdet} \boldsymbol{\Theta}
-- \mathrm{tr}(\mathbf{S}\boldsymbol{\Theta}) + \alpha \Vert \boldsymbol{\Theta}\Vert_{1}, \\
-\textsf{subject to} & \boldsymbol{\Theta} \in \mathcal{S}_{\mathcal{L}},
-\end{array}
-$$
+- \mathrm{tr}(\mathbf{S}\boldsymbol{\Theta}) - \alpha \Vert \boldsymbol{\Theta}\Vert_{1}, \\
+\textsf{subject to} & \boldsymbol{\Theta} \in \mathcal{S}_{\mathcal{L}}, \boldsymbol{\lambda}(\boldsymbol{\Theta}) \in \mathcal{S}_{\boldsymbol{\Lambda}},
+\end{array}$$
+
+where $\mathcal{S}_{\boldsymbol{\Lambda}}$ is the set of vectors that constrains the eigenvalues of
+the Laplacian matrix. For example, for a $k$-component graph with $p$ nodes,
+$\mathcal{S}_{\boldsymbol{\Lambda}} = \left\{\{\lambda_i\}_{i=1}^{p} | \lambda_1 = \lambda_2 = \cdots = \lambda_k = 0,\;
+0 < \lambda_{k+1} \leq \lambda_{k+2} \leq \cdots \leq \lambda_{p} \right\}$.
 
 Now, realizing that for any $\boldsymbol{\Theta} \in \mathcal{S}_{\mathcal{L}}$, $\boldsymbol{\Theta} = \mathcal{L}\mathbf{w}$,
 where $\mathcal{L} : \mathbb{R}^{p(p-1)/2} \rightarrow \boldsymbol{\Theta}$ is a linear operator
@@ -316,12 +320,8 @@ $$\begin{array}{ll}
 + \mathrm{tr}\left(\mathbf{S}\mathcal{L}\mathbf{w}\right) + \alpha \Vert\mathcal{L}\mathbf{w}\Vert_{1}
 + \frac{\beta}{2}\big\|\mathcal{L}\mathbf{w} - \mathbf{U}{\sf Diag}(\boldsymbol{\lambda})\mathbf{U}^{T}\big\|^{2}_{F}\\
 \textsf{subject to} & \mathbf{w} \geq 0, \boldsymbol{\lambda} \in \mathcal{S}_{\boldsymbol{\Lambda}},~\text{and}~
-\mathbf{U}^{T}\mathbf{U} = \mathbf{I}
+\mathbf{U}^{T}\mathbf{U} = \mathbf{I}.
 \end{array}$$
-where $\mathcal{S}_{\boldsymbol{\Lambda}}$ is the set of vectors that constrains the eigenvalues of
-the Laplacian matrix. For example, for a $k$-component graph with $p$ nodes,
-$\mathcal{S}_{\boldsymbol{\Lambda}} = \left\{\{\lambda_i\}_{i=1}^{p} | \lambda_1 = \lambda_2 = \cdots = \lambda_k = 0,\;
-0 < \lambda_{k+1} \leq \lambda_{k+2} \leq \cdots \leq \lambda_{p} \right\}$.
 
 To solve this optimization problem, we employ a block majorization-minimization framework that updates each
 of the variables ($\mathbf{w}, \boldsymbol{\lambda}, \mathbf{U}$) at once while fixing the remaning ones.
