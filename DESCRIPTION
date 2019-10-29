@@ -1,7 +1,7 @@
 Package: spectralGraphTopology
 Title: Learning Graphs from Data via Spectral Constraints
-Version: 0.2.1.900
-Date: 2019-10-08
+Version: 0.2.2
+Date: 2019-10-29
 Description: In the era of big data and hyperconnectivity, learning
     high-dimensional structures such as graphs from data has become a prominent
     task in machine learning and has found applications in many fields such as
