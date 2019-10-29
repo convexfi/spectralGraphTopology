@@ -1,3 +1,7 @@
+## Changes in spectralGraphTopology version 0.2.1 (2019-10-29)
+
+* Minor corrections to the vignette.
+
 ## Changes in spectralGraphTopology version 0.2.0 (2019-10-07)
 
 * Added state of the art algorithms (CGL, GLE-MM, and GLE-ADMM) for learning connected graphs.
