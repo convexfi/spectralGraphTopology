@@ -76,10 +76,12 @@ learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naiv
     S <- MASS::ginv(L)
     is_data_matrix <- TRUE
   }
+  eps <- 1e-5
   # number of nodes
   n <- nrow(S)
   # l1-norm penalty factor
-  H <- alpha * (2 * diag(n) - matrix(1, n, n))
+  # H <- alpha * (2 * diag(n) - matrix(1, n, n))
+  H <- alpha * (diag(n) - matrix(1, n, n))
   K <- S + H
   # find an appropriate inital guess
   if (is_data_matrix)
@@ -150,6 +152,9 @@ learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naiv
     U0 <- U
     lambda0 <- lambda
     Lw0 <- Lw
+    W <- 1 / (-Lw + eps)
+    W <- W - diag(diag(W))
+    K <- S + H * W
   }
   # compute the adjancency matrix
   Aw <- A(w)

@@ -11,10 +11,8 @@ N <- 100
 circles3 <- shapes.circles3(N)
 # learn underlying graph
 S <- crossprod(t(circles3$data))
-print(eigenvalues(S))
-graph <- learn_k_component_graph(S, k = 3, beta = 1,
-                                 maxiter = 570, record_weights = TRUE, record_objective = TRUE)
-print(graph$obj_fun)
+graph <- learn_k_component_graph(S, k = 3, beta = 1, fix_beta = FALSE, maxiter = 570,
+                                 record_weights = TRUE, record_objective = TRUE)
 # pretty colors
 colors <- c("#706FD3", "#FF5252", "#33D9B2")
 gr = .5 * (1 + sqrt(5))
