@@ -158,5 +158,9 @@ README file:
 [GitHub-readme](https://github.com/dppalomar/spectralGraphTopology/blob/master/README.md)
 
 Vignette:
-[GitHub-html-vignette](https://raw.githack.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology.html)
-[CRAN-html-vignette](https://cran.r-project.org/web/packages/spectralGraphTopology/vignettes/SpectralGraphTopology.html)
+[GitHub-html-vignette](https://raw.githack.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology.html),
+[CRAN-html-vignette](https://cran.r-project.org/web/packages/spectralGraphTopology/vignettes/SpectralGraphTopology.html),
+[NeurIPS’19 Promotional
+slides](https://docs.google.com/viewer?url=https://github.com/dppalomar/spectralGraphTopology/raw/master/vignettes/NeurIPS19-promo-slides.pdf),
+[NeurIPS’19 Promotional
+video](https://www.youtube.com/watch?v=klAqFvyQx7k)
