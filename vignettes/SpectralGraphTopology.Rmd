@@ -104,13 +104,13 @@ equal to zero. Therefore, one possible way to estimate a graph structure is thro
 
 One common approach to estimate Laplacian matrices (without necessarily satisfying the zero row-sum property)
 would be via the inverse of the sample covariance matrix, which is an asymptotically unbiased
-and efficient estimator. In R, this estimator can be computed simply as `S <- cov(t(Y)); solve(S, diag(nrow(S)))`,
-where ``Y`` is the $p \times n$ data matrix, $n$ is the number of samples (or features) and $p$ is the number of nodes.
+and efficient estimator. In R, this estimator can be computed simply as `S <- cov(X); solve(S)`,
+where ``X`` is the $n \times p$ data matrix, $n$ is the number of samples (or features) and $p$ is the number of nodes.
 This naive approach, although efficient when $n$ is orders of magnitude larger than $p$, poses way too many problems, e.g.,
 if $n \gtrsim p$, then inverse of the sample covariance will likely be ill-conditioned, otherwise when $n < p$,
 the sample covariance matrix is low-rank, hence its inverse does not exist.
 In this case, one can resort to the pseudo-inverse of the sample covariance matrix, which in R can be computed using the
-``MASS`` package as ``MASS::ginv(cov(t(Y)))``. In practice, these naive techniques perform very poorly, even when $n$ is just a few orders
+``MASS`` package as ``MASS::ginv(cov(X))``. In practice, these naive techniques perform very poorly, even when $n$ is just a few orders
 of magnitude larger than $p$, which makes their use questionable or even impractical to be used in real-world problems.
 
 Hence, the design of principled, efficient estimators for graph Laplacian matrices has attracted a substantial amount
@@ -143,13 +143,13 @@ The authors in [@Egilmez2017] considered to directly extend the graphical lasso 
 impose $\boldsymbol{\Theta}$ as a combinatorial graph Laplacian. Mathematically, the optimization problem becomes
 \begin{equation}
 \begin{array}{ll}
-&\underset{\boldsymbol{\Theta}}{\textsf{maximize}} & \log \mathrm{g}\det \boldsymbol{\Theta}
+&\underset{\boldsymbol{\Theta}}{\textsf{maximize}} & \log \mathrm{gdet} \boldsymbol{\Theta}
 - \mathrm{tr}(\mathbf{S}\boldsymbol{\Theta}) - \alpha \Vert \boldsymbol{\Theta}\Vert_{1, \text{off}},\\
 &\textsf{subject to} & \boldsymbol{\Theta} \in \mathcal{S}_{\mathcal{L}},
 \end{array}
 \label{eq:cgl}
 \end{equation}
-where $\mathrm{g}\det \boldsymbol{\Theta}$ represents the generalized determinant, i.e., the product of the positive eigenvalues of $\boldsymbol{\Theta}$, and $\mathcal{S}_{\mathcal{L}}$ is the set of (combinatorial) Laplacian matrices, which may
+where $\mathrm{gdet} \boldsymbol{\Theta}$ represents the generalized determinant, i.e., the product of the positive eigenvalues of $\boldsymbol{\Theta}$, and $\mathcal{S}_{\mathcal{L}}$ is the set of (combinatorial) Laplacian matrices, which may
 be written as
 $$ \begin{equation}
 \mathcal{S}_{\mathcal{L}} = \left\{\boldsymbol{\Theta} \in \mathbb{R}^{p \times p}: \boldsymbol{\Theta}\mathbf{1} = \mathbf{0},
@@ -158,7 +158,7 @@ $$ \begin{equation}
 
 It is worth noting that both graphical lasso and the combinatorial graph Laplacian (CGL) are convex
 problems that can be easily, albeit not efficiently, solved using disciplined convex programming
-frameworks such as CVX. An CVXR implementation of the above optimization problem can be coded as
+frameworks such as CVX. A CVXR implementation of the above optimization problem can be coded as
 
 ```{r}
 learn_laplacian_matrix_cvx <- function(S, alpha = 0) {
@@ -185,8 +185,8 @@ block coordinate descent updates to solve the CGL problem. In a similar fashion,
 the authors in [@Licheng2019] proposed highly efficient algorithms to solve the CGL optimization problem
 using the frameworks Majorization-Minimization (MM) and Alternating Direction Method of Multipliers (ADMM).
 
-We set up a simple experiments to compare the performance of the four approaches:
-(1) directly solving with **CVXR**, (2) **CGL**[@Egilmez2017], (3) **GLE-MM** [@Licheng2019], and (4) **GLE-ADMM** [@Licheng2019].
+We set up a simple experiment to compare the performance of the four approaches:
+directly solving with **CVXR**, **CGL** [@Egilmez2017], **GLE-MM** [@Licheng2019], and **GLE-ADMM** [@Licheng2019].
 We first build a grid graph with a total of 64 nodes using ``igraph::make_lattice`` and sample from it with increasing
 sample size ratios varying from 50 to 1000. We should expect to see a monotonically decreasing relative error curve as
 the sample size increases.  Additionally, we should observe similar performances among the algorithms
@@ -216,9 +216,9 @@ for (k in c(1:length(ratios))) {
   # Get the true Laplacian matrices
   Ltrue <- as.matrix(laplacian_matrix(grid))
   # Generate samples from the Laplacian matrix
-  Y <- MASS::mvrnorm(ratios[k] * p, mu = rep(0, p), Sigma = MASS::ginv(Ltrue))
+  X <- MASS::mvrnorm(ratios[k] * p, mu = rep(0, p), Sigma = MASS::ginv(Ltrue))
   # Compute the sample covariance matrix
-  S <- cov(Y)
+  S <- cov(X)
   # Estimate a graph from the samples using the MM method
   graph_mm <- learn_laplacian_gle_mm(S = S, verbose = FALSE)
   # Estimate a graph from the samples using the ADMM method
@@ -318,7 +318,7 @@ the original optimization problem may be approximated as follows:
 $$\begin{array}{ll}
 \underset{\mathbf{w}, \boldsymbol{\lambda}, \mathbf{U}}{\textsf{minimize}} & - \log \textrm{gdet}\left({\sf Diag}(\boldsymbol{\lambda})\right)
 + \mathrm{tr}\left(\mathbf{S}\mathcal{L}\mathbf{w}\right) + \alpha \Vert\mathcal{L}\mathbf{w}\Vert_{1}
-+ \frac{\beta}{2}\big\|\mathcal{L}\mathbf{w} - \mathbf{U}{\sf Diag}(\boldsymbol{\lambda})\mathbf{U}^{T}\big\|^{2}_{F}\\
++ \frac{\beta}{2}\big\|\mathcal{L}\mathbf{w} - \mathbf{U}{\sf Diag}(\boldsymbol{\lambda})\mathbf{U}^{T}\big\|^{2}_{F},\\
 \textsf{subject to} & \mathbf{w} \geq 0, \boldsymbol{\lambda} \in \mathcal{S}_{\boldsymbol{\Lambda}},~\text{and}~
 \mathbf{U}^{T}\mathbf{U} = \mathbf{I}.
 \end{array}$$
@@ -340,8 +340,8 @@ $$
 \text{subject to} & \begin{array}[t]{l}
 \mathbf{w} \geq 0, \ \boldsymbol{\psi} \in \mathcal{S}_{\boldsymbol{\psi}}, \ \text{and} \ \mathbf{V}^T\mathbf{V}=\mathbf{I},
 \end{array}
-\end{array}
-$$
+\end{array}$$
+where $\mathcal{A}$ is a linear operator that maps a non-negative vector of edge weights $\mathbf{w}$ into an adjacency matrix.
 
 In a similar fashion, we construct the optimization problem to estimate a $k$-component bipartite graph
 by combining the constraints related to the Laplacian and adjacency matrices.
@@ -419,10 +419,9 @@ E(bipartite)$weight <- runif(gsize(bipartite), min = 0, max = 1)
 Ltrue <- as.matrix(laplacian_matrix(bipartite))
 Atrue <- diag(diag(Ltrue)) - Ltrue
 # get samples
-Y <- MASS::mvrnorm(100 * n, rep(0, n), Sigma = MASS::ginv(Ltrue))
-
+X <- MASS::mvrnorm(100 * n, rep(0, n), Sigma = MASS::ginv(Ltrue))
 # estimate graph
-S <- cov(Y)  # compute sample covariance matrix
+S <- cov(X)  # compute sample covariance matrix
 graph <- learn_bipartite_graph(S, z = 4, verbose = FALSE)
 graph$Adjacency[graph$Adjacency < 1e-3] <- 0
 
@@ -476,8 +475,8 @@ bipartite <- graph_from_adjacency_matrix(Atrue, mode = "undirected", weighted = 
 n <- ncol(Laplacian)
 
 # estimate graph
-Y <- MASS::mvrnorm(40 * n, rep(0, n), MASS::ginv(Laplacian))
-graph <- learn_bipartite_k_component_graph(cov(Y), k = 2, beta = 1e2, nu = 1e2,
+X <- MASS::mvrnorm(40 * n, rep(0, n), MASS::ginv(Laplacian))
+graph <- learn_bipartite_k_component_graph(cov(X), k = 2, beta = 1e2, nu = 1e2,
                                            verbose = FALSE)
 graph$Adjacency[graph$Adjacency < 1e-2] <- 0
 
