@@ -16,15 +16,13 @@ Y <- MASS::mvrnorm(T, mu = rep(0, N), Sigma = MASS::ginv(Ltrue))
 S <- cov(Y)
 
 A_mask <- matrix(1, 64, 64) - diag(64)
-alpha = 5e-3
-Lcgl <- learn_combinatorial_graph_laplacian(S, A_mask, alpha = alpha, prob_tol = 1e-5)
+alpha = 1.5e-3
+Lcgl <- learn_combinatorial_graph_laplacian(S, A_mask, alpha = alpha, reltol = 1e-5, regtype = 2)
 graph <- learn_k_component_graph(S, w0 = "qp", beta = 20, alpha = alpha, abstol = 1e-5, fix_beta = TRUE)
 
-eps <- 1e-6
 # compute adjacency matrices
-graph$Adjacency[graph$Adjacency < eps] <- 0
-W_cgl <- diag(diag(Lcgl$Laplacian)) - Lcgl$Laplacian
-W_cgl[W_cgl < eps] <- 0
+W_cgl <- abs(diag(diag(Lcgl$Laplacian)) - Lcgl$Laplacian)
+W_cgl[W_cgl < 5e-2] <- 0
 # compute grids
 grid_spec <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
 grid_cgl <- graph_from_adjacency_matrix(W_cgl, mode = "undirected", weighted = TRUE)
@@ -46,20 +44,23 @@ la_cgl <- layout_on_grid(grid_cgl)
 la_true <- layout_on_grid(grid)
 
 relative_error(Ltrue, graph$Laplacian)
-spectralGraphTopology:::metrics(Ltrue, graph$Laplacian, eps)
+spectralGraphTopology:::metrics(Ltrue, graph$Laplacian, 0)
 relative_error(Ltrue, Lcgl$Laplacian)
-spectralGraphTopology:::metrics(Ltrue, Lcgl$Laplacian, eps)
+spectralGraphTopology:::metrics(Ltrue, Lcgl$Laplacian, 5e-2)
 
 gr = .5 * (1 + sqrt(5))
 setEPS()
 postscript("../latex/figures/true_grid.ps", height = 5, width = gr * 3.5)
-plot(grid, layout = la_true, vertex.label = NA, vertex.size = 3)
+plot(grid, layout = la_true, vertex.label = NA, vertex.size = 3, vertex.shape = 'square',
+     edge.width = E(grid)$weight)
 dev.off()
 setEPS()
 postscript("../latex/figures/sgl_grid.ps", height = 5, width = gr * 3.5)
-plot(grid_spec, layout = la_spec, vertex.label = NA, vertex.size = 3)
+plot(grid_spec, layout = la_spec, vertex.label = NA, vertex.size = 3, vertex.shape = 'square',
+     edge.width = E(grid_spec)$weight)
 dev.off()
 setEPS()
 postscript("../latex/figures/cgl_grid.ps", height = 5, width = gr * 3.5)
-plot(grid_cgl, layout = la_cgl, vertex.label = NA, vertex.size = 3)
+plot(grid_cgl, layout = la_cgl, vertex.label = NA, vertex.size = 3, vertex.shape = 'square',
+     edge.width = E(grid_cgl)$weight)
 dev.off()
