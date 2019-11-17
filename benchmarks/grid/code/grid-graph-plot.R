@@ -29,12 +29,15 @@ grid_cgl <- graph_from_adjacency_matrix(W_cgl, mode = "undirected", weighted = T
 
 colors <- viridis(5, begin = 0, end = .75, direction = -1)
 c_scale <- colorRamp(colors)
-E(grid_spec)$color = apply(c_scale(E(grid_spec)$weight / max(E(grid_spec)$weight)), 1,
-                          function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
-E(grid_cgl)$color = apply(c_scale(E(grid_cgl)$weight / max(E(grid_cgl)$weight)), 1,
-                          function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
-E(grid)$color = apply(c_scale(E(grid)$weight / max(E(grid)$weight)), 1,
-                      function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+E(grid_spec)$color = "#34495e"
+E(grid_cgl)$color  = "#34495e"
+E(grid)$color      = "#34495e"
+#E(grid_spec)$color = apply(c_scale(E(grid_spec)$weight / max(E(grid_spec)$weight)), 1,
+#                          function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+#E(grid_cgl)$color = apply(c_scale(E(grid_cgl)$weight / max(E(grid_cgl)$weight)), 1,
+#                          function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+#E(grid)$color = apply(c_scale(E(grid)$weight / max(E(grid)$weight)), 1,
+#                      function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
 V(grid_spec)$color = "grey"
 V(grid_cgl)$color = "grey"
 V(grid)$color = "grey"
