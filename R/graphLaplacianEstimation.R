@@ -156,8 +156,7 @@ learn_laplacian_gle_admm <- function(S, A_mask = NULL, alpha = 0, rho = 1, maxit
     Xik <- crossprod(sqrt(d) * t(U))
     Thetak <- P %*% Xik %*% t(P)
     Ck_tmp <- Yk / rho + Thetak
-    Ck <- (diag(pmax(0, diag(Ck_tmp))) +
-           A_mask * pmin(0, Ck_tmp))
+    Ck <- diag(pmax(0, diag(Ck_tmp))) + A_mask * pmin(0, Ck_tmp)
     Rk <- Thetak - Ck
     Yk <- Yk + rho * Rk
     if (record_objective)
@@ -185,6 +184,6 @@ learn_laplacian_gle_admm <- function(S, A_mask = NULL, alpha = 0, rho = 1, maxit
 # compute the partial augmented Lagragian
 aug_lag <- function(K, P, Xi, Y, C, d, rho) {
   PXiPt <- P %*% Xi %*% t(P)
-  return(sum(diag(Xi %*% t(P) %*% K %*% P)) - sum(log(d)) +
-         sum(diag(t(Y) %*% (PXiPt - C))) + .5 * rho * norm(PXiPt - C, "F") ^ 2)
+  return((sum(diag(Xi %*% t(P) %*% K %*% P)) - sum(log(d))
+          + sum(diag(t(Y) %*% (PXiPt - C))) + .5 * rho * norm(PXiPt - C, "F") ^ 2))
 }
