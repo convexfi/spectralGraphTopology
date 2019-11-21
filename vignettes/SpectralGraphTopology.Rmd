@@ -167,10 +167,10 @@ learn_laplacian_matrix_cvx <- function(S, alpha = 0) {
   zeros <- rep(0, p)
   zeros_mat <- matrix(0, p, p)
   J <- matrix(1/p, p, p)
-  H <- alpha * (2 * diag(p) - p * J)
+  H <- 2 * diag(p) - p * J
   K <- S + alpha * H
   Theta <- CVXR::Variable(p, p)
-  objective <- CVXR::matrix_trace(Theta %*% (K + J)) - CVXR::log_det(Theta + J)
+  objective <- CVXR::matrix_trace(Theta %*% K) - CVXR::log_det(Theta + J)
   constraints <- list(Theta == t(Theta),
                       Theta %*% ones == zeros,
                       Theta - CVXR::diag(CVXR::diag(Theta)) <= zeros_mat)
