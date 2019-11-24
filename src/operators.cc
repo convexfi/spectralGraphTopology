@@ -146,11 +146,12 @@ Eigen::MatrixXd vec(const Eigen::MatrixXd& M) {
 }
 
 
-// Computes the Lstar operator.
-//
-// @param M matrix
-// @return w vector
-//
+//' Computes the Lstar operator.
+//'
+//' @param M matrix
+//' @return w vector
+//'
+//' @export
 // [[Rcpp::export]]
 Eigen::VectorXd Lstar(const Eigen::MatrixXd& M) {
   int N = M.cols();
@@ -171,11 +172,12 @@ Eigen::VectorXd Lstar(const Eigen::MatrixXd& M) {
 }
 
 
-// Computes the Astar operator.
-//
-// @param M matrix
-// @return w vector
-//
+//' Computes the Astar operator.
+//'
+//' @param M matrix
+//' @return w vector
+//'
+//' @export
 // [[Rcpp::export]]
 Eigen::VectorXd Astar(const Eigen::MatrixXd& M) {
   int N = M.cols();

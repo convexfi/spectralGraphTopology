@@ -63,10 +63,22 @@ vec <- function(M) {
     .Call('_spectralGraphTopology_vec', PACKAGE = 'spectralGraphTopology', M)
 }
 
+#' Computes the Lstar operator.
+#'
+#' @param M matrix
+#' @return w vector
+#'
+#' @export
 Lstar <- function(M) {
     .Call('_spectralGraphTopology_Lstar', PACKAGE = 'spectralGraphTopology', M)
 }
 
+#' Computes the Astar operator.
+#'
+#' @param M matrix
+#' @return w vector
+#'
+#' @export
 Astar <- function(M) {
     .Call('_spectralGraphTopology_Astar', PACKAGE = 'spectralGraphTopology', M)
 }
