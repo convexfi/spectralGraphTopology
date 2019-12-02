@@ -48,8 +48,8 @@ devtools::install_github("dppalomar/spectralGraphTopology")
 ## About the project
 
 **spectralGraphTopology** is developed on [GitHub](http://github.com/dppalomar/spectralGraphTopology)
-by [Ze Vinicius](http://mirca.github.io), [Daniel Palomar](http://www.danielppalomar.com), Jiaxi Ying
-and Sandeep Kumar.
+by [Ze Vinicius](https://mirca.github.io), [Daniel Palomar](http://www.danielppalomar.com), Jiaxi Ying
+and [Sandeep Kumar](https://sites.google.com/view/sandeepkr/home).
 
 ### License
 

@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   
 
-  <title>Animals - Graph Learning</title>
+  <title>Animals - R: Graph Learning</title>
   <link rel="stylesheet" href="http://localhost:4000/spectralGraphTopology/assets/css/just-the-docs.css">
 
   
@@ -30,13 +30,17 @@
 
   <div class="page-wrap">
     <div class="side-bar">
-      <a href="http://localhost:4000/spectralGraphTopology/" class="site-title fs-6 lh-tight">Graph Learning</a>
+      <a href="http://localhost:4000/spectralGraphTopology/" class="site-title fs-6 lh-tight">R: Graph Learning</a>
       <span class="fs-3"><button class="js-main-nav-trigger navigation-list-toggle btn btn-outline" type="button" data-text-toggle="Hide">Menu</button></span>
       <div class="navigation main-nav js-main-nav">
         <nav role="navigation" aria-label="Main navigation">
   <ul class="navigation-list">
     
     
+      
+    
+      
+        
       
     
       
@@ -89,6 +93,14 @@
                   
                     <li class="navigation-list-item ">
                       
+                      <a href="http://localhost:4000/spectralGraphTopology/docs/structured/block-bipartite/" class="navigation-list-link">Block bipartite</a>
+                      
+                    </li>
+                  
+                
+                  
+                    <li class="navigation-list-item ">
+                      
                       <a href="http://localhost:4000/spectralGraphTopology/docs/structured/grid/" class="navigation-list-link">Grid</a>
                       
                     </li>
@@ -134,6 +146,8 @@
                   
                 
                   
+                
+                  
                     <li class="navigation-list-item ">
                       
                       <a href="http://localhost:4000/spectralGraphTopology/docs/clustering/twomoon/" class="navigation-list-link">Two moon</a>
@@ -165,7 +179,7 @@
           
           <div class="search js-search">
             <div class="search-input-wrap">
-              <input type="text" class="js-search-input search-input" tabindex="0" placeholder="Search Graph Learning" aria-label="Search Graph Learning" autocomplete="off">
+              <input type="text" class="js-search-input search-input" tabindex="0" placeholder="Search R: Graph Learning" aria-label="Search R: Graph Learning" autocomplete="off">
               <svg width="14" height="14" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" class="search-icon"><title>Search</title><g fill-rule="nonzero"><path d="M17.332 20.735c-5.537 0-10-4.6-10-10.247 0-5.646 4.463-10.247 10-10.247 5.536 0 10 4.601 10 10.247s-4.464 10.247-10 10.247zm0-4c3.3 0 6-2.783 6-6.247 0-3.463-2.7-6.247-6-6.247s-6 2.784-6 6.247c0 3.464 2.7 6.247 6 6.247z"/><path d="M11.672 13.791L.192 25.271 3.02 28.1 14.5 16.62z"/></g></svg>
             </div>
             <div class="js-search-results search-results-wrap"></div>
@@ -214,18 +228,23 @@ etc.  There are in total 33 animals to be clustered.</p>
 </span><span class="n">library</span><span class="p">(</span><span class="n">spectralGraphTopology</span><span class="p">)</span><span class="w">
 </span><span class="n">library</span><span class="p">(</span><span class="n">igraph</span><span class="p">)</span><span class="w">
 
+</span><span class="c1"># read data</span><span class="w">
 </span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read.csv</span><span class="p">(</span><span class="s2">"animals.txt"</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w">
 </span><span class="n">names</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">matrix</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">read.csv</span><span class="p">(</span><span class="s2">"animals_names.txt"</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)))</span><span class="w">
 </span><span class="n">Y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">matrix</span><span class="p">(</span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">df</span><span class="p">)),</span><span class="w"> </span><span class="n">nrow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nrow</span><span class="p">(</span><span class="n">df</span><span class="p">))</span><span class="w">
 </span><span class="n">n</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nrow</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span><span class="w">
-</span><span class="n">graph</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">learn_laplacian_matrix</span><span class="p">(</span><span class="n">cov</span><span class="p">(</span><span class="n">t</span><span class="p">(</span><span class="n">Y</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">diag</span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">w</span><span class="m">0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"qp"</span><span class="p">,</span><span class="w">
-                                </span><span class="n">beta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="n">verbose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w">
+</span><span class="c1"># estimate graph</span><span class="w">
+</span><span class="n">graph</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">learn_k_component_graph</span><span class="p">(</span><span class="n">cov</span><span class="p">(</span><span class="n">t</span><span class="p">(</span><span class="n">Y</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">diag</span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">w0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"qp"</span><span class="p">,</span><span class="w">
+                                 </span><span class="n">beta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="n">verbose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w">
+</span><span class="c1"># build network</span><span class="w">
 </span><span class="n">net</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">graph_from_adjacency_matrix</span><span class="p">(</span><span class="n">graph</span><span class="o">$</span><span class="n">Adjacency</span><span class="p">,</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"undirected"</span><span class="p">,</span><span class="w"> </span><span class="n">weighted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span><span class="c1"># colorify edges</span><span class="w">
 </span><span class="n">colors</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">viridis</span><span class="p">(</span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="n">begin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">-1</span><span class="p">)</span><span class="w">
 </span><span class="n">c_scale</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">colorRamp</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span><span class="w">
 </span><span class="n">E</span><span class="p">(</span><span class="n">net</span><span class="p">)</span><span class="o">$</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">apply</span><span class="p">(</span><span class="n">c_scale</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">E</span><span class="p">(</span><span class="n">net</span><span class="p">)</span><span class="o">$</span><span class="n">weight</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">E</span><span class="p">(</span><span class="n">net</span><span class="p">)</span><span class="o">$</span><span class="n">weight</span><span class="p">))),</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
                      </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="n">rgb</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">/</span><span class="m">255</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="o">/</span><span class="m">255</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="o">/</span><span class="m">255</span><span class="p">))</span><span class="w">
 </span><span class="n">V</span><span class="p">(</span><span class="n">net</span><span class="p">)</span><span class="o">$</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"pink"</span><span class="w">
+</span><span class="c1"># plot network</span><span class="w">
 </span><span class="n">plot</span><span class="p">(</span><span class="n">net</span><span class="p">,</span><span class="w"> </span><span class="n">vertex.label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">names</span><span class="p">,</span><span class="w">
      </span><span class="n">vertex.size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">4</span><span class="p">,</span><span class="w">
      </span><span class="n">vertex.label.dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">

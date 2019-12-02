@@ -8,7 +8,7 @@
   <meta name="Description" content="*spectralGraphTopology* is a software tool to estimate ">
   
 
-  <title>Home - Graph Learning</title>
+  <title>Home - R: Graph Learning</title>
   <link rel="stylesheet" href="http://localhost:4000/spectralGraphTopology/assets/css/just-the-docs.css">
 
   
@@ -32,13 +32,17 @@
 
   <div class="page-wrap">
     <div class="side-bar">
-      <a href="http://localhost:4000/spectralGraphTopology/" class="site-title fs-6 lh-tight">Graph Learning</a>
+      <a href="http://localhost:4000/spectralGraphTopology/" class="site-title fs-6 lh-tight">R: Graph Learning</a>
       <span class="fs-3"><button class="js-main-nav-trigger navigation-list-toggle btn btn-outline" type="button" data-text-toggle="Hide">Menu</button></span>
       <div class="navigation main-nav js-main-nav">
         <nav role="navigation" aria-label="Main navigation">
   <ul class="navigation-list">
     
     
+      
+    
+      
+        
       
     
       
@@ -91,6 +95,14 @@
                   
                     <li class="navigation-list-item ">
                       
+                      <a href="http://localhost:4000/spectralGraphTopology/docs/structured/block-bipartite/" class="navigation-list-link">Block bipartite</a>
+                      
+                    </li>
+                  
+                
+                  
+                    <li class="navigation-list-item ">
+                      
                       <a href="http://localhost:4000/spectralGraphTopology/docs/structured/grid/" class="navigation-list-link">Grid</a>
                       
                     </li>
@@ -136,6 +148,8 @@
                   
                 
                   
+                
+                  
                     <li class="navigation-list-item ">
                       
                       <a href="http://localhost:4000/spectralGraphTopology/docs/clustering/twomoon/" class="navigation-list-link">Two moon</a>
@@ -167,7 +181,7 @@
           
           <div class="search js-search">
             <div class="search-input-wrap">
-              <input type="text" class="js-search-input search-input" tabindex="0" placeholder="Search Graph Learning" aria-label="Search Graph Learning" autocomplete="off">
+              <input type="text" class="js-search-input search-input" tabindex="0" placeholder="Search R: Graph Learning" aria-label="Search R: Graph Learning" autocomplete="off">
               <svg width="14" height="14" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" class="search-icon"><title>Search</title><g fill-rule="nonzero"><path d="M17.332 20.735c-5.537 0-10-4.6-10-10.247 0-5.646 4.463-10.247 10-10.247 5.536 0 10 4.601 10 10.247s-4.464 10.247-10 10.247zm0-4c3.3 0 6-2.783 6-6.247 0-3.463-2.7-6.247-6-6.247s-6 2.784-6 6.247c0 3.464 2.7 6.247 6 6.247z"/><path d="M11.672 13.791L.192 25.271 3.02 28.1 14.5 16.62z"/></g></svg>
             </div>
             <div class="js-search-results search-results-wrap"></div>
@@ -185,10 +199,10 @@
       <div class="main-content">
         
         <div id="main-content" class="page-content" role="main">
-          <h1 class="fs-9" id="learning-similarities-in-graph-data">Learning similarities in graph data</h1>
+          <h1 class="fs-9" id="learning-graphs-from-data-via-spectral-constraints">Learning graphs from data via spectral constraints</h1>
 
 <p><strong>spectralGraphTopology</strong> provides estimators of the Laplacian and adjacency matrices of
-graphs by leveraing prior information in their structural form.</p>
+graphs by leveraging prior information in their structural form.</p>
 
 <p class="fs-6 fw-300"><a href="#getting-started" class="btn btn-primary fs-5 mb-4 mb-md-0 mr-2">Get started now</a> <a href="https://github.com/dppalomar/spectralGraphTopology" class="btn fs-5 mb-4 mb-md-0">View it on GitHub</a></p>
 
@@ -199,11 +213,15 @@ graphs by leveraing prior information in their structural form.</p>
 <h3 id="dependencies">Dependencies</h3>
 
 <p>The R version of <strong>spectralGraphTopology</strong> is build on top of awesome R packages including <strong>Rcpp</strong>,
-<strong>RcppEigen</strong>, and <strong>osqp</strong>. All these packages can be installed via CRAN.</p>
+<strong>RcppEigen</strong>, and <strong>igraph</strong>. All these packages can be installed via CRAN.</p>
 
 <h3 id="installation">Installation</h3>
 
 <ol>
+  <li>The <strong>stable</strong> version can be installed via CRAN as
+    <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="n">install.packages</span><span class="p">(</span><span class="s2">"spectralGraphTopology"</span><span class="p">)</span><span class="w">
+</span></code></pre></div>    </div>
+  </li>
   <li>The <strong>development</strong> version can be installed via GitHub as
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>devtools::install_github<span class="o">(</span><span class="s2">"dppalomar/spectralGraphTopology"</span><span class="o">)</span>
 </code></pre></div>    </div>
@@ -214,8 +232,7 @@ graphs by leveraing prior information in their structural form.</p>
 <h3 id="tutorials">Tutorials</h3>
 
 <ul>
-  <li><a href="http://mirca.github.io/spectralGraphTopology/_static/getting_started.html">See the package vignette</a> for a
-detailed description of the mathematical methods that are available in <strong>spectralGraphTopology</strong>.</li>
+  <li><a href="https://cran.r-project.org/web/packages/spectralGraphTopology/vignettes/SpectralGraphTopology.html">See the package vignette</a> for a detailed description of the mathematical methods that are available in <strong>spectralGraphTopology</strong>.</li>
 </ul>
 
 <hr />
@@ -242,7 +259,7 @@ Additionally, if you’ve used <strong>spectralGraphTopology</strong> on your re
 
 <ul>
   <li>S. Kumar, J. Ying, J. V. de M. Cardoso and D. P. Palomar (2019). A unified framework for structured graph learning
-via spectral constraints.</li>
+via spectral constraints. https://arxiv.org/pdf/1904.09792.pdf</li>
 </ul>
 
 

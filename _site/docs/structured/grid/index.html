@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   
 
-  <title>Grid - Graph Learning</title>
+  <title>Grid - R: Graph Learning</title>
   <link rel="stylesheet" href="http://localhost:4000/spectralGraphTopology/assets/css/just-the-docs.css">
 
   
@@ -30,13 +30,17 @@
 
   <div class="page-wrap">
     <div class="side-bar">
-      <a href="http://localhost:4000/spectralGraphTopology/" class="site-title fs-6 lh-tight">Graph Learning</a>
+      <a href="http://localhost:4000/spectralGraphTopology/" class="site-title fs-6 lh-tight">R: Graph Learning</a>
       <span class="fs-3"><button class="js-main-nav-trigger navigation-list-toggle btn btn-outline" type="button" data-text-toggle="Hide">Menu</button></span>
       <div class="navigation main-nav js-main-nav">
         <nav role="navigation" aria-label="Main navigation">
   <ul class="navigation-list">
     
     
+      
+    
+      
+        
       
     
       
@@ -82,6 +86,14 @@
                     <li class="navigation-list-item ">
                       
                       <a href="http://localhost:4000/spectralGraphTopology/docs/structured/bipartite/" class="navigation-list-link">Bipartite</a>
+                      
+                    </li>
+                  
+                
+                  
+                    <li class="navigation-list-item ">
+                      
+                      <a href="http://localhost:4000/spectralGraphTopology/docs/structured/block-bipartite/" class="navigation-list-link">Block bipartite</a>
                       
                     </li>
                   
@@ -134,6 +146,8 @@
                   
                 
                   
+                
+                  
                     <li class="navigation-list-item ">
                       
                       <a href="http://localhost:4000/spectralGraphTopology/docs/clustering/twomoon/" class="navigation-list-link">Two moon</a>
@@ -165,7 +179,7 @@
           
           <div class="search js-search">
             <div class="search-input-wrap">
-              <input type="text" class="js-search-input search-input" tabindex="0" placeholder="Search Graph Learning" aria-label="Search Graph Learning" autocomplete="off">
+              <input type="text" class="js-search-input search-input" tabindex="0" placeholder="Search R: Graph Learning" aria-label="Search R: Graph Learning" autocomplete="off">
               <svg width="14" height="14" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" class="search-icon"><title>Search</title><g fill-rule="nonzero"><path d="M17.332 20.735c-5.537 0-10-4.6-10-10.247 0-5.646 4.463-10.247 10-10.247 5.536 0 10 4.601 10 10.247s-4.464 10.247-10 10.247zm0-4c3.3 0 6-2.783 6-6.247 0-3.463-2.7-6.247-6-6.247s-6 2.784-6 6.247c0 3.464 2.7 6.247 6 6.247z"/><path d="M11.672 13.791L.192 25.271 3.02 28.1 14.5 16.62z"/></g></svg>
             </div>
             <div class="js-search-results search-results-wrap"></div>
@@ -201,34 +215,45 @@
 
 <hr />
 
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">spectralGraphTopology</span><span class="p">)</span><span class="w">
-</span><span class="n">library</span><span class="p">(</span><span class="n">igraph</span><span class="p">)</span><span class="w">
-</span><span class="n">library</span><span class="p">(</span><span class="n">viridis</span><span class="p">)</span><span class="w">
-</span><span class="n">set.seed</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="w">
+<pre><code class="language-{r}">library(spectralGraphTopology)
+library(igraph)
+library(viridis)
+set.seed(0)
 
-</span><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">64</span><span class="w">
-</span><span class="n">grid</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">make_lattice</span><span class="p">(</span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sqrt</span><span class="p">(</span><span class="n">p</span><span class="p">),</span><span class="w"> </span><span class="n">dim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">)</span><span class="w">
-</span><span class="n">n</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.integer</span><span class="p">(</span><span class="m">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w">
-</span><span class="n">E</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span><span class="o">$</span><span class="n">weight</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="n">gsize</span><span class="p">(</span><span class="n">grid</span><span class="p">),</span><span class="w"> </span><span class="n">min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1e-1</span><span class="p">,</span><span class="w"> </span><span class="n">max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w">
-</span><span class="n">Ltrue</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">as.matrix</span><span class="p">(</span><span class="n">laplacian_matrix</span><span class="p">(</span><span class="n">grid</span><span class="p">))</span><span class="w">
-</span><span class="n">Wtrue</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">diag</span><span class="p">(</span><span class="n">diag</span><span class="p">(</span><span class="n">Ltrue</span><span class="p">))</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Ltrue</span><span class="w">
-</span><span class="n">Y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">MASS</span><span class="o">::</span><span class="n">mvrnorm</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">mu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">),</span><span class="w"> </span><span class="n">Sigma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MASS</span><span class="o">::</span><span class="n">ginv</span><span class="p">(</span><span class="n">Ltrue</span><span class="p">))</span><span class="w">
-</span><span class="n">S</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">cov</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span><span class="w">
-</span><span class="n">graph</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">learn_laplacian_matrix</span><span class="p">(</span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="n">w</span><span class="m">0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"qp"</span><span class="p">,</span><span class="w"> </span><span class="n">beta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5e-3</span><span class="p">,</span><span class="w"> </span><span class="n">abstol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1e-5</span><span class="p">,</span><span class="w"> </span><span class="n">verbose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w">
-</span><span class="n">graph</span><span class="o">$</span><span class="n">Adjacency</span><span class="p">[</span><span class="n">graph</span><span class="o">$</span><span class="n">Adjacency</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">5e-2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0</span><span class="w">
-</span><span class="n">estimated_grid</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">graph_from_adjacency_matrix</span><span class="p">(</span><span class="n">graph</span><span class="o">$</span><span class="n">Adjacency</span><span class="p">,</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"undirected"</span><span class="p">,</span><span class="w"> </span><span class="n">weighted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
-</span><span class="n">colors</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">viridis</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="n">begin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">-1</span><span class="p">)</span><span class="w">
-</span><span class="n">c_scale</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">colorRamp</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span><span class="w">
-</span><span class="n">E</span><span class="p">(</span><span class="n">estimated_grid</span><span class="p">)</span><span class="o">$</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">apply</span><span class="p">(</span><span class="n">c_scale</span><span class="p">(</span><span class="n">E</span><span class="p">(</span><span class="n">estimated_grid</span><span class="p">)</span><span class="o">$</span><span class="n">weight</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="n">E</span><span class="p">(</span><span class="n">estimated_grid</span><span class="p">)</span><span class="o">$</span><span class="n">weight</span><span class="p">)),</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
-                          </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="n">rgb</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">/</span><span class="m">255</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="o">/</span><span class="m">255</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="o">/</span><span class="m">255</span><span class="p">))</span><span class="w">
-</span><span class="n">E</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span><span class="o">$</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">apply</span><span class="p">(</span><span class="n">c_scale</span><span class="p">(</span><span class="n">E</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span><span class="o">$</span><span class="n">weight</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="n">E</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span><span class="o">$</span><span class="n">weight</span><span class="p">)),</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
-                      </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="n">rgb</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="o">/</span><span class="m">255</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="o">/</span><span class="m">255</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="o">/</span><span class="m">255</span><span class="p">))</span><span class="w">
-</span><span class="n">V</span><span class="p">(</span><span class="n">estimated_grid</span><span class="p">)</span><span class="o">$</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"grey"</span><span class="w">
-</span><span class="n">V</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span><span class="o">$</span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"grey"</span><span class="w">
-</span><span class="n">la</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">layout_on_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span><span class="w">
-</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">layout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">la</span><span class="p">,</span><span class="w"> </span><span class="n">vertex.label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span><span class="n">vertex.size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w">
-</span><span class="n">plot</span><span class="p">(</span><span class="n">estimated_grid</span><span class="p">,</span><span class="w"> </span><span class="n">layout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">la</span><span class="p">,</span><span class="w"> </span><span class="n">vertex.label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span><span class="n">vertex.size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w">
-</span></code></pre></div></div>
+# number of nodes
+p &lt;- 64
+# build grid graph
+grid &lt;- make_lattice(length = sqrt(p), dim = 2)
+# number of observations
+n &lt;- as.integer(100 * p)
+# assign random weights to edges
+E(grid)$weight &lt;- runif(gsize(grid), min = 1e-1, max = 3)
+# compute true Laplacian and Adjacency matrices
+Ltrue &lt;- as.matrix(laplacian_matrix(grid))
+Wtrue &lt;- diag(diag(Ltrue)) - Ltrue
+# sample data from grid graph
+Y &lt;- MASS::mvrnorm(n, mu = rep(0, p), Sigma = MASS::ginv(Ltrue))
+# compute sample covariance matrix
+S &lt;- cov(Y)
+# learn graph on the basis of the observed data
+graph &lt;- learn_k_component_graph(S, w0 = "qp", beta = 20, alpha = 5e-3, abstol = 1e-5, verbose = FALSE)
+graph$Adjacency[graph$Adjacency &lt; 5e-2] &lt;- 0
+# build estimated graph
+estimated_grid &lt;- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+# colorify graph
+colors &lt;- viridis(20, begin = 0, end = 1, direction = -1)
+c_scale &lt;- colorRamp(colors)
+E(estimated_grid)$color = apply(c_scale(E(estimated_grid)$weight / max(E(estimated_grid)$weight)), 1,
+                          function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+E(grid)$color = apply(c_scale(E(grid)$weight / max(E(grid)$weight)), 1,
+                      function(x) rgb(x[1]/255, x[2]/255, x[3]/255))
+V(estimated_grid)$color = "grey"
+V(grid)$color = "grey"
+la &lt;- layout_on_grid(grid)
+# plot graph
+plot(grid, layout = la, vertex.label = NA, vertex.size = 3)
+plot(estimated_grid, layout = la, vertex.label = NA, vertex.size = 3)
+</code></pre>
 
 <table>
   <thead>
