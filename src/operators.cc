@@ -2,7 +2,6 @@
 // [[Rcpp::depends(RcppEigen)]]
 using namespace Eigen;
 
-
 //' Computes the Laplacian linear operator which maps a vector of weights into
 //' a valid Laplacian matrix.
 //'
@@ -239,4 +238,34 @@ Eigen::VectorXd Ainv(const Eigen::MatrixXd& M) {
     }
   }
   return w;
+}
+
+
+//' @export
+// [[Rcpp::export]]
+Eigen::VectorXd D(const Eigen::VectorXd& w) {
+  return A(w).colwise().sum();
+}
+
+
+//' @export
+// [[Rcpp::export]]
+Eigen::VectorXd Dstar(const Eigen::VectorXd& w) {
+  return Lstar(w.asDiagonal());
+}
+
+
+//' @export
+// [[Rcpp::export]]
+Eigen::MatrixXd Dmat(const int n) {
+  Eigen::VectorXd e = Eigen::VectorXd::Zero(n);
+  Eigen::MatrixXd M(n, n);
+  e(0) = 1;
+  M.col(0) = Dstar(A(e));
+  for (int j = 1; j < n; ++j) {
+    e(j - 1) = 0;
+    e(j) = 1;
+    M.col(j) = Dstar(D(e));
+  }
+  return M;
 }

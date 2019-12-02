@@ -162,6 +162,39 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// D
+Eigen::VectorXd D(const Eigen::VectorXd& w);
+RcppExport SEXP _spectralGraphTopology_D(SEXP wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type w(wSEXP);
+    rcpp_result_gen = Rcpp::wrap(D(w));
+    return rcpp_result_gen;
+END_RCPP
+}
+// Dstar
+Eigen::VectorXd Dstar(const Eigen::VectorXd& w);
+RcppExport SEXP _spectralGraphTopology_Dstar(SEXP wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Eigen::VectorXd& >::type w(wSEXP);
+    rcpp_result_gen = Rcpp::wrap(Dstar(w));
+    return rcpp_result_gen;
+END_RCPP
+}
+// Dmat
+Eigen::MatrixXd Dmat(const int n);
+RcppExport SEXP _spectralGraphTopology_Dmat(SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(Dmat(n));
+    return rcpp_result_gen;
+END_RCPP
+}
 // blockDiagCpp
 Eigen::MatrixXd blockDiagCpp(const std::vector<Eigen::MatrixXd>& matrices);
 RcppExport SEXP _spectralGraphTopology_blockDiagCpp(SEXP matricesSEXP) {
@@ -224,6 +257,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spectralGraphTopology_Astar", (DL_FUNC) &_spectralGraphTopology_Astar, 1},
     {"_spectralGraphTopology_Linv", (DL_FUNC) &_spectralGraphTopology_Linv, 1},
     {"_spectralGraphTopology_Ainv", (DL_FUNC) &_spectralGraphTopology_Ainv, 1},
+    {"_spectralGraphTopology_D", (DL_FUNC) &_spectralGraphTopology_D, 1},
+    {"_spectralGraphTopology_Dstar", (DL_FUNC) &_spectralGraphTopology_Dstar, 1},
+    {"_spectralGraphTopology_Dmat", (DL_FUNC) &_spectralGraphTopology_Dmat, 1},
     {"_spectralGraphTopology_blockDiagCpp", (DL_FUNC) &_spectralGraphTopology_blockDiagCpp, 1},
     {"_spectralGraphTopology_metrics", (DL_FUNC) &_spectralGraphTopology_metrics, 3},
     {"_spectralGraphTopology_pairwise_matrix_rownorm", (DL_FUNC) &_spectralGraphTopology_pairwise_matrix_rownorm, 1},

@@ -19,6 +19,9 @@ VectorXd Ainv(const MatrixXd&);
 VectorXd Astar(const MatrixXd&);
 MatrixXd Pmat(const int);
 VectorXd altAstar(const MatrixXd&);
+// Degree operators
+VectorXd D(const VectorXd&);
+VectorXd Dstar(const VectorXd&);
 // Utility operators
 MatrixXd vec(const MatrixXd&);
 #endif

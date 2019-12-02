@@ -91,6 +91,21 @@ Ainv <- function(M) {
     .Call('_spectralGraphTopology_Ainv', PACKAGE = 'spectralGraphTopology', M)
 }
 
+#' @export
+D <- function(w) {
+    .Call('_spectralGraphTopology_D', PACKAGE = 'spectralGraphTopology', w)
+}
+
+#' @export
+Dstar <- function(w) {
+    .Call('_spectralGraphTopology_Dstar', PACKAGE = 'spectralGraphTopology', w)
+}
+
+#' @export
+Dmat <- function(n) {
+    .Call('_spectralGraphTopology_Dmat', PACKAGE = 'spectralGraphTopology', n)
+}
+
 blockDiagCpp <- function(matrices) {
     .Call('_spectralGraphTopology_blockDiagCpp', PACKAGE = 'spectralGraphTopology', matrices)
 }
