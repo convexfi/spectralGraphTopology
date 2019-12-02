@@ -1,0 +1,8 @@
+..Rcheck/
+.DS_Store
+benchmarks/
+man/
+spectralGraphTopology.Rcheck/
+spectralGraphTopology_0.2.1.tar.gz
+src/
+vignettes/
