@@ -20,3 +20,4 @@ benchmarks/third-party/
 benchmarks/urban-land-cover/
 spectralGraphTopology.Rcheck/
 spectralGraphTopology_0.1.0.tar.gz
+.sass-cache/
