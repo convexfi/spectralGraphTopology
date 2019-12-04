@@ -53,7 +53,7 @@ learn_laplacian_gle_mm <- function(S, A_mask = NULL, alpha = 0, maxiter = 10000,
   m <- sum(mask)#.5 * sum(A_mask > 0)
   # l1-norm penalty factor
   J <- matrix(1, p, p) / p
-  H <- 2 * diag(p) - p * J
+  H <- diag(p) - p * J
   K <- S + alpha * H
   E <- get_incidence_from_adjacency(A_mask)
   R <- t(E) %*% K %*% E
@@ -139,7 +139,7 @@ learn_laplacian_gle_admm <- function(S, A_mask = NULL, alpha = 0, rho = 1, maxit
   tau <- 2
   # l1-norm penalty factor
   J <- matrix(1, p, p) / p
-  H <- 2 * diag(p) - p * J
+  H <- diag(p) - p * J
   K <- S + alpha * H
   if (verbose)
     pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta",
