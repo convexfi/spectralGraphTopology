@@ -146,6 +146,8 @@ learn_laplacian_gle_admm <- function(S, A_mask = NULL, alpha = 0, rho = 1, maxit
                                      total = maxiter, clear = FALSE, width = 80)
   if (record_objective)
     fun <- c(vanilla.objective(Theta, K))
+  time_seq <- c(0)
+  start_time <- proc.time()[3]
   # ADMM loop
   P <- qr.Q(qr(rep(1, p)), complete=TRUE)[, 2:p]
   for (k in c(1:maxiter)) {
@@ -161,7 +163,8 @@ learn_laplacian_gle_admm <- function(S, A_mask = NULL, alpha = 0, rho = 1, maxit
     Yk <- Yk + rho * Rk
     if (record_objective)
       fun <- c(fun, vanilla.objective(Thetak, K))
-    has_converged <-  norm(Theta - Thetak) / norm(Theta, "F") < reltol
+    has_converged <-  (norm(Theta - Thetak) / norm(Theta, "F") < reltol) & (k > 1)
+    time_seq <- c(time_seq, proc.time()[3] - start_time)
     if (has_converged && k > 1) break
     s <- rho * norm(C - Ck, "F")
     r <- norm(Rk, "F")
@@ -175,7 +178,7 @@ learn_laplacian_gle_admm <- function(S, A_mask = NULL, alpha = 0, rho = 1, maxit
       pb$tick()
   }
   results <- list(Laplacian = Thetak, Adjacency = diag(diag(Thetak)) - Thetak,
-                  convergence = has_converged)
+                  convergence = has_converged, elapsed_time = time_seq)
   if (record_objective)
     results$obj_fun <- fun
   return(results)
