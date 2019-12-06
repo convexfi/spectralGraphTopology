@@ -66,7 +66,7 @@
 
 #' @export
 learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0,
-                                    beta = 1e4, beta_max = 1e6, fix_beta = TRUE, rho = 1e-2, m = 7,
+                                    beta = 1e4, beta_max = 1e6, fix_beta = TRUE, rho = 1e-2, m = 7, eps = 1e-4,
                                     maxiter = 1e4, abstol = 1e-6, reltol = 1e-4, eigtol = 1e-9,
                                     record_objective = FALSE, record_weights = FALSE, verbose = TRUE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
@@ -76,7 +76,6 @@ learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naiv
     S <- MASS::ginv(L)
     is_data_matrix <- TRUE
   }
-  eps <- 1e-5
   # number of nodes
   n <- nrow(S)
   # find an appropriate inital guess
