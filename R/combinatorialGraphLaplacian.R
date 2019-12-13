@@ -128,7 +128,8 @@ learn_combinatorial_graph_laplacian <- function(S, A_mask = NULL, alpha = 0, rel
   else has_converged = FALSE
   O <- O_best - (1 / n)
   C <- C_best - (1 / n)
-  results <- list(Laplacian = O, frob_norm = frob_norm,
+  Adjacency <- diag(diag(O)) - O
+  results <- list(Laplacian = O, Adjacency = Adjacency, frob_norm = frob_norm,
                   elapsed_time = time_seq, convergence = has_converged)
   if (record_objective)
     results$obj_fun <- fun

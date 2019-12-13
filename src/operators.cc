@@ -261,7 +261,7 @@ Eigen::MatrixXd Dmat(const int n) {
   Eigen::VectorXd e = Eigen::VectorXd::Zero(n);
   Eigen::MatrixXd M(n, n);
   e(0) = 1;
-  M.col(0) = Dstar(A(e));
+  M.col(0) = Dstar(D(e));
   for (int j = 1; j < n; ++j) {
     e(j - 1) = 0;
     e(j) = 1;
