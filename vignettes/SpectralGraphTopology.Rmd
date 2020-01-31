@@ -54,14 +54,14 @@ state-of-the-art algorithms designed to estimate graph matrices
 (Laplacian and Adjacency) from data, including:
 
 * Structured Graph Laplacian (**SGL**)
-  *  S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar (2019). [A unified framework for structured graph learning via spectral constraints](https://arxiv.org/abs/1904.09792), ArXiv 2019.
-  *  S. Kumar, J., Ying, J. V. de Miranda Cardoso, and D. P. Palomar, [Structured graph learning via Laplacian spectral constraints"](https://arxiv.org/pdf/1909.11594.pdf), Advances in Neural Information Processing Systems (NeurIPS), Dec. 2019.
+  *  S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar. [A unified framework for structured graph learning via spectral constraints](https://arxiv.org/abs/1904.09792), ArXiv 2019.
+  *  S. Kumar, J., Ying, J. V. de Miranda Cardoso, and D. P. Palomar. [Structured graph learning via Laplacian spectral constraints"](https://arxiv.org/pdf/1909.11594.pdf), Advances in Neural Information Processing Systems (NeurIPS), Dec. 2019.
 * Combinatorial Graph Laplacian (**CGL**)
-  *  H. E. Egilmez, E. Pavez and A. Ortega, [Graph learning from data under Laplacian and structural constraints"](https://ieeexplore.ieee.org/document/7979524), IEEE Journal of Selected Topics in Signal Processing, vol. 11, no. 6, pp. 825-841, Sept. 2017.
+  *  H. E. Egilmez, E. Pavez and A. Ortega. [Graph learning from data under Laplacian and structural constraints"](https://ieeexplore.ieee.org/document/7979524), IEEE Journal of Selected Topics in Signal Processing, vol. 11, no. 6, pp. 825-841, Sept. 2017.
 * Constrained Laplacian Rank (**CLR**)
-  *  N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016). [The constrained Laplacian rank algorithm for graph-based clustering](https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/download/12416/11830), The Thirtieth AAAI Conference on Artificial Intelligence AAAI'16.
+  *  N. Feiping, W. Xiaoqian, M. Jordan, and H. Heng. [The constrained Laplacian rank algorithm for graph-based clustering](https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/download/12416/11830), The Thirtieth AAAI Conference on Artificial Intelligence AAAI'16.
 * Graph Laplacian Estimation (**GLE-MM** and **GLE-ADMM**)
-  *  Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, [Optimization algorithms for graph Laplacian estimation via ADMM and MM](https://ieeexplore.ieee.org/document/8747497), IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019
+  *  L. Zhao, Y. Wang, S. Kumar, and D. P. Palomar, [Optimization algorithms for graph Laplacian estimation via ADMM and MM](https://ieeexplore.ieee.org/document/8747497), IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019
 
 
 # Installation
@@ -290,11 +290,11 @@ for very sparse graphs.  Therefore, we encourage users to try out different algo
 in their problems before drawing any conclusion.
 
 # Introducing structural prior information
-Although estimating a graph Laplacian matrix by solving formulation (\ref{eq:cgl}) has shown an extreme potential for success,
-this particular formulation only allows for the estimation of connected graphs.  In many practical situations, however,
-graphs of more complex structures need to be estimated, such as k-component graphs, which are widely used in clustering tasks.
+Although estimating a graph Laplacian matrix via the formulation in the previous section has shown an extreme potential for success,
+that particular formulation only allows for the estimation of connected graphs.  In many practical situations, however,
+graphs of more complex structures need to be estimated, such as $k$-component graphs, which are widely used in clustering tasks.
 Additionally, the structure of the graph might be known a priori, i.e., whether the graph
-is k-component, bipartite, k-component bipartite; and there should be a natural way of incorporating this prior knowledge
+is $k$-component, bipartite, $k$-component bipartite; and there should be a natural way of incorporating this prior knowledge
 into the optimization framework.
 
 In this sense, in [@Kumar2019], we included spectral constraints into the
@@ -346,14 +346,14 @@ where $\mathcal{A}$ is a linear operator that maps a non-negative vector of edge
 In a similar fashion, we construct the optimization problem to estimate a $k$-component bipartite graph
 by combining the constraints related to the Laplacian and adjacency matrices.
 
-# Learning k-component, bipartite, and k-component bipartite graphs
+# Learning $k$-component, bipartite, and $k$-component bipartite graphs
 
-The `spectralGraphTopology` package provides three main functions to estimate k-component, bipartite, and
-k-component bipartite graphs, respectively: `learn_k_component_graph`, `learn_bipartite_graph`, and
+The `spectralGraphTopology` package provides three main functions to estimate $k$-component, bipartite, and
+$k$-component bipartite graphs, respectively: `learn_k_component_graph`, `learn_bipartite_graph`, and
 `learn_bipartite_k_component_graph`.  In the next subsections, we will check out how to apply those functions
 in synthetic datasets.
 
-## Clustering via k-component graphs
+## Clustering via $k$-component graphs
 
 The next snippet of code shows how to learn the clusters of a set of points
 distributed on the two dimensional Euclidean space:
@@ -549,7 +549,7 @@ knitr::include_graphics("figures/relative_error_modular.png")
 
 # Clustering with real-world datasets
 
-One of the most direct applications of learning k-component graphs is on the
+One of the most direct applications of learning $k$-component graphs is on the
 classical unsupervised machine learning problem: data clustering. For this task, we make use of two datasets:
 the animals dataset [@osherson1991] the Cancer RNA-Seq dataset [@Dua2017].
 
