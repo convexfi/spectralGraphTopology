@@ -117,7 +117,7 @@ Hence, the design of principled, efficient estimators for graph Laplacian matric
 of attention from scientific communities including Machine Learning and Signal Processing.
 
 In this package, we make available efficient implementations of state-of-the-art algorithms designed
-to estimate graph matrices (Laplacian and Adjancency) from data.  We illustrate the practicality of
+to estimate graph matrices (Laplacian and Adjacency) from data.  We illustrate the practicality of
 some of these algorithms in clustering tasks.
 
 
