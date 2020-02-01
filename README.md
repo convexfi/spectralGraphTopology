@@ -75,7 +75,7 @@ k <- 2  # number of components
 
 # estimate underlying graph
 S <- crossprod(t(twomoon$data))
-graph <- learn_k_component_graph(S, k = k, beta = .5, verbose = FALSE, abstol = 1e-3)
+graph <- learn_k_component_graph(S, k = k, beta = .25, verbose = FALSE, abstol = 1e-3)
 
 # plot
 # build network
