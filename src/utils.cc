@@ -70,7 +70,7 @@ std::vector<double> metrics(const Eigen::MatrixXd& Wtrue, const Eigen::MatrixXd&
 
 
 // [[Rcpp::export]]
-Eigen::MatrixXd pairwise_matrix_rownorm(const Eigen::MatrixXd& M) {
+Eigen::MatrixXd pairwise_matrix_rownorm2(const Eigen::MatrixXd& M) {
   const unsigned int n = M.rows();
   Eigen::MatrixXd V = Eigen::MatrixXd::Zero(n, n);
   for (unsigned int i = 0; i < n-1; ++i)

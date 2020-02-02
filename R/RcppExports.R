@@ -114,8 +114,8 @@ metrics <- function(Wtrue, West, eps) {
     .Call('_spectralGraphTopology_metrics', PACKAGE = 'spectralGraphTopology', Wtrue, West, eps)
 }
 
-pairwise_matrix_rownorm <- function(M) {
-    .Call('_spectralGraphTopology_pairwise_matrix_rownorm', PACKAGE = 'spectralGraphTopology', M)
+pairwise_matrix_rownorm2 <- function(M) {
+    .Call('_spectralGraphTopology_pairwise_matrix_rownorm2', PACKAGE = 'spectralGraphTopology', M)
 }
 
 upper_view_vec <- function(M) {

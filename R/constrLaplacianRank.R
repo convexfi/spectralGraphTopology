@@ -67,7 +67,7 @@ cluster_k_component_graph <- function(Y, k = 1, m = 5, lmd = 1, eigtol = 1e-9,
   pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  lambda: :lmd  null_eigvals: :null_eigvals",
                                    total = maxiter, clear = FALSE, width = 100)
   for (ii in c(1:maxiter)) {
-    V <- pairwise_matrix_rownorm(F)
+    V <- pairwise_matrix_rownorm2(F)
     for (i in c(1:n)) {
       p <- A[i, ] - .5 * lmd * V[i, ]
       qp <- quadprog::solve.QP(Dmat = diag(n), dvec = p, Amat = Amat, bvec = bvec, meq = 1)
@@ -97,7 +97,7 @@ cluster_k_component_graph <- function(Y, k = 1, m = 5, lmd = 1, eigtol = 1e-9,
 build_initial_graph <- function(Y, m) {
   n <- nrow(Y)
   A <- matrix(0, n, n)
-  E <- pairwise_matrix_rownorm(Y)
+  E <- pairwise_matrix_rownorm2(Y)
   for (i in c(1:n)) {
     sorted_index <- order(E[i, ])
     j_sweep <- sorted_index[2:(m+1)]

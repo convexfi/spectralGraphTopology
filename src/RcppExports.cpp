@@ -219,14 +219,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// pairwise_matrix_rownorm
-Eigen::MatrixXd pairwise_matrix_rownorm(const Eigen::MatrixXd& M);
-RcppExport SEXP _spectralGraphTopology_pairwise_matrix_rownorm(SEXP MSEXP) {
+// pairwise_matrix_rownorm2
+Eigen::MatrixXd pairwise_matrix_rownorm2(const Eigen::MatrixXd& M);
+RcppExport SEXP _spectralGraphTopology_pairwise_matrix_rownorm2(SEXP MSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Eigen::MatrixXd& >::type M(MSEXP);
-    rcpp_result_gen = Rcpp::wrap(pairwise_matrix_rownorm(M));
+    rcpp_result_gen = Rcpp::wrap(pairwise_matrix_rownorm2(M));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -262,7 +262,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spectralGraphTopology_Dmat", (DL_FUNC) &_spectralGraphTopology_Dmat, 1},
     {"_spectralGraphTopology_blockDiagCpp", (DL_FUNC) &_spectralGraphTopology_blockDiagCpp, 1},
     {"_spectralGraphTopology_metrics", (DL_FUNC) &_spectralGraphTopology_metrics, 3},
-    {"_spectralGraphTopology_pairwise_matrix_rownorm", (DL_FUNC) &_spectralGraphTopology_pairwise_matrix_rownorm, 1},
+    {"_spectralGraphTopology_pairwise_matrix_rownorm2", (DL_FUNC) &_spectralGraphTopology_pairwise_matrix_rownorm2, 1},
     {"_spectralGraphTopology_upper_view_vec", (DL_FUNC) &_spectralGraphTopology_upper_view_vec, 1},
     {NULL, NULL, 0}
 };
