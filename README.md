@@ -110,8 +110,9 @@ If you made use of this software please consider citing:
     <https://CRAN.R-project.org/package=spectralGraphTopology>
 
 -   S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar
-    (2019). A unified framework for structured graph learning via
-    spectral constraints. <https://arxiv.org/abs/1904.09792>
+    (2020). A unified framework for structured graph learning via
+    spectral constraints. Journal of Machine Learning Research (21),
+    pages 1-60.
 
 In addition, consider citing the following bibliography according to
 their implementation:
