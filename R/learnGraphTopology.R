@@ -19,7 +19,7 @@
 #'        w0 < 0
 #' @param lb lower bound for the eigenvalues of the Laplacian matrix
 #' @param ub upper bound for the eigenvalues of the Laplacian matrix
-#' @param alpha L1 regularization hyperparameter
+#' @param alpha reweighted l1-norm regularization hyperparameter
 #' @param beta regularization hyperparameter for the term ||L(w) - U Lambda U'||^2_F
 #' @param beta_max maximum allowed value for beta
 #' @param fix_beta whether or not to fix the value of beta. In case this parameter
