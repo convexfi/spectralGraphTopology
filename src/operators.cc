@@ -241,6 +241,10 @@ Eigen::VectorXd Ainv(const Eigen::MatrixXd& M) {
 }
 
 
+//' Computes the degree operator from the vector of edge weights.
+//'
+//' @param w vector
+//' @return Dw vector
 //' @export
 // [[Rcpp::export]]
 Eigen::VectorXd D(const Eigen::VectorXd& w) {
@@ -248,6 +252,11 @@ Eigen::VectorXd D(const Eigen::VectorXd& w) {
 }
 
 
+//' Computes the Dstar operator, i.e., the adjoint of the D operator.
+//'
+//' @param w vector
+//' @return Dstar(w) vector
+//'
 //' @export
 // [[Rcpp::export]]
 Eigen::VectorXd Dstar(const Eigen::VectorXd& w) {
