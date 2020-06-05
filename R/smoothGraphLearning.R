@@ -11,7 +11,7 @@
 #'             in IEEE Transactions on Signal Processing, vol. 64, no. 23,
 #'             pp. 6160-6173, Dec.1, 2016.
 #' @export
-learn_graph_sigrep <- function(X, alpha, beta, maxiter = 1000, ftol = 1e-4) {
+learn_graph_sigrep <- function(X, alpha = 1e-2, beta = 1e-1, maxiter = 1000, ftol = 1e-4) {
   n <- nrow(X)
   Y <- X
   obj_values <- c()
