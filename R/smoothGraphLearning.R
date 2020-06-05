@@ -11,8 +11,8 @@
 #'             in IEEE Transactions on Signal Processing, vol. 64, no. 23,
 #'             pp. 6160-6173, Dec.1, 2016.
 #' @export
-learn_graph_sigrep <- function(X, alpha = 1e-2, beta = 1e-1, maxiter = 1000, ftol = 1e-4) {
-  n <- nrow(X)
+learn_graph_sigrep <- function(X, alpha = 1e-3, beta = 1e-1, maxiter = 1000, ftol = 1e-4, verbose = TRUE) {
+  p <- nrow(X)
   Y <- X
   obj_values <- c()
   fun0 <- Inf
@@ -20,8 +20,8 @@ learn_graph_sigrep <- function(X, alpha = 1e-2, beta = 1e-1, maxiter = 1000, fto
     pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  relerr: :relerr",
                                      total = maxiter, clear = FALSE, width = 80)
   for (k in c(1:maxiter)) {
-    L <- glsigrep.update_L(Y, alpha, beta, n)
-    Y <- glsigrep.update_Y(L, X, alpha, n)
+    L <- glsigrep.update_L(Y, alpha, beta, p)
+    Y <- glsigrep.update_Y(L, X, alpha, p)
     funk <- glsigrep.obj_function(X, Y, L, alpha, beta)
     obj_values <- c(obj_values, funk)
     relerr <- abs(funk - fun0) / fun0
@@ -29,29 +29,29 @@ learn_graph_sigrep <- function(X, alpha = 1e-2, beta = 1e-1, maxiter = 1000, fto
     if (verbose) pb$tick(token = list(relerr = relerr))
     fun0 <- funk
   }
-  return(list(L, Y, obj_values))
+  return(list(laplacian = L, Y = Y, obj_fun = obj_values))
 }
 
 
-glsigrep.update_L <- function(Y, alpha, beta, n) {
-  L <- CVXR::Symmetric(n, n)
-  ones <- rep(1, n)
-  zeros <- rep(0, n)
-  zeros_mat <- matrix(0, n, n)
+glsigrep.update_L <- function(Y, alpha, beta, p) {
+  L <- CVXR::Symmetric(p)
+  ones <- rep(1, p)
+  zeros <- rep(0, p)
+  zeros_mat <- matrix(0, p, p)
   objective <- CVXR::Minimize(alpha * CVXR::matrix_trace(L %*% Y %*% t(Y))
                               + beta * CVXR::sum_squares(L))
-  constraints <- list(CVXR::matrix_trace(L) == n,
-                      L == t(L),
+  constraints <- list(CVXR::matrix_trace(L) == p,
                       L %*% ones == zeros,
-                      L - CVXR::diag(CVXR::diag(L)) <= zeros_mat)
+                      CVXR::upper_tri(L) <= 0,
+                      CVXR::diag(L) > 0)
   problem <- CVXR::Problem(objective, constraints)
   result <- solve(problem)
-  return(result$getValue(L))
+  return(as.matrix(result$getValue(L)))
 }
 
-glsigrep.update_Y <- function(L, X, alpha, n) {
-  In <- diag(n)
-  return(solve(In + alpha * L, X))
+glsigrep.update_Y <- function(L, X, alpha, p) {
+  Ip <- diag(p)
+  return(solve(Ip + alpha * L, X))
 }
 
 glsigrep.obj_function <- function(X, Y, L, alpha, beta) {
