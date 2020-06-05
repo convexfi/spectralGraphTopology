@@ -40,7 +40,7 @@ Eigen::MatrixXd blockDiagCpp(const std::vector<Eigen::MatrixXd>& matrices) {
 std::vector<double> metrics(const Eigen::MatrixXd& Wtrue, const Eigen::MatrixXd& West,
                             const double eps) {
   std::vector<double> metrics_list;
-  double fscore, recall, specificity, accuracy;
+  double fscore, recall, specificity, accuracy, negative_predictive_value, false_discovery_rate;
   bool isthere_edge, isthere_est_edge;
   double tp = 0, fp = 0, fn = 0, tn = 0;
   const unsigned int n = Wtrue.cols();
@@ -61,10 +61,14 @@ std::vector<double> metrics(const Eigen::MatrixXd& Wtrue, const Eigen::MatrixXd&
   recall = tp / (tp + fn);
   specificity = tn / (tn + fp);
   accuracy = (tp + tn) / (tp + tn + fp + fn);
+  negative_predictive_value = (tn / (tn + fn));
+  false_discovery_rate = (fp / (fp + tp));
   metrics_list.push_back(fscore);
   metrics_list.push_back(recall);
   metrics_list.push_back(specificity);
   metrics_list.push_back(accuracy);
+  metrics_list.push_back(negative_predictive_value);
+  metrics_list.push_back(false_discovery_rate);
   return metrics_list;
 }
 

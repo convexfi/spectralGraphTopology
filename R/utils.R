@@ -43,6 +43,86 @@ fscore <- function(A, B, eps = 1e-4) {
   return(metrics(A, B, eps)[1])
 }
 
+#' Computes the recall between two matrices
+#'
+#' @param A first matrix
+#' @param B second matrix
+#' @param eps real number such that edges whose values are smaller than eps are
+#'            not considered in the computation of the fscore
+#' @examples
+#' library(spectralGraphTopology)
+#' X <- L(c(1, 0, 1))
+#' recall(X, X)
+#' @export
+recall <- function(A, B, eps = 1e-4) {
+  return(metrics(A, B, eps)[2])
+}
+
+
+#' Computes the specificity between two matrices
+#'
+#' @param A first matrix
+#' @param B second matrix
+#' @param eps real number such that edges whose values are smaller than eps are
+#'            not considered in the computation of the fscore
+#' @examples
+#' library(spectralGraphTopology)
+#' X <- L(c(1, 0, 1))
+#' specificity(X, X)
+#' @export
+specificity <- function(A, B, eps = 1e-4) {
+  return(metrics(A, B, eps)[3])
+}
+
+
+
+#' Computes the false discovery rate between two matrices
+#'
+#' @param A first matrix
+#' @param B second matrix
+#' @param eps real number such that edges whose values are smaller than eps are
+#'            not considered in the computation of the fscore
+#' @examples
+#' library(spectralGraphTopology)
+#' X <- L(c(1, 0, 1))
+#' fdr(X, X)
+#' @export
+fdr <- function(A, B, eps = 1e-4) {
+  return(metrics(A, B, eps)[6])
+}
+
+
+#' Computes the negative predictive value between two matrices
+#'
+#' @param A first matrix
+#' @param B second matrix
+#' @param eps real number such that edges whose values are smaller than eps are
+#'            not considered in the computation of the fscore
+#' @examples
+#' library(spectralGraphTopology)
+#' X <- L(c(1, 0, 1))
+#' npv(X, X)
+#' @export
+npv <- function(A, B, eps = 1e-4) {
+  return(metrics(A, B, eps)[5])
+}
+
+
+#' Computes the accuracy between two matrices
+#'
+#' @param A first matrix
+#' @param B second matrix
+#' @param eps real number such that edges whose values are smaller than eps are
+#'            not considered in the computation of the fscore
+#' @examples
+#' library(spectralGraphTopology)
+#' X <- L(c(1, 0, 1))
+#' accuracy(X, X)
+#' @export
+accuracy <- function(A, B, eps = 1e-4) {
+  return(metrics(A, B, eps)[3])
+}
+
 
 # Compute the prial value between two matrices
 # @param Ltrue true Laplacian matrix

@@ -33,11 +33,10 @@ V(net)$cluster <- clusters
 E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
                      function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],
                                         colors[V(net)$cluster[x[1]]], brewer.greys(5)[2]))
-E(net)$color <- "white"
 V(net)$color <- c(colors[1], colors[2], colors[3], colors[4], colors[5])[clusters]
 gr = .5 * (1 + sqrt(5))
 setEPS()
-postscript("../latex/figures/cancer-rna-graph-full-clr.ps", family = "Times", height = 5, width = gr * 3.5)
+postscript("cancer-rna-graph-full-clr.ps", family = "Times", height = 5, width = gr * 3.5)
 plot(net, vertex.label = NA,
      vertex.size = 3)
 dev.off()

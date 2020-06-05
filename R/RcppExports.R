@@ -91,11 +91,20 @@ Ainv <- function(M) {
     .Call('_spectralGraphTopology_Ainv', PACKAGE = 'spectralGraphTopology', M)
 }
 
+#' Computes the degree operator from the vector of edge weights.
+#'
+#' @param w vector
+#' @return Dw vector
 #' @export
 D <- function(w) {
     .Call('_spectralGraphTopology_D', PACKAGE = 'spectralGraphTopology', w)
 }
 
+#' Computes the Dstar operator, i.e., the adjoint of the D operator.
+#'
+#' @param w vector
+#' @return Dstar(w) vector
+#'
 #' @export
 Dstar <- function(w) {
     .Call('_spectralGraphTopology_Dstar', PACKAGE = 'spectralGraphTopology', w)
