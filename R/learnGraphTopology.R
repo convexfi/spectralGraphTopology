@@ -45,7 +45,7 @@
 #' \item{\code{beta_seq}}{sequence of values taken by beta in case fix_beta = FALSE}
 #' \item{\code{convergence}}{boolean flag to indicate whether or not the optimization converged}
 #' \item{\code{obj_fun}}{values of the objective function at every iteration in case record_objective = TRUE}
-#' \item{\code{loglike}}{values of the negative loglikelihood at every iteration in case record_objective = TRUE}
+#' \item{\code{negloglike}}{values of the negative loglikelihood at every iteration in case record_objective = TRUE}
 #' \item{\code{w_seq}}{sequence of weight vectors at every iteration in case record_weights = TRUE}
 #' @author Ze Vinicius and Daniel Palomar
 #' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
@@ -96,7 +96,7 @@ learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naiv
                                      Lw = Lw0, k = k)
   # save objective function value at initial guess
   if (record_objective) {
-    ll0 <- laplacian.likelihood(Lw = Lw0, lambda = lambda0, K = K)
+    ll0 <- laplacian.negloglikelihood(Lw = Lw0, lambda = lambda0, K = K)
     fun0 <- ll0 + laplacian.prior(beta = beta, Lw = Lw0, lambda = lambda0, U = U0)
     fun_seq <- c(fun0)
     ll_seq <- c(ll0)
@@ -118,7 +118,7 @@ learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naiv
                                       Lw = Lw, k = k)
     # compute negloglikelihood and objective function values
     if (record_objective) {
-      ll <- laplacian.likelihood(Lw = Lw, lambda = lambda, K = K)
+      ll <- laplacian.negloglikelihood(Lw = Lw, lambda = lambda, K = K)
       fun <- ll + laplacian.prior(beta = beta, Lw = Lw, lambda = lambda, U = U)
       ll_seq <- c(ll_seq, ll)
       fun_seq <- c(fun_seq, fun)
@@ -160,7 +160,7 @@ learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naiv
                   beta_seq = beta_seq)
   if (record_objective) {
     results$obj_fun <- fun_seq
-    results$loglike <- ll_seq
+    results$negloglike <- ll_seq
   }
   if (record_weights)
     results$w_seq <- w_seq
@@ -196,7 +196,7 @@ learn_cospectral_graph <- function(S, lambda, k = 1, is_data_matrix = FALSE, w0 
   U0 <- laplacian.U_update(Lw = Lw0, k = k)
   # save objective function value at initial guess
   if (record_objective) {
-    ll0 <- laplacian.likelihood(Lw = Lw0, lambda = lambda, K = K)
+    ll0 <- laplacian.negloglikelihood(Lw = Lw0, lambda = lambda, K = K)
     fun0 <- ll0 + laplacian.prior(beta = beta, Lw = Lw0, lambda = lambda, U = U0)
     fun_seq <- c(fun0)
     ll_seq <- c(ll0)
@@ -216,7 +216,7 @@ learn_cospectral_graph <- function(S, lambda, k = 1, is_data_matrix = FALSE, w0 
     U <- laplacian.U_update(Lw = Lw, k = k)
     # compute negloglikelihood and objective function values
     if (record_objective) {
-      ll <- laplacian.likelihood(Lw = Lw, lambda = lambda, K = K)
+      ll <- laplacian.negloglikelihood(Lw = Lw, lambda = lambda, K = K)
       fun <- ll + laplacian.prior(beta = beta, Lw = Lw, lambda = lambda, U = U)
       ll_seq <- c(ll_seq, ll)
       fun_seq <- c(fun_seq, fun)
@@ -256,7 +256,7 @@ learn_cospectral_graph <- function(S, lambda, k = 1, is_data_matrix = FALSE, w0 
                   beta_seq = beta_seq)
   if (record_objective) {
     results$obj_fun <- fun_seq
-    results$loglike <- ll_seq
+    results$negloglike <- ll_seq
   }
   if (record_weights)
     results$w_seq <- w_seq
@@ -299,7 +299,7 @@ learn_cospectral_graph <- function(S, lambda, k = 1, is_data_matrix = FALSE, w0 
 #' \item{\code{elapsed_time}}{elapsed time recorded at every iteration}
 #' \item{\code{convergence}}{boolean flag to indicate whether or not the optimization converged}
 #' \item{\code{obj_fun}}{values of the objective function at every iteration in case record_objective = TRUE}
-#' \item{\code{loglike}}{values of the negative loglikelihood at every iteration in case record_objective = TRUE}
+#' \item{\code{negloglike}}{values of the negative loglikelihood at every iteration in case record_objective = TRUE}
 #' \item{\code{w_seq}}{sequence of weight vectors at every iteration in case record_weights = TRUE}
 #' @author Ze Vinicius and Daniel Palomar
 #' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
@@ -388,7 +388,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
   Lips_seq <- c(Lips)
   time_seq <- c(0)
   start_time <- proc.time()[3]
-  ll0 <- bipartite.likelihood(Lw = L(w0), K = K, J = J)
+  ll0 <- bipartite.negloglikelihood(Lw = L(w0), K = K, J = J)
   fun0 <- ll0 + bipartite.prior(nu = nu, Aw = Aw0, psi = psi0, V = V0)
   fun_seq <- c(fun0)
   ll_seq <- c(ll0)
@@ -429,7 +429,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
     V <- bipartite.V_update(Aw = Aw, z = z)
     psi <- bipartite.psi_update(V = V, Aw = Aw)
     # compute negloglikelihood and objective function values
-    ll <- bipartite.likelihood(Lw = Lw, K = K, J = J)
+    ll <- bipartite.negloglikelihood(Lw = Lw, K = K, J = J)
     fun <- ll + bipartite.prior(nu = nu, Aw = Aw, psi = psi, V = V)
     # save measurements of time and objective functions
     time_seq <- c(time_seq, proc.time()[3] - start_time)
@@ -453,7 +453,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
     psi0 <- psi
     Aw0 <- Aw
   }
-  results <- list(Laplacian = Lw, Adjacency = Aw, obj_fun = fun_seq, loglike = ll_seq, w = w,
+  results <- list(Laplacian = Lw, Adjacency = Aw, obj_fun = fun_seq, negloglike = ll_seq, w = w,
                   psi = psi, V = V, elapsed_time = time_seq, Lips = Lips,
                   Lips_seq = Lips_seq, convergence = (i < maxiter), nu = nu)
   if (record_weights)
@@ -514,7 +514,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
 #' \item{\code{beta_seq}}{sequence of values taken by beta in case fix_beta = FALSE}
 #' \item{\code{convergence}}{boolean flag to indicate whether or not the optimization converged}
 #' \item{\code{obj_fun}}{values of the objective function at every iteration in case record_objective = TRUE}
-#' \item{\code{loglike}}{values of the negative loglikelihood at every iteration in case record_objective = TRUE}
+#' \item{\code{negloglike}}{values of the negative loglikelihood at every iteration in case record_objective = TRUE}
 #' \item{\code{w_seq}}{sequence of weight vectors at every iteration in case record_weights = TRUE}
 #' @author Ze Vinicius and Daniel Palomar
 #' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
@@ -597,7 +597,7 @@ learn_bipartite_k_component_graph <- function(S, is_data_matrix = FALSE, z = 0, 
   lambda0 <- joint.lambda_update(lb, ub, beta, U0, Lw0, k)
   if (record_objective) {
     # save objective function value at initial guess
-    ll0 <- joint.likelihood(Lw0, lambda0, K)
+    ll0 <- joint.negloglikelihood(Lw0, lambda0, K)
     fun0 <- ll0 + joint.prior(beta, nu, Lw0, Aw0, U0, V0, lambda0, psi0)
     fun_seq <- c(fun0)
     ll_seq <- c(ll0)
@@ -620,7 +620,7 @@ learn_bipartite_k_component_graph <- function(S, is_data_matrix = FALSE, z = 0, 
     psi <- joint.psi_update(V, Aw)
     time_seq <- c(time_seq, proc.time()[3] - start_time)
     if (record_objective) {
-      ll <- joint.likelihood(Lw, lambda, K)
+      ll <- joint.negloglikelihood(Lw, lambda, K)
       fun <- ll + joint.prior(beta, nu, Lw, Aw, U, V, lambda, psi)
       ll_seq <- c(ll_seq, ll)
       fun_seq <- c(fun_seq, fun)
@@ -659,7 +659,7 @@ learn_bipartite_k_component_graph <- function(S, is_data_matrix = FALSE, z = 0, 
                   beta_seq = beta_seq, convergence = has_w_converged)
   if (record_objective) {
     results$obj_fun <- fun_seq
-    results$loglike <- ll_seq
+    results$negloglike <- ll_seq
   }
   if (record_weights)
     results$w_seq <- w_seq

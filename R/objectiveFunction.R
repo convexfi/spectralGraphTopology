@@ -1,10 +1,10 @@
 laplacian.objectiveFunction <- function(Lw, U, lambda, K, beta) {
-  return(laplacian.likelihood(Lw, lambda, K) +
+  return(laplacian.negloglikelihood(Lw, lambda, K) +
          laplacian.prior(beta, Lw, lambda, U))
 }
 
 
-laplacian.likelihood <- function(Lw, lambda, K) {
+laplacian.negloglikelihood <- function(Lw, lambda, K) {
   return(sum(-log(lambda)) + sum(diag(K %*% Lw)))
 }
 
@@ -15,12 +15,12 @@ laplacian.prior <- function(beta, Lw, lambda, U) {
 
 
 bipartite.obj_fun <- function(Aw, Lw, V, psi, K, J, nu) {
-  return(bipartite.likelihood(Lw = Lw, K = K, J = J) +
+  return(bipartite.negloglikelihood(Lw = Lw, K = K, J = J) +
          bipartite.prior(nu = nu, Aw = Aw, psi = psi, V = V))
 }
 
 
-bipartite.likelihood <- function(Lw, K, J) {
+bipartite.negloglikelihood <- function(Lw, K, J) {
   return(sum(-log(eigval_sym(Lw + J)) + c(diag(K %*% Lw))))
 }
 
@@ -31,14 +31,14 @@ bipartite.prior <- function(nu, Aw, psi, V) {
 
 
 joint.obj_fun <- function(Lw, Aw, U, V, lambda, psi, beta, nu, K) {
-  return(joint.likelihood(Lw = Lw, lambda = lambda, K = K) +
+  return(joint.negloglikelihood(Lw = Lw, lambda = lambda, K = K) +
          joint.prior(beta = beta, nu = nu, Lw = Lw, Aw = Aw, U = U, V = V,
                      lambda = lambda, psi = psi))
 }
 
 
-joint.likelihood <- function(...) {
-  return(laplacian.likelihood(...))
+joint.negloglikelihood <- function(...) {
+  return(laplacian.negloglikelihood(...))
 }
 
 
