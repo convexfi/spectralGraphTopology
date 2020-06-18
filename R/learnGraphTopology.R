@@ -49,8 +49,9 @@
 #' \item{\code{w_seq}}{sequence of weight vectors at every iteration in case record_weights = TRUE}
 #' @author Ze Vinicius and Daniel Palomar
 #' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
-#'             framework for structured graph learning via spectral constraints (2019).
-#'             https://arxiv.org/pdf/1904.09792.pdf
+#'             framework for structured graph learning via spectral constraints.
+#'             Journal of Machine Learning Research, 21(22):1−60, 2020.
+#'             http://jmlr.org/papers/v21/19-276.html
 #' @examples
 #' # design true Laplacian
 #' Laplacian <- rbind(c(1, -1, 0, 0),
@@ -303,8 +304,9 @@ learn_cospectral_graph <- function(S, lambda, k = 1, is_data_matrix = FALSE, w0 
 #' \item{\code{w_seq}}{sequence of weight vectors at every iteration in case record_weights = TRUE}
 #' @author Ze Vinicius and Daniel Palomar
 #' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
-#'             framework for structured graph learning via spectral constraints (2019).
-#'             https://arxiv.org/pdf/1904.09792.pdf
+#'             framework for structured graph learning via spectral constraints.
+#'             Journal of Machine Learning Research, 21(22):1−60, 2020.
+#'             http://jmlr.org/papers/v21/19-276.html
 #' @examples
 #' library(spectralGraphTopology)
 #' library(igraph)
@@ -518,8 +520,9 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
 #' \item{\code{w_seq}}{sequence of weight vectors at every iteration in case record_weights = TRUE}
 #' @author Ze Vinicius and Daniel Palomar
 #' @references S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar. A unified
-#'             framework for structured graph learning via spectral constraints (2019).
-#'             https://arxiv.org/pdf/1904.09792.pdf
+#'             framework for structured graph learning via spectral constraints.
+#'             Journal of Machine Learning Research, 21(22):1−60, 2020.
+#'             http://jmlr.org/papers/v21/19-276.html
 #' @examples
 #' library(spectralGraphTopology)
 #' library(igraph)
