@@ -23,14 +23,12 @@ test_that("pairwise row norm", {
   expect_equal(V, ANS)
 })
 
-test_that("Jordan's initial graph", {
+test_that("Jordan's initial smooth regular graph", {
   m <- sample(c(10:20), size = 1)
-  n <- 5
-  Y <- matrix(runif(n * m), n, m)
-  A <- build_initial_graph(Y, m = 2)
-  expect_equal(c(n, n), dim(A))
-  expect_equal(diag(A), rep(0, n))
-  expect_equal(rowSums(A), rep(1, n))
-  expect_equal(rowSums(A > 0), rep(2, n))
+  p <- 5
+  Y <- matrix(runif(p * m), p, m)
+  LA <- learn_smooth_approx_graph(Y, m = 2)
+  expect_equal(c(p, p), dim(LA))
+  expect_equal(rowSums(LA), rep(0, p))
 })
 
