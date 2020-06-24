@@ -72,3 +72,74 @@ glsigrep.update_Y <- function(L, X, alpha, p) {
 glsigrep.obj_function <- function(X, Y, L, alpha, beta) {
   return(norm(X - Y, 'F') ^ 2 + alpha * sum(diag(L %*% Y %*% t(Y))) + beta * norm(L, 'F') ^ 2)
 }
+
+
+#' @title Learn a graph from smooth signals
+#'
+#' This function learns a connected graph given an observed signal matrix
+#' using the method proposed by Kalofilias (2016).
+#'
+#' @param X a p-by-n data matrix, where p is the number of nodes and n is the
+#'        number of observations
+#' @param alpha hyperparameter that controls the importance of the Dirichlet
+#'        energy penalty
+#' @param beta hyperparameter that controls the importance of the L2-norm
+#'        regularization
+#' @references V. Kalofolias, "How to learn a graph from smooth signals", in Proc. Int.
+#'             Conf. Artif. Intell. Statist., 2016, pp. 920–929.
+#' @export
+learn_smooth_graph <- function(X, alpha = 1e-2, beta = 1e-4, step_size = 1e-2,
+                               maxiter = 1000, tol = 1e-4) {
+  p <- nrow(X)
+  S <- Sop(p)
+  wk <- spectralGraphTopology:::w_init("naive", MASS::ginv(cor(t(X))))
+  dk <- D(wk)
+  ## constants
+  mu <- 2 * beta + sqrt(2 * (p - 1))
+  eps <- lin_map(0, 0, 1 / (1 + mu))
+  gamma <- lin_map(step_size, eps, (1 - eps) / mu)
+  z <- upper_view_vec(pairwise_matrix_rownorm2(X))
+  for (k in 1:maxiter) {
+    wk_prev <- wk
+    dk_prev <- dk
+    yk <- wk - gamma * (2 * beta * wk + t(S) %*% dk)
+    yk_bar <- dk + gamma * S %*% wk
+    pk <- pmax(0, yk - 2 * gamma * z)
+    pk_bar <- .5 * (yk_bar - sqrt(yk_bar * yk_bar + 4 * alpha * gamma))
+    qk <- pk - gamma * (2 * beta * pk + t(S) %*% pk_bar)
+    qk_bar <- pk_bar + gamma * S %*% pk
+    wk <- wk - yk + qk
+    dk <- dk - yk_bar + qk_bar
+    if(norm(wk - wk_prev, '2') / norm(wk_prev, '2') < tol &&
+       norm(dk - dk_prev, '2') / norm(dk_prev, '2') < tol)
+      break
+  }
+  return(list(laplacian = L(wk), adjacency = A(wk), convergence = (k < maxiter)))
+}
+
+Sop <- function(p) {
+  ncols <- .5 * p * (p - 1)
+  ii <- rep(0, ncols)
+  jj <- rep(0, ncols)
+  S <- matrix(0, p, ncols)
+
+  k <- 1
+  for (i in c(2:p)) {
+    ii[k:(k + (p - i))] <- c(i:p)
+    k <- k + (p - i + 1)
+  }
+  k <- 1
+  for (i in c(2:p)) {
+    jj[k:(k + p - i)] <- i - 1
+    k <- k + (p - i + 1)
+  }
+  r <- c(c(1:ncols), c(1:ncols))
+  c <- c(ii, jj)
+  for (k in c(1:length(r)))
+    S[c[k], r[k]] <- 1
+  return(S)
+}
+
+lin_map <- function(x, a, b) {
+  return(x * (b - a) + a)
+}
