@@ -6,6 +6,21 @@
 #' This function learns a graph from a observed data matrix using the
 #' method proposed by Dong (2016).
 #'
+#' @param X a p-by-n data matrix, where p is the number of nodes and n is the
+#'        number of observations
+#' @param alpha hyperparameter that controls the importance of the Dirichlet
+#'        energy penalty
+#' @param beta hyperparameter that controls the importance of the L2-norm
+#'        regularization
+#' @param maxiter maximum number of iterations
+#' @param ftol relative error on the objective function to be used as the
+#'        stopping criteria
+#' @param verbose if TRUE, then a progress bar will be displayed in the console. Default is TRUE
+#' @return A list containing the following items
+#' \item{\code{laplacian}}{estimated Laplacian Matrix}
+#' \item{\code{Y}}{a smoothed approximation of the data matrix X}
+#' \item{\code{convergence}}{whether or not the algorithm has converged within the tolerance and max number of iterations}
+#' \item{\code{obj_fun}}{objective function value at every iteration, in case record_objective = TRUE}
 #' @references X. Dong, D. Thanou, P. Frossard and P. Vandergheynst, "Learning
 #'             Laplacian Matrix in Smooth Graph Signal Representations,"
 #'             in IEEE Transactions on Signal Processing, vol. 64, no. 23,
@@ -29,7 +44,7 @@ learn_graph_sigrep <- function(X, alpha = 1e-3, beta = 1e-1, maxiter = 1000, fto
     if (verbose) pb$tick(token = list(relerr = relerr))
     fun0 <- funk
   }
-  return(list(laplacian = L, Y = Y, obj_fun = obj_values))
+  return(list(laplacian = L, Y = Y, convergence = (k < maxiter), obj_fun = obj_values))
 }
 
 
