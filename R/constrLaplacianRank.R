@@ -13,8 +13,8 @@
 #' @param edgetol value below which edge weights are considered to be zero
 #' @param maxiter the maximum number of iterations
 #' @return A list containing the following elements:
-#' \item{\code{Laplacian}}{the estimated Laplacian Matrix}
-#' \item{\code{Adjacency}}{the estimated Adjacency Matrix}
+#' \item{\code{laplacian}}{the estimated Laplacian Matrix}
+#' \item{\code{adjacency}}{the estimated Adjacency Matrix}
 #' \item{\code{eigvals}}{the eigenvalues of the Laplacian Matrix}
 #' \item{\code{lmd_seq}}{sequence of lmd values at every iteration}
 #' \item{\code{elapsed_time}}{elapsed time at every iteration}
@@ -49,32 +49,33 @@ cluster_k_component_graph <- function(Y, k = 1, m = 5, lmd = 1, eigtol = 1e-9,
                                       edgetol = 1e-6, maxiter = 1000) {
   time_seq <- c(0)
   start_time <- proc.time()[3]
-  A <- build_initial_graph(Y, m)
-  n <- ncol(A)
-  S <- matrix(1/n, n, n)
-  DS <- diag(.5 * colSums(S + t(S)))
-  LS <-  DS - .5 * (S + t(S))
-  DA <- diag(.5 * colSums(A + t(A)))
-  LA <- DA - .5 * (A + t(A))
+  LA <- learn_smooth_approx_graph(Y, m)
+  p <- ncol(LA)
+  S <- matrix(1/p, p, p)
+  SS <- .5 * (S + t(S))
+  DS <- diag(colSums(SS))
+  LS <-  DS - SS
   if (k == 1)
     F <- matrix(eigvec_sym(LA)[, 1:k])
   else
     F <- eigvec_sym(LA)[, 1:k]
   # bounds for variables in the QP solver
-  bvec <- c(1, rep(0, n))
-  Amat <- cbind(rep(1, n), diag(n))
+  bvec <- c(1, rep(0, p))
+  Amat <- cbind(rep(1, p), diag(p))
+  Dmat <- diag(p)
   lmd_seq <- c(lmd)
   pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  lambda: :lmd  null_eigvals: :null_eigvals",
                                    total = maxiter, clear = FALSE, width = 100)
   for (ii in c(1:maxiter)) {
     V <- pairwise_matrix_rownorm2(F)
-    for (i in c(1:n)) {
+    for (i in c(1:p)) {
       p <- A[i, ] - .5 * lmd * V[i, ]
-      qp <- quadprog::solve.QP(Dmat = diag(n), dvec = p, Amat = Amat, bvec = bvec, meq = 1)
+      qp <- quadprog::solve.QP(Dmat = Dmat, dvec = p, Amat = Amat, bvec = bvec, meq = 1)
       S[i, ] <- qp$solution
     }
-    DS <- diag(.5 * colSums(S + t(S)))
-    LS <- DS - .5 * (S + t(S))
+    SS <- .5 * (S + t(S))
+    DS <- diag(colSums(SS))
+    LS <- DS - SS
     F <- eigvec_sym(LS)[, 1:k]
     eig_vals <- eigval_sym(LS)
     n_zero_eigenvalues <- sum(abs(eig_vals) < eigtol)
@@ -90,15 +91,29 @@ cluster_k_component_graph <- function(Y, k = 1, m = 5, lmd = 1, eigtol = 1e-9,
   }
   LS[abs(LS) < edgetol] <- 0
   AS <- diag(diag(LS)) - LS
-  return(list(Laplacian = LS, Adjacency = AS, eigenvalues = eig_vals,
+  return(list(laplacian = LS, adjacency = AS, eigenvalues = eig_vals,
               lmd_seq = lmd_seq, elapsed_time = time_seq))
 }
 
-build_initial_graph <- function(Y, m) {
-  n <- nrow(Y)
-  A <- matrix(0, n, n)
+#' Learns a smooth approximated graph from an observed data matrix.
+#' Check out https://mirca.github.io/spectralGraphTopology for code examples.
+#'
+#' @param Y a p-by-n data matrix, where p is the number of nodes and n is the number of
+#'        features (or data points per node)
+#' @param m the maximum number of possible connections for a given node used
+#'        to build an affinity matrix
+#' @return A list containing the following elements:
+#' \item{\code{laplacian}}{the estimated Laplacian Matrix}
+#' @author Ze Vinicius and Daniel Palomar
+#' @references Nie, Feiping and Wang, Xiaoqian and Jordan, Michael I. and Huang, Heng.
+#'             The Constrained Laplacian Rank Algorithm for Graph-based Clustering, 2016,
+#'             AAAI'16. http://dl.acm.org/citation.cfm?id=3016100.3016174
+#' @export
+learn_smooth_approx_graph <- function(Y, m) {
+  p <- nrow(Y)
+  A <- matrix(0, p, p)
   E <- pairwise_matrix_rownorm2(Y)
-  for (i in c(1:n)) {
+  for (i in c(1:p)) {
     sorted_index <- order(E[i, ])
     j_sweep <- sorted_index[2:(m+1)]
     den <- m * E[i, sorted_index[m+2]] - sum(E[i, j_sweep])
@@ -107,5 +122,8 @@ build_initial_graph <- function(Y, m) {
       A[i, j] <- (ei - E[i, j]) / den
     }
   }
-  return(A)
+  SA <- .5 * (A + t(A))
+  DA <- diag(colSums(SA))
+  LA <- DA - SA
+  return(laplacian = LA)
 }
