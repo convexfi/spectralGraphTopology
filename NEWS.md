@@ -1,3 +1,9 @@
+
+## Changes in spectralGraphTopology version 0.2.2 (2020-06-24)
+
+* Added two methods to learn graphs from smooth signal representations by Xiaowen Dong and Kalofolias.
+* API change: returned items now start with small-case letter, e.g., `laplacian` rather than `Laplacian`.
+
 ## Changes in spectralGraphTopology version 0.2.1 (2019-10-29)
 
 * Minor corrections to the vignette.
