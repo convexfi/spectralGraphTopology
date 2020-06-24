@@ -26,7 +26,7 @@
 #'             in IEEE Transactions on Signal Processing, vol. 64, no. 23,
 #'             pp. 6160-6173, Dec.1, 2016.
 #' @export
-learn_graph_sigrep <- function(X, alpha = 1e-3, beta = 1e-1, maxiter = 1000, ftol = 1e-4, verbose = TRUE) {
+learn_graph_sigrep <- function(X, alpha = 1e-3, beta = 5e-1, maxiter = 1000, ftol = 1e-4, verbose = TRUE) {
   p <- nrow(X)
   Y <- X
   obj_values <- c()
@@ -99,6 +99,7 @@ learn_smooth_graph <- function(X, alpha = 1e-2, beta = 1e-4, step_size = 1e-2,
   eps <- lin_map(0, 0, 1 / (1 + mu))
   gamma <- lin_map(step_size, eps, (1 - eps) / mu)
   z <- upper_view_vec(pairwise_matrix_rownorm2(X))
+  z <- z / norm(z, '2')
   for (k in 1:maxiter) {
     wk_prev <- wk
     dk_prev <- dk
