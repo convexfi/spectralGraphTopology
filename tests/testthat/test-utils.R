@@ -2,6 +2,8 @@ context("utility functions")
 library(testthat)
 library(spectralGraphTopology)
 
+set.seed(42)
+
 
 test_that("consistency of blockDiag function", {
   N1 <- sample(1:10, 1)

@@ -3,6 +3,8 @@ library(testthat)
 library(patrick)
 library(spectralGraphTopology)
 
+set.seed(42)
+
 
 test_that("test that U remains orthonormal after being updated", {
   w <- runif(1000)

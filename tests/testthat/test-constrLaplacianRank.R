@@ -2,6 +2,8 @@ context("Jordan's constrained Laplacian rank")
 library(testthat)
 library(spectralGraphTopology)
 
+set.seed(42)
+
 test_that("pairwise row norm", {
   n <- sample(c(3:10), size = 1)
   m <- sample(c(3:10), size = 1)

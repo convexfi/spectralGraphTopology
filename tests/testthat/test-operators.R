@@ -3,6 +3,8 @@ library(patrick)
 library(testthat)
 library(spectralGraphTopology)
 
+set.seed(423)
+
 # The L operator should return a symmetric positive semi-definite matrix
 # with non-positive off diagonal elements and nonnegative
 # diagonal elements
@@ -31,10 +33,8 @@ LOp <- function(w) {
     Lw[i, (i+1):n] <- -tail(w[1:k], j)
     k <- k - j
   }
-
   Lw <- Lw + t(Lw)
   Lw <- Lw - diag(colSums(Lw))
-
   return(Lw)
 }
 
@@ -67,7 +67,6 @@ LStarOpImpl <- function(Y) {
     Lw <- LOp(w)
     LStarY[i] <- sum(diag(t(Y) %*% Lw))
   }
-
   return(LStarY)
 }
 
