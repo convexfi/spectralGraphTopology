@@ -87,7 +87,7 @@ learn_laplacian_gle_mm <- function(S, A_mask = NULL, alpha = 0, maxiter = 10000,
   }
   z <- rep(0, .5 * p * (p - 1))
   z[mask] <- wk
-  results <- list(Laplacian = L(z), Adjacency = A(z), maxiter = k,
+  results <- list(laplacian = L(z), adjacency = A(z), maxiter = k,
                   convergence = has_converged)
   if (record_objective)
     results$obj_fun <- fun
@@ -177,7 +177,7 @@ learn_laplacian_gle_admm <- function(S, A_mask = NULL, alpha = 0, rho = 1, maxit
     if (verbose)
       pb$tick()
   }
-  results <- list(Laplacian = Thetak, Adjacency = diag(diag(Thetak)) - Thetak,
+  results <- list(laplacian = Thetak, adjacency = diag(diag(Thetak)) - Thetak,
                   convergence = has_converged, elapsed_time = time_seq)
   if (record_objective)
     results$obj_fun <- fun
