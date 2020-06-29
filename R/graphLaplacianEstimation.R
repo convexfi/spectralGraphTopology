@@ -29,7 +29,7 @@ get_incidence_from_adjacency <- function(A) {
 #' @param record_objective whether or not to record the objective function. Default is FALSE
 #' @param verbose if TRUE, then a progress bar will be displayed in the console. Default is TRUE
 #' @return A list containing possibly the following elements:
-#' \item{\code{Laplacian}}{the estimated Laplacian Matrix}
+#' \item{\code{laplacian}}{the estimated Laplacian Matrix}
 #' \item{\code{Adjacency}}{the estimated Adjacency Matrix}
 #' \item{\code{convergence}}{boolean flag to indicate whether or not the optimization converged}
 #' \item{\code{obj_fun}}{values of the objective function at every iteration in case record_objective = TRUE}

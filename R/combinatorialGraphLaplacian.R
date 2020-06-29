@@ -18,7 +18,7 @@
 #'        at every iteration. Default is FALSE
 #' @param verbose if TRUE, then a progress bar will be displayed in the console. Default is TRUE
 #' @return A list containing possibly the following elements
-#' \item{\code{Laplacian}}{estimated Laplacian Matrix}
+#' \item{\code{laplacian}}{estimated Laplacian Matrix}
 #' \item{\code{elapsed_time}}{elapsed time recorded at every iteration}
 #' \item{\code{frod_norm}}{relative Frobenius norm between consecutive estimates of the Laplacian matrix}
 #' \item{\code{convergence}}{whether or not the algorithm has converged within the tolerance and max number of iterations}
@@ -129,7 +129,7 @@ learn_combinatorial_graph_laplacian <- function(S, A_mask = NULL, alpha = 0, rel
   O <- O_best - (1 / n)
   C <- C_best - (1 / n)
   Adjacency <- diag(diag(O)) - O
-  results <- list(Laplacian = O, Adjacency = Adjacency, frob_norm = frob_norm,
+  results <- list(laplacian = O, adjacency = Adjacency, frob_norm = frob_norm,
                   elapsed_time = time_seq, convergence = has_converged)
   if (record_objective)
     results$obj_fun <- fun

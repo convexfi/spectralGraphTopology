@@ -36,8 +36,8 @@
 #' @param verbose whether to output a progress bar showing the evolution of the
 #'        iterations
 #' @return A list containing possibly the following elements:
-#' \item{\code{Laplacian}}{the estimated Laplacian Matrix}
-#' \item{\code{Adjacency}}{the estimated Adjacency Matrix}
+#' \item{\code{laplacian}}{the estimated Laplacian Matrix}
+#' \item{\code{adjacency}}{the estimated Adjacency Matrix}
 #' \item{\code{w}}{the estimated weight vector}
 #' \item{\code{lambda}}{optimization variable accounting for the eigenvalues of the Laplacian matrix}
 #' \item{\code{U}}{eigenvectors of the estimated Laplacian matrix}
@@ -63,7 +63,7 @@
 #' Y <- MASS::mvrnorm(n * 500, rep(0, n), MASS::ginv(Laplacian))
 #' # estimate graph on the basis of sampled data
 #' graph <- learn_k_component_graph(cov(Y), k = 2, beta = 10)
-#' graph$Laplacian
+#' graph$laplacian
 
 #' @export
 learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naive", lb = 0, ub = 1e4, alpha = 0,
@@ -156,7 +156,7 @@ learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naiv
   }
   # compute the adjancency matrix
   Aw <- A(w)
-  results <- list(Laplacian = Lw, Adjacency = Aw, w = w, lambda = lambda, U = U,
+  results <- list(laplacian = Lw, adjacency = Aw, w = w, lambda = lambda, U = U,
                   elapsed_time = time_seq, convergence = has_w_converged,
                   beta_seq = beta_seq)
   if (record_objective) {
@@ -252,7 +252,7 @@ learn_cospectral_graph <- function(S, lambda, k = 1, is_data_matrix = FALSE, w0 
   }
   # compute the adjancency matrix
   Aw <- A(w)
-  results <- list(Laplacian = Lw, Adjacency = Aw, w = w, lambda = lambda, U = U,
+  results <- list(laplacian = Lw, adjacency = Aw, w = w, lambda = lambda, U = U,
                   elapsed_time = time_seq, convergence = has_w_converged,
                   beta_seq = beta_seq)
   if (record_objective) {
@@ -292,8 +292,8 @@ learn_cospectral_graph <- function(S, lambda, k = 1, is_data_matrix = FALSE, w0 
 #' @param verbose whether to output a progress bar showing the evolution of the
 #'        iterations
 #' @return A list containing possibly the following elements:
-#' \item{\code{Laplacian}}{the estimated Laplacian Matrix}
-#' \item{\code{Adjacency}}{the estimated Adjacency Matrix}
+#' \item{\code{laplacian}}{the estimated Laplacian Matrix}
+#' \item{\code{adjacency}}{the estimated Adjacency Matrix}
 #' \item{\code{w}}{the estimated weight vector}
 #' \item{\code{psi}}{optimization variable accounting for the eigenvalues of the Adjacency matrix}
 #' \item{\code{V}}{eigenvectors of the estimated Adjacency matrix}
@@ -455,7 +455,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
     psi0 <- psi
     Aw0 <- Aw
   }
-  results <- list(Laplacian = Lw, Adjacency = Aw, obj_fun = fun_seq, negloglike = ll_seq, w = w,
+  results <- list(laplacian = Lw, adjacency = Aw, obj_fun = fun_seq, negloglike = ll_seq, w = w,
                   psi = psi, V = V, elapsed_time = time_seq, Lips = Lips,
                   Lips_seq = Lips_seq, convergence = (i < maxiter), nu = nu)
   if (record_weights)
@@ -505,8 +505,8 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
 #'        iterations
 #'
 #' @return A list containing possibly the following elements:
-#' \item{\code{Laplacian}}{the estimated Laplacian Matrix}
-#' \item{\code{Adjacency}}{the estimated Adjacency Matrix}
+#' \item{\code{laplacian}}{the estimated Laplacian Matrix}
+#' \item{\code{adjacency}}{the estimated Adjacency Matrix}
 #' \item{\code{w}}{the estimated weight vector}
 #' \item{\code{psi}}{optimization variable accounting for the eigenvalues of the Adjacency matrix}
 #' \item{\code{lambda}}{optimization variable accounting for the eigenvalues of the Laplacian matrix}
@@ -657,7 +657,7 @@ learn_bipartite_k_component_graph <- function(S, is_data_matrix = FALSE, z = 0, 
     Lw0 <- Lw
     Aw0 <- Aw
   }
-  results <- list(Laplacian = Lw, Adjacency = Aw, w = w, psi = psi,
+  results <- list(laplacian = Lw, adjacency = Aw, w = w, psi = psi,
                   lambda = lambda, V = V, U = U, elapsed_time = time_seq,
                   beta_seq = beta_seq, convergence = has_w_converged)
   if (record_objective) {
