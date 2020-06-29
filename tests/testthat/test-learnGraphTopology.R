@@ -53,8 +53,8 @@ test_that("learn_bipartite_graph converges with simple bipartite graph", {
   Y <- MASS::mvrnorm(n * 500, rep(0, n), MASS::ginv(L(w)))
   res <- learn_bipartite_graph(cov(Y), w0 = "qp", record_weights = TRUE)
   expect_true(res$convergence)
-  expect_true(relative_error(Adjacency, res$Adjacency) < 1e-1)
-  expect_true(metrics(Adjacency, res$Adjacency, 1e-1)[1] > .9)
+  expect_true(relative_error(Adjacency, res$adjacency) < 1e-1)
+  expect_true(metrics(Adjacency, res$adjacency, 1e-1)[1] > .9)
 })
 
 
@@ -77,8 +77,8 @@ test_that("learn_bipartite_k_component_graph converges with simple bipartite gra
   Y <- MASS::mvrnorm(n * 500, rep(0, n), MASS::ginv(L(w)))
   res <- learn_bipartite_k_component_graph(cov(Y), w0 = "qp")
   expect_true(res$convergence)
-  expect_true(relative_error(Adjacency, res$Adjacency) < 1.5e-1)
-  expect_true(metrics(Adjacency, res$Adjacency, 1e-1)[1] > .9)
+  expect_true(relative_error(Adjacency, res$adjacency) < 1.5e-1)
+  expect_true(metrics(Adjacency, res$adjacency, 1e-1)[1] > .9)
 })
 
 
