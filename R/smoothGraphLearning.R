@@ -92,7 +92,7 @@ learn_smooth_graph <- function(X, alpha = 1e-2, beta = 1e-4, step_size = 1e-2,
                                maxiter = 1000, tol = 1e-4) {
   p <- nrow(X)
   S <- Sop(p)
-  wk <- spectralGraphTopology:::w_init("naive", MASS::ginv(cor(t(X))))
+  wk <- spectralGraphTopology:::w_init("naive", MASS::ginv(stats::cor(t(X))))
   dk <- D(wk)
   ## constants
   mu <- 2 * beta + sqrt(2 * (p - 1))
