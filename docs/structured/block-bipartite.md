@@ -34,12 +34,12 @@ n <- ncol(Laplacian)
 Y <- MASS::mvrnorm(40 * n, rep(0, n), MASS::ginv(Laplacian))
 # learn graph on the basis of sampled data
 graph <- learn_bipartite_k_component_graph(cov(Y), k = 2, beta = 1e2, nu = 1e2, verbose = FALSE)
-graph$Adjacency[graph$Adjacency < 1e-2] <- 0
+graph$adjacency[graph$adjacency < 1e-2] <- 0
 # Plot Adjacency matrices: true and estimated
 corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
-corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+corrplot(graph$adjacency / max(graph$adjacency), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 # Build networks
-estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+estimated_bipartite <- graph_from_adjacency_matrix(graph$adjacency, mode = "undirected", weighted = TRUE)
 V(bipartite)$type <- rep(c(TRUE, FALSE), 4)
 V(estimated_bipartite)$type <- rep(c(TRUE, FALSE), 4)
 la = layout_as_bipartite(estimated_bipartite)

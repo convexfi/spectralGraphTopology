@@ -44,12 +44,12 @@ Y <- MASS::mvrnorm(100 * n, rep(0, n), Sigma = MASS::ginv(Ltrue))
 S <- cov(Y)
 # estimate Adjacency matrix
 graph <- learn_bipartite_graph(S, z = 4, verbose = FALSE)
-graph$Adjacency[graph$Adjacency < 1e-3] <- 0
+graph$adjacency[graph$adjacency < 1e-3] <- 0
 # Plot Adjacency matrices: true and estimated
 corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
-corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
+corrplot(graph$adjacency / max(graph$adjacency), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 # build networks
-estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+estimated_bipartite <- graph_from_adjacency_matrix(graph$adjacency, mode = "undirected", weighted = TRUE)
 V(estimated_bipartite)$type <- c(rep(0, 10), rep(1, 6))
 la = layout_as_bipartite(estimated_bipartite)
 colors <- viridis(20, begin = 0, end = 1, direction = -1)

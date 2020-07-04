@@ -37,7 +37,7 @@ n <- nrow(Y)
 graph <- learn_k_component_graph(cov(t(Y)) + diag(1/3, n, n), w0 = "qp",
                                  beta = 1, k = 10, verbose = FALSE)
 # build network
-net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+net <- graph_from_adjacency_matrix(graph$adjacency, mode = "undirected", weighted = TRUE)
 # colorify edges
 colors <- viridis(50, begin = 0, end = 1, direction = -1)
 c_scale <- colorRamp(colors)

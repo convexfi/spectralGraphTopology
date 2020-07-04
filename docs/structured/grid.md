@@ -39,9 +39,9 @@ Y <- MASS::mvrnorm(n, mu = rep(0, p), Sigma = MASS::ginv(Ltrue))
 S <- cov(Y)
 # learn graph on the basis of the observed data
 graph <- learn_k_component_graph(S, w0 = "qp", beta = 20, alpha = 5e-3, abstol = 1e-5, verbose = FALSE)
-graph$Adjacency[graph$Adjacency < 5e-2] <- 0
+graph$adjacency[graph$adjacency < 5e-2] <- 0
 # build estimated graph
-estimated_grid <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+estimated_grid <- graph_from_adjacency_matrix(graph$adjacency, mode = "undirected", weighted = TRUE)
 # colorify graph
 colors <- viridis(20, begin = 0, end = 1, direction = -1)
 c_scale <- colorRamp(colors)
