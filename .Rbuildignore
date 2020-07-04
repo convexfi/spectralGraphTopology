@@ -13,6 +13,7 @@
 ^.roxygenize\.R$
 ^.travis\.yml$
 ^.circleci$
+^.github$
 ^azure-pipelines.yml$
 ^appveyor\.yml$
 ^Dockerfile$
