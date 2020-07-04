@@ -18,6 +18,10 @@ graphs by leveraging prior information in their structural form.
 
 ---
 
+## Reference API
+
+Find the reference API of **spectralGraphTopology** [here](docs/ref-api.pdf).
+
 ## Getting started
 
 ### Dependencies
