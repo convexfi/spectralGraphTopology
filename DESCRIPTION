@@ -36,6 +36,7 @@ Imports:
     MASS,
     Matrix,
     progress,
+    CVXR,
     rlist
 RoxygenNote: 7.0.2
 Suggests:
