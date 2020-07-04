@@ -58,7 +58,7 @@ glsigrep.update_L <- function(Y, alpha, beta, p) {
   constraints <- list(CVXR::matrix_trace(L) == p,
                       L %*% ones == zeros,
                       CVXR::upper_tri(L) <= 0,
-                      CVXR::diag(L) > 0)
+                      CVXR::diag(L) >= 1e-6)
   problem <- CVXR::Problem(objective, constraints)
   result <- solve(problem)
   return(as.matrix(result$getValue(L)))

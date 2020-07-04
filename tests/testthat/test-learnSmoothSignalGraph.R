@@ -6,7 +6,7 @@ library(igraph)
 
 set.seed(42)
 
-with_parameters_test_that("we can recover a simple grid graph with Dong and Kalofolias methods", {
+with_parameters_test_that("we can recover a simple grid graph with Kalofolias method", {
     p <- 16
     grid <- make_lattice(length = sqrt(p), dim = 2)
     E(grid)$weight <- runif(gsize(grid), min = 1e-1, max = 3)
@@ -21,6 +21,6 @@ with_parameters_test_that("we can recover a simple grid graph with Dong and Kalo
     res <- func(X = X)
     expect_true(fscore(Ltrue, res$laplacian, 1e-4) > .7)
   },
-  cases(list(func = learn_smooth_graph),
-        list(func = learn_graph_sigrep))
+  cases(list(func = learn_smooth_graph))
+        #,list(func = learn_graph_sigrep))
 )
