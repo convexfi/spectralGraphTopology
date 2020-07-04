@@ -49,7 +49,7 @@ learn_graph_sigrep <- function(X, alpha = 1e-3, beta = 5e-1, maxiter = 1000, fto
 
 
 glsigrep.update_L <- function(Y, alpha, beta, p) {
-  L <- CVXR::Semidef(p)
+  L <- CVXR:::Semidef(p)
   ones <- rep(1, p)
   zeros <- rep(0, p)
   zeros_mat <- matrix(0, p, p)
