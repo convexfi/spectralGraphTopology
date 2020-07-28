@@ -71,7 +71,7 @@ learn_k_component_graph <- function(S, is_data_matrix = FALSE, k = 1, w0 = "naiv
                                     maxiter = 1e4, abstol = 1e-6, reltol = 1e-4, eigtol = 1e-9,
                                     record_objective = FALSE, record_weights = FALSE, verbose = TRUE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
-    A <- learn_smooth_approx_graph(S, m = m)
+    A <- build_initial_graph(S, m = m)
     D <- diag(.5 * colSums(A + t(A)))
     L <- D - .5 * (A + t(A))
     S <- MASS::ginv(L)
@@ -174,7 +174,7 @@ learn_cospectral_graph <- function(S, lambda, k = 1, is_data_matrix = FALSE, w0 
                                    maxiter = 1e4, abstol = 1e-6, reltol = 1e-4, eigtol = 1e-9,
                                    record_objective = FALSE, record_weights = FALSE, verbose = TRUE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
-    A <- learn_smooth_approx_graph(S, m = m)
+    A <- build_initial_graph(S, m = m)
     D <- diag(.5 * colSums(A + t(A)))
     L <- D - .5 * (A + t(A))
     S <- MASS::ginv(L)
@@ -362,7 +362,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
                                   w0 = "naive", m = 7, maxiter = 1e4, abstol = 1e-6, reltol = 1e-4,
                                   record_weights = FALSE, verbose = TRUE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
-    A <- learn_smooth_approx_graph(S, m = m)
+    A <- build_initial_graph(S, m = m)
     D <- diag(.5 * colSums(A + t(A)))
     L <- D - .5 * (A + t(A))
     S <- MASS::ginv(L)
@@ -574,7 +574,7 @@ learn_bipartite_k_component_graph <- function(S, is_data_matrix = FALSE, z = 0, 
                                               reltol = 1e-4, eigtol = 1e-9,
                                               record_weights = FALSE, record_objective = FALSE, verbose = TRUE) {
   if (is_data_matrix || ncol(S) != nrow(S)) {
-    A <- learn_smooth_approx_graph(S, m = m)
+    A <- build_initial_graph(S, m = m)
     D <- diag(.5 * colSums(A + t(A)))
     L <- D - .5 * (A + t(A))
     S <- MASS::ginv(L)

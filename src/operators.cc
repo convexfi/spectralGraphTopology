@@ -219,9 +219,9 @@ Eigen::VectorXd Linv(const Eigen::MatrixXd& M) {
 }
 
 
-// Computes the inverse of the L operator.
+// Computes the inverse of the A operator.
 //
-// @param M Laplacian matrix
+// @param M Adjacency matrix
 // @return w the weight vector of the graph
 //
 // [[Rcpp::export]]

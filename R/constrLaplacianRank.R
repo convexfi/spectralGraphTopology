@@ -49,33 +49,32 @@ cluster_k_component_graph <- function(Y, k = 1, m = 5, lmd = 1, eigtol = 1e-9,
                                       edgetol = 1e-6, maxiter = 1000) {
   time_seq <- c(0)
   start_time <- proc.time()[3]
-  LA <- learn_smooth_approx_graph(Y, m)
-  p <- ncol(LA)
-  S <- matrix(1/p, p, p)
-  SS <- .5 * (S + t(S))
-  DS <- diag(colSums(SS))
-  LS <-  DS - SS
+  A <- build_initial_graph(Y, m)
+  n <- ncol(A)
+  S <- matrix(1/n, n, n)
+  DS <- diag(.5 * colSums(S + t(S)))
+  LS <-  DS - .5 * (S + t(S))
+  DA <- diag(.5 * colSums(A + t(A)))
+  LA <- DA - .5 * (A + t(A))
   if (k == 1)
     F <- matrix(eigvec_sym(LA)[, 1:k])
   else
     F <- eigvec_sym(LA)[, 1:k]
   # bounds for variables in the QP solver
-  bvec <- c(1, rep(0, p))
-  Amat <- cbind(rep(1, p), diag(p))
-  Dmat <- diag(p)
+  bvec <- c(1, rep(0, n))
+  Amat <- cbind(rep(1, n), diag(n))
   lmd_seq <- c(lmd)
   pb <- progress::progress_bar$new(format = "<:bar> :current/:total  eta: :eta  lambda: :lmd  null_eigvals: :null_eigvals",
                                    total = maxiter, clear = FALSE, width = 100)
   for (ii in c(1:maxiter)) {
     V <- pairwise_matrix_rownorm2(F)
-    for (i in c(1:p)) {
+    for (i in c(1:n)) {
       p <- A[i, ] - .5 * lmd * V[i, ]
-      qp <- quadprog::solve.QP(Dmat = Dmat, dvec = p, Amat = Amat, bvec = bvec, meq = 1)
+      qp <- quadprog::solve.QP(Dmat = diag(n), dvec = p, Amat = Amat, bvec = bvec, meq = 1)
       S[i, ] <- qp$solution
     }
-    SS <- .5 * (S + t(S))
-    DS <- diag(colSums(SS))
-    LS <- DS - SS
+    DS <- diag(.5 * colSums(S + t(S)))
+    LS <- DS - .5 * (S + t(S))
     F <- eigvec_sym(LS)[, 1:k]
     eig_vals <- eigval_sym(LS)
     n_zero_eigenvalues <- sum(abs(eig_vals) < eigtol)
@@ -93,6 +92,22 @@ cluster_k_component_graph <- function(Y, k = 1, m = 5, lmd = 1, eigtol = 1e-9,
   AS <- diag(diag(LS)) - LS
   return(list(laplacian = LS, adjacency = AS, eigenvalues = eig_vals,
               lmd_seq = lmd_seq, elapsed_time = time_seq))
+}
+
+build_initial_graph <- function(Y, m) {
+  n <- nrow(Y)
+  A <- matrix(0, n, n)
+  E <- pairwise_matrix_rownorm2(Y)
+  for (i in c(1:n)) {
+    sorted_index <- order(E[i, ])
+    j_sweep <- sorted_index[2:(m+1)]
+    den <- m * E[i, sorted_index[m+2]] - sum(E[i, j_sweep])
+    ei <- E[i, sorted_index[m+2]]
+    for (j in j_sweep) {
+      A[i, j] <- (ei - E[i, j]) / den
+    }
+  }
+  return(A)
 }
 
 #' Learns a smooth approximated graph from an observed data matrix.
