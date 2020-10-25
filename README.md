@@ -79,7 +79,7 @@ graph <- learn_k_component_graph(S, k = k, beta = .25, verbose = FALSE, abstol =
 
 # plot
 # build network
-net <- igraph::graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+net <- igraph::graph_from_adjacency_matrix(graph$adjacency, mode = "undirected", weighted = TRUE)
 # colorify nodes and edges
 colors <- c("#706FD3", "#FF5252")
 V(net)$cluster <- twomoon$clusters
@@ -110,9 +110,9 @@ If you made use of this software please consider citing:
     <https://CRAN.R-project.org/package=spectralGraphTopology>
 
 -   S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar
-    (2020). A unified framework for structured graph learning via
-    spectral constraints. Journal of Machine Learning Research (21),
-    pages 1-60.
+    (2020). [A unified framework for structured graph learning via
+    spectral constraints](https://www.jmlr.org/papers/v21/19-276.html).
+    Journal of Machine Learning Research (21), pages 1-60.
 
 In addition, consider citing the following bibliography according to
 their implementation:
