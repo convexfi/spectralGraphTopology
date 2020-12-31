@@ -26,8 +26,8 @@ Eigen::MatrixXd L(const Eigen::VectorXd& w) {
     k -= j;
   }
 
-  Eigen::MatrixXd LwColSum = (Lw + Lw.transpose()).colwise().sum().asDiagonal();
-  Lw -= LwColSum;
+  Eigen::VectorXd LwColSum = (Lw + Lw.transpose()).colwise().sum();
+  Lw.diagonal() -= LwColSum;
   return Lw.selfadjointView<Upper>();
 }
 
