@@ -1,8 +1,9 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 spectralGraphTopology
 =====================
 
-[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/spectralGraphTopology)](https://cran.r-project.org/package=spectralGraphTopology)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/spectralGraphTopology)](https://cran.r-project.org/package=spectralGraphTopology)
 [![CRAN
 Downloads](https://cranlogs.r-pkg.org/badges/spectralGraphTopology)](https://cran.r-project.org/package=spectralGraphTopology)
 ![CRAN Downloads
@@ -106,8 +107,8 @@ If you made use of this software please consider citing:
 
 -   J. V. de Miranda Cardoso, D. P. Palomar (2019).
     spectralGraphTopology: Learning Graphs from Data via Spectral
-    Constraints. R package version 0.1.0.
-    <https://CRAN.R-project.org/package=spectralGraphTopology>
+    Constraints.
+    <a href="https://CRAN.R-project.org/package=spectralGraphTopology" class="uri">https://CRAN.R-project.org/package=spectralGraphTopology</a>
 
 -   S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar
     (2020). [A unified framework for structured graph learning via
@@ -117,36 +118,12 @@ If you made use of this software please consider citing:
 In addition, consider citing the following bibliography according to
 their implementation:
 
-<table>
-<colgroup>
-<col style="width: 9%" />
-<col style="width: 90%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th><strong>function</strong></th>
-<th><strong>reference</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>cluster_k_component_graph</code></td>
-<td>N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016). <a href="https://dl.acm.org/citation.cfm?id=3016100.3016174">The Constrained Laplacian Rank Algorithm for Graph-based Clustering</a>, AAAI’16.</td>
-</tr>
-<tr class="even">
-<td><code>learn_laplacian_gle_mm</code></td>
-<td>Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, <a href="https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf">Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM</a>, IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019</td>
-</tr>
-<tr class="odd">
-<td><code>learn_laplacian_gle_admm</code></td>
-<td>Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, <a href="https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf">Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM</a>, IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019</td>
-</tr>
-<tr class="even">
-<td><code>learn_combinatorial_graph_laplacian</code></td>
-<td>H. E. Egilmez, E. Pavez and A. Ortega, <a href="https://ieeexplore.ieee.org/document/7979524">Graph learning from data under Laplacian and structural constraints</a>, Journal of Selected Topics in Signal Processing, vol. 11, no. 6, pp. 825-841, Sept. 2017</td>
-</tr>
-</tbody>
-</table>
+| **function**                          | **reference**                                                                                                                                                                                                                                                                                       |
+|---------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `cluster_k_component_graph`           | N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016). [The Constrained Laplacian Rank Algorithm for Graph-based Clustering](https://dl.acm.org/citation.cfm?id=3016100.3016174), AAAI’16.                                                                                                |
+| `learn_laplacian_gle_mm`              | Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, [Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM](https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf), IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019 |
+| `learn_laplacian_gle_admm`            | Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, [Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM](https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf), IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019 |
+| `learn_combinatorial_graph_laplacian` | H. E. Egilmez, E. Pavez and A. Ortega, [Graph learning from data under Laplacian and structural constraints](https://ieeexplore.ieee.org/document/7979524), Journal of Selected Topics in Signal Processing, vol. 11, no. 6, pp. 825-841, Sept. 2017                                                |
 
 Links
 -----

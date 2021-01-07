@@ -103,7 +103,7 @@ to report a bug or discuss a feature request.
 If you made use of this software please consider citing:
 
 - J. V. de Miranda Cardoso, D. P. Palomar (2019). spectralGraphTopology: Learning Graphs from
-  Data via Spectral Constraints. R package version 0.1.0. <https://CRAN.R-project.org/package=spectralGraphTopology>
+  Data via Spectral Constraints. <https://CRAN.R-project.org/package=spectralGraphTopology>
 
 - S. Kumar, J. Ying, J. V. de Miranda Cardoso, and D. P. Palomar (2020). [A unified framework
   for structured graph learning via spectral constraints](https://www.jmlr.org/papers/v21/19-276.html). Journal of Machine Learning Research (21), pages 1-60.
