@@ -115,6 +115,11 @@ If you made use of this software please consider citing:
     spectral constraints](https://www.jmlr.org/papers/v21/19-276.html).
     Journal of Machine Learning Research (21), pages 1-60.
 
+-   S. Kumar, J. Ying, J. V. de Miranda Cardoso, D. P. Palomar (2019).
+    [Structured graph learning via Laplacian spectral
+    constraints](https://papers.nips.cc/paper/9339-structured-graph-learning-via-laplacian-spectral-constraints.pdf).
+    Advances in Neural Information Processing Systems.
+
 In addition, consider citing the following bibliography according to
 their implementation:
 
