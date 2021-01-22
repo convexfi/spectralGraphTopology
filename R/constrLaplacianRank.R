@@ -34,7 +34,7 @@
 #' # estimate underlying graph
 #' graph <- cluster_k_component_graph(twomoon$data, k = 2)
 #' # build network
-#' net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+#' net <- graph_from_adjacency_matrix(graph$adjacency, mode = "undirected", weighted = TRUE)
 #' # colorify nodes and edges
 #' colors <- c("#706FD3", "#FF5252", "#33D9B2")
 #' V(net)$cluster <- twomoon$clusters
