@@ -12,7 +12,7 @@ circles3 <- shapes.circles3(N)
 # learn underlying graph
 graph <- learn_k_component_graph(crossprod(t(circles3$data)), k = 3, beta = 1, tol = 1e-2)
 # construct the network
-net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+net <- graph_from_adjacency_matrix(graph$adjacency, mode = "undirected", weighted = TRUE)
 # pretty colors
 colors <- c("#706FD3", "#FF5252", "#33D9B2")
 # colorify edges and nodes

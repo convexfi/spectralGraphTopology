@@ -13,7 +13,7 @@ twomoon <- shapes.two.moon(N)
 S <- crossprod(t(twomoon$data))
 graph <- learn_k_component_graph(S, k = 2, beta = 1, abs = 1e-3, fix_beta = FALSE)
 # build network
-net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+net <- graph_from_adjacency_matrix(graph$adjacency, mode = "undirected", weighted = TRUE)
 # colorify nodes and edges
 colors <- c("#706FD3", "#FF5252", "#33D9B2")
 V(net)$cluster <- twomoon$clusters

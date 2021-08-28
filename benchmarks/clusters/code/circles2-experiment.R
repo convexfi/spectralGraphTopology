@@ -1,7 +1,6 @@
 library(clusterSim)
 library(spectralGraphTopology)
 library(igraph)
-library(viridis)
 library(extrafont)
 
 set.seed(1)
@@ -13,9 +12,9 @@ circles2 <- shapes.circles2(N)
 S <- crossprod(t(circles2$data))
 graph <- learn_k_component_graph(S, k = 2, beta = 1, fix_beta = FALSE, abstol = 1e-3)
 # construct network
-net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+net <- graph_from_adjacency_matrix(graph$adjacency, mode = "undirected", weighted = TRUE)
 # use pretty colors for the nodes and edges
-colors <- c("#706FD3", "#FF5252")
+colors <- c("#eb3b5a", "#4b7bec")
 V(net)$cluster <- circles2$clusters
 E(net)$color <- apply(as.data.frame(get.edgelist(net)), 1,
                      function(x) ifelse(V(net)$cluster[x[1]] == V(net)$cluster[x[2]],

@@ -10,7 +10,7 @@ n <- nrow(spirals)
 graph <- learn_k_component_graph(crossprod(t(spirals)) + diag(1/3, n, n),
                                  k = 2, beta = 1, fix_beta = FALSE)
 # construct network
-net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+net <- graph_from_adjacency_matrix(graph$adjacency, mode = "undirected", weighted = TRUE)
 clusters <- components(net)$membership
 colors <- c("#706FD3", "#FF5252")
 V(net)$cluster <- clusters

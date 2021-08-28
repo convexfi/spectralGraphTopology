@@ -1,8 +1,6 @@
 library(spectralGraphTopology)
 library(igraph)
-library(viridis)
 library(extrafont)
-library(rgl)
 
 set.seed(1)
 
@@ -30,7 +28,7 @@ Y <- rbind(cbind(h1_sample_x, h1_sample_y, h1_sample_z),
            cbind(h2_sample_x, h2_sample_y, h2_sample_z))
 graph <- learn_k_component_graph(crossprod(t(Y)), k = 2, beta = 1, fix_beta = FALSE, abstol = 1e-3)
 # construct network
-net <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected", weighted = TRUE)
+net <- graph_from_adjacency_matrix(graph$adjacency, mode = "undirected", weighted = TRUE)
 # use pretty colors for the nodes and edges
 colors <- c("#706FD3", "#FF5252")
 clusters <- c(rep(1, n_nodes), rep(2, n_nodes))
