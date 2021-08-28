@@ -11,13 +11,8 @@ Total](https://cranlogs.r-pkg.org/badges/grand-total/spectralGraphTopology?color
 [![Rcpp](https://img.shields.io/badge/powered%20by-Rcpp-orange.svg?style=flat)](http://www.rcpp.org/)
 
 [![codecov](https://codecov.io/gh/mirca/spectralGraphTopology/branch/master/graph/badge.svg)](https://codecov.io/gh/mirca/spectralGraphTopology)
-[![Travis-CI-Badge](https://travis-ci.org/mirca/spectralGraphTopology.svg?branch=master)](https://travis-ci.org/mirca/spectralGraphTopology)
-[![Build
-status](https://ci.appveyor.com/api/projects/status/vr62ddvc9xoabnwy?svg=true)](https://ci.appveyor.com/project/mirca/spectralgraphtopology-j05c9)
 [![Docker Build
 Status](https://img.shields.io/docker/cloud/build/mirca/spectralgraphtopology.svg)](https://hub.docker.com/r/mirca/spectralgraphtopology/)
-[![Build
-Status](https://dev.azure.com/jvmirca/spectralGraphTopology/_apis/build/status/mirca.spectralGraphTopology?branchName=master)](https://dev.azure.com/jvmirca/spectralGraphTopology/_build/latest?definitionId=1&branchName=master)
 
 <a href="https://mirca.github.io/spectralGraphTopology"><img style="float: right;" width="250" src="./man/figures//circles3_reduced.gif" align="right" /></a>
 
