@@ -381,7 +381,7 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
   else
     Sinv <- MASS::ginv(S)
   # if w0 is either "naive" or "qp", compute it, else return w0
-  w0 <- w_init(w0, Sinv)
+  w0 <- w_init(w0, Sinv) + 1e-4
   Lips <- 1 / min(eigval_sym(L(w0) + J))
   # compute quantities on the initial guess
   Aw0 <- A(w0)
@@ -407,15 +407,22 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
       w <- bipartite.w_update(w = w0, Aw = Aw0, V = V0, nu = nu, psi = psi0,
                               K = K, J = J, Lips = Lips)
       # compute the objective function at the updated value of w
+      Lw <- L(w)
       fun_t <- tryCatch({
-                   bipartite.obj_fun(Aw = A(w), Lw = L(w), V = V0, psi = psi0,
+                   bipartite.obj_fun(Aw = A(w), Lw = Lw, V = V0, psi = psi0,
                                      K = K, J = J, nu = nu)
                  }, warning = function(warn) return(Inf), error = function(err) return(Inf)
                )
+      chol_status <- try(chol(Lw + J), silent = TRUE)
+      chol_error <- ifelse(class(chol_status) == "try-error", TRUE, FALSE)
+      if (chol_error[1])
+        is_disconnected <- TRUE
+      else
+        is_disconnected <- FALSE
       # check if the previous value of the objective function is
       # smaller than the current one
       Lips_seq <- c(Lips_seq, Lips)
-      if (fun0 < fun_t)
+      if (fun0 < fun_t | is_disconnected)
         # in case it is in fact larger, then increase Lips and recompute w
         Lips <- 2 * Lips
       else {
