@@ -3,16 +3,13 @@
 spectralGraphTopology
 =====================
 
+[![codecov](https://codecov.io/gh/mirca/spectralGraphTopology/branch/master/graph/badge.svg?token=0FlrfUz3pg)](https://codecov.io/gh/mirca/spectralGraphTopology)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/spectralGraphTopology)](https://cran.r-project.org/package=spectralGraphTopology)
 [![CRAN
 Downloads](https://cranlogs.r-pkg.org/badges/spectralGraphTopology)](https://cran.r-project.org/package=spectralGraphTopology)
 ![CRAN Downloads
 Total](https://cranlogs.r-pkg.org/badges/grand-total/spectralGraphTopology?color=brightgreen)
 [![Rcpp](https://img.shields.io/badge/powered%20by-Rcpp-orange.svg?style=flat)](http://www.rcpp.org/)
-
-[![codecov](https://codecov.io/gh/mirca/spectralGraphTopology/branch/master/graph/badge.svg)](https://codecov.io/gh/mirca/spectralGraphTopology)
-[![Docker Build
-Status](https://img.shields.io/docker/cloud/build/mirca/spectralgraphtopology.svg)](https://hub.docker.com/r/mirca/spectralgraphtopology/)
 
 <a href="https://mirca.github.io/spectralGraphTopology"><img style="float: right;" width="250" src="./man/figures//circles3_reduced.gif" align="right" /></a>
 
