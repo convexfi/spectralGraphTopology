@@ -36,8 +36,10 @@
 #' Algorithms for Graph Laplacian Estimation via ADMM and MM IEEE Trans. on Signal
 #' Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019
 #'
-#' @importFrom Rcpp sourceCpp
 #' @useDynLib spectralGraphTopology
+#' @importFrom Rcpp sourceCpp
+#' @importFrom Rcpp evalCpp
+#' @exportPattern "^[[:alpha:]]+"
 #' @docType package
 #' @name spectralGraphTopology-package
 NULL
