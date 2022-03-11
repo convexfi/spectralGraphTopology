@@ -20,7 +20,7 @@ Authors@R: c(
   )
 Maintainer: Ze Vinicius <jvmirca@gmail.com>
 URL: https://github.com/dppalomar/spectralGraphTopology,
-     https://mirca.github.io/spectralGraphTopology,
+     https://mirca.github.io/spectralGraphTopology/,
      https://www.danielppalomar.com
 BugReports: https://github.com/dppalomar/spectralGraphTopology/issues
 Depends:

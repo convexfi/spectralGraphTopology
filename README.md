@@ -11,7 +11,7 @@ Downloads](https://cranlogs.r-pkg.org/badges/spectralGraphTopology)](https://cra
 Total](https://cranlogs.r-pkg.org/badges/grand-total/spectralGraphTopology?color=brightgreen)
 [![Rcpp](https://img.shields.io/badge/powered%20by-Rcpp-orange.svg?style=flat)](http://www.rcpp.org/)
 
-<a href="https://mirca.github.io/spectralGraphTopology"><img style="float: right;" width="250" src="./man/figures//circles3_reduced.gif" align="right" /></a>
+<a href="https://mirca.github.io/spectralGraphTopology/"><img style="float: right;" width="250" src="./man/figures//circles3_reduced.gif" align="right" /></a>
 
 **spectralGraphTopology** provides estimators to learn k-component,
 bipartite, and k-component bipartite graphs from data by imposing
