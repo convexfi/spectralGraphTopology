@@ -26,6 +26,7 @@
 #'        is set to false, then beta will increase (decrease) depending whether the number of
 #'        zero eigenvalues is lesser (greater) than k
 #' @param rho how much to increase (decrease) beta in case fix_beta = FALSE
+#' @param eps small positive constant
 #' @param maxiter the maximum number of iterations
 #' @param abstol absolute tolerance on the weight vector w
 #' @param reltol relative tolerance on the weight vector w
@@ -329,14 +330,14 @@ learn_cospectral_graph <- function(S, lambda, k = 1, is_data_matrix = FALSE, w0 
 #' S <- cov(Y)
 #' # estimate Adjacency matrix
 #' graph <- learn_bipartite_graph(S, z = 4, verbose = FALSE)
-#' graph$Adjacency[graph$Adjacency < 1e-3] <- 0
+#' graph$adjacency[graph$adjacency < 1e-3] <- 0
 #' # Plot Adjacency matrices: true, noisy, and estimated
 #' corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square",
 #'          addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
-#' corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE,
+#' corrplot(graph$adjacency / max(graph$adjacency), is.corr = FALSE,
 #'          method = "square", addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 #' # build networks
-#' estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency,
+#' estimated_bipartite <- graph_from_adjacency_matrix(graph$adjacency,
 #'                                                    mode = "undirected",
 #'                                                    weighted = TRUE)
 #' V(estimated_bipartite)$type <- c(rep(0, 10), rep(1, 6))
@@ -543,14 +544,14 @@ learn_bipartite_graph <- function(S, is_data_matrix = FALSE, z = 0, nu = 1e4, al
 #' n <- ncol(Laplacian)
 #' Y <- MASS::mvrnorm(40 * n, rep(0, n), MASS::ginv(Laplacian))
 #' graph <- learn_bipartite_k_component_graph(cov(Y), k = 2, beta = 1e2, nu = 1e2, verbose = FALSE)
-#' graph$Adjacency[graph$Adjacency < 1e-2] <- 0
+#' graph$adjacency[graph$adjacency < 1e-2] <- 0
 #' # Plot Adjacency matrices: true, noisy, and estimated
 #' corrplot(Atrue / max(Atrue), is.corr = FALSE, method = "square", addgrid.col = NA, tl.pos = "n",
 #'          cl.cex = 1.25)
-#' corrplot(graph$Adjacency / max(graph$Adjacency), is.corr = FALSE, method = "square",
+#' corrplot(graph$adjacency / max(graph$adjacency), is.corr = FALSE, method = "square",
 #'          addgrid.col = NA, tl.pos = "n", cl.cex = 1.25)
 #' # Plot networks
-#' estimated_bipartite <- graph_from_adjacency_matrix(graph$Adjacency, mode = "undirected",
+#' estimated_bipartite <- graph_from_adjacency_matrix(graph$adjacency, mode = "undirected",
 #'                                                    weighted = TRUE)
 #' V(bipartite)$type <- rep(c(TRUE, FALSE), 4)
 #' V(estimated_bipartite)$type <- rep(c(TRUE, FALSE), 4)
