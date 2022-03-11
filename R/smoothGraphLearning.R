@@ -87,6 +87,9 @@ glsigrep.obj_function <- function(X, Y, L, alpha, beta) {
 #'        energy penalty
 #' @param beta hyperparameter that controls the importance of the L2-norm
 #'        regularization
+#' @param step_size learning rate
+#' @param maxiter maximum number of iterations
+#' @param tol relative tolerance used as stopping criteria
 #' @references V. Kalofolias, "How to learn a graph from smooth signals", in Proc. Int.
 #'             Conf. Artif. Intell. Statist., 2016, pp. 920–929.
 #' @export
