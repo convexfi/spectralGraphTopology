@@ -3,7 +3,7 @@
 spectralGraphTopology
 =====================
 
-[![codecov](https://codecov.io/gh/mirca/spectralGraphTopology/branch/master/graph/badge.svg?token=0FlrfUz3pg)](https://codecov.io/gh/mirca/spectralGraphTopology)
+[![codecov](https://codecov.io/gh/mirca/spectralGraphTopology/branch/master/graph/badge.svg?token=0FlrfUz3pg)](https://app.codecov.io/gh/mirca/spectralGraphTopology)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/spectralGraphTopology)](https://cran.r-project.org/package=spectralGraphTopology)
 [![CRAN
 Downloads](https://cranlogs.r-pkg.org/badges/spectralGraphTopology)](https://cran.r-project.org/package=spectralGraphTopology)
@@ -22,7 +22,7 @@ to play key roles in unsupervised machine learning tasks such as
 clustering.
 
 **Documentation**:
-[**https://mirca.github.io/spectralGraphTopology**](https://mirca.github.io/spectralGraphTopology).
+[**https://mirca.github.io/spectralGraphTopology**](https://mirca.github.io/spectralGraphTopology/).
 
 Installation
 ------------
@@ -117,7 +117,7 @@ their implementation:
 
 | **function**                          | **reference**                                                                                                                                                                                                                                                                                       |
 |---------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `cluster_k_component_graph`           | N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016). [The Constrained Laplacian Rank Algorithm for Graph-based Clustering](https://dl.acm.org/citation.cfm?id=3016100.3016174), AAAI’16.                                                                                                |
+| `cluster_k_component_graph`           | N., Feiping, W., Xiaoqian, J., Michael I., and H., Heng. (2016). [The Constrained Laplacian Rank Algorithm for Graph-based Clustering](https://dl.acm.org/doi/10.5555/3016100.3016174), AAAI’16.                                                                                                    |
 | `learn_laplacian_gle_mm`              | Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, [Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM](https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf), IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019 |
 | `learn_laplacian_gle_admm`            | Licheng Zhao, Yiwei Wang, Sandeep Kumar, and Daniel P. Palomar, [Optimization Algorithms for Graph Laplacian Estimation via ADMM and MM](https://palomar.home.ece.ust.hk/papers/2019/ZhaoWangKumarPalomar-TSP2019.pdf), IEEE Trans. on Signal Processing, vol. 67, no. 16, pp. 4231-4244, Aug. 2019 |
 | `learn_combinatorial_graph_laplacian` | H. E. Egilmez, E. Pavez and A. Ortega, [Graph learning from data under Laplacian and structural constraints](https://ieeexplore.ieee.org/document/7979524), Journal of Selected Topics in Signal Processing, vol. 11, no. 6, pp. 825-841, Sept. 2017                                                |
@@ -134,7 +134,7 @@ README file:
 
 Vignette:
 [GitHub-html-vignette](https://raw.githack.com/dppalomar/spectralGraphTopology/master/vignettes/SpectralGraphTopology.html),
-[CRAN-html-vignette](https://cran.r-project.org/web/packages/spectralGraphTopology/vignettes/SpectralGraphTopology.html),
+[CRAN-html-vignette](https://cran.r-project.org/package=spectralGraphTopology/vignettes/SpectralGraphTopology.html),
 [NeurIPS’19 Promotional
 slides](https://docs.google.com/viewer?url=https://github.com/dppalomar/spectralGraphTopology/raw/master/vignettes/NeurIPS19-promo-slides.pdf),
 [NeurIPS’19 Promotional
