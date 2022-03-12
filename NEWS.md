@@ -1,3 +1,6 @@
+## Changes in spectralGraphTopology version 0.2.3 (2021-03-12)
+
+* Minor changes to comply with CRAN policies.
 
 ## Changes in spectralGraphTopology version 0.2.2 (2020-06-24)
 
