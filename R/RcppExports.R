@@ -110,7 +110,6 @@ Dstar <- function(w) {
     .Call('_spectralGraphTopology_Dstar', PACKAGE = 'spectralGraphTopology', w)
 }
 
-#' @export
 Dmat <- function(n) {
     .Call('_spectralGraphTopology_Dmat', PACKAGE = 'spectralGraphTopology', n)
 }
