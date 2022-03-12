@@ -3,7 +3,6 @@
 export(A)
 export(Astar)
 export(D)
-export(Dmat)
 export(Dstar)
 export(L)
 export(Lstar)
