@@ -39,7 +39,6 @@
 #' @useDynLib spectralGraphTopology
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
-#' @exportPattern "^[[:alpha:]]+"
 #' @docType package
 #' @name spectralGraphTopology-package
 NULL

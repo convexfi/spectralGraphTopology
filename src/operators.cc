@@ -264,7 +264,6 @@ Eigen::VectorXd Dstar(const Eigen::VectorXd& w) {
 }
 
 
-//' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd Dmat(const int n) {
   Eigen::VectorXd e = Eigen::VectorXd::Zero(n);
