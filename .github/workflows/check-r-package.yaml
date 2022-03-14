@@ -8,7 +8,11 @@ name: test-coverage
 
 jobs:
   test-coverage:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 9
+      matrix:
+        os: [macos-latest, ubuntu-latest]
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
